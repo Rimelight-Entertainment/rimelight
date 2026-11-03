@@ -39,16 +39,6 @@ const OMIT_KEYS = [
   "items",
   "checkedIcon",
   "submenuIcon",
-  "topRender",
-  "topSlot",
-  "bottomRender",
-  "bottomSlot",
-  "itemRender",
-  "itemSlot",
-  "trigger",
-  "triggerSlot",
-  "content",
-  "contentSlot",
   "portal",
   "unmountOnHide",
   "longPressDelay",
@@ -153,7 +143,7 @@ interface MenuLayerProps {
   styles?: Partial<Record<RLContextMenuSlot, JSX.CSSProperties | string>> | undefined;
   checkedIcon: () => string;
   submenuIcon: () => string;
-  itemRender?: RLContextMenuProps["itemRender"];
+  itemRender?: RLContextMenuProps["itemSlot"];
   isSubmenu?: boolean;
   closeLayer?: () => void;
   closeRoot: () => void;
@@ -586,8 +576,10 @@ export const RLContextMenu: Component<RLContextMenuProps> = (props) => {
     classes,
     rest,
     id: menuId,
+    slots,
   } = RLContextMenuTheme.setup(setupProps, {
     omit: OMIT_KEYS,
+    slots: ["topSlot", "bottomSlot", "itemSlot", "triggerSlot", "contentSlot"] as const,
     idPrefix: "rl-context-menu",
     variants: () => ({
       size: props.size ?? "md",
@@ -787,12 +779,12 @@ export const RLContextMenu: Component<RLContextMenuProps> = (props) => {
   };
 
   const topRenderContent = () =>
-    resolveRenderProp(props.topSlot ?? props.topRender, { open: isOpen(), close: closeMenu });
+    resolveRenderProp(slots.topSlot(), { open: isOpen(), close: closeMenu });
 
   const bottomRenderContent = () =>
-    resolveRenderProp(props.bottomSlot ?? props.bottomRender, { open: isOpen(), close: closeMenu });
+    resolveRenderProp(slots.bottomSlot(), { open: isOpen(), close: closeMenu });
 
-  const triggerContent = () => props.triggerSlot ?? props.trigger ?? props.children;
+  const triggerContent = () => slots.triggerSlot() ?? props.children;
 
   const slotStyles = () => props.styles;
 
@@ -852,7 +844,7 @@ export const RLContextMenu: Component<RLContextMenuProps> = (props) => {
               styles={slotStyles()}
               checkedIcon={checkedIcon}
               submenuIcon={submenuIcon}
-              itemRender={props.itemSlot ?? props.itemRender}
+              itemRender={slots.itemSlot()}
               closeRoot={closeMenu}
             />
           </Show>
@@ -863,9 +855,7 @@ export const RLContextMenu: Component<RLContextMenuProps> = (props) => {
           </Show>
 
           {/* Custom content Slot */}
-          <Show when={props.contentSlot ?? props.content}>
-            {props.contentSlot ?? props.content}
-          </Show>
+          <Show when={slots.contentSlot()}>{slots.contentSlot()}</Show>
         </div>
       </div>
     </>

@@ -21,11 +21,11 @@ export interface RLPageProps {
   /**
    * Content rendered in the left column. The column is only rendered when provided.
    */
-  left?: JSX.Element;
+  leftSlot?: JSX.Element;
   /**
    * Content rendered in the right column. The column is only rendered when provided.
    */
-  right?: JSX.Element;
+  rightSlot?: JSX.Element;
   /**
    * Content rendered in the centered main column.
    */

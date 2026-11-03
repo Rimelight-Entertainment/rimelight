@@ -258,7 +258,8 @@ export interface RLAudioProps {
    */
   class?: any;
   children?: JSX.Element | undefined;
-  transcript?: JSX.Element | undefined;
+  transcript?: string | undefined;
+  transcriptSlot?: JSX.Element | undefined;
   headerSlot?: JSX.Element | undefined;
   timelineSlot?: JSX.Element | undefined;
   controlsSlot?: JSX.Element | undefined;

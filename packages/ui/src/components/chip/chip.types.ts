@@ -96,11 +96,6 @@ export interface RLChipProps {
   children?: JSX.Element;
 
   /**
-   * Content / text rendered inside the chip indicator.
-   */
-  content?: JSX.Element;
-
-  /**
    * Slot alias for `content`.
    */
   contentSlot?: JSX.Element;

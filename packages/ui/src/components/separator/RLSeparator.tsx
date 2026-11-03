@@ -4,10 +4,13 @@ import { RLSeparatorTheme } from "./separator.theme";
 import { Show } from "solid-js";
 import { RLAvatar } from "../avatar/RLAvatar";
 
-const OMIT_KEYS = ["decorative", "label", "icon", "avatar", "avatarSlot", "iconSlot"] as const;
+const OMIT_KEYS = ["decorative", "label", "icon", "avatar"] as const;
 
 export const RLSeparator: Component<RLSeparatorProps> = (props) => {
-  const { classes, rest } = RLSeparatorTheme.setup(props, { omit: OMIT_KEYS });
+  const { classes, rest, slots } = RLSeparatorTheme.setup(props, {
+    omit: OMIT_KEYS,
+    slots: ["avatarSlot", "iconSlot"] as const,
+  });
 
   const decorative = () => props.decorative ?? true;
 
@@ -23,8 +26,8 @@ export const RLSeparator: Component<RLSeparatorProps> = (props) => {
 
       <Show when={props.label || props.icon || props.avatar || props.children}>
         <div class={classes().container} data-slot="container">
-          {props.avatarSlot ? (
-            props.avatarSlot
+          {slots.avatarSlot() ? (
+            slots.avatarSlot()
           ) : props.avatar ? (
             <RLAvatar
               {...(typeof props.avatar === "string" ? { src: props.avatar } : props.avatar)}
@@ -34,8 +37,8 @@ export const RLSeparator: Component<RLSeparatorProps> = (props) => {
             />
           ) : null}
 
-          {props.iconSlot ? (
-            props.iconSlot
+          {slots.iconSlot() ? (
+            slots.iconSlot()
           ) : props.icon ? (
             <span class={classes().icon} data-slot="icon">
               <span class={props.icon} aria-hidden="true" />

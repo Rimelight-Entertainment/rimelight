@@ -5,7 +5,10 @@ import { RLFooterTheme } from "./footer.theme";
 const OMIT_KEYS = ["left", "center", "right"] as const;
 
 export const RLFooter: Component<RLFooterProps> = (props) => {
-  const { classes, rest } = RLFooterTheme.setup(props, { omit: OMIT_KEYS });
+  const { classes, rest, slots } = RLFooterTheme.setup(props, {
+    omit: OMIT_KEYS,
+    slots: ["leftSlot", "centerSlot", "rightSlot"] as const,
+  });
 
   return (
     <footer
@@ -17,13 +20,13 @@ export const RLFooter: Component<RLFooterProps> = (props) => {
     >
       <div class={classes().container} data-slot="container">
         <div class={classes().left} data-slot="left">
-          {props.left}
+          {slots.leftSlot()}
         </div>
         <div class={classes().center} data-slot="center">
-          {props.center}
+          {slots.centerSlot()}
         </div>
         <div class={classes().right} data-slot="right">
-          {props.right}
+          {slots.rightSlot()}
         </div>
       </div>
     </footer>

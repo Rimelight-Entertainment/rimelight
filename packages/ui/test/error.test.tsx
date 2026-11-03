@@ -108,7 +108,7 @@ describe("RLErrorBoundary", () => {
 
   it("supports a custom fallback", () => {
     const c = mountComponent(() => (
-      <RLErrorBoundary fallback={() => <p data-test="custom">custom</p>}>
+      <RLErrorBoundary fallbackSlot={() => <p data-test="custom">custom</p>}>
         <Throws error={new Error("x")} />
       </RLErrorBoundary>
     ));

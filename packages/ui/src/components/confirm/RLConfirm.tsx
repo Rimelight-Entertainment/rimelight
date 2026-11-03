@@ -18,20 +18,19 @@ const OMIT_KEYS = [
   "transition",
   "lockScroll",
   "unmountOnHide",
-  "trigger",
-  "triggerSlot",
-  "titleSlot",
-  "descriptionSlot",
-  "footer",
-  "footerSlot",
   "onOpenChange",
   "onConfirm",
   "onCancel",
   "onClose",
 ] as const;
 
+const SLOT_KEYS = ["triggerSlot", "titleSlot", "descriptionSlot", "footerSlot"] as const;
+
 export const RLConfirm: Component<RLConfirmProps> = (props) => {
-  const { classes, rest } = RLConfirmTheme.setup(props, { omit: OMIT_KEYS });
+  const { classes, rest, slots } = RLConfirmTheme.setup(props, {
+    omit: OMIT_KEYS,
+    slots: SLOT_KEYS,
+  });
 
   const [uncontrolledOpen, setUncontrolledOpen] = createSignal(props.defaultOpen ?? false);
   const isOpen = () => (props.open !== undefined ? Boolean(props.open) : uncontrolledOpen());
@@ -57,7 +56,37 @@ export const RLConfirm: Component<RLConfirmProps> = (props) => {
   };
 
   const isDestructive = () => props.variant === "destructive";
-  const footerContent = () => props.footerSlot ?? props.footer;
+
+  // Invoked by Modal only while the dialog is rendered. A custom footer replaces the default
+  // action row.
+  const renderFooter = () => {
+    const custom = slots.footerSlot();
+    if (custom) return custom();
+    return (
+      <div class="flex items-center justify-between w-full" data-slot="confirm-actions">
+        <RLButton
+          class={classes().cancelButton}
+          data-slot="cancel"
+          variant="outline"
+          color={isDestructive() ? "error" : "neutral"}
+          type="button"
+          onClick={handleCancel}
+        >
+          {props.cancelLabel ?? "Cancel"}
+        </RLButton>
+        <RLButton
+          class={classes().actionButton}
+          data-slot="action"
+          color={isDestructive() ? "error" : "primary"}
+          variant="solid"
+          type="button"
+          onClick={handleConfirm}
+        >
+          {props.actionLabel ?? "Confirm"}
+        </RLButton>
+      </div>
+    );
+  };
 
   return (
     <RLModal
@@ -73,11 +102,10 @@ export const RLConfirm: Component<RLConfirmProps> = (props) => {
       lockScroll={props.lockScroll}
       unmountOnHide={props.unmountOnHide}
       close={false}
-      trigger={props.trigger}
-      triggerSlot={props.triggerSlot}
+      triggerSlot={slots.triggerSlot()}
       triggerLabel={props.triggerLabel}
-      titleSlot={props.titleSlot}
-      descriptionSlot={props.descriptionSlot}
+      titleSlot={slots.titleSlot()}
+      descriptionSlot={slots.descriptionSlot()}
       ui={{
         root: classes().root,
         trigger: classes().trigger,
@@ -97,38 +125,7 @@ export const RLConfirm: Component<RLConfirmProps> = (props) => {
         }
       }}
       onClose={handleCancel}
-      footerSlot={() =>
-        footerContent() !== undefined ? (
-          typeof footerContent() === "function" ? (
-            (footerContent() as any)()
-          ) : (
-            footerContent()
-          )
-        ) : (
-          <div class="flex items-center justify-between w-full" data-slot="confirm-actions">
-            <RLButton
-              class={classes().cancelButton}
-              data-slot="cancel"
-              variant="outline"
-              color={isDestructive() ? "error" : "neutral"}
-              type="button"
-              onClick={handleCancel}
-            >
-              {props.cancelLabel ?? "Cancel"}
-            </RLButton>
-            <RLButton
-              class={classes().actionButton}
-              data-slot="action"
-              color={isDestructive() ? "error" : "primary"}
-              variant="solid"
-              type="button"
-              onClick={handleConfirm}
-            >
-              {props.actionLabel ?? "Confirm"}
-            </RLButton>
-          </div>
-        )
-      }
+      footerSlot={renderFooter}
       {...rest}
     >
       {props.children}

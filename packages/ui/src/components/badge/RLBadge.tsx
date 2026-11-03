@@ -12,8 +12,6 @@ const OMIT_KEYS = [
   "leadingIcon",
   "trailing",
   "trailingIcon",
-  "leadingSlot",
-  "trailingSlot",
 ] as const;
 
 export const RLBadge: Component<RLBadgeProps> = (props) => {
@@ -29,7 +27,7 @@ export const RLBadge: Component<RLBadgeProps> = (props) => {
       (iconProp() && !trailingProp()) ||
       leadingIconProp() ||
       props.avatar ||
-      props.leadingSlot,
+      slots.leadingSlot(),
     );
 
   const leadingIconName = () =>
@@ -37,7 +35,10 @@ export const RLBadge: Component<RLBadgeProps> = (props) => {
 
   const isTrailing = () =>
     Boolean(
-      trailingProp() || (iconProp() && trailingProp()) || trailingIconProp() || props.trailingSlot,
+      trailingProp() ||
+      (iconProp() && trailingProp()) ||
+      trailingIconProp() ||
+      slots.trailingSlot(),
     );
 
   const trailingIconName = () =>
@@ -49,15 +50,17 @@ export const RLBadge: Component<RLBadgeProps> = (props) => {
     Tag: Root,
     classes,
     rest,
+    slots,
   } = RLBadgeTheme.setup(props, {
     as: "span",
     omit: OMIT_KEYS,
+    slots: ["leadingSlot", "trailingSlot"] as const,
     variants: () => ({ square: isSquare() }),
   });
 
   const renderLeading = () => {
-    if (props.leadingSlot !== undefined && props.leadingSlot !== null) {
-      return props.leadingSlot;
+    if (slots.leadingSlot() !== undefined && slots.leadingSlot() !== null) {
+      return slots.leadingSlot();
     }
 
     const iconName = leadingIconName();
@@ -104,8 +107,8 @@ export const RLBadge: Component<RLBadgeProps> = (props) => {
   };
 
   const renderTrailing = () => {
-    if (props.trailingSlot !== undefined && props.trailingSlot !== null) {
-      return props.trailingSlot;
+    if (slots.trailingSlot() !== undefined && slots.trailingSlot() !== null) {
+      return slots.trailingSlot();
     }
 
     const iconName = trailingIconName();

@@ -11,7 +11,7 @@ export interface RLErrorBoundaryProps {
    * Fully custom fallback. Receives the error and a `reset` function that re-runs the children.
    * When omitted, `RLError` is rendered.
    */
-  fallback?: (error: unknown, reset: () => void) => JSX.Element;
+  fallbackSlot?: (error: unknown, reset: () => void) => JSX.Element;
   /**
    * When this value changes while an error is shown, the boundary resets.
    * Pass the route pathname so navigating away clears the error.

@@ -64,7 +64,7 @@ export interface RLLocaleSelectorProps {
   class?: any;
   children?: JSX.Element;
   labelSlot?: JSX.Element;
-  leading?: JSX.Element;
+  leadingSlot?: JSX.Element;
   leadingIcon?: string;
   onSelect?: (item: LocaleItem) => void;
   onChange?: (e: Event & { currentTarget: HTMLSelectElement }) => void;

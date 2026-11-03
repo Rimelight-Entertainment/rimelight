@@ -10,6 +10,7 @@ import {
 import { dynamic, type ValidComponent } from "@solidjs/web";
 import type { BaseThemeProps, ClassValue, InferThemeVariants, ThemeConfig, ThemeUI } from "./types";
 import { getUIConfig } from "./runtime";
+import { slot } from "./slot";
 
 function toVal(val: ClassValue): string {
   if (!val) return "";
@@ -182,7 +183,14 @@ function compileTheme<S extends string>(
   };
 }
 
-export interface ThemeSetupOptions<T extends Record<string, any>, K extends keyof T = never> {
+/** Memoized accessors for the slot keys passed to `setup({ slots })`. */
+export type SlotAccessors<T, SK extends keyof T> = { [P in SK]-?: Accessor<T[P]> };
+
+export interface ThemeSetupOptions<
+  T extends Record<string, any>,
+  K extends keyof T = never,
+  SK extends keyof T = never,
+> {
   /**
    * Default HTML tag or component when `props.as` is not provided, or a reactive
    * accessor returning the fallback tag (e.g. `() => isInteractive() ? "a" : "div"`).
@@ -195,9 +203,15 @@ export interface ThemeSetupOptions<T extends Record<string, any>, K extends keyo
    */
   omit?: readonly K[];
   /**
-   * Optional reactive accessor for computed variant overrides.
+   * Slot prop keys. Each is read through `slot()` and returned as a memoized accessor in
+   * `slots`, and stripped from `rest`. Slot props must only be read through this result.
    */
-  variants?: () => Record<string, any>;
+  slots?: readonly SK[];
+  /**
+   * Optional reactive accessor for computed variant overrides. Receives the slot accessors
+   * from `slots`, so variants can depend on slot presence without reading props directly.
+   */
+  variants?: (slots: SlotAccessors<T, SK>) => Record<string, any>;
   /**
    * Optional prefix (e.g. `"rl-card"`) to generate a hydration-safe reactive `id()`
    * accessor (`() => props.id || "${idPrefix}-${createUniqueId()}"`).
@@ -209,11 +223,13 @@ export interface ThemeSetupResult<
   S extends string,
   T extends Record<string, any>,
   K extends keyof T = never,
+  SK extends keyof T = never,
 > {
   Tag: Component<any>;
   classes: Accessor<Record<S, string>>;
-  rest: Omit<T, "as" | "ui" | "class" | "children" | "theme" | K>;
+  rest: Omit<T, "as" | "ui" | "class" | "children" | "theme" | K | SK>;
   id: Accessor<string>;
+  slots: { [P in SK]-?: Accessor<T[P]> };
 }
 
 export interface ThemeResolver<
@@ -226,10 +242,14 @@ export interface ThemeResolver<
   /**
    * One-line component setup returning `{ Tag, classes, rest, id }`.
    */
-  setup: <T extends Record<string, any>, K extends keyof T = never>(
+  setup: <
+    T extends Record<string, any>,
+    K extends keyof T = never,
+    const SK extends keyof T = never,
+  >(
     props: T,
-    options?: ThemeSetupOptions<T, K>,
-  ) => ThemeSetupResult<S, T, K>;
+    options?: ThemeSetupOptions<T, K, SK>,
+  ) => ThemeSetupResult<S, T, K, SK>;
   /**
    * Creates a reactive `createMemo` of resolved slot classes from component `props`
    * and optional computed variant overrides.
@@ -456,15 +476,27 @@ export function defineTheme<
     return () => (props.id as string | undefined) || fallback;
   };
 
-  resolve.setup = <T extends Record<string, any>, K extends keyof T = never>(
+  resolve.setup = <
+    T extends Record<string, any>,
+    K extends keyof T = never,
+    const SK extends keyof T = never,
+  >(
     props: T,
-    options?: ThemeSetupOptions<T, K>,
-  ): ThemeSetupResult<S, T, K> => {
+    options?: ThemeSetupOptions<T, K, SK>,
+  ): ThemeSetupResult<S, T, K, SK> => {
     const id = resolve.id(props, options?.idPrefix);
+    const slotKeys = options?.slots ?? [];
+    const slots = {} as SlotAccessors<T, SK>;
+    for (const key of slotKeys) {
+      slots[key] = slot(() => props[key]);
+    }
+    const variantsFn = options?.variants;
+    const omitKeys = slotKeys.length ? [...(options?.omit ?? []), ...slotKeys] : options?.omit;
     return {
       Tag: resolve.tag(props, options?.as),
-      classes: resolve.use(props, options?.variants),
-      rest: omitWithList(props, options?.omit),
+      classes: resolve.use(props, variantsFn ? () => variantsFn(slots) : undefined),
+      rest: omitWithList(props, omitKeys as readonly (K | SK)[] | undefined),
+      slots,
       get id() {
         return id;
       },

@@ -45,7 +45,7 @@ describe("RLPageSection", () => {
     const html = renderToString(() => (
       <RLPageSection
         title="With Bg Prop"
-        background={<div class="bg-layer">Custom Background</div>}
+        backgroundSlot={<div class="bg-layer">Custom Background</div>}
       >
         <div class="main-body">Main Children</div>
       </RLPageSection>
@@ -62,9 +62,9 @@ describe("RLPageSection", () => {
   it("renders body, header, and footer props correctly", () => {
     const html = renderToString(() => (
       <RLPageSection
-        header={<div>Custom Header</div>}
-        body={<div>Custom Body</div>}
-        footer={<div>Custom Footer</div>}
+        headerSlot={<div>Custom Header</div>}
+        bodySlot={<div>Custom Body</div>}
+        footerSlot={<div>Custom Footer</div>}
       >
         <div>Default Child</div>
       </RLPageSection>
@@ -79,7 +79,7 @@ describe("RLPageSection", () => {
   it("places background prop in the background container, not inside inner content", () => {
     const el = document.createElement("div");
     el.innerHTML = renderToString(() => (
-      <RLPageSection title="Home Hero" background={<div class="bg-img">Hero Image</div>}>
+      <RLPageSection title="Home Hero" backgroundSlot={<div class="bg-img">Hero Image</div>}>
         <div class="hero-logo">Logo</div>
       </RLPageSection>
     ));

@@ -8,6 +8,7 @@ import { RLPopover } from "../popover/RLPopover";
 import { uiT } from "../../locale";
 
 const OMIT_KEYS = [
+  "transcript",
   "src",
   "title",
   "description",
@@ -41,11 +42,6 @@ const OMIT_KEYS = [
   "externalLink",
   "showPlaylist",
   "artworkZoomable",
-  "transcript",
-  "headerSlot",
-  "timelineSlot",
-  "controlsSlot",
-  "artworkSlot",
   "onPlay",
   "onPause",
   "onEnded",
@@ -97,7 +93,9 @@ export const RLAudio: Component<RLAudioProps> = (props) => {
     classes,
     rest,
     id: audioId,
+    slots,
   } = RLAudioTheme.setup(props, {
+    slots: ["headerSlot", "timelineSlot", "controlsSlot", "artworkSlot", "transcriptSlot"] as const,
     omit: OMIT_KEYS,
     idPrefix: "rl-audio",
   });
@@ -210,7 +208,8 @@ export const RLAudio: Component<RLAudioProps> = (props) => {
   const trackTitle = () => currentTrack()?.title ?? props.title;
   const trackDescription = () => currentTrack()?.description ?? props.description;
   const trackArtwork = () => currentTrack()?.artwork ?? props.artwork;
-  const trackTranscript = () => currentTrack()?.transcript ?? props.transcript;
+  const trackTranscript = () =>
+    currentTrack()?.transcript ?? props.transcript ?? slots.transcriptSlot();
   const trackFormat = () => currentTrack()?.format ?? props.format;
   const trackFileSize = () => currentTrack()?.fileSize ?? props.fileSize;
   const trackBitrate = () => currentTrack()?.bitrate ?? props.bitrate;
@@ -477,11 +476,11 @@ export const RLAudio: Component<RLAudioProps> = (props) => {
 
   const renderArtwork = () => {
     const art = trackArtwork();
-    if (!art && !props.artworkSlot) return null;
+    if (!art && !slots.artworkSlot()) return null;
 
     const imageElement = () =>
-      props.artworkSlot ? (
-        props.artworkSlot
+      slots.artworkSlot() ? (
+        slots.artworkSlot()
       ) : artworkZoomable() && art ? (
         <RLImage
           src={art}
@@ -556,7 +555,7 @@ export const RLAudio: Component<RLAudioProps> = (props) => {
       <div class={classes().container} data-slot="container">
         {/* 1. Header with Artwork, Track Details & Top Actions */}
         <Show
-          when={props.headerSlot}
+          when={slots.headerSlot()}
           fallback={
             <div class={classes().header} data-slot="header">
               {renderArtwork()}
@@ -643,12 +642,12 @@ export const RLAudio: Component<RLAudioProps> = (props) => {
             </div>
           }
         >
-          {props.headerSlot}
+          {slots.headerSlot()}
         </Show>
 
         {/* 2. Timeline Section (Progress Scrub Bar or Waveform + Time) */}
         <Show
-          when={props.timelineSlot}
+          when={slots.timelineSlot()}
           fallback={
             <div class={classes().timeline} data-slot="timeline">
               <div
@@ -756,12 +755,12 @@ export const RLAudio: Component<RLAudioProps> = (props) => {
             </div>
           }
         >
-          {props.timelineSlot}
+          {slots.timelineSlot()}
         </Show>
 
         {/* 3. Controls Section: Left (Volume), Center (Playback), Right (Repeat & Speed) */}
         <Show
-          when={props.controlsSlot}
+          when={slots.controlsSlot()}
           fallback={
             <div class={classes().controls} data-slot="controls">
               {/* Bottom-Left: Vertical Volume Popover & Mute */}
@@ -776,7 +775,7 @@ export const RLAudio: Component<RLAudioProps> = (props) => {
                         trigger: () => "inline-flex items-center justify-center",
                         content: () => classes().volumePopover,
                       }}
-                      trigger={
+                      triggerSlot={
                         <button
                           type="button"
                           onContextMenu={(e) => {
@@ -1031,7 +1030,7 @@ export const RLAudio: Component<RLAudioProps> = (props) => {
             </div>
           }
         >
-          {props.controlsSlot}
+          {slots.controlsSlot()}
         </Show>
 
         {/* 4. Playlist / Queue View */}

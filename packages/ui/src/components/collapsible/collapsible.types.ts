@@ -63,24 +63,14 @@ export interface RLCollapsibleProps {
   children?: JSX.Element | ((props: { open: boolean }) => JSX.Element);
 
   /**
-   * Content slot element or render prop displayed when open.
+   * Content displayed when open. Element or render function.
    */
-  content?: JSX.Element | ((props?: Record<string, unknown>) => JSX.Element);
+  contentSlot?: JSX.Element | ((props?: Record<string, unknown>) => JSX.Element);
 
   /**
-   * Content slot alias for template usage.
+   * Trigger element or render function receiving `{ open }`.
    */
-  contentSlot?: JSX.Element;
-
-  /**
-   * Explicit trigger slot element or render prop function.
-   */
-  trigger?: JSX.Element | ((props: { open: boolean }) => JSX.Element);
-
-  /**
-   * Trigger slot alias for template usage.
-   */
-  triggerSlot?: JSX.Element;
+  triggerSlot?: JSX.Element | ((props: { open: boolean }) => JSX.Element);
 
   /**
    * Callback fired when the open state of the collapsible changes.

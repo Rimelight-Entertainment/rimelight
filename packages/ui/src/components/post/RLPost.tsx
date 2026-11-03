@@ -15,17 +15,19 @@ const OMIT_KEYS = [
   "localize",
   "badge",
   "badgeColor",
-  "imageSlot",
-  "titleSlot",
-  "descriptionSlot",
-  "badgeSlot",
-  "dateSlot",
-  "footerSlot",
 ] as const;
 
 export const RLPost: Component<RLPostProps> = (props) => {
   const link = () => localizeHref(props.href || props.to, props.localize);
-  const { Tag, classes, rest } = RLPostTheme.setup(props, {
+  const { Tag, classes, rest, slots } = RLPostTheme.setup(props, {
+    slots: [
+      "imageSlot",
+      "badgeSlot",
+      "dateSlot",
+      "titleSlot",
+      "descriptionSlot",
+      "footerSlot",
+    ] as const,
     as: () => (link() ? "a" : "div"),
     omit: OMIT_KEYS,
   });
@@ -49,8 +51,8 @@ export const RLPost: Component<RLPostProps> = (props) => {
 
   const body = () => (
     <>
-      {props.imageSlot !== undefined ? (
-        props.imageSlot
+      {slots.imageSlot() !== undefined ? (
+        slots.imageSlot()
       ) : props.image ? (
         <div class={classes()["imageWrapper"]} data-slot="image-wrapper">
           <img
@@ -63,24 +65,24 @@ export const RLPost: Component<RLPostProps> = (props) => {
       ) : null}
 
       <div class={classes()["content"]} data-slot="content">
-        {props.titleSlot !== undefined ? (
-          props.titleSlot
+        {slots.titleSlot() !== undefined ? (
+          slots.titleSlot()
         ) : props.title ? (
           <h3 class={classes()["title"]} data-slot="title">
             {props.title}
           </h3>
         ) : null}
 
-        {props.descriptionSlot !== undefined ? (
-          props.descriptionSlot
+        {slots.descriptionSlot() !== undefined ? (
+          slots.descriptionSlot()
         ) : props.description ? (
           <p class={classes()["description"]} data-slot="description">
             {props.description}
           </p>
         ) : null}
 
-        {props.badgeSlot !== undefined ? (
-          props.badgeSlot
+        {slots.badgeSlot() !== undefined ? (
+          slots.badgeSlot()
         ) : props.badge ? (
           <RLBadge
             color={(props.badgeColor ?? "primary") as any}
@@ -93,8 +95,8 @@ export const RLPost: Component<RLPostProps> = (props) => {
           </RLBadge>
         ) : null}
 
-        {props.dateSlot !== undefined ? (
-          props.dateSlot
+        {slots.dateSlot() !== undefined ? (
+          slots.dateSlot()
         ) : formattedDate() ? (
           <time class={classes()["date"]} data-slot="date">
             {formattedDate()}
@@ -104,9 +106,9 @@ export const RLPost: Component<RLPostProps> = (props) => {
         {props.children}
       </div>
 
-      {props.footerSlot !== undefined && (
+      {slots.footerSlot() !== undefined && (
         <div class={classes()["footer"]} data-slot="footer">
-          {props.footerSlot}
+          {slots.footerSlot()}
         </div>
       )}
     </>

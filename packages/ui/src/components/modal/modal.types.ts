@@ -1,4 +1,5 @@
 import type { JSX } from "@solidjs/web";
+import type { OverlaySlot } from "../../slot";
 
 export type RLModalSize = "xs" | "sm" | "md" | "lg" | "xl" | "fullscreen";
 
@@ -174,79 +175,50 @@ export interface RLModalProps {
   children?: JSX.Element;
 
   /**
-   * Trigger element slot.
+   * Trigger element. Always rendered, so it is plain JSX.
    */
-  trigger?: JSX.Element | (() => JSX.Element) | undefined;
+  triggerSlot?: JSX.Element | undefined;
 
   /**
-   * Explicit trigger slot prop.
+   * Whole content override. Replaces the header, body, and footer.
+   * Function-only: invoked inside the dialog, so nothing is built while closed.
    */
-  triggerSlot?: JSX.Element | (() => JSX.Element) | undefined;
+  contentSlot?: OverlaySlot | undefined;
 
   /**
-   * Whole content override slot.
+   * Header override. Replaces the default title/description/close header.
    */
-  content?: JSX.Element | (() => JSX.Element) | undefined;
+  headerSlot?: OverlaySlot | undefined;
 
   /**
-   * Explicit content slot prop.
+   * Title content. Takes precedence over the `title` string.
    */
-  contentSlot?: JSX.Element | (() => JSX.Element) | undefined;
+  titleSlot?: OverlaySlot | undefined;
 
   /**
-   * Header section slot override.
+   * Description content. Takes precedence over the `description` string.
    */
-  header?: JSX.Element | (() => JSX.Element) | undefined;
+  descriptionSlot?: OverlaySlot | undefined;
 
   /**
-   * Explicit header slot prop.
+   * Actions rendered in the header.
    */
-  headerSlot?: JSX.Element | (() => JSX.Element) | undefined;
+  actionsSlot?: OverlaySlot | undefined;
 
   /**
-   * Custom title slot.
+   * Custom close control. Replaces the default close button.
    */
-  titleSlot?: JSX.Element | (() => JSX.Element) | undefined;
+  closeSlot?: OverlaySlot | undefined;
 
   /**
-   * Custom description slot.
+   * Body content. Takes precedence over `children`.
    */
-  descriptionSlot?: JSX.Element | (() => JSX.Element) | undefined;
+  bodySlot?: OverlaySlot | undefined;
 
   /**
-   * Actions slot inside header.
+   * Footer content.
    */
-  actions?: JSX.Element | (() => JSX.Element) | undefined;
-
-  /**
-   * Explicit actions slot prop.
-   */
-  actionsSlot?: JSX.Element | (() => JSX.Element) | undefined;
-
-  /**
-   * Custom close button slot.
-   */
-  closeSlot?: JSX.Element | (() => JSX.Element) | undefined;
-
-  /**
-   * Modal body content slot.
-   */
-  body?: JSX.Element | (() => JSX.Element) | undefined;
-
-  /**
-   * Explicit body slot prop.
-   */
-  bodySlot?: JSX.Element | (() => JSX.Element) | undefined;
-
-  /**
-   * Modal footer section slot.
-   */
-  footer?: JSX.Element | (() => JSX.Element) | undefined;
-
-  /**
-   * Explicit footer slot prop.
-   */
-  footerSlot?: JSX.Element | (() => JSX.Element) | undefined;
+  footerSlot?: OverlaySlot | undefined;
 
   /**
    * Callback fired when open state changes.

@@ -42,17 +42,9 @@ export interface RLCopyMarkdownProps {
    */
   avatar?: RLAvatarProps | string | undefined;
   /**
-   * When `true`, the icon will be displayed on the left side. Also accepts slot JSX.
-   */
-  leading?: JSX.Element;
-  /**
    * Slot content rendered in leading position.
    */
   leadingSlot?: JSX.Element;
-  /**
-   * When `true`, the icon will be displayed on the right side. Also accepts slot JSX.
-   */
-  trailing?: JSX.Element;
   /**
    * Slot content rendered in trailing position.
    */

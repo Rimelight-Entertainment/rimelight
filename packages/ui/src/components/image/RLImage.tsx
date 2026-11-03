@@ -43,12 +43,13 @@ const OMIT_KEYS = [
   "metaSize",
   "metaAlt",
   "metaDownload",
-  "trigger",
-  "captionSlot",
 ] as const;
 
 export const RLImage: Component<RLImageProps> = (props) => {
-  const { classes, rest } = RLImageTheme.setup(props, { omit: OMIT_KEYS });
+  const { classes, rest, slots } = RLImageTheme.setup(props, {
+    omit: OMIT_KEYS,
+    slots: ["captionSlot", "triggerSlot"] as const,
+  });
 
   const isInteractive = () => props.lightbox ?? true;
   const isFigure = () => props.figure ?? Boolean(props.caption);
@@ -234,8 +235,8 @@ export const RLImage: Component<RLImageProps> = (props) => {
   };
 
   const renderTrigger = () =>
-    props.trigger ? (
-      props.trigger
+    slots.triggerSlot() ? (
+      slots.triggerSlot()
     ) : isInteractive() ? (
       <button type="button" class={classes().trigger} data-image-trigger onClick={openDialog}>
         {triggerImage()}
@@ -254,7 +255,7 @@ export const RLImage: Component<RLImageProps> = (props) => {
               {props.caption}
             </figcaption>
           )}
-          {props.captionSlot}
+          {slots.captionSlot()}
         </figure>
       ) : (
         <>
@@ -264,7 +265,7 @@ export const RLImage: Component<RLImageProps> = (props) => {
               {props.caption}
             </p>
           )}
-          {props.captionSlot}
+          {slots.captionSlot()}
         </>
       )}
 

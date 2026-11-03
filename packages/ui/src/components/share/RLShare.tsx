@@ -49,8 +49,8 @@ export const RLShare: Component<RLShareProps> = (props) => {
       rounded={buttonProps.rounded}
       fieldGroup={buttonProps.fieldGroup}
       justify={buttonProps.justify}
-      leading={buttonProps.leading}
-      trailing={buttonProps.trailing}
+      leadingSlot={buttonProps.leadingSlot}
+      trailingSlot={buttonProps.trailingSlot}
       {...(buttonProps.as !== undefined ? { as: buttonProps.as } : {})}
       theme={buttonProps.theme}
       leadingIcon="share"

@@ -1,5 +1,6 @@
 import type { JSX } from "@solidjs/web";
 import type { RLModalSize, RLModalUiSlots } from "../modal/modal.types";
+import type { OverlaySlot } from "../../slot";
 
 export interface RLConfirmUiSlots extends RLModalUiSlots {
   cancelButton?: string | undefined;
@@ -103,34 +104,24 @@ export interface RLConfirmProps {
   children?: JSX.Element | undefined;
 
   /**
-   * Custom trigger element.
+   * Trigger element. Always rendered, so it is plain JSX.
    */
-  trigger?: JSX.Element | (() => JSX.Element) | undefined;
+  triggerSlot?: JSX.Element | undefined;
 
   /**
-   * Trigger slot override.
+   * Title content. Function-only: invoked while the dialog is open.
    */
-  triggerSlot?: JSX.Element | (() => JSX.Element) | undefined;
+  titleSlot?: OverlaySlot | undefined;
 
   /**
-   * Title slot override.
+   * Description content. Function-only: invoked while the dialog is open.
    */
-  titleSlot?: JSX.Element | (() => JSX.Element) | undefined;
+  descriptionSlot?: OverlaySlot | undefined;
 
   /**
-   * Description slot override.
+   * Footer content. Replaces the default Cancel/Confirm row. Function-only.
    */
-  descriptionSlot?: JSX.Element | (() => JSX.Element) | undefined;
-
-  /**
-   * Custom footer actions slot override.
-   */
-  footer?: JSX.Element | (() => JSX.Element) | undefined;
-
-  /**
-   * Footer slot override.
-   */
-  footerSlot?: JSX.Element | (() => JSX.Element) | undefined;
+  footerSlot?: OverlaySlot | undefined;
 
   /**
    * Callback fired when open state changes.

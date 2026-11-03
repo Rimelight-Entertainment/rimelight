@@ -7,7 +7,10 @@ import { RLButtonTheme } from "../button/button.theme";
 const OMIT_KEYS = ["raw"] as const;
 
 export const RLCopyMarkdown: Component<RLCopyMarkdownProps> = (props) => {
-  const { rest } = RLButtonTheme.setup(props, { omit: OMIT_KEYS });
+  const { rest, slots } = RLButtonTheme.setup(props, {
+    omit: OMIT_KEYS,
+    slots: ["leadingSlot", "trailingSlot"] as const,
+  });
   const [copied, setCopied] = createSignal(false);
   let timeoutId: ReturnType<typeof setTimeout> | undefined;
 
@@ -38,8 +41,8 @@ export const RLCopyMarkdown: Component<RLCopyMarkdownProps> = (props) => {
       rounded={props.rounded}
       fieldGroup={props.fieldGroup}
       justify={props.justify}
-      leading={props.leading}
-      trailing={props.trailing}
+      leadingSlot={slots.leadingSlot()}
+      trailingSlot={slots.trailingSlot()}
       {...(props.as !== undefined ? { as: props.as } : {})}
       theme={props.theme}
       leadingIcon="copy"

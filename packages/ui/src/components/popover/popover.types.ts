@@ -30,7 +30,7 @@ export interface RLPopoverProps {
    */
   class?: any;
   children?: JSX.Element;
-  trigger?: JSX.Element;
+  triggerSlot?: JSX.Element;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
   [key: string]: unknown;

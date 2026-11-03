@@ -1,4 +1,5 @@
 import type { JSX } from "@solidjs/web";
+import type { OverlaySlot } from "../../slot";
 
 export interface RLSlideoverProps {
   /**
@@ -34,12 +35,22 @@ export interface RLSlideoverProps {
    */
   unmountOnHide?: boolean;
   children?: JSX.Element;
-  trigger?: JSX.Element;
+  /**
+   * Trigger element. Always rendered, so it is plain JSX.
+   */
   triggerSlot?: JSX.Element;
-  titleSlot?: JSX.Element;
-  descriptionSlot?: JSX.Element;
-  footer?: JSX.Element;
-  footerSlot?: JSX.Element;
+  /**
+   * Title content. Function-only: invoked while the sheet is mounted.
+   */
+  titleSlot?: OverlaySlot;
+  /**
+   * Description content. Function-only: invoked while the sheet is mounted.
+   */
+  descriptionSlot?: OverlaySlot;
+  /**
+   * Footer content. Function-only: invoked while the sheet is mounted.
+   */
+  footerSlot?: OverlaySlot;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
   [key: string]: unknown;

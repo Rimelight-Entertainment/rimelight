@@ -12,7 +12,8 @@ const OMIT_KEYS = [
 ] as const;
 
 export const RLPopover: Component<RLPopoverProps> = (props) => {
-  const { classes, rest } = RLPopoverTheme.setup(props, {
+  const { classes, rest, slots } = RLPopoverTheme.setup(props, {
+    slots: ["triggerSlot"] as const,
     omit: OMIT_KEYS,
     variants: () => ({ size: props.size ?? "md", placement: props.placement ?? "bottom" }),
   });
@@ -71,7 +72,7 @@ export const RLPopover: Component<RLPopoverProps> = (props) => {
           if (mode() === "hover" || mode() === "both") handleHoverHide();
         }}
       >
-        {props.trigger ??
+        {slots.triggerSlot() ??
           (props.triggerLabel ? (
             <button type="button" class="cursor-pointer">
               {props.triggerLabel}

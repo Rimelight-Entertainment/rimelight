@@ -6,17 +6,20 @@ import { RLIcon } from "../icon/RLIcon";
 const OMIT_KEYS = ["quote", "caption"] as const;
 
 export const RLQuote: Component<RLQuoteProps> = (props) => {
-  const { classes, rest } = RLQuoteTheme.setup(props, { omit: OMIT_KEYS });
+  const { classes, rest, slots } = RLQuoteTheme.setup(props, {
+    omit: OMIT_KEYS,
+    slots: ["quoteSlot", "captionSlot"] as const,
+  });
 
   return (
     <figure class={classes().root} data-slot="root" {...rest}>
       <RLIcon name="quote" class={classes().icon} data-slot="icon" />
       <blockquote class={classes().quote} data-slot="quote">
-        {props.quote !== undefined ? props.quote : props.children}
+        {slots.quoteSlot() !== undefined ? slots.quoteSlot() : props.children}
       </blockquote>
-      {props.caption ? (
+      {slots.captionSlot() ? (
         <figcaption class={classes().caption} data-slot="caption">
-          {props.caption}
+          {slots.captionSlot()}
         </figcaption>
       ) : null}
     </figure>

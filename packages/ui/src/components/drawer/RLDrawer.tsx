@@ -3,6 +3,7 @@ import { RLDrawerTheme } from "./drawer.theme";
 import { createEffect, createSignal, Show, onSettled, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 import { uiT } from "../../locale";
+import { slot } from "../../slot";
 
 const OMIT_KEYS = [
   "open",
@@ -10,20 +11,19 @@ const OMIT_KEYS = [
   "title",
   "description",
   "triggerLabel",
-  "trigger",
-  "triggerSlot",
-  "titleSlot",
-  "descriptionSlot",
-  "footer",
-  "footerSlot",
   "onOpenChange",
   "closeOnClickOutside",
   "closeOnEscape",
   "lockScroll",
 ] as const;
 
+const SLOT_KEYS = ["triggerSlot", "titleSlot", "descriptionSlot", "footerSlot"] as const;
+
 export const RLDrawer: Component<RLDrawerProps> = (props) => {
-  const { classes, rest } = RLDrawerTheme.setup(props, { omit: OMIT_KEYS });
+  const { classes, rest, slots } = RLDrawerTheme.setup(props, {
+    omit: OMIT_KEYS,
+    slots: SLOT_KEYS,
+  });
 
   const [isOpen, setIsOpen] = createSignal(props.open ?? props.defaultOpen ?? false);
 
@@ -73,8 +73,61 @@ export const RLDrawer: Component<RLDrawerProps> = (props) => {
     };
   });
 
-  const triggerContent = () => props.trigger ?? props.triggerSlot;
-  const footerContent = () => props.footer ?? props.footerSlot;
+  // Overlay slots are invoked inside the dialog render, which only runs while open.
+  const renderDialog = () => {
+    const titleNode = slot(() => slots.titleSlot()?.());
+    const descriptionNode = slot(() => slots.descriptionSlot()?.());
+    const footerNode = slot(() => slots.footerSlot()?.());
+
+    return (
+      <dialog
+        ref={(el) => (dialogRef = el)}
+        class={`${classes().content} ${isOpen() ? "" : "hidden"}`}
+        data-slot="content"
+        aria-modal="true"
+        data-state={isOpen() ? "open" : "closed"}
+        {...rest}
+      >
+        <div class={classes().handle} data-slot="handle" />
+
+        <button
+          class={classes().closeButton}
+          data-slot="close-button"
+          type="button"
+          aria-label={uiT("drawer.close")}
+          onClick={() => handleOpenChange(false)}
+        >
+          <RLIcon name="x" size="sm" aria-hidden="true" />
+        </button>
+
+        <div class={classes().header} data-slot="header">
+          {titleNode() ? (
+            titleNode()
+          ) : props.title ? (
+            <h3 class={classes().title} data-slot="title">
+              {props.title}
+            </h3>
+          ) : null}
+
+          {descriptionNode() ? (
+            descriptionNode()
+          ) : props.description ? (
+            <p class={classes().description} data-slot="description">
+              {props.description}
+            </p>
+          ) : null}
+        </div>
+
+        {props.children}
+
+        {footerNode() ? (
+          <div class={classes().footer} data-slot="footer">
+            {footerNode()}
+          </div>
+        ) : null}
+      </dialog>
+    );
+  };
 
   return (
     <div class={classes().root} data-slot="drawer-container">
@@ -87,58 +140,11 @@ export const RLDrawer: Component<RLDrawerProps> = (props) => {
         >
           {props.triggerLabel}
         </button>
-      ) : triggerContent() ? (
-        <span onClick={() => handleOpenChange(true)}>{triggerContent()}</span>
+      ) : slots.triggerSlot() ? (
+        <span onClick={() => handleOpenChange(true)}>{slots.triggerSlot()}</span>
       ) : null}
 
-      <Show when={isOpen()}>
-        <dialog
-          ref={(el) => (dialogRef = el)}
-          class={`${classes().content} ${isOpen() ? "" : "hidden"}`}
-          data-slot="content"
-          aria-modal="true"
-          data-state={isOpen() ? "open" : "closed"}
-          {...rest}
-        >
-          <div class={classes().handle} data-slot="handle" />
-
-          <button
-            class={classes().closeButton}
-            data-slot="close-button"
-            type="button"
-            aria-label={uiT("drawer.close")}
-            onClick={() => handleOpenChange(false)}
-          >
-            <RLIcon name="x" size="sm" aria-hidden="true" />
-          </button>
-
-          <div class={classes().header} data-slot="header">
-            {props.titleSlot ? (
-              props.titleSlot
-            ) : props.title ? (
-              <h3 class={classes().title} data-slot="title">
-                {props.title}
-              </h3>
-            ) : null}
-
-            {props.descriptionSlot ? (
-              props.descriptionSlot
-            ) : props.description ? (
-              <p class={classes().description} data-slot="description">
-                {props.description}
-              </p>
-            ) : null}
-          </div>
-
-          {props.children}
-
-          {footerContent() ? (
-            <div class={classes().footer} data-slot="footer">
-              {footerContent()}
-            </div>
-          ) : null}
-        </dialog>
-      </Show>
+      <Show when={isOpen()}>{renderDialog()}</Show>
     </div>
   );
 };

@@ -447,13 +447,13 @@ export interface RLTableProps<T = any> {
    */
   slots?: Record<string, (props: any) => any> | undefined;
   ref?: (api: TableApi<T>) => void | TableApi<T>;
-  toolbar?: () => JSX.Element;
-  captionContent?: () => JSX.Element;
-  groupHeader?: (group: TableGroup<T>, colSpan: number) => JSX.Element;
-  expandedContent?: (row: TableRow<T>) => JSX.Element;
-  loadingContent?: () => JSX.Element;
-  emptyContent?: () => JSX.Element;
-  bodyTop?: () => JSX.Element;
-  bodyBottom?: () => JSX.Element;
+  toolbarSlot?: () => JSX.Element;
+  captionSlot?: () => JSX.Element;
+  groupHeaderSlot?: (group: TableGroup<T>, colSpan: number) => JSX.Element;
+  expandedContentSlot?: (row: TableRow<T>) => JSX.Element;
+  loadingContentSlot?: () => JSX.Element;
+  emptyContentSlot?: () => JSX.Element;
+  bodyTopSlot?: () => JSX.Element;
+  bodyBottomSlot?: () => JSX.Element;
   [key: string]: unknown;
 }

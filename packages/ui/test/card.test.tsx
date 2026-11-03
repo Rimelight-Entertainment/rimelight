@@ -76,7 +76,7 @@ describe("RLCard", () => {
         <RLCard
           title="Ignored Title"
           description="Ignored Desc"
-          header={<div class="custom-header">Custom Header</div>}
+          headerSlot={<div class="custom-header">Custom Header</div>}
         >
           Body
         </RLCard>
@@ -94,7 +94,7 @@ describe("RLCard", () => {
     });
 
     it("renders body via body prop or bodySlot alias", () => {
-      const propHtml = render(() => <RLCard body={<span>Body Prop</span>} />);
+      const propHtml = render(() => <RLCard bodySlot={<span>Body Prop</span>} />);
       expect(propHtml).toContain("Body Prop");
       expect(slotTag(propHtml, "body")).not.toBe("");
 
@@ -103,9 +103,9 @@ describe("RLCard", () => {
       expect(slotTag(slotHtml, "body")).not.toBe("");
     });
 
-    it("renders footer via footer prop or footerSlot alias", () => {
+    it("renders footerSlot", () => {
       const footerHtml = render(() => (
-        <RLCard footer={<button type="button">Action</button>}>Content</RLCard>
+        <RLCard footerSlot={<button type="button">Action</button>}>Content</RLCard>
       ));
       expect(slotTag(footerHtml, "footer")).not.toBe("");
       expect(footerHtml).toContain("Action");
@@ -168,7 +168,7 @@ describe("RLCard", () => {
 
     it("renders custom media or mediaSlot", () => {
       const html = render(() => (
-        <RLCard media={<div class="video-player">Video</div>} title="Video Card" />
+        <RLCard mediaSlot={<div class="video-player">Video</div>} title="Video Card" />
       ));
       expect(html).toContain("video-player");
       expect(html).toContain("Video");
@@ -278,7 +278,7 @@ describe("RLCard", () => {
         <RLCard
           title="Customized"
           description="Sub-text"
-          footer="Footer"
+          footerSlot="Footer"
           ui={{
             root: "shadow-2xl",
             header: "p-8",

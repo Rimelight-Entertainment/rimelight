@@ -127,11 +127,13 @@ export interface RLBreadcrumbProps<T = BreadcrumbItem> {
   class?: any;
 
   children?: JSX.Element;
-  separator?: JSX.Element;
   itemSlot?: (props: { item: T; index: number; active: boolean }) => JSX.Element;
   itemLeadingSlot?: (props: { item: T; index: number; active: boolean }) => JSX.Element;
   itemLabelSlot?: (props: { item: T; index: number; active: boolean }) => JSX.Element;
   itemTrailingSlot?: (props: { item: T; index: number; active: boolean }) => JSX.Element;
-  separatorSlot?: (props: { item?: T | undefined; index?: number | undefined }) => JSX.Element;
+  /** Separator element, or a render function receiving `{ item, index }`. */
+  separatorSlot?:
+    | JSX.Element
+    | ((props: { item?: T | undefined; index?: number | undefined }) => JSX.Element);
   [key: string]: unknown;
 }

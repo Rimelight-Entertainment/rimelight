@@ -56,10 +56,11 @@ function extractYoutubeVideoId(rawUrl: string): string | null {
   return null;
 }
 
-const OMIT_KEYS = ["src", "title", "icon", "thumbnail", "iconSlot", "transcriptSlot"] as const;
+const OMIT_KEYS = ["src", "title", "icon", "thumbnail"] as const;
 
 export const RLVideo: Component<RLVideoProps> = (props) => {
-  const { Tag, classes, rest } = RLVideoTheme.setup(props, {
+  const { Tag, classes, rest, slots } = RLVideoTheme.setup(props, {
+    slots: ["iconSlot", "transcriptSlot"] as const,
     omit: OMIT_KEYS,
   });
 
@@ -99,8 +100,8 @@ export const RLVideo: Component<RLVideoProps> = (props) => {
                 data-slot="image"
               />
 
-              {props.iconSlot ? (
-                props.iconSlot
+              {slots.iconSlot() ? (
+                slots.iconSlot()
               ) : (
                 <RLIcon
                   name={iconName()}
@@ -126,9 +127,9 @@ export const RLVideo: Component<RLVideoProps> = (props) => {
         </Show>
       </Tag>
 
-      <Show when={props.transcriptSlot || props.children}>
+      <Show when={slots.transcriptSlot() || props.children}>
         <div class={classes().transcript} data-slot="transcript">
-          {props.transcriptSlot ? props.transcriptSlot : props.children}
+          {slots.transcriptSlot() ? slots.transcriptSlot() : props.children}
         </div>
       </Show>
     </div>

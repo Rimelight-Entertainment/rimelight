@@ -2,14 +2,7 @@ import type { RLDashboardSidebarProps } from "./dashboard-sidebar.types";
 import { RLDashboardSidebarTheme } from "./dashboard-sidebar.theme";
 import { createSignal, onSettled, type Component } from "solid-js";
 
-const OMIT_KEYS = [
-  "collapsible",
-  "openMobile",
-  "headerSlot",
-  "footerSlot",
-  "onOpenMobileChange",
-  "onCollapseChange",
-] as const;
+const OMIT_KEYS = ["collapsible", "openMobile", "onOpenMobileChange", "onCollapseChange"] as const;
 
 export const RLDashboardSidebar: Component<RLDashboardSidebarProps> = (props) => {
   const side = () => props.side ?? "left";
@@ -17,7 +10,8 @@ export const RLDashboardSidebar: Component<RLDashboardSidebarProps> = (props) =>
   const [isCollapsed, setIsCollapsed] = createSignal(() => props.collapsed ?? false);
   const [isMobileOpen, setIsMobileOpen] = createSignal(() => props.openMobile ?? false);
 
-  const { classes, rest } = RLDashboardSidebarTheme.setup(props, {
+  const { classes, rest, slots } = RLDashboardSidebarTheme.setup(props, {
+    slots: ["headerSlot", "footerSlot"] as const,
     omit: OMIT_KEYS,
     variants: () => ({ collapsed: isCollapsible() && isCollapsed() }),
   });
@@ -74,16 +68,16 @@ export const RLDashboardSidebar: Component<RLDashboardSidebarProps> = (props) =>
   });
 
   const headerContent = () =>
-    "headerSlot" in props ? (
+    slots.headerSlot() !== undefined ? (
       <div data-slot="header" class={classes().header}>
-        {props.headerSlot}
+        {slots.headerSlot()}
       </div>
     ) : null;
 
   const footerContent = () =>
-    "footerSlot" in props ? (
+    slots.footerSlot() !== undefined ? (
       <div data-slot="footer" class={classes().footer}>
-        {props.footerSlot}
+        {slots.footerSlot()}
       </div>
     ) : null;
 

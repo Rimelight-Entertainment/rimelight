@@ -44,7 +44,7 @@ export interface RLImageProps {
   metaDownload?: boolean | undefined;
   ui?: any;
   class?: any;
-  trigger?: JSX.Element;
+  triggerSlot?: JSX.Element;
   captionSlot?: JSX.Element;
   children?: JSX.Element;
   [key: string]: unknown;

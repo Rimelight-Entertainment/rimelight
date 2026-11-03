@@ -335,7 +335,7 @@ describe("RLAccordion Solid Component Suite", () => {
         renderToString(() => (
           <RLAccordion
             items={SAMPLE_ITEMS}
-            leading={(item, index) => (
+            leadingSlot={(item, index) => (
               <span class="custom-badge-leading">
                 Badge #{index}: {item.label}
               </span>
@@ -354,7 +354,9 @@ describe("RLAccordion Solid Component Suite", () => {
         renderToString(() => (
           <RLAccordion
             items={SAMPLE_ITEMS}
-            trailing={(_item, index) => <span class="custom-trailing-action">Action {index}</span>}
+            trailingSlot={(_item, index) => (
+              <span class="custom-trailing-action">Action {index}</span>
+            )}
           />
         )),
       );
@@ -405,7 +407,7 @@ describe("RLAccordion Solid Component Suite", () => {
           <RLAccordion
             items={SAMPLE_ITEMS}
             defaultValue="0"
-            body={(item, index) => (
+            bodySlot={(item, index) => (
               <p class="custom-body-renderer">
                 Item [{index}]: {item.content}
               </p>
@@ -424,7 +426,7 @@ describe("RLAccordion Solid Component Suite", () => {
           <RLAccordion
             items={SAMPLE_ITEMS}
             defaultValue="0"
-            content={(item, index) => (
+            contentSlot={(item, index) => (
               <article class="custom-content-wrapper" data-index={index}>
                 <h4>{item.label}</h4>
                 <p>{item.content}</p>
@@ -454,7 +456,7 @@ describe("RLAccordion Solid Component Suite", () => {
           <RLAccordion
             items={items}
             defaultValue="special"
-            body={(item) =>
+            bodySlot={(item) =>
               item.value === "special" ? (
                 <div class="named-slot-output">SPECIAL: {item.content}</div>
               ) : (

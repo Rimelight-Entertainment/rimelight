@@ -38,7 +38,6 @@ const OMIT_KEYS = [
   "action",
   "intersection",
   "handle",
-  "handleSlot",
   "handleIcon",
   "translations",
   "onValueChange",
@@ -66,7 +65,6 @@ const PANEL_ITEM_KEYS = new Set([
   "onCollapse",
   "onExpand",
   "resizable",
-  "handle",
   "class",
   "style",
 ]);
@@ -211,8 +209,9 @@ export const RLSplitter: Component<RLSplitterProps> = (props) => {
     return { ...props.classes, ...props.ui };
   });
 
-  const { Tag, classes, rest, id } = RLSplitterTheme.setup(props, {
+  const { Tag, classes, rest, id, slots } = RLSplitterTheme.setup(props, {
     omit: OMIT_KEYS,
+    slots: ["handleSlot"] as const,
     idPrefix: "rl-splitter",
     variants: () => ({
       orientation: effectiveOrientation(),
@@ -955,7 +954,7 @@ export const RLSplitter: Component<RLSplitterProps> = (props) => {
 
   const renderHandleInner = (i: number, state: SplitterHandleState) => {
     const cfg = getHandleConfig(i);
-    const custom = cfg.children ?? cfg.content ?? props.handleSlot ?? props.handle;
+    const custom = cfg.children ?? cfg.content ?? slots.handleSlot();
     if (custom !== undefined) {
       return typeof custom === "function"
         ? (custom as (s: SplitterHandleState) => JSX.Element)(state)

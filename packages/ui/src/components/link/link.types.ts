@@ -108,7 +108,7 @@ export interface RLLinkProps {
    */
   class?: any;
   children?: JSX.Element;
-  leading?: JSX.Element;
-  trailing?: JSX.Element;
+  leadingSlot?: JSX.Element;
+  trailingSlot?: JSX.Element;
   [key: string]: unknown;
 }

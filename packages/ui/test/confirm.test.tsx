@@ -73,8 +73,8 @@ describe("RLConfirm", () => {
         <RLConfirm
           open
           portal={false}
-          titleSlot={<h3 class="custom-confirm-title">Slot Title</h3>}
-          descriptionSlot={<p class="custom-confirm-desc">Slot Description</p>}
+          titleSlot={() => <h3 class="custom-confirm-title">Slot Title</h3>}
+          descriptionSlot={() => <p class="custom-confirm-desc">Slot Description</p>}
         />
       ));
 
@@ -90,11 +90,11 @@ describe("RLConfirm", () => {
           open
           portal={false}
           title="Custom Footer"
-          footer={
+          footerSlot={() => (
             <button type="button" class="custom-footer-btn">
               Understood
             </button>
-          }
+          )}
         />
       ));
 

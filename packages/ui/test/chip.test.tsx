@@ -219,7 +219,7 @@ describe("RLChip", () => {
 
     it("renders custom content slot and overrides text prop", () => {
       const html = render(() => (
-        <RLChip text="Ignored" content={<strong class="vip-badge">VIP</strong>}>
+        <RLChip text="Ignored" contentSlot={<strong class="vip-badge">VIP</strong>}>
           <span>Target</span>
         </RLChip>
       ));

@@ -69,18 +69,18 @@ export interface RLPageSectionProps {
    * Dynamic intrinsic size fallback for content-visibility layout stability.
    */
   containIntrinsicSize?: string;
-  background?: JSX.Element;
-  top?: JSX.Element;
-  header?: JSX.Element;
-  leading?: JSX.Element;
+  backgroundSlot?: JSX.Element;
+  topSlot?: JSX.Element;
+  headerSlot?: JSX.Element;
+  leadingSlot?: JSX.Element;
   headlineSlot?: JSX.Element;
   titleSlot?: JSX.Element;
   descriptionSlot?: JSX.Element;
-  body?: JSX.Element;
-  footer?: JSX.Element;
+  bodySlot?: JSX.Element;
+  footerSlot?: JSX.Element;
   linksSlot?: JSX.Element;
-  content?: JSX.Element;
-  bottom?: JSX.Element;
+  contentSlot?: JSX.Element;
+  bottomSlot?: JSX.Element;
   children?: JSX.Element;
   [key: string]: unknown;
 }

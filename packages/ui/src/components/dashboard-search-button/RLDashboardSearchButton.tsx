@@ -4,10 +4,13 @@ import { RLDashboardSearchButtonTheme } from "./dashboard-search-button.theme";
 import { For, Show } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 
-const OMIT_KEYS = ["icon", "label", "kbds", "trailingSlot"] as const;
+const OMIT_KEYS = ["icon", "label", "kbds"] as const;
 
 export const RLDashboardSearchButton: Component<RLDashboardSearchButtonProps> = (props) => {
-  const { classes, rest } = RLDashboardSearchButtonTheme.setup(props, { omit: OMIT_KEYS });
+  const { classes, rest, slots } = RLDashboardSearchButtonTheme.setup(props, {
+    omit: OMIT_KEYS,
+    slots: ["trailingSlot"] as const,
+  });
 
   const labelText = () => props.label ?? "Search";
   const kbdsList = () => props.kbds ?? [{ value: "meta" }, { value: "k" }];
@@ -33,7 +36,7 @@ export const RLDashboardSearchButton: Component<RLDashboardSearchButtonProps> = 
 
       <span data-slot="trailing" class={classes().trailing}>
         <Show
-          when={props.trailingSlot}
+          when={slots.trailingSlot()}
           fallback={
             <Show when={kbdsList().length > 0}>
               <span class="flex items-center gap-0.5">
@@ -52,7 +55,7 @@ export const RLDashboardSearchButton: Component<RLDashboardSearchButtonProps> = 
             </Show>
           }
         >
-          {props.trailingSlot}
+          {slots.trailingSlot()}
         </Show>
       </span>
       {props.children}

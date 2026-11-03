@@ -12,14 +12,14 @@ export interface RLCardProps {
   as?: ValidComponent;
 
   /**
-   * Text or node displayed as the title of the card header.
+   * Title text of the card header. Use titleSlot for JSX.
    */
-  title?: string | JSX.Element | undefined;
+  title?: string | undefined;
 
   /**
-   * Text or node displayed as the description of the card header.
+   * Description text of the card header. Use descriptionSlot for JSX.
    */
-  description?: string | JSX.Element | undefined;
+  description?: string | undefined;
 
   /**
    * The visual variant of the card.
@@ -38,7 +38,7 @@ export interface RLCardProps {
    *
    * @default false
    */
-  overlay?: JSX.Element;
+  overlay?: boolean | undefined;
 
   /**
    * Target URL when card acts as a link.
@@ -113,52 +113,32 @@ export interface RLCardProps {
   children?: JSX.Element;
 
   /**
-   * Content rendered in the header slot. Replaces title and description.
-   */
-  header?: JSX.Element;
-
-  /**
-   * Slot alias for `header`.
+   * Header content. Replaces title and description.
    */
   headerSlot?: JSX.Element;
 
   /**
-   * Custom title slot content.
+   * Custom title content. Takes precedence over the `title` string.
    */
   titleSlot?: JSX.Element;
 
   /**
-   * Custom description slot content.
+   * Custom description content. Takes precedence over the `description` string.
    */
   descriptionSlot?: JSX.Element;
 
   /**
-   * Content rendered in the body slot.
-   */
-  body?: JSX.Element;
-
-  /**
-   * Slot alias for `body`.
+   * Body content. Takes precedence over `children`.
    */
   bodySlot?: JSX.Element;
 
   /**
-   * Content rendered in the footer slot.
-   */
-  footer?: JSX.Element;
-
-  /**
-   * Slot alias for `footer`.
+   * Footer content.
    */
   footerSlot?: JSX.Element;
 
   /**
-   * Custom media content slot.
-   */
-  media?: JSX.Element;
-
-  /**
-   * Slot alias for `media`.
+   * Media content. Takes precedence over `mediaSrc`.
    */
   mediaSlot?: JSX.Element;
 

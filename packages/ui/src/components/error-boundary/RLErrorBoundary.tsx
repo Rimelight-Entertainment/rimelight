@@ -5,6 +5,7 @@ import type { RLErrorAction } from "../error/error.types";
 import { RLError } from "../error/RLError";
 import { getErrorStatus } from "../error/http-error";
 import { uiT } from "../../locale";
+import { slot } from "../../slot";
 
 /**
  * Catches errors thrown below it and renders `RLError` (or a custom `fallback`).
@@ -12,6 +13,8 @@ import { uiT } from "../../locale";
  * In production, unexpected error messages are never shown; see `HttpError` to expose one.
  */
 export const RLErrorBoundary: Component<RLErrorBoundaryProps> = (props) => {
+  const fallbackSlot = slot(() => props.fallbackSlot);
+
   return (
     <Errored
       fallback={(err, reset) => {
@@ -28,7 +31,8 @@ export const RLErrorBoundary: Component<RLErrorBoundaryProps> = (props) => {
           },
         );
 
-        if (props.fallback) return props.fallback(error, reset);
+        const fallback = fallbackSlot();
+        if (fallback) return fallback(error, reset);
 
         const actions = (): RLErrorAction[] => {
           const home: RLErrorAction = {

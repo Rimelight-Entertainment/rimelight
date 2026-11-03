@@ -284,14 +284,9 @@ export interface RLSplitterProps {
   intersection?: boolean;
 
   /**
-   * Custom handle grip content or render function receiving `{ collapsed, dragging, active, index, orientation }`.
+   * Custom handle grip content, or a render function receiving `{ collapsed, dragging, active, index, orientation }`.
    */
-  handle?: JSX.Element | ((state: SplitterHandleState) => JSX.Element);
-
-  /**
-   * Custom handle slot element.
-   */
-  handleSlot?: JSX.Element;
+  handleSlot?: JSX.Element | ((state: SplitterHandleState) => JSX.Element);
 
   /**
    * Icon name rendered inside the default handle control, or `false` to hide the default icon.

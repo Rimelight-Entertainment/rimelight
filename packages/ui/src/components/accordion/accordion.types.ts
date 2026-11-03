@@ -137,21 +137,21 @@ export interface RLAccordionProps {
   /**
    * Custom leading content per item. Falls back to `item.icon`.
    */
-  leading?: AccordionSlotRenderer;
+  leadingSlot?: AccordionSlotRenderer;
   /**
    * Custom trailing content per item. Falls back to `trailingIconSlot`, then the `trailingIcon`
    * prop / `item.trailingIcon`.
    */
-  trailing?: AccordionSlotRenderer;
+  trailingSlot?: AccordionSlotRenderer;
   /**
    * Custom content area per item. Falls back to the default content/body wrappers around the
    * resolved body.
    */
-  content?: AccordionSlotRenderer;
+  contentSlot?: AccordionSlotRenderer;
   /**
    * Custom body content per item. Falls back to per-item named slots, then `item.content`.
    */
-  body?: AccordionSlotRenderer;
+  bodySlot?: AccordionSlotRenderer;
   /**
    * Called with the next open value whenever it changes. Pair with `value` for controlled state.
    */

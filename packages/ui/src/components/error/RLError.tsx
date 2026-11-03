@@ -54,9 +54,6 @@ const OMIT_KEYS = [
   "hideStatus",
   "actions",
   "showDetails",
-  "iconSlot",
-  "actionsSlot",
-  "footerSlot",
 ] as const;
 
 /**
@@ -67,7 +64,8 @@ export const RLError: Component<RLErrorProps> = (props) => {
   const status = () => props.status ?? getErrorStatus(props.error);
   const style = () => styleFor(status());
 
-  const { classes, rest } = RLErrorTheme.setup(props, {
+  const { classes, rest, slots } = RLErrorTheme.setup(props, {
+    slots: ["iconSlot", "actionsSlot", "footerSlot"] as const,
     omit: OMIT_KEYS,
     variants: () => ({ color: props.color ?? style().color }),
   });
@@ -105,14 +103,14 @@ export const RLError: Component<RLErrorProps> = (props) => {
         </Show>
 
         <Show
-          when={props.iconSlot}
+          when={slots.iconSlot()}
           fallback={
             <div class={classes().icon} data-slot="icon">
               <RLIcon name={props.icon ?? style().icon} class="size-8" aria-hidden="true" />
             </div>
           }
         >
-          {props.iconSlot}
+          {slots.iconSlot()}
         </Show>
 
         <div class={classes().header} data-slot="header">
@@ -140,7 +138,7 @@ export const RLError: Component<RLErrorProps> = (props) => {
         </Show>
 
         <Show
-          when={props.actionsSlot}
+          when={slots.actionsSlot()}
           fallback={
             <Show when={actionList().length > 0}>
               <div class={classes().actions} data-slot="actions">
@@ -165,13 +163,13 @@ export const RLError: Component<RLErrorProps> = (props) => {
           }
         >
           <div class={classes().actions} data-slot="actions">
-            {props.actionsSlot}
+            {slots.actionsSlot()}
           </div>
         </Show>
 
-        <Show when={props.footerSlot}>
+        <Show when={slots.footerSlot()}>
           <div class={classes().footer} data-slot="footer">
-            {props.footerSlot}
+            {slots.footerSlot()}
           </div>
         </Show>
       </div>

@@ -24,7 +24,8 @@ export const RLHeader: Component<RLHeaderProps> = (props) => {
   const layerType = () => props.layerType ?? "header";
   const isBanner = () => layerType() === "banner";
 
-  const { Tag, classes, rest, id } = RLHeaderTheme.setup(props, {
+  const { Tag, classes, rest, id, slots } = RLHeaderTheme.setup(props, {
+    slots: ["leftSlot", "centerSlot", "rightSlot"] as const,
     as: "header",
     omit: OMIT_KEYS,
     variants: () => ({
@@ -81,13 +82,13 @@ export const RLHeader: Component<RLHeaderProps> = (props) => {
       <div class={classes().content} data-header-content>
         <div class={classes().container} data-slot="container">
           <div class={classes().left} data-slot="left">
-            {props.left}
+            {slots.leftSlot()}
           </div>
           <div class={classes().center} data-slot="center">
-            {props.center ?? props.children}
+            {slots.centerSlot() ?? props.children}
           </div>
           <div class={classes().right} data-slot="right">
-            {props.right}
+            {slots.rightSlot()}
           </div>
         </div>
       </div>

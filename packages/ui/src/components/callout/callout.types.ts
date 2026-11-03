@@ -124,7 +124,6 @@ export interface RLCalloutProps {
    * Accessible aria-describedby ID override.
    */
   ariaDescribedby?: string | undefined;
-  leading?: JSX.Element;
   iconSlot?: JSX.Element;
   titleSlot?: JSX.Element;
   headerSlot?: JSX.Element;

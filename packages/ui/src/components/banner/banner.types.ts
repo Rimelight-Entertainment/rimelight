@@ -23,9 +23,9 @@ export interface RLBannerProps {
   icon?: string | undefined;
 
   /**
-   * Text or node title of the banner.
+   * Title text of the banner. Use titleSlot for JSX.
    */
-  title?: string | JSX.Element | undefined;
+  title?: string | undefined;
 
   /**
    * Display a list of actions next to the title.
@@ -212,7 +212,7 @@ export interface RLBannerProps {
    */
   children?: JSX.Element;
   /** Replaces the leading icon. */
-  leading?: JSX.Element;
+  leadingSlot?: JSX.Element;
   /** Replaces the title text. */
   titleSlot?: JSX.Element;
   /** Replaces the action buttons. */
@@ -220,10 +220,10 @@ export interface RLBannerProps {
   /** Replaces the close button. */
   closeSlot?: JSX.Element;
   /** Content rendered in the left area. */
-  left?: JSX.Element;
+  leftSlot?: JSX.Element;
   /** Replaces the center area content (leading & title). */
-  center?: JSX.Element;
+  centerSlot?: JSX.Element;
   /** Content rendered in the right area, before actions & close button. */
-  right?: JSX.Element;
+  rightSlot?: JSX.Element;
   [key: string]: unknown;
 }

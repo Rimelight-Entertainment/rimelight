@@ -10,15 +10,7 @@ import type { JSX } from "@solidjs/web";
 import { RLIcon } from "../icon/RLIcon";
 import { localizeHref } from "../link/helpers";
 
-const OMIT_KEYS = [
-  "items",
-  "color",
-  "variant",
-  "orientation",
-  "slots",
-  "contentSlot",
-  "itemSlot",
-] as const;
+const OMIT_KEYS = ["items", "color", "variant", "orientation", "slots"] as const;
 
 const LOCALE_PREFIX = /^\/[a-z]{2}(?:-[a-zA-Z]{2})?(?=\/|$)/;
 const normalizePath = (p: string) => p.replace(LOCALE_PREFIX, "").replace(/\/+$/, "") || "/";
@@ -32,7 +24,16 @@ const resolveHref = (item: NavigationMenuItem | NavigationMenuChildItem): string
 const hasChildren = (item: NavigationMenuItem) => !!item.children && item.children.length > 0;
 
 export const RLNavigationMenu: Component<RLNavigationMenuProps> = (props) => {
-  const { classes, rest } = RLNavigationMenuTheme.setup(props, { omit: OMIT_KEYS });
+  // `slots` is this component's public item-renderer map (keyed by item.slot), so the slot
+  // accessors from setup are named `slotAccessors`.
+  const {
+    classes,
+    rest,
+    slots: slotAccessors,
+  } = RLNavigationMenuTheme.setup(props, {
+    omit: OMIT_KEYS,
+    slots: ["contentSlot", "itemSlot"] as const,
+  });
 
   let navRef: HTMLElement | undefined;
 
@@ -50,7 +51,7 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (props) => {
    */
   const rendererFor = (item: NavigationMenuItem): NavigationMenuContentRenderer | undefined => {
     if (item.slot && props.slots?.[item.slot]) return props.slots[item.slot];
-    return props.contentSlot;
+    return slotAccessors.contentSlot();
   };
 
   const hasPanel = (item: NavigationMenuItem) => hasChildren(item) || !!rendererFor(item);

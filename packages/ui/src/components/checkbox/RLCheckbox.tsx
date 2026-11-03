@@ -15,8 +15,6 @@ const OMIT_KEYS = [
   "defaultChecked",
   "onCheckedChange",
   "onChange",
-  "labelSlot",
-  "descriptionSlot",
   "autofocus",
   "form",
   "formaction",
@@ -66,7 +64,9 @@ export const RLCheckbox: Component<RLCheckboxProps> = (props) => {
     classes,
     rest,
     id,
+    slots,
   } = RLCheckboxTheme.setup(props, {
+    slots: ["labelSlot", "descriptionSlot"] as const,
     as: "label",
     omit: OMIT_KEYS,
     idPrefix: "rl-checkbox",
@@ -95,16 +95,16 @@ export const RLCheckbox: Component<RLCheckboxProps> = (props) => {
     }
   };
 
-  const hasLabel = () => Boolean(props.label || props.labelSlot || props.children);
-  const hasDescription = () => Boolean(props.description || props.descriptionSlot);
+  const hasLabel = () => Boolean(props.label || slots.labelSlot() || props.children);
+  const hasDescription = () => Boolean(props.description || slots.descriptionSlot());
   const hasWrapper = () => Boolean(labelIcon() || hasLabel() || hasDescription());
 
   const renderLabel = () => {
-    if (props.labelSlot) {
-      if (typeof props.labelSlot === "function") {
-        return (props.labelSlot as any)({ label: props.label });
+    if (slots.labelSlot()) {
+      if (typeof slots.labelSlot() === "function") {
+        return (slots.labelSlot() as any)({ label: props.label });
       }
-      return props.labelSlot;
+      return slots.labelSlot();
     }
     if (props.children) {
       return props.children;
@@ -113,11 +113,11 @@ export const RLCheckbox: Component<RLCheckboxProps> = (props) => {
   };
 
   const renderDescription = () => {
-    if (props.descriptionSlot) {
-      if (typeof props.descriptionSlot === "function") {
-        return (props.descriptionSlot as any)({ description: props.description });
+    if (slots.descriptionSlot()) {
+      if (typeof slots.descriptionSlot() === "function") {
+        return (slots.descriptionSlot() as any)({ description: props.description });
       }
-      return props.descriptionSlot;
+      return slots.descriptionSlot();
     }
     return props.description;
   };

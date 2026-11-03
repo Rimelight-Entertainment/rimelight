@@ -27,24 +27,22 @@ const OMIT_KEYS = [
 ] as const;
 
 export const RLInput: Component<RLInputProps> = (props) => {
-  const hasLeading = () => !!(props.leadingIcon || props.leading);
-  const hasTrailing = () => !!(props.trailingIcon || props.trailing);
-
-  const { classes, rest } = RLInputTheme.setup(props, {
+  const { classes, rest, slots } = RLInputTheme.setup(props, {
+    slots: ["leadingSlot", "trailingSlot"] as const,
     omit: OMIT_KEYS,
-    variants: () => ({
+    variants: (s) => ({
       variant: props.variant ?? "default",
       size: props.size ?? "md",
-      hasLeading: hasLeading(),
-      hasTrailing: hasTrailing(),
+      hasLeading: !!(props.leadingIcon || s.leadingSlot()),
+      hasTrailing: !!(props.trailingIcon || s.trailingSlot()),
       error: !!props.error,
     }),
   });
 
   return (
     <div class={classes().root} data-slot="root" data-theme={props.theme}>
-      <Show when={props.leading}>{props.leading}</Show>
-      <Show when={!props.leading && props.leadingIcon}>
+      <Show when={slots.leadingSlot()}>{slots.leadingSlot()}</Show>
+      <Show when={!slots.leadingSlot() && props.leadingIcon}>
         <span class={classes().leading} data-slot="leading">
           <RLIcon name={props.leadingIcon!} size="sm" aria-hidden="true" />
         </span>
@@ -69,8 +67,8 @@ export const RLInput: Component<RLInputProps> = (props) => {
         {...rest}
       />
 
-      <Show when={props.trailing}>{props.trailing}</Show>
-      <Show when={!props.trailing && props.trailingIcon}>
+      <Show when={slots.trailingSlot()}>{slots.trailingSlot()}</Show>
+      <Show when={!slots.trailingSlot() && props.trailingIcon}>
         <span class={classes().trailing} data-slot="trailing">
           <RLIcon name={props.trailingIcon!} size="sm" aria-hidden="true" />
         </span>

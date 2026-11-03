@@ -19,13 +19,11 @@ const OMIT_KEYS = [
   "duration",
   "dismissable",
   "onDismiss",
-  "titleSlot",
-  "descriptionSlot",
-  "actionsSlot",
 ] as const;
 
 export const RLToast: Component<RLToastProps> = (props) => {
-  const { Tag, classes, rest } = RLToastTheme.setup(props, {
+  const { Tag, classes, rest, slots } = RLToastTheme.setup(props, {
+    slots: ["titleSlot", "descriptionSlot", "actionsSlot"] as const,
     omit: OMIT_KEYS,
     variants: () => ({
       variant: ["success", "error", "warning", "info"].includes(props.variant ?? "")
@@ -115,21 +113,21 @@ export const RLToast: Component<RLToastProps> = (props) => {
       <RLIcon name={icon()} class="size-4 shrink-0 mt-0.5" aria-hidden="true" />
 
       <div class="flex flex-col gap-0.5 flex-1 min-w-0">
-        {props.titleSlot || props.title ? (
+        {slots.titleSlot() || props.title ? (
           <div class={classes().title} data-slot="title">
-            {props.titleSlot ? props.titleSlot : props.title}
+            {slots.titleSlot() ? slots.titleSlot() : props.title}
           </div>
         ) : null}
-        {props.descriptionSlot || props.description ? (
+        {slots.descriptionSlot() || props.description ? (
           <div class={classes().description} data-slot="description">
-            {props.descriptionSlot ? props.descriptionSlot : props.description}
+            {slots.descriptionSlot() ? slots.descriptionSlot() : props.description}
           </div>
         ) : null}
         {props.children}
-        {props.actionsSlot || props.actionLabel ? (
+        {slots.actionsSlot() || props.actionLabel ? (
           <div class="flex items-center justify-end gap-2 mt-3" data-slot="actions">
-            {props.actionsSlot ? (
-              props.actionsSlot
+            {slots.actionsSlot() ? (
+              slots.actionsSlot()
             ) : (
               <button type="button" class={classes().action} data-slot="action" data-toast-action>
                 {props.actionLabel}

@@ -90,7 +90,7 @@ describe("RLBanner", () => {
 
     it("leading slot replaces the icon", () => {
       const html = render(() => (
-        <RLBanner icon="rocket" leading={<span class="custom-leading">L</span>} title="t" />
+        <RLBanner icon="rocket" leadingSlot={<span class="custom-leading">L</span>} title="t" />
       ));
       expect(html).toContain("custom-leading");
       expect(slotTag(html, "icon")).toBe("");
@@ -189,8 +189,8 @@ describe("RLBanner", () => {
       const html = render(() => (
         <RLBanner
           title="t"
-          left={<span class="l-extra">L</span>}
-          right={<span class="r-extra">R</span>}
+          leftSlot={<span class="l-extra">L</span>}
+          rightSlot={<span class="r-extra">R</span>}
         />
       ));
       expect(html).toContain("l-extra");
@@ -199,7 +199,7 @@ describe("RLBanner", () => {
 
     it("center replaces leading and title", () => {
       const html = render(() => (
-        <RLBanner title="Hidden title" icon="rocket" center={<span class="c-extra">C</span>} />
+        <RLBanner title="Hidden title" icon="rocket" centerSlot={<span class="c-extra">C</span>} />
       ));
       expect(html).toContain("c-extra");
       expect(html).not.toContain("Hidden title");

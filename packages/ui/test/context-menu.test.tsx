@@ -44,7 +44,7 @@ describe("RLContextMenu", () => {
     it("supports explicit trigger prop", () => {
       const html = render(() => (
         <RLContextMenu
-          trigger={<span class="explicit-trigger">Custom Surface</span>}
+          triggerSlot={<span class="explicit-trigger">Custom Surface</span>}
           items={[{ label: "Copy" }]}
         />
       ));
@@ -303,9 +303,9 @@ describe("RLContextMenu", () => {
         <RLContextMenu
           open
           portal={false}
-          topRender={() => <div class="custom-top">Header Metadata</div>}
-          bottomRender={() => <div class="custom-bottom">Footer Info</div>}
-          itemRender={(props) => (
+          topSlot={() => <div class="custom-top">Header Metadata</div>}
+          bottomSlot={() => <div class="custom-bottom">Footer Info</div>}
+          itemSlot={(props) => (
             <div class="custom-item-render" data-index={props.index}>
               Custom: {props.item.label}
             </div>

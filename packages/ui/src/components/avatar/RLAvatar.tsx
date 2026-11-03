@@ -38,8 +38,6 @@ const OMIT_KEYS = [
   "sizes",
   "srcset",
   "usemap",
-  "fallbackSlot",
-  "badgeSlot",
   "imgProps",
 ] as const;
 
@@ -48,9 +46,11 @@ export const RLAvatar: Component<RLAvatarProps> = (props) => {
     Tag: Root,
     classes,
     rest,
+    slots,
   } = RLAvatarTheme.setup(props, {
     as: "span",
     omit: OMIT_KEYS,
+    slots: ["fallbackSlot", "badgeSlot"] as const,
   });
 
   const [imageError, setImageError] = createSignal(false);
@@ -76,7 +76,7 @@ export const RLAvatar: Component<RLAvatarProps> = (props) => {
   };
 
   const renderFallback = () => {
-    const customSlot = props.fallbackSlot;
+    const customSlot = slots.fallbackSlot();
     if (customSlot !== undefined && customSlot !== null) {
       return (
         <span class={classes().fallback} data-slot="fallback">
@@ -154,7 +154,7 @@ export const RLAvatar: Component<RLAvatarProps> = (props) => {
 
   const chipConfig = createMemo(() => {
     const chipProp = props.chip;
-    const badgeProp = props.badge || props.badgeSlot;
+    const badgeProp = props.badge || slots.badgeSlot();
     if (!chipProp && !badgeProp) return null;
 
     let config: Record<string, any> = {};
@@ -169,7 +169,7 @@ export const RLAvatar: Component<RLAvatarProps> = (props) => {
       config["position"] = props.badgePosition ?? config["position"] ?? "bottom-right";
       config["inset"] = config["inset"] ?? true;
       if (props.badgeColor) config["color"] = props.badgeColor;
-      if (props.badgeSlot) config["content"] = props.badgeSlot;
+      if (slots.badgeSlot()) config["content"] = slots.badgeSlot();
       else if (typeof props.badge === "string" || typeof props.badge === "number") {
         config["text"] = props.badge;
       }

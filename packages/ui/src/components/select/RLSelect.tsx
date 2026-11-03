@@ -25,7 +25,8 @@ export const RLSelect: Component<RLSelectProps> = (props) => {
   const resolvedVariant = () =>
     props.variant === "default" || props.variant === "icon" ? props.variant : "default";
 
-  const { Tag, classes, rest } = RLSelectTheme.setup(props, {
+  const { Tag, classes, rest, slots } = RLSelectTheme.setup(props, {
+    slots: ["leadingSlot"] as const,
     omit: OMIT_KEYS,
     variants: () => ({ variant: resolvedVariant() }),
   });
@@ -96,9 +97,9 @@ export const RLSelect: Component<RLSelectProps> = (props) => {
       >
         {/* The select button. <selectedcontent> mirrors the chosen option, so the closed control shows its label. */}
         <button type="button" class={classes().trigger} data-slot="trigger">
-          {props.leading ? (
+          {slots.leadingSlot() ? (
             <span class={classes().leading} data-slot="leading">
-              {props.leading}
+              {slots.leadingSlot()}
             </span>
           ) : props.leadingIcon ? (
             <span class={classes().leading} data-slot="leading">

@@ -9,29 +9,23 @@ const OMIT_KEYS = [
   "minSize",
   "maxSize",
   "header",
-  "headerSlot",
   "body",
-  "bodySlot",
   "footer",
-  "footerSlot",
   "resizeHandle",
-  "resizeHandleSlot",
 ] as const;
 
 export const RLDashboardPanel: Component<RLDashboardPanelProps> = (props) => {
-  const { classes, rest } = RLDashboardPanelTheme.setup(props, { omit: OMIT_KEYS });
+  const { classes, rest, slots } = RLDashboardPanelTheme.setup(props, {
+    omit: OMIT_KEYS,
+    slots: ["headerSlot", "bodySlot", "footerSlot", "resizeHandleSlot"] as const,
+  });
 
   const resizable = () => props.resizable ?? false;
 
-  const headerContent = () => props.header ?? props.headerSlot;
-  const bodyContent = () =>
-    props.body !== undefined
-      ? props.body
-      : props.bodySlot !== undefined
-        ? props.bodySlot
-        : props.children;
-  const footerContent = () => props.footer ?? props.footerSlot;
-  const resizeHandleContent = () => props.resizeHandle ?? props.resizeHandleSlot;
+  const headerContent = () => slots.headerSlot();
+  const bodyContent = () => (slots.bodySlot() !== undefined ? slots.bodySlot() : props.children);
+  const footerContent = () => slots.footerSlot();
+  const resizeHandleContent = () => slots.resizeHandleSlot();
 
   return (
     <>

@@ -11,11 +11,13 @@ const OMIT_KEYS = [
   "icon",
   "color",
   "onChange",
-  "iconSlot",
 ] as const;
 
 export const RLFileUpload: Component<RLFileUploadProps> = (props) => {
-  const { classes, rest } = RLFileUploadTheme.setup(props, { omit: OMIT_KEYS });
+  const { classes, rest, slots } = RLFileUploadTheme.setup(props, {
+    omit: OMIT_KEYS,
+    slots: ["iconSlot"] as const,
+  });
 
   const [dragging, setDragging] = createSignal(false);
   const [fileLabel, setFileLabel] = createSignal("");
@@ -101,8 +103,8 @@ export const RLFileUpload: Component<RLFileUploadProps> = (props) => {
       />
 
       <div class={classes().content} data-slot="content">
-        {props.iconSlot ? (
-          props.iconSlot
+        {slots.iconSlot() ? (
+          slots.iconSlot()
         ) : (
           <RLIcon name={props.icon ?? "cloud-upload"} class={classes().icon} aria-hidden="true" />
         )}

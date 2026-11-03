@@ -1,7 +1,7 @@
 import type { RLButtonProps } from "./button.types";
 import { RLButtonTheme } from "./button.theme";
 import { createMemo, createSignal, Show, type Component } from "solid-js";
-import { type JSX } from "@solidjs/web";
+
 import {
   isThenable,
   resolveKeyboardAction,
@@ -12,6 +12,8 @@ import { resolveLinkAttrs } from "../link/helpers";
 import { uiT } from "../../locale";
 import { RLIcon } from "../icon/RLIcon";
 import { RLAvatar } from "../avatar/RLAvatar";
+
+type SlotPresence = { leadingSlot: () => unknown; trailingSlot: () => unknown };
 
 const OMIT_KEYS = [
   "href",
@@ -28,8 +30,6 @@ const OMIT_KEYS = [
   "inactiveClass",
   "exactActiveClass",
   "disabled",
-  "leadingSlot",
-  "trailingSlot",
   "onClick",
   "onKeyDown",
   "type",
@@ -111,36 +111,34 @@ export const RLButton: Component<RLButtonProps> = (props) => {
 
   const showExternalHint = () => isLink() && linkAttrs().target === "_blank" && !ariaLabel();
 
-  const isTrailingPosition = () =>
+  const isTrailingPosition = (s: SlotPresence) =>
     Boolean(
-      props.trailingSlot ||
-      (props.trailing !== undefined && typeof props.trailing !== "boolean") ||
+      s.trailingSlot() ||
       trailingIconProp() ||
       (iconProp() && trailingFlag() === true) ||
       externalIconName() ||
       (isLoading() && trailingFlag() === true && leadingFlag() !== true),
     );
 
-  const isLeadingPosition = () =>
+  const isLeadingPosition = (s: SlotPresence) =>
     Boolean(
-      props.leadingSlot ||
-      (props.leading !== undefined && typeof props.leading !== "boolean") ||
+      s.leadingSlot() ||
       leadingIconProp() ||
       (iconProp() && trailingFlag() !== true) ||
       props.avatar ||
-      (isLoading() && !isTrailingPosition()) ||
+      (isLoading() && !isTrailingPosition(s)) ||
       leadingFlag() === true,
     );
 
   const leadingIconName = () => {
-    if (isLoading() && !isTrailingPosition()) {
+    if (isLoading() && !isTrailingPosition(slots)) {
       return props.loadingIcon || "loader-circle";
     }
     return leadingIconProp() || (iconProp() && trailingFlag() !== true ? iconProp() : undefined);
   };
 
   const trailingIconName = () => {
-    if (isLoading() && isTrailingPosition()) {
+    if (isLoading() && isTrailingPosition(slots)) {
       return props.loadingIcon || "loader-circle";
     }
     return (
@@ -163,9 +161,11 @@ export const RLButton: Component<RLButtonProps> = (props) => {
     Tag: CustomRoot,
     classes,
     rest,
+    slots,
   } = RLButtonTheme.setup(props, {
     omit: OMIT_KEYS,
-    variants: () => ({
+    slots: ["leadingSlot", "trailingSlot"] as const,
+    variants: (s) => ({
       variant:
         props.active && props.activeVariant ? props.activeVariant : (props.variant ?? "solid"),
       color: props.active && props.activeColor ? props.activeColor : (props.color ?? "primary"),
@@ -175,8 +175,8 @@ export const RLButton: Component<RLButtonProps> = (props) => {
       square: isSquare(),
       fieldGroup: props.fieldGroup,
       rounded: props.rounded ?? false,
-      leading: isLeadingPosition(),
-      trailing: isTrailingPosition(),
+      leading: isLeadingPosition(s),
+      trailing: isTrailingPosition(s),
       loading: isLoading(),
       active: props.active,
       class: rootClassOverride(),
@@ -241,37 +241,32 @@ export const RLButton: Component<RLButtonProps> = (props) => {
 
   const buttonContent = () => (
     <>
-      <Show when={props.leadingSlot !== undefined && props.leadingSlot !== null}>
-        {props.leadingSlot}
+      <Show when={slots.leadingSlot() !== undefined && slots.leadingSlot() !== null}>
+        {slots.leadingSlot()}
       </Show>
-      <Show when={props.leadingSlot === undefined || props.leadingSlot === null}>
-        <Show when={props.leading !== undefined && typeof props.leading !== "boolean"}>
-          {props.leading as JSX.Element}
+      <Show when={slots.leadingSlot() === undefined || slots.leadingSlot() === null}>
+        <Show when={leadingIconName()}>
+          {(iconName) => (
+            <RLIcon
+              name={iconName()}
+              size="none"
+              class={classes()["leadingIcon"]}
+              data-slot="leading-icon"
+              aria-hidden="true"
+            />
+          )}
         </Show>
-        <Show when={props.leading === undefined || typeof props.leading === "boolean"}>
-          <Show when={leadingIconName()}>
-            {(iconName) => (
-              <RLIcon
-                name={iconName()}
-                size="none"
-                class={classes()["leadingIcon"]}
-                data-slot="leading-icon"
-                aria-hidden="true"
-              />
-            )}
-          </Show>
-          <Show when={!leadingIconName() && props.avatar && !isLoading()}>
-            <span class={classes()["leadingAvatar"]} data-slot="leading-avatar">
-              <RLAvatar
-                {...(typeof props.avatar === "string" ? { src: props.avatar } : props.avatar)}
-                size={
-                  (typeof props.avatar === "object" && props.avatar?.size) ||
-                  (classes()["leadingAvatarSize"] as any)
-                }
-                class={classes()["leadingAvatar"]}
-              />
-            </span>
-          </Show>
+        <Show when={!leadingIconName() && props.avatar && !isLoading()}>
+          <span class={classes()["leadingAvatar"]} data-slot="leading-avatar">
+            <RLAvatar
+              {...(typeof props.avatar === "string" ? { src: props.avatar } : props.avatar)}
+              size={
+                (typeof props.avatar === "object" && props.avatar?.size) ||
+                (classes()["leadingAvatarSize"] as any)
+              }
+              class={classes()["leadingAvatar"]}
+            />
+          </span>
         </Show>
       </Show>
 
@@ -288,25 +283,20 @@ export const RLButton: Component<RLButtonProps> = (props) => {
         </span>
       </Show>
 
-      <Show when={props.trailingSlot !== undefined && props.trailingSlot !== null}>
-        {props.trailingSlot}
+      <Show when={slots.trailingSlot() !== undefined && slots.trailingSlot() !== null}>
+        {slots.trailingSlot()}
       </Show>
-      <Show when={props.trailingSlot === undefined || props.trailingSlot === null}>
-        <Show when={props.trailing !== undefined && typeof props.trailing !== "boolean"}>
-          {props.trailing as JSX.Element}
-        </Show>
-        <Show when={props.trailing === undefined || typeof props.trailing === "boolean"}>
-          <Show when={trailingIconName()}>
-            {(iconName) => (
-              <RLIcon
-                name={iconName()}
-                size="none"
-                class={classes()["trailingIcon"]}
-                data-slot="trailing-icon"
-                aria-hidden="true"
-              />
-            )}
-          </Show>
+      <Show when={slots.trailingSlot() === undefined || slots.trailingSlot() === null}>
+        <Show when={trailingIconName()}>
+          {(iconName) => (
+            <RLIcon
+              name={iconName()}
+              size="none"
+              class={classes()["trailingIcon"]}
+              data-slot="trailing-icon"
+              aria-hidden="true"
+            />
+          )}
         </Show>
       </Show>
     </>

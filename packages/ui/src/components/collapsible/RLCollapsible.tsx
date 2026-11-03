@@ -6,10 +6,6 @@ import { type JSX } from "@solidjs/web";
 const OMIT_KEYS = [
   "defaultOpen",
   "unmountOnHide",
-  "content",
-  "contentSlot",
-  "trigger",
-  "triggerSlot",
   "onOpenChange",
   "id",
   "ariaLabel",
@@ -24,8 +20,9 @@ export const RLCollapsible: Component<RLCollapsibleProps> = (props) => {
   const unmountOnHide = () => props.unmountOnHide !== false;
   const isDisabled = () => props.disabled === true;
 
-  const { Tag, classes, rest, id } = RLCollapsibleTheme.setup(props, {
+  const { Tag, classes, rest, id, slots } = RLCollapsibleTheme.setup(props, {
     omit: OMIT_KEYS,
+    slots: ["triggerSlot", "contentSlot"] as const,
     idPrefix: "rl-collapsible",
     variants: () => ({ open: isOpen(), disabled: isDisabled() }),
   });
@@ -42,11 +39,13 @@ export const RLCollapsible: Component<RLCollapsibleProps> = (props) => {
     props.onOpenChange?.(next);
   };
 
-  const hasContentProp = () => props.content !== undefined || props.contentSlot !== undefined;
-  const hasTriggerProp = () => props.trigger !== undefined || props.triggerSlot !== undefined;
+  const hasContentProp = () => slots.contentSlot() !== undefined;
+  const hasTriggerProp = () => slots.triggerSlot() !== undefined;
 
+  // Slots may be JSX or a render function receiving `{ open }`. Render functions are invoked
+  // here, at the render site.
   const renderTrigger = () => {
-    const t = props.triggerSlot ?? props.trigger;
+    const t = slots.triggerSlot();
     if (t !== undefined) {
       return typeof t === "function"
         ? (t as (p: { open: boolean }) => JSX.Element)({ open: isOpen() })
@@ -63,7 +62,7 @@ export const RLCollapsible: Component<RLCollapsibleProps> = (props) => {
   };
 
   const renderContent = () => {
-    const c = props.contentSlot ?? props.content;
+    const c = slots.contentSlot();
     if (c !== undefined) {
       return typeof c === "function" ? (c as (p?: Record<string, unknown>) => JSX.Element)({}) : c;
     }

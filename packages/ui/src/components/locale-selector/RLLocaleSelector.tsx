@@ -13,15 +13,16 @@ const OMIT_KEYS = [
   "variant",
   "size",
   "color",
-  "labelSlot",
-  "leading",
   "leadingIcon",
   "onSelect",
   "onChange",
 ] as const;
 
 export const RLLocaleSelector: Component<RLLocaleSelectorProps> = (props) => {
-  const { classes, rest } = RLLocaleSelectorTheme.setup(props, { omit: OMIT_KEYS });
+  const { classes, rest, slots } = RLLocaleSelectorTheme.setup(props, {
+    omit: OMIT_KEYS,
+    slots: ["labelSlot", "leadingSlot"] as const,
+  });
 
   const locale = useLocale();
   const currentCode = (): string => props.currentLocale ?? locale();
@@ -81,7 +82,7 @@ export const RLLocaleSelector: Component<RLLocaleSelectorProps> = (props) => {
           aria-label={uiT("locale-selector.label")}
           class={classes().select}
           leadingIcon={props.leadingIcon || "i-lucide-globe"}
-          leading={props.leading}
+          leadingSlot={slots.leadingSlot()}
         />
       </div>
       {props.children}

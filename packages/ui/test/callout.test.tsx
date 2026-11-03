@@ -193,12 +193,12 @@ describe("RLCallout", () => {
       expect(html).toContain('alt="John Doe"');
     });
 
-    it("leading slot replaces icon and avatar", () => {
+    it("iconSlot replaces icon and avatar", () => {
       const html = render(() => (
         <RLCallout
           icon="star"
           avatar="https://example.com/photo.png"
-          leading={<span class="custom-badge">VIP</span>}
+          iconSlot={<span class="custom-badge">VIP</span>}
           title="User"
         />
       ));

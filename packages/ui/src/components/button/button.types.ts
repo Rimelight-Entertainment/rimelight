@@ -72,9 +72,9 @@ export interface RLButtonProps {
    */
   avatar?: RLAvatarProps | string | undefined;
   /**
-   * When `true`, the icon will be displayed on the left side. Also accepts slot JSX.
+   * When `true`, the leading icon is displayed. JSX goes in leadingSlot.
    */
-  leading?: JSX.Element;
+  leading?: boolean | undefined;
   /**
    * Display an icon on the left side.
    */
@@ -84,9 +84,9 @@ export interface RLButtonProps {
    */
   leadingSlot?: JSX.Element;
   /**
-   * When `true`, the icon will be displayed on the right side. Also accepts slot JSX.
+   * When `true`, the trailing icon is displayed. JSX goes in trailingSlot.
    */
-  trailing?: JSX.Element;
+  trailing?: boolean | undefined;
   /**
    * Display an icon on the right side.
    */

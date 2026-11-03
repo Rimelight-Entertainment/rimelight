@@ -36,7 +36,7 @@ describe("RLPage", () => {
 
   it("renders the left slot in its own column", () => {
     const html = renderToString(() => (
-      <RLPage left={<nav class="left-nav">Navigation</nav>}>
+      <RLPage leftSlot={<nav class="left-nav">Navigation</nav>}>
         <div>Main</div>
       </RLPage>
     ));
@@ -50,7 +50,7 @@ describe("RLPage", () => {
 
   it("renders the right slot in its own column", () => {
     const html = renderToString(() => (
-      <RLPage right={<aside class="right-toc">Table of contents</aside>}>
+      <RLPage rightSlot={<aside class="right-toc">Table of contents</aside>}>
         <div>Main</div>
       </RLPage>
     ));
@@ -64,7 +64,7 @@ describe("RLPage", () => {
 
   it("splits the center column when both left and right slots are provided", () => {
     const html = renderToString(() => (
-      <RLPage left={<div>Left</div>} right={<div>Right</div>}>
+      <RLPage leftSlot={<div>Left</div>} rightSlot={<div>Right</div>}>
         <div>Main</div>
       </RLPage>
     ));
@@ -102,8 +102,8 @@ describe("RLPage", () => {
   it("applies ui slot overrides", () => {
     const html = renderToString(() => (
       <RLPage
-        left={<div>Left</div>}
-        right={<div>Right</div>}
+        leftSlot={<div>Left</div>}
+        rightSlot={<div>Right</div>}
         ui={{ root: "ui-root", left: "ui-left", center: "ui-center", right: "ui-right" }}
       >
         <div>Main</div>
@@ -118,7 +118,12 @@ describe("RLPage", () => {
 
   it("does not leak internal props onto the DOM", () => {
     const html = renderToString(() => (
-      <RLPage as="section" ui={{ root: "x" }} left={<div>Left</div>} right={<div>Right</div>}>
+      <RLPage
+        as="section"
+        ui={{ root: "x" }}
+        leftSlot={<div>Left</div>}
+        rightSlot={<div>Right</div>}
+      >
         <div>Main</div>
       </RLPage>
     ));
@@ -131,7 +136,7 @@ describe("RLPage", () => {
 
   it("renders correctly in the DOM when mounted into a container", () => {
     container.innerHTML = renderToString(() => (
-      <RLPage left={<div>Left</div>}>
+      <RLPage leftSlot={<div>Left</div>}>
         <div>Main</div>
       </RLPage>
     ));

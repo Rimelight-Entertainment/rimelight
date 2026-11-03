@@ -4,11 +4,11 @@ export interface RLFieldGroupProps {
   /**
    * Text/icon to prepend.
    */
-  prepend?: string | JSX.Element;
+  prependSlot?: JSX.Element;
   /**
    * Text/icon to append.
    */
-  append?: string | JSX.Element;
+  appendSlot?: JSX.Element;
   /**
    * Size scale.
    */

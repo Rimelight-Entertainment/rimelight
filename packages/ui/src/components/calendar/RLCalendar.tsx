@@ -164,7 +164,12 @@ export const RLCalendar: Component<RLCalendarProps> = (props) => {
 
   const fullLabel = createMemo(() => `${props.calendarLabel ?? "Event Date"}, ${headingValue()}`);
 
-  const { Tag: Root, classes } = RLCalendarTheme.setup(props, {
+  const {
+    Tag: Root,
+    classes,
+    slots,
+  } = RLCalendarTheme.setup(props, {
+    slots: ["weekDaySlot", "daySlot", "monthCellSlot", "yearCellSlot", "headingSlot"] as const,
     variants: () => ({ view: view() }),
   });
 
@@ -463,7 +468,7 @@ export const RLCalendar: Component<RLCalendarProps> = (props) => {
           <For each={weekDaysOfGrid(grid, locale(), weekdayFormat())}>
             {(wd) => (
               <th class={classes().headCell} data-slot="headCell">
-                {props.weekDaySlot ? props.weekDaySlot({ day: wd }) : wd}
+                {slots.weekDaySlot() ? slots.weekDaySlot()?.({ day: wd }) : wd}
               </th>
             )}
           </For>
@@ -525,7 +530,9 @@ export const RLCalendar: Component<RLCalendarProps> = (props) => {
                         onClick={() => onDayClick(day)}
                         onKeyDown={(e) => onDayKey(e, day)}
                       >
-                        {props.daySlot ? props.daySlot({ day }) : formatDayLabel(day, locale())}
+                        {slots.daySlot()
+                          ? slots.daySlot()?.({ day })
+                          : formatDayLabel(day, locale())}
                       </div>
                     </td>
                   );
@@ -637,15 +644,15 @@ export const RLCalendar: Component<RLCalendarProps> = (props) => {
                           onKeyDown={(e) => onCellKey(e, cell, mode)}
                         >
                           {mode === "month"
-                            ? props.monthCellSlot
-                              ? props.monthCellSlot({
+                            ? slots.monthCellSlot()
+                              ? slots.monthCellSlot()?.({
                                   month: cell,
                                   selected: selected(),
                                   disabled: disabled(),
                                 })
                               : formatMonthShort(cell, locale())
-                            : props.yearCellSlot
-                              ? props.yearCellSlot({
+                            : slots.yearCellSlot()
+                              ? slots.yearCellSlot()?.({
                                   year: cell,
                                   selected: selected(),
                                   disabled: disabled(),
@@ -719,7 +726,7 @@ export const RLCalendar: Component<RLCalendarProps> = (props) => {
             data-disabled={props.disabled ? "" : undefined}
           >
             <Show
-              when={props.headingSlot}
+              when={slots.headingSlot()}
               fallback={
                 <Show
                   when={switchable() && viewControlEnabled()}
@@ -744,7 +751,7 @@ export const RLCalendar: Component<RLCalendarProps> = (props) => {
                 </Show>
               }
             >
-              {props.headingSlot ? props.headingSlot() : null}
+              {slots.headingSlot() ? slots.headingSlot()?.() : null}
             </Show>
           </div>
 

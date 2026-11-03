@@ -1,32 +1,28 @@
 import type { Component } from "solid-js";
-import { Show, createMemo } from "solid-js";
+import { Show } from "solid-js";
 import type { RLPageProps } from "./page.types";
 import { RLPageTheme } from "./page.theme";
 
-const OMIT_KEYS = ["left", "right"] as const;
-
 export const RLPage: Component<RLPageProps> = (props) => {
-  const left = createMemo(() => props.left);
-  const right = createMemo(() => props.right);
-
   const {
     Tag: Root,
     classes,
     rest,
+    slots,
   } = RLPageTheme.setup(props, {
     as: "div",
-    omit: OMIT_KEYS,
-    variants: () => ({
-      left: Boolean(left()),
-      right: Boolean(right()),
+    slots: ["leftSlot", "rightSlot"] as const,
+    variants: (s) => ({
+      left: Boolean(s.leftSlot()),
+      right: Boolean(s.rightSlot()),
     }),
   });
 
   return (
     <Root class={classes().root} data-slot="root" {...rest}>
-      <Show when={left()}>
+      <Show when={slots.leftSlot()}>
         <div class={classes().left} data-slot="left">
-          {left()}
+          {slots.leftSlot()}
         </div>
       </Show>
 
@@ -34,9 +30,9 @@ export const RLPage: Component<RLPageProps> = (props) => {
         {props.children}
       </div>
 
-      <Show when={right()}>
+      <Show when={slots.rightSlot()}>
         <div class={classes().right} data-slot="right">
-          {right()}
+          {slots.rightSlot()}
         </div>
       </Show>
     </Root>

@@ -21,7 +21,6 @@ const OMIT_KEYS = [
   "showLabels",
   "beforeLabelPlacement",
   "afterLabelPlacement",
-  "handle",
   "handleIcon",
   "showHandle",
   "showDivider",
@@ -35,7 +34,15 @@ const OMIT_KEYS = [
 ] as const;
 
 export const RLCompare: Component<RLCompareProps> = (props) => {
-  const { Tag: Root, classes, rest } = RLCompareTheme.setup(props, { omit: OMIT_KEYS });
+  const {
+    Tag: Root,
+    classes,
+    rest,
+    slots,
+  } = RLCompareTheme.setup(props, {
+    omit: OMIT_KEYS,
+    slots: ["beforeSlot", "afterSlot", "beforeLabelSlot", "afterLabelSlot", "handleSlot"] as const,
+  });
 
   const resolvedChildren = children(() => props.children);
 
@@ -203,14 +210,15 @@ export const RLCompare: Component<RLCompareProps> = (props) => {
   const shouldShowLabels = () =>
     props.showLabels !== undefined
       ? props.showLabels
-      : Boolean(props.beforeLabel || props.afterLabel);
+      : Boolean(slots.beforeLabelSlot() || slots.afterLabelSlot());
 
   const renderBeforeContent = () => {
-    if (typeof props.before === "function") {
-      return props.before(clampedValue());
+    const before = slots.beforeSlot();
+    if (typeof before === "function") {
+      return before(clampedValue());
     }
-    if (props.before !== undefined) {
-      return props.before;
+    if (before !== undefined) {
+      return before;
     }
     if (props.beforeSrc) {
       return (
@@ -230,11 +238,12 @@ export const RLCompare: Component<RLCompareProps> = (props) => {
   };
 
   const renderAfterContent = () => {
-    if (typeof props.after === "function") {
-      return props.after(clampedValue());
+    const after = slots.afterSlot();
+    if (typeof after === "function") {
+      return after(clampedValue());
     }
-    if (props.after !== undefined) {
-      return props.after;
+    if (after !== undefined) {
+      return after;
     }
     if (props.afterSrc) {
       return (
@@ -254,11 +263,12 @@ export const RLCompare: Component<RLCompareProps> = (props) => {
   };
 
   const renderHandle = () => {
-    if (typeof props.handle === "function") {
-      return props.handle({ orientation: orientation(), value: clampedValue() });
+    const handle = slots.handleSlot();
+    if (typeof handle === "function") {
+      return handle({ orientation: orientation(), value: clampedValue() });
     }
-    if (props.handle !== undefined) {
-      return props.handle;
+    if (handle !== undefined) {
+      return handle;
     }
     const defaultIconName = props.handleIcon
       ? props.handleIcon
@@ -309,22 +319,22 @@ export const RLCompare: Component<RLCompareProps> = (props) => {
         </div>
 
         {/* Before Label */}
-        {shouldShowLabels() && props.beforeLabel ? (
+        {shouldShowLabels() && slots.beforeLabelSlot() ? (
           <span
             class={`${classes().beforeLabel} ${beforeLabelPlacementClass()}`}
             data-slot="before-label"
           >
-            {props.beforeLabel}
+            {slots.beforeLabelSlot()}
           </span>
         ) : null}
 
         {/* After Label */}
-        {shouldShowLabels() && props.afterLabel ? (
+        {shouldShowLabels() && slots.afterLabelSlot() ? (
           <span
             class={`${classes().afterLabel} ${afterLabelPlacementClass()}`}
             data-slot="after-label"
           >
-            {props.afterLabel}
+            {slots.afterLabelSlot()}
           </span>
         ) : null}
 

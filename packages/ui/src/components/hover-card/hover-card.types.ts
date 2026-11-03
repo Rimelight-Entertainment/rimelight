@@ -6,6 +6,6 @@ export interface RLHoverCardProps {
   ui?: any;
   class?: any;
   children?: JSX.Element;
-  trigger?: JSX.Element;
+  triggerSlot?: JSX.Element;
   [key: string]: unknown;
 }

@@ -2,13 +2,14 @@ import type { Component } from "solid-js";
 import type { RLTooltipProps } from "./tooltip.types";
 import { RLTooltipTheme } from "./tooltip.theme";
 
-const OMIT_KEYS = ["content", "contentSlot"] as const;
+const OMIT_KEYS = ["content"] as const;
 
 export const RLTooltip: Component<RLTooltipProps> = (props) => {
   const placement = () => props.placement ?? "top";
 
-  const { classes, rest } = RLTooltipTheme.setup(props, {
+  const { classes, rest, slots } = RLTooltipTheme.setup(props, {
     omit: OMIT_KEYS,
+    slots: ["contentSlot"] as const,
     variants: () => ({ placement: placement() }),
   });
 
@@ -24,7 +25,7 @@ export const RLTooltip: Component<RLTooltipProps> = (props) => {
       </div>
 
       <div class={classes().content} data-slot="content" role="tooltip">
-        {props.contentSlot !== undefined ? props.contentSlot : props.content}
+        {slots.contentSlot() !== undefined ? slots.contentSlot() : props.content}
       </div>
     </div>
   );

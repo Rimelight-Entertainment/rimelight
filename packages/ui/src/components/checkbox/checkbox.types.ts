@@ -7,11 +7,6 @@ export type RLCheckboxVariant = "list" | "card";
 export type RLCheckboxSize = "xs" | "sm" | "md" | "lg" | "xl";
 export type RLCheckboxIndicator = "start" | "end" | "hidden";
 
-export interface RLCheckboxSlots {
-  label?: ((props: { label: string | undefined }) => JSX.Element) | JSX.Element;
-  description?: ((props: { description: string | undefined }) => JSX.Element) | JSX.Element;
-}
-
 export interface RLCheckboxUiSlots {
   root?: string | undefined;
   container?: string | undefined;

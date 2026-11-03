@@ -10,7 +10,7 @@ export interface RLQuoteProps {
    */
   class?: any;
   children?: JSX.Element;
-  quote?: JSX.Element;
-  caption?: JSX.Element;
+  quoteSlot?: JSX.Element;
+  captionSlot?: JSX.Element;
   [key: string]: unknown;
 }

@@ -24,9 +24,6 @@ const OMIT_KEYS = [
   "descriptionKey",
   "onChange",
   "onValueChange",
-  "legendSlot",
-  "labelSlot",
-  "descriptionSlot",
 ] as const;
 
 export const RLCheckboxGroup: Component<RLCheckboxGroupProps> = (props) => {
@@ -35,7 +32,9 @@ export const RLCheckboxGroup: Component<RLCheckboxGroupProps> = (props) => {
     classes,
     rest,
     id,
+    slots,
   } = RLCheckboxGroupTheme.setup(props, {
+    slots: ["legendSlot", "labelSlot", "descriptionSlot"] as const,
     omit: OMIT_KEYS,
     idPrefix: "rl-checkbox-group",
   });
@@ -135,7 +134,7 @@ export const RLCheckboxGroup: Component<RLCheckboxGroupProps> = (props) => {
   };
 
   const renderLegend = () => {
-    if (props.legendSlot !== undefined) return props.legendSlot;
+    if (slots.legendSlot() !== undefined) return slots.legendSlot();
     return props.legend;
   };
 
@@ -149,7 +148,7 @@ export const RLCheckboxGroup: Component<RLCheckboxGroupProps> = (props) => {
       {...rest}
     >
       <fieldset class={classes().fieldset} data-slot="fieldset">
-        <Show when={props.legend || props.legendSlot}>
+        <Show when={props.legend || slots.legendSlot()}>
           <legend class={classes().legend} data-slot="legend">
             {renderLegend()}
           </legend>
@@ -198,11 +197,13 @@ export const RLCheckboxGroup: Component<RLCheckboxGroupProps> = (props) => {
                     class={item.class}
                     onChange={(e) => toggleValue(item.value, e.currentTarget.checked, e)}
                     labelSlot={
-                      props.labelSlot ? () => props.labelSlot!({ item: item as any }) : undefined
+                      slots.labelSlot()
+                        ? () => slots.labelSlot()!({ item: item as any })
+                        : undefined
                     }
                     descriptionSlot={
-                      props.descriptionSlot
-                        ? () => props.descriptionSlot!({ item: item as any })
+                      slots.descriptionSlot()
+                        ? () => slots.descriptionSlot()!({ item: item as any })
                         : undefined
                     }
                   />

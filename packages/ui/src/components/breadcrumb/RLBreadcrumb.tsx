@@ -13,11 +13,6 @@ const OMIT_KEYS = [
   "maxVisible",
   "estimatedItemWidth",
   "separator",
-  "itemSlot",
-  "itemLeadingSlot",
-  "itemLabelSlot",
-  "itemTrailingSlot",
-  "separatorSlot",
   "slots",
 ] as const;
 
@@ -31,13 +26,23 @@ interface VisibleItemEntry {
 }
 
 export const RLBreadcrumb: Component<RLBreadcrumbProps<any>> = (props) => {
+  // `slots` is this component's public item-renderer map, so setup's accessors are named
+  // `slotAccessors`.
   const {
     Tag: RootTag,
     classes,
     rest,
+    slots: slotAccessors,
   } = RLBreadcrumbTheme.setup(props, {
     as: "nav",
     omit: OMIT_KEYS,
+    slots: [
+      "itemSlot",
+      "itemLeadingSlot",
+      "itemLabelSlot",
+      "itemTrailingSlot",
+      "separatorSlot",
+    ] as const,
   });
 
   const allItems = () => (Array.isArray(props.items) ? props.items : []);
@@ -168,18 +173,13 @@ export const RLBreadcrumb: Component<RLBreadcrumbProps<any>> = (props) => {
       }),
     );
 
-    if (props.separatorSlot) {
+    const separatorRenderer = slotAccessors.separatorSlot();
+    if (separatorRenderer !== undefined) {
       return (
         <span class={themeClasses().separator} data-slot="separator" aria-hidden="true">
-          {props.separatorSlot({ item, index: idx })}
-        </span>
-      );
-    }
-
-    if (props.separator !== undefined && props.separator !== null) {
-      return (
-        <span class={themeClasses().separator} data-slot="separator" aria-hidden="true">
-          {props.separator}
+          {typeof separatorRenderer === "function"
+            ? separatorRenderer({ item, index: idx })
+            : separatorRenderer}
         </span>
       );
     }
@@ -205,15 +205,16 @@ export const RLBreadcrumb: Component<RLBreadcrumbProps<any>> = (props) => {
     const hasTo = () => theme().hasTo;
     const classes = createMemo(() => theme().classes());
 
-    if (props.itemSlot) {
-      return props.itemSlot({ item, index, active: active() });
+    const itemRenderer = slotAccessors.itemSlot();
+    if (itemRenderer) {
+      return itemRenderer({ item, index, active: active() });
     }
 
     const labelText = () => getItemLabel(item);
 
-    const leadingSlot = props.itemLeadingSlot;
-    const labelSlot = props.itemLabelSlot;
-    const trailingSlot = props.itemTrailingSlot;
+    const leadingSlot = slotAccessors.itemLeadingSlot();
+    const labelSlot = slotAccessors.itemLabelSlot();
+    const trailingSlot = slotAccessors.itemTrailingSlot();
 
     const renderLeading = () => {
       if (leadingSlot) {

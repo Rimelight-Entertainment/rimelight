@@ -53,9 +53,7 @@ export interface RLSidebarProps {
    */
   class?: any;
   children?: JSX.Element;
-  header?: JSX.Element;
   headerSlot?: JSX.Element;
-  footer?: JSX.Element;
   footerSlot?: JSX.Element;
   [key: string]: unknown;
 }

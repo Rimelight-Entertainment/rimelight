@@ -1,9 +1,10 @@
 import type { RLModalProps } from "./modal.types";
 import { RLModalTheme } from "./modal.theme";
 import { createEffect, createSignal, onSettled, Show, type Component } from "solid-js";
-import { Portal, type JSX } from "@solidjs/web";
+import { Portal } from "@solidjs/web";
 import { RLButton } from "../button/RLButton";
 import { uiT } from "../../locale";
+import { slot } from "../../slot";
 
 const OMIT_KEYS = [
   "open",
@@ -21,21 +22,6 @@ const OMIT_KEYS = [
   "ariaLabel",
   "ariaLabelledby",
   "ariaDescribedby",
-  "trigger",
-  "triggerSlot",
-  "content",
-  "contentSlot",
-  "header",
-  "headerSlot",
-  "titleSlot",
-  "descriptionSlot",
-  "actions",
-  "actionsSlot",
-  "closeSlot",
-  "body",
-  "bodySlot",
-  "footer",
-  "footerSlot",
   "onOpenChange",
   "onClose",
   "onClosePrevent",
@@ -45,13 +31,27 @@ const OMIT_KEYS = [
   "onAfterLeave",
 ] as const;
 
+const SLOT_KEYS = [
+  "triggerSlot",
+  "contentSlot",
+  "headerSlot",
+  "titleSlot",
+  "descriptionSlot",
+  "actionsSlot",
+  "closeSlot",
+  "bodySlot",
+  "footerSlot",
+] as const;
+
 export const RLModal: Component<RLModalProps> = (props) => {
   const {
     classes,
     rest,
+    slots,
     id: modalId,
   } = RLModalTheme.setup(props, {
     omit: OMIT_KEYS,
+    slots: SLOT_KEYS,
     idPrefix: "rl-modal",
   });
 
@@ -136,140 +136,141 @@ export const RLModal: Component<RLModalProps> = (props) => {
     };
   });
 
-  const resolveSlot = (slot: unknown): JSX.Element =>
-    typeof slot === "function" ? (slot as () => JSX.Element)() : (slot as JSX.Element);
-
-  const triggerContent = () => resolveSlot(props.triggerSlot ?? props.trigger);
-  const contentSlotContent = () => resolveSlot(props.contentSlot ?? props.content);
-  const headerSlotContent = () => resolveSlot(props.headerSlot ?? props.header);
-  const titleContent = () => resolveSlot(props.titleSlot ?? props.title);
-  const descriptionContent = () => resolveSlot(props.descriptionSlot ?? props.description);
-  const actionsContent = () => resolveSlot(props.actionsSlot ?? props.actions);
-  const closeSlotContent = () => resolveSlot(props.closeSlot);
-  const footerContent = () => resolveSlot(props.footerSlot ?? props.footer);
-  const bodyContent = () => resolveSlot(props.bodySlot ?? props.body ?? props.children);
-
   const showCloseButton = () => props.close !== false;
   const closeProps = () => (typeof props.close === "object" ? props.close : {});
 
-  const renderModalDialog = () => (
-    <div
-      class={classes().overlay}
-      data-slot="overlay"
-      data-state={isOpen() ? "open" : "closed"}
-      style={{ display: isOpen() || !unmountOnHide() ? undefined : "none" }}
-      onClick={(e) => {
-        if (e.target === e.currentTarget) {
-          handleDismiss();
-        }
-      }}
-    >
+  // Overlay slots are invoked here, inside the dialog render, which only runs while the
+  // modal is open. Each invocation is memoized once so repeated reads (aria ids, Show
+  // guards, and the markup itself) share one subtree.
+  const renderModalDialog = () => {
+    const contentNode = slot(() => slots.contentSlot()?.());
+    const headerNode = slot(() => slots.headerSlot()?.());
+    const titleNode = slot(() => slots.titleSlot()?.() ?? props.title);
+    const descriptionNode = slot(() => slots.descriptionSlot()?.() ?? props.description);
+    const actionsNode = slot(() => slots.actionsSlot()?.());
+    const closeNode = slot(() => slots.closeSlot()?.());
+    const bodyNode = slot(() => slots.bodySlot()?.() ?? props.children);
+    const footerNode = slot(() => slots.footerSlot()?.());
+
+    return (
       <div
-        ref={(el) => (contentRef = el)}
-        role={(props.role ?? "dialog") as any}
-        aria-modal={isModal() ? "true" : undefined}
-        aria-label={props.ariaLabel}
-        aria-labelledby={props.ariaLabelledby ?? (titleContent() ? titleId() : undefined)}
-        aria-describedby={props.ariaDescribedby ?? (descriptionContent() ? descId() : undefined)}
+        class={classes().overlay}
+        data-slot="overlay"
         data-state={isOpen() ? "open" : "closed"}
-        data-slot="content"
-        class={classes().content}
-        tabindex={-1}
-        onClick={(e) => e.stopPropagation()}
-        {...rest}
+        style={{ display: isOpen() || !unmountOnHide() ? undefined : "none" }}
+        onClick={(e) => {
+          if (e.target === e.currentTarget) {
+            handleDismiss();
+          }
+        }}
       >
-        <Show
-          when={contentSlotContent()}
-          fallback={
-            <>
-              {/* Header / Title / Description */}
-              <Show
-                when={
-                  headerSlotContent() ||
-                  titleContent() ||
-                  descriptionContent() ||
-                  showCloseButton() ||
-                  closeSlotContent()
-                }
-              >
+        <div
+          ref={(el) => (contentRef = el)}
+          role={(props.role ?? "dialog") as any}
+          aria-modal={isModal() ? "true" : undefined}
+          aria-label={props.ariaLabel}
+          aria-labelledby={props.ariaLabelledby ?? (titleNode() ? titleId() : undefined)}
+          aria-describedby={props.ariaDescribedby ?? (descriptionNode() ? descId() : undefined)}
+          data-state={isOpen() ? "open" : "closed"}
+          data-slot="content"
+          class={classes().content}
+          tabindex={-1}
+          onClick={(e) => e.stopPropagation()}
+          {...rest}
+        >
+          <Show
+            when={contentNode()}
+            fallback={
+              <>
+                {/* Header / Title / Description */}
                 <Show
-                  when={headerSlotContent()}
-                  fallback={
-                    <div class={classes().header} data-slot="header">
-                      <div class="flex flex-col gap-1 min-w-0 flex-1">
-                        <Show when={titleContent()}>
-                          <h2 id={titleId()} class={classes().title} data-slot="title">
-                            {titleContent()}
-                          </h2>
-                        </Show>
-                        <Show when={descriptionContent()}>
-                          <p id={descId()} class={classes().description} data-slot="description">
-                            {descriptionContent()}
-                          </p>
-                        </Show>
-                      </div>
-
-                      <Show when={actionsContent()}>
-                        <div class={classes().actions} data-slot="actions">
-                          {actionsContent()}
-                        </div>
-                      </Show>
-
-                      <Show when={closeSlotContent() || showCloseButton()}>
-                        <Show
-                          when={closeSlotContent()}
-                          fallback={
-                            <RLButton
-                              type="button"
-                              variant="ghost"
-                              color="neutral"
-                              size="sm"
-                              square
-                              leadingIcon={props.closeIcon ?? "x"}
-                              aria-label={uiT("modal.close")}
-                              data-slot="close"
-                              class={classes().close}
-                              onClick={handleClose}
-                              {...closeProps()}
-                            />
-                          }
-                        >
-                          <span onClick={handleClose}>{closeSlotContent()}</span>
-                        </Show>
-                      </Show>
-                    </div>
+                  when={
+                    headerNode() ||
+                    titleNode() ||
+                    descriptionNode() ||
+                    showCloseButton() ||
+                    closeNode()
                   }
                 >
-                  <div class={classes().header} data-slot="header">
-                    {headerSlotContent()}
+                  <Show
+                    when={headerNode()}
+                    fallback={
+                      <div class={classes().header} data-slot="header">
+                        <div class="flex flex-col gap-1 min-w-0 flex-1">
+                          <Show when={titleNode()}>
+                            <h2 id={titleId()} class={classes().title} data-slot="title">
+                              {titleNode()}
+                            </h2>
+                          </Show>
+                          <Show when={descriptionNode()}>
+                            <p id={descId()} class={classes().description} data-slot="description">
+                              {descriptionNode()}
+                            </p>
+                          </Show>
+                        </div>
+
+                        <Show when={actionsNode()}>
+                          <div class={classes().actions} data-slot="actions">
+                            {actionsNode()}
+                          </div>
+                        </Show>
+
+                        <Show when={closeNode() || showCloseButton()}>
+                          <Show
+                            when={closeNode()}
+                            fallback={
+                              <RLButton
+                                type="button"
+                                variant="ghost"
+                                color="neutral"
+                                size="sm"
+                                square
+                                leadingIcon={props.closeIcon ?? "x"}
+                                aria-label={uiT("modal.close")}
+                                data-slot="close"
+                                class={classes().close}
+                                onClick={handleClose}
+                                {...closeProps()}
+                              />
+                            }
+                          >
+                            <span onClick={handleClose}>{closeNode()}</span>
+                          </Show>
+                        </Show>
+                      </div>
+                    }
+                  >
+                    <div class={classes().header} data-slot="header">
+                      {headerNode()}
+                    </div>
+                  </Show>
+                </Show>
+
+                {/* Body */}
+                <div class={classes().body} data-slot="body">
+                  {bodyNode()}
+                </div>
+
+                {/* Footer */}
+                <Show when={footerNode()}>
+                  <div class={classes().footer} data-slot="footer">
+                    {footerNode()}
                   </div>
                 </Show>
-              </Show>
-
-              {/* Body */}
-              <div class={classes().body} data-slot="body">
-                {bodyContent()}
-              </div>
-
-              {/* Footer */}
-              <Show when={footerContent()}>
-                <div class={classes().footer} data-slot="footer">
-                  {footerContent()}
-                </div>
-              </Show>
-            </>
-          }
-        >
-          {contentSlotContent()}
-        </Show>
+              </>
+            }
+          >
+            {contentNode()}
+          </Show>
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   return (
     <div class={classes().root} data-slot="root">
       <Show
-        when={triggerContent()}
+        when={slots.triggerSlot()}
         fallback={
           <Show when={props.triggerLabel}>
             <RLButton
@@ -288,7 +289,7 @@ export const RLModal: Component<RLModalProps> = (props) => {
           data-slot="trigger-wrapper"
           onClick={() => setOpenState(true)}
         >
-          {triggerContent()}
+          {slots.triggerSlot()}
         </span>
       </Show>
 

@@ -18,9 +18,9 @@ export interface RLFooterProps {
    * Additional CSS classes to apply to the root element.
    */
   class?: any;
-  left?: JSX.Element;
-  center?: JSX.Element;
-  right?: JSX.Element;
+  leftSlot?: JSX.Element;
+  centerSlot?: JSX.Element;
+  rightSlot?: JSX.Element;
   children?: JSX.Element;
   [key: string]: unknown;
 }

@@ -36,7 +36,7 @@ describe("RLModal", () => {
     it("renders custom trigger element", () => {
       const html = render(() => (
         <RLModal
-          trigger={
+          triggerSlot={
             <button type="button" class="my-custom-btn">
               Launch
             </button>
@@ -47,7 +47,7 @@ describe("RLModal", () => {
       expect(html).toContain("Launch");
     });
 
-    it("supports triggerSlot prop alias", () => {
+    it("renders triggerSlot", () => {
       const html = render(() => (
         <RLModal triggerSlot={<span class="badge-trigger">Click me</span>} />
       ));
@@ -114,8 +114,8 @@ describe("RLModal", () => {
           portal={false}
           title="Prop Title"
           description="Prop Desc"
-          titleSlot={<h3 class="custom-title-slot">Slot Title</h3>}
-          descriptionSlot={<p class="custom-desc-slot">Slot Desc</p>}
+          titleSlot={() => <h3 class="custom-title-slot">Slot Title</h3>}
+          descriptionSlot={() => <p class="custom-desc-slot">Slot Desc</p>}
         />
       ));
       expect(html).toContain("custom-title-slot");
@@ -132,7 +132,7 @@ describe("RLModal", () => {
           open
           portal={false}
           title="Ignored"
-          header={<div class="custom-header">Custom Header Content</div>}
+          headerSlot={() => <div class="custom-header">Custom Header Content</div>}
         >
           Body
         </RLModal>
@@ -148,11 +148,11 @@ describe("RLModal", () => {
           open
           portal={false}
           title="Modal Header"
-          actions={
+          actionsSlot={() => (
             <button type="button" class="header-action-btn">
               Action
             </button>
-          }
+          )}
         />
       ));
       expect(slotTag(html, "actions")).not.toBe("");
@@ -160,18 +160,16 @@ describe("RLModal", () => {
       expect(html).toContain("Action");
     });
 
-    it("renders footer via footer prop and footerSlot alias", () => {
-      const htmlProp = render(() => (
-        <RLModal open portal={false} footer={<div class="prop-footer">Prop Footer</div>} />
+    it("renders footerSlot", () => {
+      const html = render(() => (
+        <RLModal
+          open
+          portal={false}
+          footerSlot={() => <div class="slot-footer">Slot Footer</div>}
+        />
       ));
-      expect(slotTag(htmlProp, "footer")).not.toBe("");
-      expect(htmlProp).toContain("Prop Footer");
-
-      const htmlSlot = render(() => (
-        <RLModal open portal={false} footerSlot={<div class="slot-footer">Slot Footer</div>} />
-      ));
-      expect(slotTag(htmlSlot, "footer")).not.toBe("");
-      expect(htmlSlot).toContain("Slot Footer");
+      expect(slotTag(html, "footer")).not.toBe("");
+      expect(html).toContain("Slot Footer");
     });
 
     it("renders contentSlot overriding whole dialog contents", () => {
@@ -180,7 +178,7 @@ describe("RLModal", () => {
           open
           portal={false}
           title="Ignored"
-          contentSlot={<div class="entire-content-override">Override All</div>}
+          contentSlot={() => <div class="entire-content-override">Override All</div>}
         />
       ));
       expect(html).toContain("entire-content-override");
@@ -220,11 +218,11 @@ describe("RLModal", () => {
           open
           portal={false}
           title="Title"
-          closeSlot={
+          closeSlot={() => (
             <button type="button" class="slot-close">
               X
             </button>
-          }
+          )}
         />
       ));
       expect(html).toContain("slot-close");
@@ -333,7 +331,7 @@ describe("RLModal", () => {
           portal={false}
           title="Custom Title"
           description="Custom Description"
-          footer="Custom Footer"
+          footerSlot={() => "Custom Footer"}
           ui={{
             root: "custom-root-class",
             overlay: "custom-overlay-class",

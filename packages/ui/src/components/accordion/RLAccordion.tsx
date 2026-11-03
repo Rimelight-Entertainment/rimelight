@@ -16,12 +16,7 @@ const OMIT_KEYS = [
   "unmountOnHide",
   "valueKey",
   "labelKey",
-  "leading",
-  "trailing",
-  "content",
-  "body",
   "onChange",
-  "trailingIconSlot",
   "name",
 ] as const;
 
@@ -46,7 +41,15 @@ const normalizeMultiple = (value: string | string[] | undefined): string[] =>
   value === undefined ? [] : Array.isArray(value) ? [...value] : [value];
 
 export const RLAccordion: Component<RLAccordionProps> = (props) => {
-  const { Tag: ItemsRoot, classes, rest } = RLAccordionTheme.setup(props, { omit: OMIT_KEYS });
+  const {
+    Tag: ItemsRoot,
+    classes,
+    rest,
+    slots,
+  } = RLAccordionTheme.setup(props, {
+    omit: OMIT_KEYS,
+    slots: ["leadingSlot", "trailingSlot", "contentSlot", "bodySlot", "trailingIconSlot"] as const,
+  });
   const SummaryRoot = RLAccordionTheme.tag(props, "details");
 
   const isMultiple = () => props.multiple === true || props.type === "multiple";
@@ -116,7 +119,7 @@ export const RLAccordion: Component<RLAccordionProps> = (props) => {
   };
 
   const renderLeading = (item: AccordionItem, index: number) => {
-    const custom = props.leading?.(item, index);
+    const custom = slots.leadingSlot()?.(item, index);
     if (custom !== undefined && custom !== null) return custom;
     if (!item.icon) return null;
     return (
@@ -127,12 +130,12 @@ export const RLAccordion: Component<RLAccordionProps> = (props) => {
   };
 
   const renderTrailing = (item: AccordionItem, index: number) => {
-    const custom = props.trailing?.(item, index);
+    const custom = slots.trailingSlot()?.(item, index);
     if (custom !== undefined && custom !== null) return custom;
-    if (props.trailingIconSlot) {
+    if (slots.trailingIconSlot()) {
       return (
         <span class={classes().trailingIcon} data-slot="trailing-icon">
-          {props.trailingIconSlot}
+          {slots.trailingIconSlot()}
         </span>
       );
     }
@@ -146,13 +149,13 @@ export const RLAccordion: Component<RLAccordionProps> = (props) => {
   };
 
   const renderBodyInner = (item: AccordionItem, index: number) => {
-    const custom = props.body?.(item, index);
+    const custom = slots.bodySlot()?.(item, index);
     if (custom !== undefined && custom !== null) return custom;
     return item.content;
   };
 
   const renderContent = (item: AccordionItem, index: number, val: string) => {
-    const custom = props.content?.(item, index);
+    const custom = slots.contentSlot()?.(item, index);
     if (custom !== undefined && custom !== null) return custom;
     return (
       <div
@@ -247,7 +250,7 @@ export const RLAccordion: Component<RLAccordionProps> = (props) => {
             </span>
             {defaultTrailingIcon() ? (
               <span class={classes().trailingIcon} data-slot="trailing-icon">
-                {props.trailingIconSlot ?? <RLIcon name={defaultTrailingIcon()} size="md" />}
+                {slots.trailingIconSlot() ?? <RLIcon name={defaultTrailingIcon()} size="md" />}
               </span>
             ) : null}
           </summary>

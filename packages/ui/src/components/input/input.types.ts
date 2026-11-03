@@ -81,7 +81,7 @@ export interface RLInputProps {
   onFocus?: (e: FocusEvent & { currentTarget: HTMLInputElement }) => void;
   onKeyDown?: (e: KeyboardEvent & { currentTarget: HTMLInputElement }) => void;
   ref?: HTMLInputElement | ((el: HTMLInputElement) => void);
-  leading?: JSX.Element;
-  trailing?: JSX.Element;
+  leadingSlot?: JSX.Element;
+  trailingSlot?: JSX.Element;
   [key: string]: unknown;
 }

@@ -6,7 +6,10 @@ import { RLHoverCardTheme } from "./hover-card.theme";
 const OMIT_KEYS = ["triggerLabel", "trigger"] as const;
 
 export const RLHoverCard: Component<RLHoverCardProps> = (props) => {
-  const { classes, rest } = RLHoverCardTheme.setup(props, { omit: OMIT_KEYS });
+  const { classes, rest, slots } = RLHoverCardTheme.setup(props, {
+    omit: OMIT_KEYS,
+    slots: ["triggerSlot"] as const,
+  });
 
   const [isOpen, setIsOpen] = createSignal(false);
 
@@ -31,8 +34,8 @@ export const RLHoverCard: Component<RLHoverCardProps> = (props) => {
         onFocus={() => setIsOpen(true)}
         onBlur={() => setIsOpen(false)}
       >
-        {props.trigger ? (
-          props.trigger
+        {slots.triggerSlot() ? (
+          slots.triggerSlot()
         ) : props.triggerLabel ? (
           <span class="cursor-help underline decoration-dotted">{props.triggerLabel}</span>
         ) : null}

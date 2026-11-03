@@ -14,17 +14,21 @@ const OMIT_KEYS = [
   "title",
   "description",
   "actions",
-  "headerSlot",
-  "leadingSlot",
-  "titleSlot",
-  "descriptionSlot",
-  "bodySlot",
-  "actionsSlot",
-  "footerSlot",
 ] as const;
 
 export const RLEmpty: Component<RLEmptyProps> = (props) => {
-  const { classes, rest } = RLEmptyTheme.setup(props, { omit: OMIT_KEYS });
+  const { classes, rest, slots } = RLEmptyTheme.setup(props, {
+    omit: OMIT_KEYS,
+    slots: [
+      "headerSlot",
+      "leadingSlot",
+      "titleSlot",
+      "descriptionSlot",
+      "bodySlot",
+      "actionsSlot",
+      "footerSlot",
+    ] as const,
+  });
 
   const activeIcon = () =>
     props.loading ? (props.loadingIcon ?? "i-lucide-loader-circle") : props.icon;
@@ -33,11 +37,11 @@ export const RLEmpty: Component<RLEmptyProps> = (props) => {
   return (
     <div class={classes()["root"]} data-slot="root" {...rest}>
       <Show
-        when={props.headerSlot}
+        when={slots.headerSlot()}
         fallback={
           <div class={classes()["header"]} data-slot="header">
             <Show
-              when={props.leadingSlot}
+              when={slots.leadingSlot()}
               fallback={
                 <Show
                   when={activeIcon()}
@@ -59,42 +63,42 @@ export const RLEmpty: Component<RLEmptyProps> = (props) => {
                 </Show>
               }
             >
-              {props.leadingSlot}
+              {slots.leadingSlot()}
             </Show>
 
-            <Show when={props.title || props.titleSlot}>
+            <Show when={props.title || slots.titleSlot()}>
               <div class={classes()["title"]} data-slot="title">
-                <Show when={props.titleSlot} fallback={props.title}>
-                  {props.titleSlot}
+                <Show when={slots.titleSlot()} fallback={props.title}>
+                  {slots.titleSlot()}
                 </Show>
               </div>
             </Show>
 
-            <Show when={props.description || props.descriptionSlot}>
+            <Show when={props.description || slots.descriptionSlot()}>
               <div class={classes()["description"]} data-slot="description">
-                <Show when={props.descriptionSlot} fallback={props.description}>
-                  {props.descriptionSlot}
+                <Show when={slots.descriptionSlot()} fallback={props.description}>
+                  {slots.descriptionSlot()}
                 </Show>
               </div>
             </Show>
           </div>
         }
       >
-        {props.headerSlot}
+        {slots.headerSlot()}
       </Show>
 
-      <Show when={props.bodySlot || props.children}>
+      <Show when={slots.bodySlot() || props.children}>
         <div class={classes()["body"]} data-slot="body">
-          <Show when={props.bodySlot} fallback={props.children}>
-            {props.bodySlot}
+          <Show when={slots.bodySlot()} fallback={props.children}>
+            {slots.bodySlot()}
           </Show>
         </div>
       </Show>
 
-      <Show when={actionList().length > 0 || props.actionsSlot}>
+      <Show when={actionList().length > 0 || slots.actionsSlot()}>
         <div class={classes()["actions"]} data-slot="actions">
           <Show
-            when={props.actionsSlot}
+            when={slots.actionsSlot()}
             fallback={
               <For each={actionList()}>
                 {(action) => {
@@ -114,14 +118,14 @@ export const RLEmpty: Component<RLEmptyProps> = (props) => {
               </For>
             }
           >
-            {props.actionsSlot}
+            {slots.actionsSlot()}
           </Show>
         </div>
       </Show>
 
-      <Show when={props.footerSlot}>
+      <Show when={slots.footerSlot()}>
         <div class={classes()["footer"]} data-slot="footer">
-          {props.footerSlot}
+          {slots.footerSlot()}
         </div>
       </Show>
     </div>

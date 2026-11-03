@@ -31,7 +31,7 @@ export interface RLFormFieldProps {
    */
   class?: any;
   children?: JSX.Element;
-  hint?: JSX.Element;
+  hintSlot?: JSX.Element;
   labelSlot?: JSX.Element;
   descriptionSlot?: JSX.Element;
   errorSlot?: JSX.Element;

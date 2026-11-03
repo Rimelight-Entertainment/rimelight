@@ -23,8 +23,8 @@ export interface RLHeaderProps {
   stackIndex?: number;
   hideOnScroll?: boolean;
   layerType?: "header" | "banner";
-  left?: JSX.Element;
-  center?: JSX.Element;
-  right?: JSX.Element;
+  leftSlot?: JSX.Element;
+  centerSlot?: JSX.Element;
+  rightSlot?: JSX.Element;
   [key: string]: unknown;
 }

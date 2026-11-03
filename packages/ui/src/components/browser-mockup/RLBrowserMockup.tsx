@@ -15,13 +15,6 @@ const OMIT_KEYS = [
   "padded",
   "shadow",
   "rounded",
-  "headerSlot",
-  "controlsSlot",
-  "navigationSlot",
-  "urlSlot",
-  "urlPrefixSlot",
-  "urlSuffixSlot",
-  "actionsSlot",
   "ariaLabel",
 ] as const;
 
@@ -31,7 +24,17 @@ export const RLBrowserMockup: Component<RLBrowserMockupProps> = (props) => {
     classes,
     rest,
     id,
+    slots,
   } = RLBrowserMockupTheme.setup(props, {
+    slots: [
+      "headerSlot",
+      "controlsSlot",
+      "navigationSlot",
+      "urlPrefixSlot",
+      "urlSlot",
+      "urlSuffixSlot",
+      "actionsSlot",
+    ] as const,
     omit: OMIT_KEYS,
     variants: () => ({
       controlsVariant: props.controls === false ? "none" : props.controlsVariant,
@@ -49,15 +52,15 @@ export const RLBrowserMockup: Component<RLBrowserMockupProps> = (props) => {
 
   const showUrlBar = () =>
     props.url !== undefined ||
-    Boolean(props.urlSlot) ||
-    Boolean(props.urlPrefixSlot) ||
-    Boolean(props.urlSuffixSlot);
+    Boolean(slots.urlSlot()) ||
+    Boolean(slots.urlPrefixSlot()) ||
+    Boolean(slots.urlSuffixSlot());
 
   const urlIconName = () => props.urlIcon ?? "lock";
 
   const renderUrlPrefix = () => {
-    if (props.urlPrefixSlot) {
-      return props.urlPrefixSlot;
+    if (slots.urlPrefixSlot()) {
+      return slots.urlPrefixSlot();
     }
     if (props.urlPrefix === false) {
       return null;
@@ -88,13 +91,13 @@ export const RLBrowserMockup: Component<RLBrowserMockupProps> = (props) => {
     >
       <header class={classes().header} data-slot="header">
         <Show
-          when={props.headerSlot}
+          when={slots.headerSlot()}
           fallback={
             <>
               {/* Window Controls (macOS / neutral dots) */}
               <Show when={showControls()}>
                 <Show
-                  when={props.controlsSlot}
+                  when={slots.controlsSlot()}
                   fallback={
                     <div class={classes().controls} data-slot="controls" aria-hidden="true">
                       <span
@@ -112,14 +115,14 @@ export const RLBrowserMockup: Component<RLBrowserMockupProps> = (props) => {
                     </div>
                   }
                 >
-                  {props.controlsSlot}
+                  {slots.controlsSlot()}
                 </Show>
               </Show>
 
               {/* Navigation controls (back, forward, reload) */}
               <Show when={showNavigation()}>
                 <Show
-                  when={props.navigationSlot}
+                  when={slots.navigationSlot()}
                   fallback={
                     <div
                       class={classes().navigation}
@@ -153,14 +156,14 @@ export const RLBrowserMockup: Component<RLBrowserMockupProps> = (props) => {
                     </div>
                   }
                 >
-                  {props.navigationSlot}
+                  {slots.navigationSlot()}
                 </Show>
               </Show>
 
               {/* URL Address Bar */}
               <Show when={showUrlBar()}>
                 <Show
-                  when={props.urlSlot}
+                  when={slots.urlSlot()}
                   fallback={
                     <div class={classes().urlBar} data-slot="url-bar">
                       {renderUrlPrefix()}
@@ -169,28 +172,28 @@ export const RLBrowserMockup: Component<RLBrowserMockupProps> = (props) => {
                           {props.url}
                         </span>
                       </Show>
-                      <Show when={props.urlSuffixSlot}>
+                      <Show when={slots.urlSuffixSlot()}>
                         <span class={classes().urlSuffix} data-slot="url-suffix">
-                          {props.urlSuffixSlot}
+                          {slots.urlSuffixSlot()}
                         </span>
                       </Show>
                     </div>
                   }
                 >
-                  {props.urlSlot}
+                  {slots.urlSlot()}
                 </Show>
               </Show>
 
               {/* Actions slot */}
-              <Show when={props.actionsSlot}>
+              <Show when={slots.actionsSlot()}>
                 <div class={classes().actions} data-slot="actions">
-                  {props.actionsSlot}
+                  {slots.actionsSlot()}
                 </div>
               </Show>
             </>
           }
         >
-          {props.headerSlot}
+          {slots.headerSlot()}
         </Show>
       </header>
 

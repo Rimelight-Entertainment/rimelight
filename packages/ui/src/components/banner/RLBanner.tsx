@@ -23,13 +23,6 @@ const OMIT_KEYS = [
   "fixed",
   "stackIndex",
   "hideOnScroll",
-  "leading",
-  "titleSlot",
-  "actionsSlot",
-  "closeSlot",
-  "left",
-  "center",
-  "right",
   "href",
   "target",
   "rel",
@@ -53,9 +46,18 @@ export const RLBanner: Component<RLBannerProps> = (props) => {
   const href = () => props.href;
   const isLink = () => Boolean(href());
 
-  const { Tag, classes, rest, id } = RLBannerTheme.setup(props, {
+  const { Tag, classes, rest, id, slots } = RLBannerTheme.setup(props, {
     as: "div",
     omit: OMIT_KEYS,
+    slots: [
+      "leadingSlot",
+      "titleSlot",
+      "actionsSlot",
+      "closeSlot",
+      "leftSlot",
+      "centerSlot",
+      "rightSlot",
+    ] as const,
     variants: () => ({
       contain: props.contain ?? true,
       sticky: sticky(),
@@ -98,10 +100,10 @@ export const RLBanner: Component<RLBannerProps> = (props) => {
 
   const hasTitle = () =>
     Boolean(
-      props.titleSlot !== undefined || props.title !== undefined || props.children !== undefined,
+      slots.titleSlot() !== undefined || props.title !== undefined || props.children !== undefined,
     );
   const hasActions = () =>
-    Boolean(props.actionsSlot !== undefined || (props.actions && props.actions.length > 0));
+    Boolean(slots.actionsSlot() !== undefined || (props.actions && props.actions.length > 0));
 
   const { registerHeader } = useHeaderStack();
   const layer = registerHeader({
@@ -204,13 +206,13 @@ export const RLBanner: Component<RLBannerProps> = (props) => {
         <div class={classes().content} data-slot="content" data-header-content>
           <div class={classes().container} data-slot="container">
             <div class={classes().left} data-slot="left">
-              {props.left}
+              {slots.leftSlot()}
             </div>
 
             <div class={classes().center} data-slot="center">
-              <Show when={!props.center} fallback={props.center}>
+              <Show when={!slots.centerSlot()} fallback={slots.centerSlot()}>
                 <Show
-                  when={props.leading}
+                  when={slots.leadingSlot()}
                   fallback={
                     <Show when={props.icon}>
                       {(icon) => (
@@ -221,39 +223,39 @@ export const RLBanner: Component<RLBannerProps> = (props) => {
                     </Show>
                   }
                 >
-                  {props.leading}
+                  {slots.leadingSlot()}
                 </Show>
 
                 <Show when={hasTitle()}>
                   <div id={titleId()} class={classes().title} data-slot="title">
-                    {props.titleSlot ?? props.title ?? props.children}
+                    {slots.titleSlot() ?? props.title ?? props.children}
                   </div>
                 </Show>
               </Show>
             </div>
 
             <div class={classes().right} data-slot="right">
-              {props.right}
+              {slots.rightSlot()}
 
               {/* Actions off to the rightmost next to the close button */}
               <Show when={hasActions()}>
                 <div class={classes().actions} data-slot="actions">
                   <Show
-                    when={props.actionsSlot}
+                    when={slots.actionsSlot()}
                     fallback={
                       <For each={props.actions}>
                         {(action) => <RLButton color="neutral" size="xs" {...action} />}
                       </For>
                     }
                   >
-                    {props.actionsSlot}
+                    {slots.actionsSlot()}
                   </Show>
                 </div>
               </Show>
 
               {/* Close Button */}
               <Show
-                when={props.closeSlot}
+                when={slots.closeSlot()}
                 fallback={
                   <Show when={isClosable()}>
                     <RLButton
@@ -267,7 +269,7 @@ export const RLBanner: Component<RLBannerProps> = (props) => {
                   </Show>
                 }
               >
-                {props.closeSlot}
+                {slots.closeSlot()}
               </Show>
             </div>
           </div>

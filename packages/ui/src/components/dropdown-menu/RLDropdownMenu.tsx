@@ -16,7 +16,10 @@ const OMIT_KEYS = [
 ] as const;
 
 export const RLDropdownMenu: Component<RLDropdownMenuProps> = (props) => {
-  const { classes, rest } = RLDropdownMenuTheme.setup(props, { omit: OMIT_KEYS });
+  const { classes, rest, slots } = RLDropdownMenuTheme.setup(props, {
+    omit: OMIT_KEYS,
+    slots: ["triggerSlot"] as const,
+  });
 
   const [isOpen, setIsOpen] = createSignal(false);
   const [coords, setCoords] = createSignal<{
@@ -80,7 +83,7 @@ export const RLDropdownMenu: Component<RLDropdownMenuProps> = (props) => {
     return [props.items as DropdownMenuItem[]];
   });
 
-  const triggerElement = () => props.trigger || props.children;
+  const triggerElement = () => slots.triggerSlot() || props.children;
 
   return (
     <div

@@ -162,21 +162,13 @@ const RLSidebarItems: Component<{
   );
 };
 
-const OMIT_KEYS = [
-  "items",
-  "logo",
-  "t",
-  "_depth",
-  "header",
-  "headerSlot",
-  "footer",
-  "footerSlot",
-] as const;
+const OMIT_KEYS = ["items", "logo", "t", "_depth"] as const;
 
 export const RLSidebar: Component<RLSidebarProps> = (props) => {
-  const { Tag, classes, rest } = RLSidebarTheme.setup(props, {
+  const { Tag, classes, rest, slots } = RLSidebarTheme.setup(props, {
     as: "aside",
     omit: OMIT_KEYS,
+    slots: ["headerSlot", "footerSlot"] as const,
     variants: () => ({ side: "left" }),
   });
 
@@ -195,28 +187,21 @@ export const RLSidebar: Component<RLSidebarProps> = (props) => {
 
   const headerContent = () => (
     <Show
-      when={props.header}
+      when={slots.headerSlot()}
       fallback={
-        <Show
-          when={props.headerSlot}
-          fallback={
-            <Show when={props.logo}>
-              <span data-slot="sidebar-logo" class={classes().logoWrapper}>
-                <RLIcon name="i-lucide-layers" class="size-5 text-primary" />
-                <span class="truncate">{props.logo}</span>
-              </span>
-            </Show>
-          }
-        >
-          {props.headerSlot}
+        <Show when={props.logo}>
+          <span data-slot="sidebar-logo" class={classes().logoWrapper}>
+            <RLIcon name="i-lucide-layers" class="size-5 text-primary" />
+            <span class="truncate">{props.logo}</span>
+          </span>
         </Show>
       }
     >
-      {props.header}
+      {slots.headerSlot()}
     </Show>
   );
 
-  const footerContent = () => props.footer || props.footerSlot;
+  const footerContent = () => slots.footerSlot();
 
   return (
     <Show

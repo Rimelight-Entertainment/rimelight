@@ -1092,7 +1092,17 @@ export const RLTable = <T = any,>(props: RLTableProps<T>): JSX.Element => {
   }
 
   // ─── Theme Resolution ────────────────────────────────────────────────────────
-  const { classes } = RLTableTheme.setup(props, {
+  const { classes, slots } = RLTableTheme.setup(props, {
+    slots: [
+      "toolbarSlot",
+      "captionSlot",
+      "groupHeaderSlot",
+      "expandedContentSlot",
+      "loadingContentSlot",
+      "emptyContentSlot",
+      "bodyTopSlot",
+      "bodyBottomSlot",
+    ] as const,
     variants: () => ({ externalScroll: false, pinned: false }),
   });
 
@@ -1101,7 +1111,7 @@ export const RLTable = <T = any,>(props: RLTableProps<T>): JSX.Element => {
       props.searchable ||
       props.showColumnsToggle ||
       props.exportable ||
-      !!props.toolbar ||
+      !!slots.toolbarSlot() ||
       !!props.slots?.["toolbar"],
   );
 
@@ -1168,7 +1178,7 @@ export const RLTable = <T = any,>(props: RLTableProps<T>): JSX.Element => {
 
           {props.slots?.["toolbar"]
             ? props.slots["toolbar"]({ table: tableApi })
-            : props.toolbar?.()}
+            : slots.toolbarSlot()?.()}
 
           <div class="ml-auto flex items-center gap-2 shrink-0">
             <Show when={props.exportable}>
@@ -1228,12 +1238,12 @@ export const RLTable = <T = any,>(props: RLTableProps<T>): JSX.Element => {
             </For>
           </colgroup>
 
-          <Show when={props.caption || props.captionContent || props.slots?.["caption"]}>
+          <Show when={props.caption || slots.captionSlot() || props.slots?.["caption"]}>
             <caption class={classes().caption} data-slot="caption">
               {props.slots?.["caption"]
                 ? props.slots["caption"]({ table: tableApi })
-                : props.captionContent
-                  ? props.captionContent()
+                : slots.captionSlot()
+                  ? slots.captionSlot()?.()
                   : props.caption}
             </caption>
           </Show>
@@ -1460,7 +1470,7 @@ export const RLTable = <T = any,>(props: RLTableProps<T>): JSX.Element => {
           <tbody class={classes().tbody} data-slot="tbody">
             {props.slots?.["body-top"]
               ? props.slots["body-top"]({ table: tableApi })
-              : props.bodyTop?.()}
+              : slots.bodyTopSlot()?.()}
 
             <Show
               when={!props.loading}
@@ -1472,7 +1482,7 @@ export const RLTable = <T = any,>(props: RLTableProps<T>): JSX.Element => {
                     data-slot="loading"
                   >
                     <Show
-                      when={props.slots?.["loading"] || props.loadingContent}
+                      when={props.slots?.["loading"] || slots.loadingContentSlot()}
                       fallback={
                         <div class="flex items-center justify-center gap-2 text-muted py-4">
                           <RLIcon
@@ -1485,7 +1495,7 @@ export const RLTable = <T = any,>(props: RLTableProps<T>): JSX.Element => {
                     >
                       {props.slots?.["loading"]
                         ? props.slots["loading"]({ table: tableApi })
-                        : props.loadingContent?.()}
+                        : slots.loadingContentSlot()?.()}
                     </Show>
                   </td>
                 </tr>
@@ -1501,7 +1511,7 @@ export const RLTable = <T = any,>(props: RLTableProps<T>): JSX.Element => {
                       data-slot="empty"
                     >
                       <Show
-                        when={props.slots?.["empty"] || props.emptyContent}
+                        when={props.slots?.["empty"] || slots.emptyContentSlot()}
                         fallback={
                           <div class="flex flex-col items-center justify-center py-6 gap-2 text-muted">
                             <RLIcon name="i-lucide-inbox" class="size-8 opacity-40" />
@@ -1511,7 +1521,7 @@ export const RLTable = <T = any,>(props: RLTableProps<T>): JSX.Element => {
                       >
                         {props.slots?.["empty"]
                           ? props.slots["empty"]({ table: tableApi })
-                          : props.emptyContent?.()}
+                          : slots.emptyContentSlot()?.()}
                       </Show>
                     </td>
                   </tr>
@@ -1542,7 +1552,7 @@ export const RLTable = <T = any,>(props: RLTableProps<T>): JSX.Element => {
                             data-slot="td-group"
                           >
                             <Show
-                              when={groupHeaderSlot || props.groupHeader}
+                              when={groupHeaderSlot || slots.groupHeaderSlot()}
                               fallback={
                                 <span class="flex items-center gap-2">
                                   <span class="i-lucide-layers size-3.5 text-primary opacity-70" />
@@ -1562,7 +1572,7 @@ export const RLTable = <T = any,>(props: RLTableProps<T>): JSX.Element => {
                                     colSpan: visibleColumns().length,
                                     table: tableApi,
                                   })
-                                : props.groupHeader?.(group, visibleColumns().length)}
+                                : slots.groupHeaderSlot()?.(group, visibleColumns().length)}
                             </Show>
                           </td>
                         </tr>
@@ -1756,7 +1766,7 @@ export const RLTable = <T = any,>(props: RLTableProps<T>): JSX.Element => {
                           when={
                             row.getCanExpand() &&
                             row.getIsExpanded() &&
-                            (props.slots?.["expanded"] || props.expandedContent)
+                            (props.slots?.["expanded"] || slots.expandedContentSlot())
                           }
                         >
                           <tr class={classes().trExpanded} data-slot="tr-expanded">
@@ -1767,7 +1777,7 @@ export const RLTable = <T = any,>(props: RLTableProps<T>): JSX.Element => {
                             >
                               {props.slots?.["expanded"]
                                 ? props.slots["expanded"]({ row, table: tableApi })
-                                : props.expandedContent?.(row)}
+                                : slots.expandedContentSlot()?.(row)}
                             </td>
                           </tr>
                         </Show>
@@ -1936,7 +1946,7 @@ export const RLTable = <T = any,>(props: RLTableProps<T>): JSX.Element => {
 
             {props.slots?.["body-bottom"]
               ? props.slots["body-bottom"]({ table: tableApi })
-              : props.bodyBottom?.()}
+              : slots.bodyBottomSlot()?.()}
           </tbody>
 
           {/* ── tfoot ── */}

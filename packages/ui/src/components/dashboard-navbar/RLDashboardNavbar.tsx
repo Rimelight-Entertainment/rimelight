@@ -4,18 +4,7 @@ import { type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 import { uiT } from "../../locale";
 
-const OMIT_KEYS = [
-  "icon",
-  "title",
-  "toggle",
-  "toggleSide",
-  "leftSlot",
-  "rightSlot",
-  "centerSlot",
-  "titleSlot",
-  "leadingSlot",
-  "trailingSlot",
-] as const;
+const OMIT_KEYS = ["icon", "title", "toggle", "toggleSide"] as const;
 
 export const RLDashboardNavbar: Component<RLDashboardNavbarProps> = (props) => {
   const showToggle = () => props.toggle ?? true;
@@ -25,7 +14,16 @@ export const RLDashboardNavbar: Component<RLDashboardNavbarProps> = (props) => {
     Tag: Root,
     classes,
     rest,
+    slots,
   } = RLDashboardNavbarTheme.setup(props, {
+    slots: [
+      "leftSlot",
+      "centerSlot",
+      "rightSlot",
+      "leadingSlot",
+      "trailingSlot",
+      "titleSlot",
+    ] as const,
     as: "header",
     omit: OMIT_KEYS,
     variants: () => ({ toggleSide: toggleSide() }),
@@ -59,18 +57,18 @@ export const RLDashboardNavbar: Component<RLDashboardNavbarProps> = (props) => {
 
   const leftContent = () => {
     if ("leftSlot" in props) {
-      return props.leftSlot;
+      return slots.leftSlot();
     }
     return (
       <>
-        {props.leadingSlot ??
+        {slots.leadingSlot() ??
           (props.icon ? (
             <RLIcon name={props.icon} class={classes().icon} data-slot="icon" />
           ) : null)}
         <h1 data-slot="title" class={classes().title}>
-          {"titleSlot" in props ? props.titleSlot : props.title}
+          {"titleSlot" in props ? slots.titleSlot() : props.title}
         </h1>
-        {props.trailingSlot}
+        {slots.trailingSlot()}
       </>
     );
   };
@@ -78,7 +76,7 @@ export const RLDashboardNavbar: Component<RLDashboardNavbarProps> = (props) => {
   const centerContent = () =>
     "centerSlot" in props || "children" in props ? (
       <div data-slot="center" class={classes().center}>
-        {"centerSlot" in props ? props.centerSlot : props.children}
+        {"centerSlot" in props ? slots.centerSlot() : props.children}
       </div>
     ) : null;
 
@@ -92,7 +90,7 @@ export const RLDashboardNavbar: Component<RLDashboardNavbarProps> = (props) => {
       {centerContent()}
 
       <div data-slot="right" class={classes().right}>
-        {props.rightSlot}
+        {slots.rightSlot()}
         {rightToggle()}
       </div>
     </>

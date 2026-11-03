@@ -26,13 +26,18 @@ const OMIT_KEYS = [
 export const RLLink: Component<RLLinkProps> = (props) => {
   const attrs = createMemo(() => resolveLinkAttrs(props));
 
-  const resolvedLeading = children(() => props.leading);
+  const resolvedLeading = children(() => slots.leadingSlot());
   const resolvedChildren = children(() => props.children);
-  const resolvedTrailing = children(() => props.trailing);
+  const resolvedTrailing = children(() => slots.trailingSlot());
 
   const ariaLabelValue = () => props.ariaLabel;
 
-  const { classes: themeClasses, rest } = RLLinkTheme.setup(props, {
+  const {
+    classes: themeClasses,
+    rest,
+    slots,
+  } = RLLinkTheme.setup(props, {
+    slots: ["leadingSlot", "trailingSlot"] as const,
     omit: OMIT_KEYS,
     variants: () => ({
       active: props.active,

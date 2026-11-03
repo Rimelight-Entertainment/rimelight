@@ -101,13 +101,13 @@ export interface RLCompareProps {
    * Content rendered in the "before" (left/top) section.
    * Can be an element or a function receiving the current position percentage.
    */
-  before?: JSX.Element | ((value: number) => JSX.Element);
+  beforeSlot?: JSX.Element | ((value: number) => JSX.Element);
 
   /**
    * Content rendered in the "after" (right/bottom) section.
    * Can be an element or a function receiving the current position percentage.
    */
-  after?: JSX.Element | ((value: number) => JSX.Element);
+  afterSlot?: JSX.Element | ((value: number) => JSX.Element);
 
   /**
    * Shorthand URL for the "before" image.
@@ -134,12 +134,12 @@ export interface RLCompareProps {
   /**
    * Label text or element for the "before" side.
    */
-  beforeLabel?: JSX.Element | string;
+  beforeLabelSlot?: JSX.Element | string;
 
   /**
    * Label text or element for the "after" side.
    */
-  afterLabel?: JSX.Element | string;
+  afterLabelSlot?: JSX.Element | string;
 
   /**
    * Whether to display before/after labels.
@@ -160,7 +160,7 @@ export interface RLCompareProps {
   /**
    * Custom handle element or render function receiving orientation and value.
    */
-  handle?:
+  handleSlot?:
     | JSX.Element
     | ((props: { orientation: CompareOrientation; value: number }) => JSX.Element);
 

@@ -174,8 +174,8 @@ describe("RLButton", () => {
     it("supports custom leading and trailing slot content", () => {
       const html = render(() => (
         <RLButton
-          leading={<span class="custom-leading">🚀</span>}
-          trailing={<span class="custom-trailing">➡️</span>}
+          leadingSlot={<span class="custom-leading">🚀</span>}
+          trailingSlot={<span class="custom-trailing">➡️</span>}
           label="Custom Slots"
         />
       ));

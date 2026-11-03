@@ -9,7 +9,7 @@ import { RLButton } from "../button/RLButton";
 import { defineShortcuts } from "../../shortcuts";
 import { uiNodes, uiT } from "../../locale";
 
-const OMIT_KEYS = ["endpoint", "placeholder", "messages", "triggerSlot"] as const;
+const OMIT_KEYS = ["endpoint", "placeholder", "messages"] as const;
 
 export const RLSearch: Component<RLSearchProps> = (props) => {
   const {
@@ -17,8 +17,10 @@ export const RLSearch: Component<RLSearchProps> = (props) => {
     classes,
     rest,
     id: modalId,
+    slots,
   } = RLSearchTheme.setup(props, {
     omit: OMIT_KEYS,
+    slots: ["triggerSlot"] as const,
     idPrefix: "rl-search",
   });
 
@@ -130,9 +132,9 @@ export const RLSearch: Component<RLSearchProps> = (props) => {
 
   return (
     <Tag class={`${classes().root} rl-search-wrapper`} data-slot="root" {...rest}>
-      {props.triggerSlot ? (
+      {slots.triggerSlot() ? (
         <div class="cursor-pointer" onClick={toggleModal}>
-          {props.triggerSlot}
+          {slots.triggerSlot()}
         </div>
       ) : props.children ? (
         <div class="cursor-pointer" onClick={toggleModal}>
@@ -181,8 +183,8 @@ export const RLSearch: Component<RLSearchProps> = (props) => {
                       closeModal();
                     }
                   }}
-                  leading={<RLIcon name="search" class={classes().headerIcon} />}
-                  trailing={
+                  leadingSlot={<RLIcon name="search" class={classes().headerIcon} />}
+                  trailingSlot={
                     <div class="flex items-center gap-2">
                       <Show when={loading()}>
                         <RLIcon name="loader-circle" class="size-4 animate-spin text-muted" />

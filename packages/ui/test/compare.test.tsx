@@ -145,8 +145,8 @@ describe("RLCompare Component Test Suite", () => {
       const html = cleanHtml(
         renderToString(() => (
           <RLCompare
-            before={<div class="p-4 bg-red-500">Left Version</div>}
-            after={<div class="p-4 bg-blue-500">Right Version</div>}
+            beforeSlot={<div class="p-4 bg-red-500">Left Version</div>}
+            afterSlot={<div class="p-4 bg-blue-500">Right Version</div>}
           />
         )),
       );
@@ -160,8 +160,8 @@ describe("RLCompare Component Test Suite", () => {
         renderToString(() => (
           <RLCompare
             value={60}
-            before={(val) => <span>Before at {val}%</span>}
-            after={(val) => <span>After at {val}%</span>}
+            beforeSlot={(val) => <span>Before at {val}%</span>}
+            afterSlot={(val) => <span>After at {val}%</span>}
           />
         )),
       );
@@ -192,8 +192,8 @@ describe("RLCompare Component Test Suite", () => {
           <RLCompare
             beforeSrc="/b.jpg"
             afterSrc="/a.jpg"
-            beforeLabel="Before Polish"
-            afterLabel="After Polish"
+            beforeLabelSlot="Before Polish"
+            afterLabelSlot="After Polish"
           />
         )),
       );
@@ -210,8 +210,8 @@ describe("RLCompare Component Test Suite", () => {
           <RLCompare
             beforeSrc="/b.jpg"
             afterSrc="/a.jpg"
-            beforeLabel="B"
-            afterLabel="A"
+            beforeLabelSlot="B"
+            afterLabelSlot="A"
             beforeLabelPlacement="bottom-left"
             afterLabelPlacement="bottom-right"
           />
@@ -243,7 +243,7 @@ describe("RLCompare Component Test Suite", () => {
           <RLCompare
             beforeSrc="/b.jpg"
             afterSrc="/a.jpg"
-            handle={({ orientation, value }) => (
+            handleSlot={({ orientation, value }) => (
               <div data-custom-handle>
                 {orientation}-{value}
               </div>

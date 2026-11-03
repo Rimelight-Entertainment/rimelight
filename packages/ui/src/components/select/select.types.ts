@@ -28,7 +28,7 @@ export interface RLSelectProps {
   class?: string | undefined;
   items?: SelectItem[] | string[] | undefined;
   leadingIcon?: string | undefined;
-  leading?: JSX.Element | undefined;
+  leadingSlot?: JSX.Element | undefined;
   children?: JSX.Element | undefined;
   theme?: string | undefined;
   ui?: any;

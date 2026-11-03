@@ -119,33 +119,6 @@ export const componentMeta: ComponentMetaMap = {
           "Explicit native group name for the `<details>` items. When omitted no `name` renders: single-open exclusivity is enforced by component state, and independent accordions can never merge into one native group. Pass it to opt into native exclusive grouping (e.g. no-JS contexts). Rimelight extra: not in Nuxt UI.",
       },
       {
-        name: "leading",
-        type: "AccordionSlotRenderer",
-        required: false,
-        description: "Custom leading content per item. Falls back to `item.icon`.",
-      },
-      {
-        name: "trailing",
-        type: "AccordionSlotRenderer",
-        required: false,
-        description:
-          "Custom trailing content per item. Falls back to `trailingIconSlot`, then the `trailingIcon` prop / `item.trailingIcon`.",
-      },
-      {
-        name: "content",
-        type: "AccordionSlotRenderer",
-        required: false,
-        description:
-          "Custom content area per item. Falls back to the default content/body wrappers around the resolved body.",
-      },
-      {
-        name: "body",
-        type: "AccordionSlotRenderer",
-        required: false,
-        description:
-          "Custom body content per item. Falls back to per-item named slots, then `item.content`.",
-      },
-      {
         name: "onChange",
         type: "(value: string | string[] | undefined) => void",
         required: false,
@@ -164,6 +137,29 @@ export const componentMeta: ComponentMetaMap = {
         bindings: {},
         description:
           "Custom trailing icon element applied to every item (overridden per item by the `trailing` render prop, then by `item.trailingIcon`).",
+      },
+      {
+        name: "leading",
+        bindings: {},
+        description: "Custom leading content per item. Falls back to `item.icon`.",
+      },
+      {
+        name: "trailing",
+        bindings: {},
+        description:
+          "Custom trailing content per item. Falls back to `trailingIconSlot`, then the `trailingIcon` prop / `item.trailingIcon`.",
+      },
+      {
+        name: "content",
+        bindings: {},
+        description:
+          "Custom content area per item. Falls back to the default content/body wrappers around the resolved body.",
+      },
+      {
+        name: "body",
+        bindings: {},
+        description:
+          "Custom body content per item. Falls back to per-item named slots, then `item.content`.",
       },
     ],
     emits: [],
@@ -513,7 +509,7 @@ export const componentMeta: ComponentMetaMap = {
       },
       {
         name: "transcript",
-        type: "JSX.Element | undefined",
+        type: "string | undefined",
         required: false,
         description: "",
       },
@@ -563,6 +559,11 @@ export const componentMeta: ComponentMetaMap = {
     slots: [
       {
         name: "default",
+        bindings: {},
+        description: "",
+      },
+      {
+        name: "transcript",
         bindings: {},
         description: "",
       },
@@ -1692,9 +1693,9 @@ export const componentMeta: ComponentMetaMap = {
       },
       {
         name: "title",
-        type: "string | JSX.Element | undefined",
+        type: "string | undefined",
         required: false,
-        description: "Text or node title of the banner.",
+        description: "Title text of the banner. Use titleSlot for JSX.",
       },
       {
         name: "actions",
@@ -1881,36 +1882,17 @@ export const componentMeta: ComponentMetaMap = {
         required: false,
         description: "Force a color-scheme context on the component.",
       },
-      {
-        name: "leading",
-        type: "JSX.Element",
-        required: false,
-        description: "Replaces the leading icon.",
-      },
-      {
-        name: "left",
-        type: "JSX.Element",
-        required: false,
-        description: "Content rendered in the left area.",
-      },
-      {
-        name: "center",
-        type: "JSX.Element",
-        required: false,
-        description: "Replaces the center area content (leading & title).",
-      },
-      {
-        name: "right",
-        type: "JSX.Element",
-        required: false,
-        description: "Content rendered in the right area, before actions & close button.",
-      },
     ],
     slots: [
       {
         name: "default",
         bindings: {},
         description: "Default slot children.",
+      },
+      {
+        name: "leading",
+        bindings: {},
+        description: "Replaces the leading icon.",
       },
       {
         name: "title",
@@ -1926,6 +1908,21 @@ export const componentMeta: ComponentMetaMap = {
         name: "close",
         bindings: {},
         description: "Replaces the close button.",
+      },
+      {
+        name: "left",
+        bindings: {},
+        description: "Content rendered in the left area.",
+      },
+      {
+        name: "center",
+        bindings: {},
+        description: "Replaces the center area content (leading & title).",
+      },
+      {
+        name: "right",
+        bindings: {},
+        description: "Content rendered in the right area, before actions & close button.",
       },
     ],
     emits: [],
@@ -2077,12 +2074,6 @@ export const componentMeta: ComponentMetaMap = {
         required: false,
         description: "Additional CSS classes to apply to the root element.",
       },
-      {
-        name: "separator",
-        type: "JSX.Element",
-        required: false,
-        description: "",
-      },
     ],
     slots: [
       {
@@ -2113,7 +2104,7 @@ export const componentMeta: ComponentMetaMap = {
       {
         name: "separator",
         bindings: {},
-        description: "",
+        description: "Separator element, or a render function receiving `{ item, index }`.",
       },
     ],
     emits: [],
@@ -2644,10 +2635,9 @@ export const componentMeta: ComponentMetaMap = {
       },
       {
         name: "leading",
-        type: "JSX.Element",
+        type: "boolean | undefined",
         required: false,
-        description:
-          "When `true`, the icon will be displayed on the left side. Also accepts slot JSX.",
+        description: "When `true`, the leading icon is displayed. JSX goes in leadingSlot.",
       },
       {
         name: "leadingIcon",
@@ -2657,10 +2647,9 @@ export const componentMeta: ComponentMetaMap = {
       },
       {
         name: "trailing",
-        type: "JSX.Element",
+        type: "boolean | undefined",
         required: false,
-        description:
-          "When `true`, the icon will be displayed on the right side. Also accepts slot JSX.",
+        description: "When `true`, the trailing icon is displayed. JSX goes in trailingSlot.",
       },
       {
         name: "trailingIcon",
@@ -4123,12 +4112,6 @@ export const componentMeta: ComponentMetaMap = {
         required: false,
         description: "Accessible aria-describedby ID override.",
       },
-      {
-        name: "leading",
-        type: "JSX.Element",
-        required: false,
-        description: "",
-      },
     ],
     slots: [
       {
@@ -4278,15 +4261,15 @@ export const componentMeta: ComponentMetaMap = {
       },
       {
         name: "title",
-        type: "string | JSX.Element | undefined",
+        type: "string | undefined",
         required: false,
-        description: "Text or node displayed as the title of the card header.",
+        description: "Title text of the card header. Use titleSlot for JSX.",
       },
       {
         name: "description",
-        type: "string | JSX.Element | undefined",
+        type: "string | undefined",
         required: false,
-        description: "Text or node displayed as the description of the card header.",
+        description: "Description text of the card header. Use descriptionSlot for JSX.",
       },
       {
         name: "variant",
@@ -4303,7 +4286,7 @@ export const componentMeta: ComponentMetaMap = {
       },
       {
         name: "overlay",
-        type: "JSX.Element",
+        type: "boolean | undefined",
         required: false,
         description: "Whether to render content in an overlay layer over media.",
         default: "false",
@@ -4374,30 +4357,6 @@ export const componentMeta: ComponentMetaMap = {
         required: false,
         description: "Additional CSS classes to apply to the root element.",
       },
-      {
-        name: "header",
-        type: "JSX.Element",
-        required: false,
-        description: "Content rendered in the header slot. Replaces title and description.",
-      },
-      {
-        name: "body",
-        type: "JSX.Element",
-        required: false,
-        description: "Content rendered in the body slot.",
-      },
-      {
-        name: "footer",
-        type: "JSX.Element",
-        required: false,
-        description: "Content rendered in the footer slot.",
-      },
-      {
-        name: "media",
-        type: "JSX.Element",
-        required: false,
-        description: "Custom media content slot.",
-      },
     ],
     slots: [
       {
@@ -4408,32 +4367,32 @@ export const componentMeta: ComponentMetaMap = {
       {
         name: "header",
         bindings: {},
-        description: "Slot alias for `header`.",
+        description: "Header content. Replaces title and description.",
       },
       {
         name: "title",
         bindings: {},
-        description: "Custom title slot content.",
+        description: "Custom title content. Takes precedence over the `title` string.",
       },
       {
         name: "description",
         bindings: {},
-        description: "Custom description slot content.",
+        description: "Custom description content. Takes precedence over the `description` string.",
       },
       {
         name: "body",
         bindings: {},
-        description: "Slot alias for `body`.",
+        description: "Body content. Takes precedence over `children`.",
       },
       {
         name: "footer",
         bindings: {},
-        description: "Slot alias for `footer`.",
+        description: "Footer content.",
       },
       {
         name: "media",
         bindings: {},
-        description: "Slot alias for `media`.",
+        description: "Media content. Takes precedence over `mediaSrc`.",
       },
       {
         name: "overlay",
@@ -6222,12 +6181,6 @@ export const componentMeta: ComponentMetaMap = {
         required: false,
         description: "Additional CSS classes to apply to the root element.",
       },
-      {
-        name: "content",
-        type: "JSX.Element",
-        required: false,
-        description: "Content / text rendered inside the chip indicator.",
-      },
     ],
     slots: [
       {
@@ -6406,18 +6359,6 @@ export const componentMeta: ComponentMetaMap = {
         default: "true",
       },
       {
-        name: "content",
-        type: "JSX.Element | ((props?: Record<string, unknown>) => JSX.Element)",
-        required: false,
-        description: "Content slot element or render prop displayed when open.",
-      },
-      {
-        name: "trigger",
-        type: "JSX.Element | ((props: { open: boolean }) => JSX.Element)",
-        required: false,
-        description: "Explicit trigger slot element or render prop function.",
-      },
-      {
         name: "onOpenChange",
         type: "(open: boolean) => void",
         required: false,
@@ -6463,12 +6404,12 @@ export const componentMeta: ComponentMetaMap = {
       {
         name: "content",
         bindings: {},
-        description: "Content slot alias for template usage.",
+        description: "Content displayed when open. Element or render function.",
       },
       {
         name: "trigger",
         bindings: {},
-        description: "Trigger slot alias for template usage.",
+        description: "Trigger element or render function receiving `{ open }`.",
       },
     ],
     emits: [],
@@ -7009,20 +6950,6 @@ export const componentMeta: ComponentMetaMap = {
         default: '"horizontal"',
       },
       {
-        name: "before",
-        type: "JSX.Element | ((value: number) => JSX.Element)",
-        required: false,
-        description:
-          'Content rendered in the "before" (left/top) section. Can be an element or a function receiving the current position percentage.',
-      },
-      {
-        name: "after",
-        type: "JSX.Element | ((value: number) => JSX.Element)",
-        required: false,
-        description:
-          'Content rendered in the "after" (right/bottom) section. Can be an element or a function receiving the current position percentage.',
-      },
-      {
         name: "beforeSrc",
         type: "string",
         required: false,
@@ -7049,18 +6976,6 @@ export const componentMeta: ComponentMetaMap = {
         default: '"After"',
       },
       {
-        name: "beforeLabel",
-        type: "JSX.Element | string",
-        required: false,
-        description: 'Label text or element for the "before" side.',
-      },
-      {
-        name: "afterLabel",
-        type: "JSX.Element | string",
-        required: false,
-        description: 'Label text or element for the "after" side.',
-      },
-      {
         name: "showLabels",
         type: "boolean",
         required: false,
@@ -7078,12 +6993,6 @@ export const componentMeta: ComponentMetaMap = {
         type: "CompareLabelPlacement",
         required: false,
         description: "Placement for the after side label.",
-      },
-      {
-        name: "handle",
-        type: "JSX.Element | ((props: { orientation: CompareOrientation; value: number }) => JSX.Element)",
-        required: false,
-        description: "Custom handle element or render function receiving orientation and value.",
       },
       {
         name: "handleIcon",
@@ -7207,6 +7116,33 @@ export const componentMeta: ComponentMetaMap = {
       },
     ],
     slots: [
+      {
+        name: "before",
+        bindings: {},
+        description:
+          'Content rendered in the "before" (left/top) section. Can be an element or a function receiving the current position percentage.',
+      },
+      {
+        name: "after",
+        bindings: {},
+        description:
+          'Content rendered in the "after" (right/bottom) section. Can be an element or a function receiving the current position percentage.',
+      },
+      {
+        name: "beforeLabel",
+        bindings: {},
+        description: 'Label text or element for the "before" side.',
+      },
+      {
+        name: "afterLabel",
+        bindings: {},
+        description: 'Label text or element for the "after" side.',
+      },
+      {
+        name: "handle",
+        bindings: {},
+        description: "Custom handle element or render function receiving orientation and value.",
+      },
       {
         name: "default",
         bindings: {},
@@ -7456,18 +7392,6 @@ export const componentMeta: ComponentMetaMap = {
         description: "Additional CSS classes to apply to the root element.",
       },
       {
-        name: "trigger",
-        type: "JSX.Element | (() => JSX.Element) | undefined",
-        required: false,
-        description: "Custom trigger element.",
-      },
-      {
-        name: "footer",
-        type: "JSX.Element | (() => JSX.Element) | undefined",
-        required: false,
-        description: "Custom footer actions slot override.",
-      },
-      {
         name: "onOpenChange",
         type: "((open: boolean) => void) | undefined",
         required: false,
@@ -7501,22 +7425,22 @@ export const componentMeta: ComponentMetaMap = {
       {
         name: "trigger",
         bindings: {},
-        description: "Trigger slot override.",
+        description: "Trigger element. Always rendered, so it is plain JSX.",
       },
       {
         name: "title",
         bindings: {},
-        description: "Title slot override.",
+        description: "Title content. Function-only: invoked while the dialog is open.",
       },
       {
         name: "description",
         bindings: {},
-        description: "Description slot override.",
+        description: "Description content. Function-only: invoked while the dialog is open.",
       },
       {
         name: "footer",
         bindings: {},
-        description: "Footer slot override.",
+        description: "Footer content. Replaces the default Cancel/Confirm row. Function-only.",
       },
     ],
     emits: [],
@@ -7717,36 +7641,6 @@ export const componentMeta: ComponentMetaMap = {
         default: '"chevron-right"',
       },
       {
-        name: "topRender",
-        type: "JSX.Element | Component<ContextMenuTopRenderProps> | undefined",
-        required: false,
-        description: "Content rendered before the resolved item groups.",
-      },
-      {
-        name: "bottomRender",
-        type: "JSX.Element | Component<ContextMenuBottomRenderProps> | undefined",
-        required: false,
-        description: "Content rendered after the resolved item groups.",
-      },
-      {
-        name: "itemRender",
-        type: "Component<ContextMenuItemRenderProps> | undefined",
-        required: false,
-        description: "Renderer for each menu item.",
-      },
-      {
-        name: "trigger",
-        type: "JSX.Element | undefined",
-        required: false,
-        description: "Explicit trigger element when not using `children`.",
-      },
-      {
-        name: "content",
-        type: "JSX.Element | undefined",
-        required: false,
-        description: "Explicit content element when not using `items`.",
-      },
-      {
         name: "portal",
         type: "boolean | Node | undefined",
         required: false,
@@ -7814,27 +7708,27 @@ export const componentMeta: ComponentMetaMap = {
       {
         name: "top",
         bindings: {},
-        description: "Slot alias for `topRender`.",
+        description: "Content rendered before the resolved item groups.",
       },
       {
         name: "bottom",
         bindings: {},
-        description: "Slot alias for `bottomRender`.",
+        description: "Content rendered after the resolved item groups.",
       },
       {
         name: "item",
         bindings: {},
-        description: "Slot alias for `itemRender`.",
+        description: "Renderer for each menu item.",
       },
       {
         name: "trigger",
         bindings: {},
-        description: "Slot alias for `trigger`.",
+        description: "Trigger element when not using `children`.",
       },
       {
         name: "content",
         bindings: {},
-        description: "Slot alias for `content`.",
+        description: "Content element when not using `items`.",
       },
       {
         name: "default",
@@ -7984,20 +7878,6 @@ export const componentMeta: ComponentMetaMap = {
         type: "RLAvatarProps | string | undefined",
         required: false,
         description: "Display an avatar on the left side.",
-      },
-      {
-        name: "leading",
-        type: "JSX.Element",
-        required: false,
-        description:
-          "When `true`, the icon will be displayed on the left side. Also accepts slot JSX.",
-      },
-      {
-        name: "trailing",
-        type: "JSX.Element",
-        required: false,
-        description:
-          "When `true`, the icon will be displayed on the right side. Also accepts slot JSX.",
       },
       {
         name: "loadingIcon",
@@ -8368,30 +8248,6 @@ export const componentMeta: ComponentMetaMap = {
       {
         name: "class",
         type: "any",
-        required: false,
-        description: "",
-      },
-      {
-        name: "header",
-        type: "JSX.Element",
-        required: false,
-        description: "",
-      },
-      {
-        name: "body",
-        type: "JSX.Element",
-        required: false,
-        description: "",
-      },
-      {
-        name: "footer",
-        type: "JSX.Element",
-        required: false,
-        description: "",
-      },
-      {
-        name: "resizeHandle",
-        type: "JSX.Element",
         required: false,
         description: "",
       },
@@ -9053,18 +8909,6 @@ export const componentMeta: ComponentMetaMap = {
         description: "Additional CSS classes to apply to the root element.",
       },
       {
-        name: "trigger",
-        type: "JSX.Element",
-        required: false,
-        description: "",
-      },
-      {
-        name: "footer",
-        type: "JSX.Element",
-        required: false,
-        description: "",
-      },
-      {
         name: "defaultOpen",
         type: "boolean",
         required: false,
@@ -9104,22 +8948,22 @@ export const componentMeta: ComponentMetaMap = {
       {
         name: "trigger",
         bindings: {},
-        description: "",
+        description: "Trigger element. Always rendered, so it is plain JSX.",
       },
       {
         name: "title",
         bindings: {},
-        description: "",
+        description: "Title content. Function-only: invoked inside the open dialog.",
       },
       {
         name: "description",
         bindings: {},
-        description: "",
+        description: "Description content. Function-only: invoked inside the open dialog.",
       },
       {
         name: "footer",
         bindings: {},
-        description: "",
+        description: "Footer content. Function-only: invoked inside the open dialog.",
       },
     ],
     emits: [],
@@ -9251,16 +9095,15 @@ export const componentMeta: ComponentMetaMap = {
         required: false,
         description: "Additional CSS classes to apply to the root element.",
       },
-      {
-        name: "trigger",
-        type: "JSX.Element",
-        required: false,
-        description: "",
-      },
     ],
     slots: [
       {
         name: "default",
+        bindings: {},
+        description: "",
+      },
+      {
+        name: "trigger",
         bindings: {},
         description: "",
       },
@@ -9739,13 +9582,6 @@ export const componentMeta: ComponentMetaMap = {
     frameworks: ["solid"],
     props: [
       {
-        name: "fallback",
-        type: "(error: unknown, reset: () => void) => JSX.Element",
-        required: false,
-        description:
-          "Fully custom fallback. Receives the error and a `reset` function that re-runs the children. When omitted, `RLError` is rendered.",
-      },
-      {
         name: "resetKey",
         type: "unknown",
         required: false,
@@ -9794,6 +9630,12 @@ export const componentMeta: ComponentMetaMap = {
         description:
           "Content to protect. Any error thrown while rendering it (including rejected async reads) is caught here.",
       },
+      {
+        name: "fallback",
+        bindings: {},
+        description:
+          "Fully custom fallback. Receives the error and a `reset` function that re-runs the children. When omitted, `RLError` is rendered.",
+      },
     ],
     emits: [],
     theme: null,
@@ -9803,18 +9645,6 @@ export const componentMeta: ComponentMetaMap = {
     solidComponent: "RLFieldGroup.tsx",
     frameworks: ["solid"],
     props: [
-      {
-        name: "prepend",
-        type: "string | JSX.Element",
-        required: false,
-        description: "Text/icon to prepend.",
-      },
-      {
-        name: "append",
-        type: "string | JSX.Element",
-        required: false,
-        description: "Text/icon to append.",
-      },
       {
         name: "size",
         type: '"sm" | "md" | "lg"',
@@ -9835,6 +9665,16 @@ export const componentMeta: ComponentMetaMap = {
       },
     ],
     slots: [
+      {
+        name: "prepend",
+        bindings: {},
+        description: "Text/icon to prepend.",
+      },
+      {
+        name: "append",
+        bindings: {},
+        description: "Text/icon to append.",
+      },
       {
         name: "default",
         bindings: {},
@@ -10074,26 +9914,23 @@ export const componentMeta: ComponentMetaMap = {
         required: false,
         description: "Additional CSS classes to apply to the root element.",
       },
+    ],
+    slots: [
       {
         name: "left",
-        type: "JSX.Element",
-        required: false,
+        bindings: {},
         description: "",
       },
       {
         name: "center",
-        type: "JSX.Element",
-        required: false,
+        bindings: {},
         description: "",
       },
       {
         name: "right",
-        type: "JSX.Element",
-        required: false,
+        bindings: {},
         description: "",
       },
-    ],
-    slots: [
       {
         name: "default",
         bindings: {},
@@ -10235,16 +10072,15 @@ export const componentMeta: ComponentMetaMap = {
         required: false,
         description: "Additional CSS classes to apply to the root element.",
       },
-      {
-        name: "hint",
-        type: "JSX.Element",
-        required: false,
-        description: "",
-      },
     ],
     slots: [
       {
         name: "default",
+        bindings: {},
+        description: "",
+      },
+      {
+        name: "hint",
         bindings: {},
         description: "",
       },
@@ -10596,28 +10432,25 @@ export const componentMeta: ComponentMetaMap = {
         required: false,
         description: "",
       },
-      {
-        name: "left",
-        type: "JSX.Element",
-        required: false,
-        description: "",
-      },
-      {
-        name: "center",
-        type: "JSX.Element",
-        required: false,
-        description: "",
-      },
-      {
-        name: "right",
-        type: "JSX.Element",
-        required: false,
-        description: "",
-      },
     ],
     slots: [
       {
         name: "default",
+        bindings: {},
+        description: "",
+      },
+      {
+        name: "left",
+        bindings: {},
+        description: "",
+      },
+      {
+        name: "center",
+        bindings: {},
+        description: "",
+      },
+      {
+        name: "right",
         bindings: {},
         description: "",
       },
@@ -10694,16 +10527,15 @@ export const componentMeta: ComponentMetaMap = {
         required: false,
         description: "",
       },
-      {
-        name: "trigger",
-        type: "JSX.Element",
-        required: false,
-        description: "",
-      },
     ],
     slots: [
       {
         name: "default",
+        bindings: {},
+        description: "",
+      },
+      {
+        name: "trigger",
         bindings: {},
         description: "",
       },
@@ -10993,14 +10825,13 @@ export const componentMeta: ComponentMetaMap = {
         required: false,
         description: "",
       },
-      {
-        name: "trigger",
-        type: "JSX.Element",
-        required: false,
-        description: "",
-      },
     ],
     slots: [
+      {
+        name: "trigger",
+        bindings: {},
+        description: "",
+      },
       {
         name: "caption",
         bindings: {},
@@ -11217,20 +11048,19 @@ export const componentMeta: ComponentMetaMap = {
         required: false,
         description: "",
       },
+    ],
+    slots: [
       {
         name: "leading",
-        type: "JSX.Element",
-        required: false,
+        bindings: {},
         description: "",
       },
       {
         name: "trailing",
-        type: "JSX.Element",
-        required: false,
+        bindings: {},
         description: "",
       },
     ],
-    slots: [],
     emits: [],
     theme: {
       slots: ["root", "input", "leading", "trailing"],
@@ -12839,22 +12669,20 @@ export const componentMeta: ComponentMetaMap = {
         required: false,
         description: "Additional CSS classes to apply to the root element.",
       },
-      {
-        name: "leading",
-        type: "JSX.Element",
-        required: false,
-        description: "",
-      },
-      {
-        name: "trailing",
-        type: "JSX.Element",
-        required: false,
-        description: "",
-      },
     ],
     slots: [
       {
         name: "default",
+        bindings: {},
+        description: "",
+      },
+      {
+        name: "leading",
+        bindings: {},
+        description: "",
+      },
+      {
+        name: "trailing",
         bindings: {},
         description: "",
       },
@@ -13082,12 +12910,6 @@ export const componentMeta: ComponentMetaMap = {
         description: "Additional CSS classes to apply to the root element.",
       },
       {
-        name: "leading",
-        type: "JSX.Element",
-        required: false,
-        description: "",
-      },
-      {
         name: "leadingIcon",
         type: "string",
         required: false,
@@ -13114,6 +12936,11 @@ export const componentMeta: ComponentMetaMap = {
       },
       {
         name: "label",
+        bindings: {},
+        description: "",
+      },
+      {
+        name: "leading",
         bindings: {},
         description: "",
       },
@@ -13693,42 +13520,6 @@ export const componentMeta: ComponentMetaMap = {
         description: "Additional CSS classes to apply to the root element.",
       },
       {
-        name: "trigger",
-        type: "JSX.Element | (() => JSX.Element) | undefined",
-        required: false,
-        description: "Trigger element slot.",
-      },
-      {
-        name: "content",
-        type: "JSX.Element | (() => JSX.Element) | undefined",
-        required: false,
-        description: "Whole content override slot.",
-      },
-      {
-        name: "header",
-        type: "JSX.Element | (() => JSX.Element) | undefined",
-        required: false,
-        description: "Header section slot override.",
-      },
-      {
-        name: "actions",
-        type: "JSX.Element | (() => JSX.Element) | undefined",
-        required: false,
-        description: "Actions slot inside header.",
-      },
-      {
-        name: "body",
-        type: "JSX.Element | (() => JSX.Element) | undefined",
-        required: false,
-        description: "Modal body content slot.",
-      },
-      {
-        name: "footer",
-        type: "JSX.Element | (() => JSX.Element) | undefined",
-        required: false,
-        description: "Modal footer section slot.",
-      },
-      {
         name: "onOpenChange",
         type: "((open: boolean) => void) | undefined",
         required: false,
@@ -13780,47 +13571,48 @@ export const componentMeta: ComponentMetaMap = {
       {
         name: "trigger",
         bindings: {},
-        description: "Explicit trigger slot prop.",
+        description: "Trigger element. Always rendered, so it is plain JSX.",
       },
       {
         name: "content",
         bindings: {},
-        description: "Explicit content slot prop.",
+        description:
+          "Whole content override. Replaces the header, body, and footer. Function-only: invoked inside the dialog, so nothing is built while closed.",
       },
       {
         name: "header",
         bindings: {},
-        description: "Explicit header slot prop.",
+        description: "Header override. Replaces the default title/description/close header.",
       },
       {
         name: "title",
         bindings: {},
-        description: "Custom title slot.",
+        description: "Title content. Takes precedence over the `title` string.",
       },
       {
         name: "description",
         bindings: {},
-        description: "Custom description slot.",
+        description: "Description content. Takes precedence over the `description` string.",
       },
       {
         name: "actions",
         bindings: {},
-        description: "Explicit actions slot prop.",
+        description: "Actions rendered in the header.",
       },
       {
         name: "close",
         bindings: {},
-        description: "Custom close button slot.",
+        description: "Custom close control. Replaces the default close button.",
       },
       {
         name: "body",
         bindings: {},
-        description: "Explicit body slot prop.",
+        description: "Body content. Takes precedence over `children`.",
       },
       {
         name: "footer",
         bindings: {},
-        description: "Explicit footer slot prop.",
+        description: "Footer content.",
       },
     ],
     emits: [],
@@ -14177,22 +13969,20 @@ export const componentMeta: ComponentMetaMap = {
         required: false,
         description: "Additional CSS classes to apply to the root element.",
       },
+    ],
+    slots: [
       {
         name: "left",
-        type: "JSX.Element",
-        required: false,
+        bindings: {},
         description:
           "Content rendered in the left column. The column is only rendered when provided.",
       },
       {
         name: "right",
-        type: "JSX.Element",
-        required: false,
+        bindings: {},
         description:
           "Content rendered in the right column. The column is only rendered when provided.",
       },
-    ],
-    slots: [
       {
         name: "default",
         bindings: {},
@@ -14448,56 +14238,28 @@ export const componentMeta: ComponentMetaMap = {
         required: false,
         description: "Dynamic intrinsic size fallback for content-visibility layout stability.",
       },
+    ],
+    slots: [
       {
         name: "background",
-        type: "JSX.Element",
-        required: false,
+        bindings: {},
         description: "",
       },
       {
         name: "top",
-        type: "JSX.Element",
-        required: false,
+        bindings: {},
         description: "",
       },
       {
         name: "header",
-        type: "JSX.Element",
-        required: false,
+        bindings: {},
         description: "",
       },
       {
         name: "leading",
-        type: "JSX.Element",
-        required: false,
+        bindings: {},
         description: "",
       },
-      {
-        name: "body",
-        type: "JSX.Element",
-        required: false,
-        description: "",
-      },
-      {
-        name: "footer",
-        type: "JSX.Element",
-        required: false,
-        description: "",
-      },
-      {
-        name: "content",
-        type: "JSX.Element",
-        required: false,
-        description: "",
-      },
-      {
-        name: "bottom",
-        type: "JSX.Element",
-        required: false,
-        description: "",
-      },
-    ],
-    slots: [
       {
         name: "headline",
         bindings: {},
@@ -14514,7 +14276,27 @@ export const componentMeta: ComponentMetaMap = {
         description: "",
       },
       {
+        name: "body",
+        bindings: {},
+        description: "",
+      },
+      {
+        name: "footer",
+        bindings: {},
+        description: "",
+      },
+      {
         name: "links",
+        bindings: {},
+        description: "",
+      },
+      {
+        name: "content",
+        bindings: {},
+        description: "",
+      },
+      {
+        name: "bottom",
         bindings: {},
         description: "",
       },
@@ -14956,12 +14738,6 @@ export const componentMeta: ComponentMetaMap = {
         description: "Additional CSS classes to apply to the root element.",
       },
       {
-        name: "trigger",
-        type: "JSX.Element",
-        required: false,
-        description: "",
-      },
-      {
         name: "defaultOpen",
         type: "boolean",
         required: false,
@@ -14977,6 +14753,11 @@ export const componentMeta: ComponentMetaMap = {
     slots: [
       {
         name: "default",
+        bindings: {},
+        description: "",
+      },
+      {
+        name: "trigger",
         bindings: {},
         description: "",
       },
@@ -15457,22 +15238,20 @@ export const componentMeta: ComponentMetaMap = {
         required: false,
         description: "Additional CSS classes to apply to the root element.",
       },
-      {
-        name: "quote",
-        type: "JSX.Element",
-        required: false,
-        description: "",
-      },
-      {
-        name: "caption",
-        type: "JSX.Element",
-        required: false,
-        description: "",
-      },
     ],
     slots: [
       {
         name: "default",
+        bindings: {},
+        description: "",
+      },
+      {
+        name: "quote",
+        bindings: {},
+        description: "",
+      },
+      {
+        name: "caption",
         bindings: {},
         description: "",
       },
@@ -16017,12 +15796,6 @@ export const componentMeta: ComponentMetaMap = {
         description: "",
       },
       {
-        name: "leading",
-        type: "JSX.Element | undefined",
-        required: false,
-        description: "",
-      },
-      {
         name: "theme",
         type: "string | undefined",
         required: false,
@@ -16048,6 +15821,11 @@ export const componentMeta: ComponentMetaMap = {
       },
     ],
     slots: [
+      {
+        name: "leading",
+        bindings: {},
+        description: "",
+      },
       {
         name: "default",
         bindings: {},
@@ -16616,18 +16394,6 @@ export const componentMeta: ComponentMetaMap = {
         required: false,
         description: "Additional CSS classes to apply to the root element.",
       },
-      {
-        name: "header",
-        type: "JSX.Element",
-        required: false,
-        description: "",
-      },
-      {
-        name: "footer",
-        type: "JSX.Element",
-        required: false,
-        description: "",
-      },
     ],
     slots: [
       {
@@ -16861,18 +16627,6 @@ export const componentMeta: ComponentMetaMap = {
         description: "Keep content mounted in the DOM when hidden.",
       },
       {
-        name: "trigger",
-        type: "JSX.Element",
-        required: false,
-        description: "",
-      },
-      {
-        name: "footer",
-        type: "JSX.Element",
-        required: false,
-        description: "",
-      },
-      {
         name: "defaultOpen",
         type: "boolean",
         required: false,
@@ -16894,22 +16648,22 @@ export const componentMeta: ComponentMetaMap = {
       {
         name: "trigger",
         bindings: {},
-        description: "",
+        description: "Trigger element. Always rendered, so it is plain JSX.",
       },
       {
         name: "title",
         bindings: {},
-        description: "",
+        description: "Title content. Function-only: invoked while the sheet is mounted.",
       },
       {
         name: "description",
         bindings: {},
-        description: "",
+        description: "Description content. Function-only: invoked while the sheet is mounted.",
       },
       {
         name: "footer",
         bindings: {},
-        description: "",
+        description: "Footer content. Function-only: invoked while the sheet is mounted.",
       },
     ],
     emits: [],
@@ -17272,13 +17026,6 @@ export const componentMeta: ComponentMetaMap = {
         default: "false",
       },
       {
-        name: "handle",
-        type: "JSX.Element | ((state: SplitterHandleState) => JSX.Element)",
-        required: false,
-        description:
-          "Custom handle grip content or render function receiving `{ collapsed, dragging, active, index, orientation }`.",
-      },
-      {
         name: "handleIcon",
         type: "string | boolean",
         required: false,
@@ -17369,7 +17116,8 @@ export const componentMeta: ComponentMetaMap = {
       {
         name: "handle",
         bindings: {},
-        description: "Custom handle slot element.",
+        description:
+          "Custom handle grip content, or a render function receiving `{ collapsed, dragging, active, index, orientation }`.",
       },
       {
         name: "default",
@@ -18462,56 +18210,49 @@ export const componentMeta: ComponentMetaMap = {
         required: false,
         description: "",
       },
+    ],
+    slots: [
       {
         name: "toolbar",
-        type: "() => JSX.Element",
-        required: false,
+        bindings: {},
         description: "",
       },
       {
-        name: "captionContent",
-        type: "() => JSX.Element",
-        required: false,
+        name: "caption",
+        bindings: {},
         description: "",
       },
       {
         name: "groupHeader",
-        type: "(group: TableGroup<T>, colSpan: number) => JSX.Element",
-        required: false,
+        bindings: {},
         description: "",
       },
       {
         name: "expandedContent",
-        type: "(row: TableRow<T>) => JSX.Element",
-        required: false,
+        bindings: {},
         description: "",
       },
       {
         name: "loadingContent",
-        type: "() => JSX.Element",
-        required: false,
+        bindings: {},
         description: "",
       },
       {
         name: "emptyContent",
-        type: "() => JSX.Element",
-        required: false,
+        bindings: {},
         description: "",
       },
       {
         name: "bodyTop",
-        type: "() => JSX.Element",
-        required: false,
+        bindings: {},
         description: "",
       },
       {
         name: "bodyBottom",
-        type: "() => JSX.Element",
-        required: false,
+        bindings: {},
         description: "",
       },
     ],
-    slots: [],
     emits: [],
     theme: {
       slots: [

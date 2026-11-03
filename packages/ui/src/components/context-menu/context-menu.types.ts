@@ -282,41 +282,21 @@ export interface RLContextMenuProps {
   /**
    * Content rendered before the resolved item groups.
    */
-  topRender?: JSX.Element | Component<ContextMenuTopRenderProps> | undefined;
-  /**
-   * Slot alias for `topRender`.
-   */
   topSlot?: JSX.Element | Component<ContextMenuTopRenderProps> | undefined;
   /**
    * Content rendered after the resolved item groups.
-   */
-  bottomRender?: JSX.Element | Component<ContextMenuBottomRenderProps> | undefined;
-  /**
-   * Slot alias for `bottomRender`.
    */
   bottomSlot?: JSX.Element | Component<ContextMenuBottomRenderProps> | undefined;
   /**
    * Renderer for each menu item.
    */
-  itemRender?: Component<ContextMenuItemRenderProps> | undefined;
-  /**
-   * Slot alias for `itemRender`.
-   */
   itemSlot?: Component<ContextMenuItemRenderProps> | undefined;
   /**
-   * Explicit trigger element when not using `children`.
-   */
-  trigger?: JSX.Element | undefined;
-  /**
-   * Slot alias for `trigger`.
+   * Trigger element when not using `children`.
    */
   triggerSlot?: JSX.Element | undefined;
   /**
-   * Explicit content element when not using `items`.
-   */
-  content?: JSX.Element | undefined;
-  /**
-   * Slot alias for `content`.
+   * Content element when not using `items`.
    */
   contentSlot?: JSX.Element | undefined;
   /**
