@@ -10,6 +10,7 @@ import { ui } from "@rimelight/ui/plugin";
 import { cms } from "@rimelight/cms/plugin";
 
 export default defineConfig({
+  builder: { sharedPlugins: true },
   plugins: [
     // Tests run in Node: the Cloudflare worker runtime would only leave servers hanging.
     ...(process.env["VITEST"] ? [] : [cloudflare()]),
