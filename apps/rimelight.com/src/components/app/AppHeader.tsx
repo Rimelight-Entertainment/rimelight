@@ -846,14 +846,16 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
                 />
               }
             >
-              <RLNavigationMenu
-                items={leftLinks()}
-                panels={leftMobileSlots}
-                orientation="vertical"
-                ui={{
-                  link: "flex justify-start items-center w-full text-left py-2 text-lg transition-colors duration-200 hover:text-primary-400 data-[state=open]:text-primary-400 aria-[current]:text-primary-400",
-                }}
-              />
+              {() => (
+                <RLNavigationMenu
+                  items={leftLinks()}
+                  panels={leftMobileSlots}
+                  orientation="vertical"
+                  ui={{
+                    link: "flex justify-start items-center w-full text-left py-2 text-lg transition-colors duration-200 hover:text-primary-400 data-[state=open]:text-primary-400 aria-[current]:text-primary-400",
+                  }}
+                />
+              )}
             </RLSlideover>
           </div>
         </div>
@@ -929,11 +931,13 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
                     />
                   }
                 >
-                  <div class="flex flex-col gap-md">
-                    <For each={actions()}>
-                      {(buttonProps) => <RLButton {...buttonProps} block={true} />}
-                    </For>
-                  </div>
+                  {() => (
+                    <div class="flex flex-col gap-md">
+                      <For each={actions()}>
+                        {(buttonProps) => <RLButton {...buttonProps} block={true} />}
+                      </For>
+                    </div>
+                  )}
                 </RLSlideover>
               }
             >

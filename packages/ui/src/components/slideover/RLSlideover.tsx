@@ -21,7 +21,7 @@ const OMIT_KEYS = [
 ] as const;
 
 export const RLSlideover: Component<RLSlideoverProps> = (props) => {
-  const { Tag, classes, rest, slots, children, theme } = RLSlideoverTheme.setup(props, {
+  const { Tag, classes, rest, slots, theme } = RLSlideoverTheme.setup(props, {
     omit: OMIT_KEYS,
     slots: ["triggerSlot", "titleSlot", "descriptionSlot", "footerSlot"] as const,
   });
@@ -108,7 +108,7 @@ export const RLSlideover: Component<RLSlideoverProps> = (props) => {
             </Show>
           </div>
 
-          <div class="flex flex-col flex-1 gap-2 overflow-y-auto">{children()}</div>
+          <div class="flex flex-col flex-1 gap-2 overflow-y-auto">{props.children?.()}</div>
 
           <Show when={slots.footerSlot() !== undefined}>
             <div class={classes().footer} data-slot="footer">

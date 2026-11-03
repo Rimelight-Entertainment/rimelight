@@ -3,7 +3,10 @@ import type { InferThemeProps } from "../../resolver";
 import type { OverlaySlot } from "../../slot";
 import type { RLSlideoverTheme } from "./slideover.theme";
 
-export type RLSlideoverProps = Omit<InferThemeProps<typeof RLSlideoverTheme>, "side"> & {
+export type RLSlideoverProps = Omit<
+  InferThemeProps<typeof RLSlideoverTheme>,
+  "side" | "children"
+> & {
   /**
    * Edge the sheet slides in from.
    *
@@ -52,9 +55,9 @@ export type RLSlideoverProps = Omit<InferThemeProps<typeof RLSlideoverTheme>, "s
    */
   portal?: boolean | HTMLElement | undefined;
   /**
-   * Body content.
+   * Body content. Function-only: invoked while the sheet is mounted.
    */
-  children?: JSX.Element | undefined;
+  children?: OverlaySlot | undefined;
   /**
    * Trigger element. Always rendered, so it is plain JSX.
    */

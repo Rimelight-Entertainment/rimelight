@@ -174,47 +174,49 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
                 />
               }
             >
-              <RLNavigationMenu
-                items={leftLinks()}
-                orientation="vertical"
-                panels={{
-                  features: () => (
-                    <div class="flex flex-col lg:flex-row gap-lg bg-default w-full">
-                      <div class="bg-default flex flex-col lg:flex-row gap-lg p-lg flex-1">
-                        <RLImage
-                          class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded mb-2 lg:mb-0"
-                          src="https://cdn.rimelight.com/images/placeholder.webp"
-                          alt=""
-                          ui={{
-                            trigger: "absolute inset-0 w-full h-full overflow-hidden rounded-lg",
-                            triggerImage: "w-full h-full object-cover",
-                          }}
-                        />
+              {() => (
+                <RLNavigationMenu
+                  items={leftLinks()}
+                  orientation="vertical"
+                  panels={{
+                    features: () => (
+                      <div class="flex flex-col lg:flex-row gap-lg bg-default w-full">
+                        <div class="bg-default flex flex-col lg:flex-row gap-lg p-lg flex-1">
+                          <RLImage
+                            class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded mb-2 lg:mb-0"
+                            src="https://cdn.rimelight.com/images/placeholder.webp"
+                            alt=""
+                            ui={{
+                              trigger: "absolute inset-0 w-full h-full overflow-hidden rounded-lg",
+                              triggerImage: "w-full h-full object-cover",
+                            }}
+                          />
 
-                        <div class="flex flex-col gap-sm flex-2">
-                          <div class="grid grid-cols-1 sm:grid-cols-2 gap-xl gap-y-4">
-                            <RLLinkGroup
-                              {...startLinkGroup()}
-                              ui={{ title: "!text-primary-500" }}
-                            />
-                            <RLLinkGroup
-                              {...customizeLinkGroup()}
-                              ui={{ title: "!text-primary-500" }}
-                            />
+                          <div class="flex flex-col gap-sm flex-2">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-xl gap-y-4">
+                              <RLLinkGroup
+                                {...startLinkGroup()}
+                                ui={{ title: "!text-primary-500" }}
+                              />
+                              <RLLinkGroup
+                                {...customizeLinkGroup()}
+                                ui={{ title: "!text-primary-500" }}
+                              />
+                            </div>
                           </div>
                         </div>
-                      </div>
 
-                      <div class="bg-muted p-lg w-64 shrink-0">
-                        <RLLinkGroup
-                          {...resourcesLinkGroup()}
-                          ui={{ title: "!text-primary-500" }}
-                        />
+                        <div class="bg-muted p-lg w-64 shrink-0">
+                          <RLLinkGroup
+                            {...resourcesLinkGroup()}
+                            ui={{ title: "!text-primary-500" }}
+                          />
+                        </div>
                       </div>
-                    </div>
-                  ),
-                }}
-              />
+                    ),
+                  }}
+                />
+              )}
             </RLSlideover>
           </div>
         </div>
@@ -255,11 +257,13 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
                 />
               }
             >
-              <div class="flex flex-col gap-md">
-                <For each={actions()}>
-                  {(buttonProps) => <RLButton {...buttonProps} block={true} />}
-                </For>
-              </div>
+              {() => (
+                <div class="flex flex-col gap-md">
+                  <For each={actions()}>
+                    {(buttonProps) => <RLButton {...buttonProps} block={true} />}
+                  </For>
+                </div>
+              )}
             </RLSlideover>
           </div>
         </div>
