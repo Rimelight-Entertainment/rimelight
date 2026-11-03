@@ -1,16 +1,14 @@
 import { type Component, For } from "solid-js";
-import {
-  RLHeader,
-  RLLogo,
-  RLNavigationMenu,
-  RLLinkGroup,
-  RLButton,
-  RLSlideover,
-  RLSearch,
-  RLImage,
-  type RLButtonProps,
-  type RLLinkGroupProps,
-} from "@rimelight/ui";
+import { RLHeader } from "@rimelight/ui/components/header/RLHeader.tsx";
+import { RLLogo } from "@rimelight/ui/components/logo/RLLogo.tsx";
+import { RLNavigationMenu } from "@rimelight/ui/components/navigation-menu/RLNavigationMenu.tsx";
+import { RLLinkGroup } from "@rimelight/ui/components/link-group/RLLinkGroup.tsx";
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
+import { RLSlideover } from "@rimelight/ui/components/slideover/RLSlideover.tsx";
+import { RLSearch } from "@rimelight/ui/components/search/RLSearch.tsx";
+import { RLImage } from "@rimelight/ui/components/image/RLImage.tsx";
+import type { RLButtonProps } from "@rimelight/ui/components/button/button.types.ts";
+import type { RLLinkGroupProps } from "@rimelight/ui/components/link-group/link-group.types.ts";
 import { useShortcuts } from "@rimelight/ui/shortcuts";
 import type { NavigationMenuItem } from "@rimelight/ui/components/navigation-menu/navigation-menu.types.ts";
 import { t, getLocaleUrl } from "@rimelight/i18n";

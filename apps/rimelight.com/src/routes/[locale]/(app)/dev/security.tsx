@@ -1,6 +1,6 @@
 import { For, Show } from "solid-js";
 import { type JSX } from "@solidjs/web";
-import { RLButton } from "@rimelight/ui";
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
 import { buildCspHeader, activeConfig } from "@rimelight/security";
 import { t } from "@rimelight/i18n";
 

@@ -1,5 +1,5 @@
 import type { JSX } from "@solidjs/web";
-import { getColorPalettes } from "@rimelight/ui";
+import { getColorPalettes } from "@rimelight/ui/runtime";
 
 export const AUDIT_COLORS = getColorPalettes();
 

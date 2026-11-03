@@ -1,6 +1,8 @@
 import { For, Show, createSignal } from "solid-js";
 import { type JSX } from "@solidjs/web";
-import { RLBadge, RLButton, RLIcon } from "@rimelight/ui";
+import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx";
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
+import { RLIcon } from "@rimelight/ui/components/icon/RLIcon.tsx";
 import { DEFAULT_ICON_NAMES } from "@rimelight/ui/icons";
 import { getUIConfig } from "@rimelight/ui/runtime";
 import { t } from "@rimelight/i18n";

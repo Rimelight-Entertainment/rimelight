@@ -1,7 +1,8 @@
 import { For, Show, createMemo, createSignal } from "solid-js";
 import { type JSX } from "@solidjs/web";
 import { useLocation } from "@solidjs/router";
-import { RLButton, RLCarousel } from "@rimelight/ui";
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
+import { RLCarousel } from "@rimelight/ui/components/carousel/RLCarousel.tsx";
 import { getLocaleInfo, getLocales } from "@rimelight/i18n";
 import { createPageHead, type HeadTag } from "@rimelight/seo/head";
 import { t } from "@rimelight/i18n";

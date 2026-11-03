@@ -2,17 +2,15 @@ import { type Component, Show, createSignal, onSettled } from "solid-js";
 import type { RouteSectionProps } from "@solidjs/router";
 import AppHeader from "#components/app/AppHeader";
 import AppFooter from "#components/app/AppFooter";
-import {
-  RLBanner,
-  RLMain,
-  RLScrollToTop,
-  RLShortcuts,
-  RLToaster,
-  RLRouteAnnouncer,
-  RLLayoutGrid,
-  RLToast,
-  RLButton,
-} from "@rimelight/ui";
+import { RLBanner } from "@rimelight/ui/components/banner/RLBanner.tsx";
+import { RLMain } from "@rimelight/ui/components/main/RLMain.tsx";
+import { RLScrollToTop } from "@rimelight/ui/components/scroll-to-top/RLScrollToTop.tsx";
+import { RLShortcuts } from "@rimelight/ui/components/shortcuts/RLShortcuts.tsx";
+import { RLToaster } from "@rimelight/ui/components/toaster/RLToaster.tsx";
+import { RLRouteAnnouncer } from "@rimelight/ui/components/route-announcer/RLRouteAnnouncer.tsx";
+import { RLLayoutGrid } from "@rimelight/ui/components/layout-grid/RLLayoutGrid.tsx";
+import { RLToast } from "@rimelight/ui/components/toast/RLToast.tsx";
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
 import { t, getLocaleUrl } from "@rimelight/i18n";
 
 export const AppRouteLayout: Component<RouteSectionProps> = (props) => {

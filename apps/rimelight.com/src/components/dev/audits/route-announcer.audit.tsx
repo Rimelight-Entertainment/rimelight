@@ -1,6 +1,7 @@
 import { createSignal, For, Show } from "solid-js";
 import type { JSX } from "@solidjs/web";
-import { RLRouteAnnouncer, type RLRouteAnnouncerProgressSize } from "@rimelight/ui";
+import { RLRouteAnnouncer } from "@rimelight/ui/components/route-announcer/RLRouteAnnouncer.tsx";
+import type { RLRouteAnnouncerProgressSize } from "@rimelight/ui/components/route-announcer/route-announcer.types.ts";
 import { AUDIT_COLORS, type ComponentAuditDefinition } from "./types";
 import { t } from "@rimelight/i18n";
 

@@ -1,6 +1,8 @@
 import { type RouteSectionProps } from "@solidjs/router";
 import { t, getLocaleUrl } from "@rimelight/i18n";
-import { RLContainer, RLHeader, RLLogo } from "@rimelight/ui";
+import { RLContainer } from "@rimelight/ui/components/container/RLContainer.tsx";
+import { RLHeader } from "@rimelight/ui/components/header/RLHeader.tsx";
+import { RLLogo } from "@rimelight/ui/components/logo/RLLogo.tsx";
 
 export default function DevRouteLayout(props: RouteSectionProps) {
   return (

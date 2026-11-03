@@ -10,7 +10,8 @@ import {
   loadLocale,
   t,
 } from "@rimelight/i18n";
-import { RLButton, RLLocaleSelector } from "@rimelight/ui";
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
+import { RLLocaleSelector } from "@rimelight/ui/components/locale-selector/RLLocaleSelector.tsx";
 
 const withComputedTranslation = (
   fn: (params?: Record<string, unknown>) => string,

@@ -1,18 +1,16 @@
 import { type Component, For, Show } from "solid-js";
-import {
-  RLHeader,
-  RLLogo,
-  RLNavigationMenu,
-  RLLinkGroup,
-  RLButton,
-  RLSlideover,
-  RLAvatar,
-  RLSearch,
-  RLDropdownMenu,
-  RLImage,
-  type RLButtonProps,
-  type RLLinkGroupProps,
-} from "@rimelight/ui";
+import { RLHeader } from "@rimelight/ui/components/header/RLHeader.tsx";
+import { RLLogo } from "@rimelight/ui/components/logo/RLLogo.tsx";
+import { RLNavigationMenu } from "@rimelight/ui/components/navigation-menu/RLNavigationMenu.tsx";
+import { RLLinkGroup } from "@rimelight/ui/components/link-group/RLLinkGroup.tsx";
+import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
+import { RLSlideover } from "@rimelight/ui/components/slideover/RLSlideover.tsx";
+import { RLAvatar } from "@rimelight/ui/components/avatar/RLAvatar.tsx";
+import { RLSearch } from "@rimelight/ui/components/search/RLSearch.tsx";
+import { RLDropdownMenu } from "@rimelight/ui/components/dropdown-menu/RLDropdownMenu.tsx";
+import { RLImage } from "@rimelight/ui/components/image/RLImage.tsx";
+import type { RLButtonProps } from "@rimelight/ui/components/button/button.types.ts";
+import type { RLLinkGroupProps } from "@rimelight/ui/components/link-group/link-group.types.ts";
 import { useShortcuts } from "@rimelight/ui/shortcuts";
 import type { NavigationMenuItem } from "@rimelight/ui/components/navigation-menu/navigation-menu.types.ts";
 import type { DropdownMenuItem } from "@rimelight/ui/components/dropdown-menu/dropdown-menu.types.ts";

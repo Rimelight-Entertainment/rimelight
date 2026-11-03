@@ -1,7 +1,10 @@
 import { type Component } from "solid-js";
 import { useHead } from "@solidjs/web";
 import { createPageHead } from "@rimelight/seo/head";
-import { RLPageSection, RLGrid, RLCard, RLImage } from "@rimelight/ui";
+import { RLPageSection } from "@rimelight/ui/components/page-section/RLPageSection.tsx";
+import { RLGrid } from "@rimelight/ui/components/grid/RLGrid.tsx";
+import { RLCard } from "@rimelight/ui/components/card/RLCard.tsx";
+import { RLImage } from "@rimelight/ui/components/image/RLImage.tsx";
 import { t } from "@rimelight/i18n";
 
 export const AboutPage: Component = () => {

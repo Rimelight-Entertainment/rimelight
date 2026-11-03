@@ -1,5 +1,7 @@
 import { For } from "solid-js";
-import { RLCard, RLGrid, RLPageSection } from "@rimelight/ui";
+import { RLCard } from "@rimelight/ui/components/card/RLCard.tsx";
+import { RLGrid } from "@rimelight/ui/components/grid/RLGrid.tsx";
+import { RLPageSection } from "@rimelight/ui/components/page-section/RLPageSection.tsx";
 import { getLocaleUrl, t } from "@rimelight/i18n";
 
 const dashboardCards = [
