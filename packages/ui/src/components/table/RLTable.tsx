@@ -835,11 +835,10 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
     };
   });
 
-  // Called on both server and client: Solid's server onSettled consumes a hydration
-  // child id that the client's onSettled also consumes. Guarding it with !isServer
-  // desyncs ids and yields "Hydration key miss" on every element after the table root.
+  // Unconditional on purpose. Solid's server onSettled only reserves a hydration child id
+  // (it never runs the callback), and the client onSettled also reserves one. Calling it
+  // only on the client desyncs ids and causes "Hydration key miss" after the table root.
   onSettled(() => {
-    if (isServer) return undefined;
     if (isVirtual()) {
       const scrollEl = virtualOpts().getScrollElement?.() || containerRef;
       if (scrollEl) {
