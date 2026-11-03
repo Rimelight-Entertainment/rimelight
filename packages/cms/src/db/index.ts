@@ -84,38 +84,20 @@ export function getCmsDb(options: ResolveDbOptions = {}, c?: any): CmsDbInstance
   }
 
   if (!rawDb) {
-    const isDev =
-      (typeof process !== "undefined" && process.env?.["NODE_ENV"] === "development") ||
-      (typeof import.meta !== "undefined" && Boolean((import.meta as any).env?.DEV)) ||
-      Boolean(env?.DATABASE_URL && env?.HYPERDRIVE?.host?.includes(".hyperdrive.local"));
-
-    // In local dev, Cloudflare Hyperdrive proxy binds to a mock local IP that the postgres-js driver
-    // cannot reach over HTTP. Prefer direct DATABASE_URL in dev mode or whenever Hyperdrive is pointing to a local mock.
-    const envUrl = isDev
-      ? env?.DATABASE_URL ||
-        env?.HYPERDRIVE?.connectionString ||
-        env?.HYPERDRIVE_URL ||
-        (typeof process !== "undefined"
-          ? process.env?.["DATABASE_URL"] || process.env?.["HYPERDRIVE_URL"]
-          : undefined) ||
-        (typeof import.meta !== "undefined"
-          ? (import.meta as any).env?.["DATABASE_URL"] ||
-            (import.meta as any).env?.["HYPERDRIVE_URL"]
-          : undefined)
-      : env?.HYPERDRIVE?.connectionString ||
-        env?.HYPERDRIVE_URL ||
-        env?.DATABASE_URL ||
-        (typeof process !== "undefined"
-          ? process.env?.["HYPERDRIVE_URL"] || process.env?.["DATABASE_URL"]
-          : undefined) ||
-        (typeof import.meta !== "undefined"
-          ? (import.meta as any).env?.["HYPERDRIVE_URL"] ||
-            (import.meta as any).env?.["DATABASE_URL"]
-          : undefined);
+    const envUrl =
+      env?.HYPERDRIVE?.connectionString ||
+      env?.HYPERDRIVE_URL ||
+      env?.DATABASE_URL ||
+      (typeof process !== "undefined"
+        ? process.env?.["HYPERDRIVE_URL"] || process.env?.["DATABASE_URL"]
+        : undefined) ||
+      (typeof import.meta !== "undefined"
+        ? (import.meta as any).env?.["HYPERDRIVE_URL"] || (import.meta as any).env?.["DATABASE_URL"]
+        : undefined);
 
     if (typeof envUrl === "string" && envUrl.trim().length > 0) {
       // Per request: postgres-js holds socket state. Hyperdrive pools the connections.
-      const client = postgres(envUrl.trim(), { prepare: false, max: 5 });
+      const client = postgres(envUrl.trim(), { prepare: false, max: 5, onnotice: () => {} });
       const db = drizzlePostgres({ client } as any);
       const instance: CmsDbInstance = {
         db,
