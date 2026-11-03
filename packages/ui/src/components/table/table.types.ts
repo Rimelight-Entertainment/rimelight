@@ -445,15 +445,19 @@ export interface RLTableProps<T = any> {
   /**
    * Solid slot overrides dictionary (e.g. { "name-cell": ({ row }) => ... })
    */
-  slots?: Record<string, (props: any) => any> | undefined;
+  columnSlots?: Record<string, (ctx: any) => any> | undefined;
   ref?: (api: TableApi<T>) => void | TableApi<T>;
-  toolbarSlot?: () => JSX.Element;
-  captionSlot?: () => JSX.Element;
-  groupHeaderSlot?: (group: TableGroup<T>, colSpan: number) => JSX.Element;
-  expandedContentSlot?: (row: TableRow<T>) => JSX.Element;
-  loadingContentSlot?: () => JSX.Element;
-  emptyContentSlot?: () => JSX.Element;
-  bodyTopSlot?: () => JSX.Element;
-  bodyBottomSlot?: () => JSX.Element;
+  toolbarSlot?: (ctx: { table: TableApi<T> }) => JSX.Element;
+  captionSlot?: (ctx: { table: TableApi<T> }) => JSX.Element;
+  groupHeaderSlot?: (ctx: {
+    group: TableGroup<T>;
+    colSpan: number;
+    table: TableApi<T>;
+  }) => JSX.Element;
+  expandedContentSlot?: (ctx: { row: TableRow<T>; table: TableApi<T> }) => JSX.Element;
+  loadingContentSlot?: (ctx: { table: TableApi<T> }) => JSX.Element;
+  emptyContentSlot?: (ctx: { table: TableApi<T> }) => JSX.Element;
+  bodyTopSlot?: (ctx: { table: TableApi<T> }) => JSX.Element;
+  bodyBottomSlot?: (ctx: { table: TableApi<T> }) => JSX.Element;
   [key: string]: unknown;
 }

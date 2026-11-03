@@ -83,7 +83,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
     {
       label: t("app.header.left-links.features.label"),
       to: doc("getting-started/introduction"),
-      slot: "features" as const,
+      panel: "features" as const,
       children: [
         {
           label: t("app.header.link-groups.center.start.label"),
@@ -130,7 +130,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
             <RLNavigationMenu
               items={leftLinks()}
               variant="link"
-              slots={{
+              panels={{
                 features: () => (
                   <div class="flex flex-col lg:flex-row gap-lg bg-default w-full">
                     <div class="bg-default flex flex-col lg:flex-row gap-lg p-lg flex-1">
@@ -179,7 +179,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
                 items={leftLinks()}
                 orientation="vertical"
                 variant="link"
-                slots={{
+                panels={{
                   features: () => (
                     <div class="flex flex-col lg:flex-row gap-lg bg-default w-full">
                       <div class="bg-default flex flex-col lg:flex-row gap-lg p-lg flex-1">

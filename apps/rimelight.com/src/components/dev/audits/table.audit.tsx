@@ -472,7 +472,7 @@ export const TableSandbox = (): JSX.Element => {
         onSelect={(_e: Event, row: TableRow<PaymentItem>) => {
           setLastClickedRow(`${row.id} (${row.original.email})`);
         }}
-        expandedContentSlot={(row: TableRow<PaymentItem>) => (
+        expandedContentSlot={({ row }: { row: TableRow<PaymentItem> }) => (
           <div class="p-4 rounded bg-muted/40 text-xs font-mono flex flex-col gap-1 border border-default/50">
             <span class="font-bold text-highlighted uppercase tracking-wider">
               Sub-row Detail Inspector:

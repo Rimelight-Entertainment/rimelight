@@ -365,7 +365,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
     {
       label: t("app.header.left-links.grand-tale.label"),
       to: getLocaleUrl("/franchises/grand-tale"),
-      slot: "grand-tale" as const,
+      panel: "grand-tale" as const,
       children: [
         {
           label: t("app.header.link-groups.center.grand-tale.main.title"),
@@ -435,7 +435,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
     },
     {
       label: t("app.header.left-links.community.label"),
-      slot: "community" as const,
+      panel: "community" as const,
       children: [
         {
           label: t("app.header.link-groups.center.community.forums.title"),
@@ -464,7 +464,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
     {
       label: t("app.header.left-links.company.label"),
       to: getLocaleUrl("/company"),
-      slot: "company" as const,
+      panel: "company" as const,
       children: [
         {
           label: t("app.header.link-groups.center.company.main.studio.title"),
@@ -515,7 +515,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
     {
       label: t("app.header.left-links.store.label"),
       to: getLocaleUrl("/store"),
-      slot: "store" as const,
+      panel: "store" as const,
       children: [
         {
           label: t("app.header.link-groups.center.store.main.digital-goods.title"),
@@ -825,7 +825,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
             <RLNavigationMenu
               items={leftLinks()}
               variant="link"
-              slots={leftSlots()}
+              panels={leftSlots()}
               ui={{
                 link: "text-white transition-colors duration-200 hover:text-primary-400 data-[state=open]:text-primary-400 aria-[current]:text-primary-400",
               }}
@@ -849,7 +849,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
             >
               <RLNavigationMenu
                 items={leftLinks()}
-                slots={leftMobileSlots}
+                panels={leftMobileSlots}
                 orientation="vertical"
                 variant="link"
                 ui={{

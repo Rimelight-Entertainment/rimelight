@@ -13774,11 +13774,11 @@ export const componentMeta: ComponentMetaMap = {
         description: "Additional CSS classes to apply to the root element.",
       },
       {
-        name: "slots",
+        name: "panels",
         type: "Record<string, NavigationMenuContentRenderer>",
         required: false,
         description:
-          "Named mega-menu panels, matched by each item's `slot` key. Horizontal menus show these as mega-menu panels; vertical menus render them inline in the accordion.",
+          "Named mega-menu panels, matched by each item's `panel` key. Horizontal menus show these as mega-menu panels; vertical menus render them inline in the accordion.",
       },
     ],
     slots: [
@@ -13790,7 +13790,7 @@ export const componentMeta: ComponentMetaMap = {
       {
         name: "content",
         bindings: {},
-        description: "Fallback panel renderer for items with no matching entry in `slots`.",
+        description: "Fallback panel renderer for items with no matching entry in `panels`.",
       },
       {
         name: "item",
@@ -18199,8 +18199,8 @@ export const componentMeta: ComponentMetaMap = {
         description: "Additional classes on the root element.",
       },
       {
-        name: "slots",
-        type: "Record<string, (props: any) => any> | undefined",
+        name: "columnSlots",
+        type: "Record<string, (ctx: any) => any> | undefined",
         required: false,
         description: 'Solid slot overrides dictionary (e.g. { "name-cell": ({ row }) => ... })',
       },

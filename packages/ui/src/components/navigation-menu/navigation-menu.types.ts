@@ -13,10 +13,10 @@ export interface NavigationMenuItem extends Omit<RLLinkProps, "type" | "raw" | "
   trailingIcon?: string | undefined;
   type?: "label" | "trigger" | "link" | undefined;
   /**
-   * Key into the menu's `slots` prop. When set and a matching renderer exists, that
+   * Key into the menu's `panels` prop. When set and a matching renderer exists, that
    * renderer replaces the default child list as this item's (mega-menu) panel.
    */
-  slot?: string | undefined;
+  panel?: string | undefined;
   value?: string | undefined;
   /**
    * Child links. A child that has its own `children` renders as a titled group.
@@ -94,12 +94,12 @@ export interface RLNavigationMenuProps {
   class?: any;
   children?: JSX.Element;
   /**
-   * Named mega-menu panels, matched by each item's `slot` key.
+   * Named mega-menu panels, matched by each item's `panel` key.
    * Horizontal menus show these as mega-menu panels; vertical menus render them inline in the accordion.
    */
-  slots?: Record<string, NavigationMenuContentRenderer>;
+  panels?: Record<string, NavigationMenuContentRenderer>;
   /**
-   * Fallback panel renderer for items with no matching entry in `slots`.
+   * Fallback panel renderer for items with no matching entry in `panels`.
    */
   contentSlot?: NavigationMenuContentRenderer;
   /**

@@ -112,7 +112,7 @@ describe("RLTable Theme & Logic Suite", () => {
       const html = renderSolid(RLTable, {
         data: sampleData,
         columns,
-        slots: {
+        columnSlots: {
           "name-cell": ({ row }: { row: { original: { name: string } } }) =>
             `<span class="custom-name-slot">${row.original.name.toUpperCase()}</span>`,
         },

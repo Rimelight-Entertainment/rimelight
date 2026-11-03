@@ -10,7 +10,7 @@ import type { JSX } from "@solidjs/web";
 import { RLIcon } from "../icon/RLIcon";
 import { localizeHref } from "../link/helpers";
 
-const OMIT_KEYS = ["items", "color", "variant", "orientation", "slots"] as const;
+const OMIT_KEYS = ["items", "color", "variant", "orientation", "panels"] as const;
 
 const LOCALE_PREFIX = /^\/[a-z]{2}(?:-[a-zA-Z]{2})?(?=\/|$)/;
 const normalizePath = (p: string) => p.replace(LOCALE_PREFIX, "").replace(/\/+$/, "") || "/";
@@ -24,13 +24,7 @@ const resolveHref = (item: NavigationMenuItem | NavigationMenuChildItem): string
 const hasChildren = (item: NavigationMenuItem) => !!item.children && item.children.length > 0;
 
 export const RLNavigationMenu: Component<RLNavigationMenuProps> = (props) => {
-  // `slots` is this component's public item-renderer map (keyed by item.slot), so the slot
-  // accessors from setup are named `slotAccessors`.
-  const {
-    classes,
-    rest,
-    slots: slotAccessors,
-  } = RLNavigationMenuTheme.setup(props, {
+  const { classes, rest, slots } = RLNavigationMenuTheme.setup(props, {
     omit: OMIT_KEYS,
     slots: ["contentSlot", "itemSlot"] as const,
   });
@@ -45,13 +39,13 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (props) => {
   const isHorizontal = () => orientation() === "horizontal";
 
   /**
-   * Custom panel renderer for an item. `slots[item.slot]` wins, `contentSlot` is the
+   * Custom panel renderer for an item. `panels[item.panel]` wins, `contentSlot` is the
    * generic fallback. Returns the *function* (never calls it) so checking for a panel
    * doesn't instantiate the panel's JSX.
    */
   const rendererFor = (item: NavigationMenuItem): NavigationMenuContentRenderer | undefined => {
-    if (item.slot && props.slots?.[item.slot]) return props.slots[item.slot];
-    return slotAccessors.contentSlot();
+    if (item.panel && props.panels?.[item.panel]) return props.panels[item.panel];
+    return slots.contentSlot();
   };
 
   const hasPanel = (item: NavigationMenuItem) => hasChildren(item) || !!rendererFor(item);

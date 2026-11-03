@@ -13,7 +13,6 @@ const OMIT_KEYS = [
   "maxVisible",
   "estimatedItemWidth",
   "separator",
-  "slots",
 ] as const;
 
 interface VisibleItemEntry {
@@ -26,13 +25,11 @@ interface VisibleItemEntry {
 }
 
 export const RLBreadcrumb: Component<RLBreadcrumbProps<any>> = (props) => {
-  // `slots` is this component's public item-renderer map, so setup's accessors are named
-  // `slotAccessors`.
   const {
     Tag: RootTag,
     classes,
     rest,
-    slots: slotAccessors,
+    slots,
   } = RLBreadcrumbTheme.setup(props, {
     as: "nav",
     omit: OMIT_KEYS,
@@ -173,7 +170,7 @@ export const RLBreadcrumb: Component<RLBreadcrumbProps<any>> = (props) => {
       }),
     );
 
-    const separatorRenderer = slotAccessors.separatorSlot();
+    const separatorRenderer = slots.separatorSlot();
     if (separatorRenderer !== undefined) {
       return (
         <span class={themeClasses().separator} data-slot="separator" aria-hidden="true">
@@ -205,16 +202,16 @@ export const RLBreadcrumb: Component<RLBreadcrumbProps<any>> = (props) => {
     const hasTo = () => theme().hasTo;
     const classes = createMemo(() => theme().classes());
 
-    const itemRenderer = slotAccessors.itemSlot();
+    const itemRenderer = slots.itemSlot();
     if (itemRenderer) {
       return itemRenderer({ item, index, active: active() });
     }
 
     const labelText = () => getItemLabel(item);
 
-    const leadingSlot = slotAccessors.itemLeadingSlot();
-    const labelSlot = slotAccessors.itemLabelSlot();
-    const trailingSlot = slotAccessors.itemTrailingSlot();
+    const leadingSlot = slots.itemLeadingSlot();
+    const labelSlot = slots.itemLabelSlot();
+    const trailingSlot = slots.itemTrailingSlot();
 
     const renderLeading = () => {
       if (leadingSlot) {
