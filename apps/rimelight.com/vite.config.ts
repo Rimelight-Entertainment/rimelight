@@ -16,7 +16,6 @@ export default defineConfig({
     ...(process.env["VITEST"] ? [] : [cloudflare()]),
 
     solid({
-      exclude: ["src/fetch.ts"],
       start: true,
       ssr: true,
       serverFunctions: true,

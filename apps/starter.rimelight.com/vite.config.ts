@@ -15,7 +15,6 @@ export default defineConfig({
     cloudflare(),
 
     solid({
-      exclude: ["src/fetch.ts"],
       start: true,
       ssr: true,
       serverFunctions: true,
