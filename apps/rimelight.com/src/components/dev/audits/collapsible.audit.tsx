@@ -86,7 +86,7 @@ export const CollapsibleSandbox = (): JSX.Element => {
           disabled={isDisabled()}
           unmountOnHide={unmountOnHide()}
           class="flex flex-col gap-2 w-72"
-          content={
+          contentSlot={
             <div class="p-4 rounded-lg bg-elevated/50 border border-default text-sm text-muted">
               <p class="font-medium text-highlighted mb-1">{t("app.text.collapsible-content")}</p>
               <p>{t("app.text.this-content-toggles-smoothly-according-to-the-o")}</p>
@@ -131,7 +131,7 @@ export const collapsibleAudit: ComponentAuditDefinition = {
       render: () => (
         <RLCollapsible
           class="flex flex-col gap-2 w-72"
-          content={
+          contentSlot={
             <div class="p-4 rounded-lg bg-elevated/50 border border-default text-sm text-muted">
               Collapsible content revealed on click.
             </div>
@@ -152,7 +152,7 @@ export const collapsibleAudit: ComponentAuditDefinition = {
         <RLCollapsible
           unmountOnHide={false}
           class="flex flex-col gap-2 w-72"
-          content={
+          contentSlot={
             <div class="p-4 rounded-lg bg-elevated/50 border border-default text-sm text-muted">
               This DOM node remains in the document even when closed.
             </div>
@@ -188,7 +188,7 @@ export const collapsibleAudit: ComponentAuditDefinition = {
               open={open()}
               onOpenChange={setOpen}
               class="flex flex-col gap-2"
-              content={
+              contentSlot={
                 <div class="p-4 rounded-lg bg-elevated/50 border border-default text-sm text-muted">
                   Controlled collapsible content.
                 </div>
@@ -212,7 +212,7 @@ export const collapsibleAudit: ComponentAuditDefinition = {
         <RLCollapsible
           disabled
           class="flex flex-col gap-2 w-72"
-          content={
+          contentSlot={
             <div class="p-4 rounded-lg bg-elevated/50 border border-default">{"Hidden"}</div>
           }
         >
@@ -231,7 +231,7 @@ export const collapsibleAudit: ComponentAuditDefinition = {
       render: () => (
         <RLCollapsible
           class="flex flex-col gap-2 w-72"
-          content={
+          contentSlot={
             <div class="p-4 rounded-lg bg-elevated/50 border border-default text-sm text-muted">
               Smooth collapsible accordion panel.
             </div>
@@ -265,7 +265,7 @@ export const collapsibleAudit: ComponentAuditDefinition = {
             trigger: "font-semibold text-primary",
             content: "mt-2 p-3 rounded-lg bg-elevated border border-primary/20 text-xs",
           }}
-          content={<div>{"Custom styled slot content"}</div>}
+          contentSlot={<div>{"Custom styled slot content"}</div>}
         >
           <RLButton label="Custom Styled Collapsible" color="primary" variant="soft" block />
         </RLCollapsible>
@@ -284,7 +284,7 @@ export const collapsibleAudit: ComponentAuditDefinition = {
           as="section"
           class="flex flex-col gap-2 w-72"
           ariaLabel="Semantic Collapsible Section"
-          content={
+          contentSlot={
             <div class="p-4 rounded-lg bg-elevated/50 border border-default text-sm text-muted">
               Rendered inside a semantic &lt;section&gt; element.
             </div>

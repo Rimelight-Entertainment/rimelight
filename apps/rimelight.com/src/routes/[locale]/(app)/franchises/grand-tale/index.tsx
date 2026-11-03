@@ -38,7 +38,7 @@ export const GrandTaleIndexPage: Component = () => {
           title: "text-white text-5xl lg:text-7xl font-black uppercase tracking-tight",
           description: "text-neutral-300 max-w-2xl text-lg md:text-xl",
         }}
-        background={
+        backgroundSlot={
           <div class="w-full h-full">
             <video autoplay loop muted playsinline class="h-full w-full object-cover opacity-60">
               <source
@@ -60,7 +60,7 @@ export const GrandTaleIndexPage: Component = () => {
           title: "text-white text-4xl font-extrabold uppercase",
           description: "text-neutral-400",
         }}
-        body={
+        bodySlot={
           <div class="grid grid-cols-2 gap-8 mt-8 max-w-xl">
             <div>
               <div class="text-4xl font-black text-white">3+</div>

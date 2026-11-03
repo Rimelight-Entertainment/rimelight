@@ -411,8 +411,8 @@ export const buttonAudit: ComponentAuditDefinition = {
       render: () => (
         <div class="flex items-center gap-3 flex-wrap">
           <RLButton
-            leading={<span class="text-sm">✨</span>}
-            trailing={<span class="text-xs bg-white/20 px-1 rounded">{"HOT"}</span>}
+            leadingSlot={<span class="text-sm">✨</span>}
+            trailingSlot={<span class="text-xs bg-white/20 px-1 rounded">{"HOT"}</span>}
             ui={{
               base: "shadow-lg",
               label: "tracking-wider uppercase font-bold",

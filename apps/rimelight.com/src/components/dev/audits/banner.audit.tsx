@@ -191,7 +191,7 @@ export const bannerAudit: ComponentAuditDefinition = {
           />
           <RLBanner
             color="info"
-            left={
+            leftSlot={
               <span class="text-xs font-bold uppercase tracking-wider bg-white/20 px-2 py-0.5 rounded">
                 NEW
               </span>
@@ -220,7 +220,7 @@ export const bannerAudit: ComponentAuditDefinition = {
       render: () => (
         <RLBanner
           color="success"
-          leading={<span aria-hidden="true">🎉</span>}
+          leadingSlot={<span aria-hidden="true">🎉</span>}
           titleSlot={
             <span>
               Custom <strong>title</strong> slot

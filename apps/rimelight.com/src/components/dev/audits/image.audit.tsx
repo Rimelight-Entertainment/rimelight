@@ -282,7 +282,7 @@ export const imageAudit: ComponentAuditDefinition = {
             lightSrc={SAMPLE.portrait}
             alt={"Portrait"}
             class="w-full"
-            trigger={
+            triggerSlot={
               <div class="relative cursor-zoom-in overflow-hidden rounded-xl border border-default">
                 <img src={SAMPLE.portrait} alt={"Portrait"} class="w-full" />
                 <span class="absolute bottom-2 right-2 rounded-full bg-black/60 px-3 py-1 text-[10px] font-mono text-white">

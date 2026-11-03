@@ -164,12 +164,12 @@ export const ModalSandbox = (): JSX.Element => {
           close={hasClose()}
           title={hasHeader() ? title() : undefined}
           description={hasHeader() ? description() : undefined}
-          trigger={
+          triggerSlot={
             <RLButton color="primary" onClick={() => setOpen(true)}>
               Open Configured Modal
             </RLButton>
           }
-          footer={() =>
+          footerSlot={() =>
             hasFooter() ? (
               <div class="flex items-center justify-end gap-2 w-full">
                 <RLButton variant="outline" color="neutral" onClick={() => setOpen(false)}>
@@ -232,7 +232,7 @@ export const modalAudit: ComponentAuditDefinition = {
                     size={s}
                     title={`Modal Size: ${s.toUpperCase()}`}
                     description={`This dialog demonstrates size="${s}".`}
-                    footer={() => (
+                    footerSlot={() => (
                       <div class="flex justify-end w-full">
                         <RLButton size="sm" onClick={() => setActiveSize(null)}>
                           Close
@@ -272,7 +272,7 @@ export const modalAudit: ComponentAuditDefinition = {
               scrollable
               title={"Terms of Service & Privacy Policy"}
               description="Please review all sections carefully."
-              footer={() => (
+              footerSlot={() => (
                 <div class="flex justify-end gap-2 w-full">
                   <RLButton variant="outline" onClick={() => setOpen(false)}>
                     Decline
@@ -321,16 +321,18 @@ export const modalAudit: ComponentAuditDefinition = {
             <RLModal
               open={firstOpen()}
               onOpenChange={setFirstOpen}
-              titleSlot={<span class="text-primary font-bold">{"Step 1: Configuration"}</span>}
-              descriptionSlot={
+              titleSlot={() => (
+                <span class="text-primary font-bold">{"Step 1: Configuration"}</span>
+              )}
+              descriptionSlot={() => (
                 <span class="text-xs italic text-muted">{"Primary settings stage"}</span>
-              }
-              actions={
+              )}
+              actionsSlot={() => (
                 <span class="text-xs px-2 py-0.5 rounded bg-primary/10 text-primary font-mono">
                   Step 1 of 2
                 </span>
-              }
-              footer={() => (
+              )}
+              footerSlot={() => (
                 <div class="flex justify-between items-center w-full">
                   <RLButton variant="ghost" size="sm" onClick={() => setFirstOpen(false)}>
                     Cancel
@@ -350,7 +352,7 @@ export const modalAudit: ComponentAuditDefinition = {
                 onOpenChange={setSecondOpen}
                 title={"Step 2: Confirmation"}
                 description="Review summary before final deployment."
-                footer={() => (
+                footerSlot={() => (
                   <div class="flex justify-end gap-2 w-full">
                     <RLButton variant="outline" size="sm" onClick={() => setSecondOpen(false)}>
                       Back
@@ -406,7 +408,7 @@ export const modalAudit: ComponentAuditDefinition = {
                 body: "p-6",
                 footer: "p-6 bg-elevated/40 rounded-b-xl border-t border-default",
               }}
-              footer={() => (
+              footerSlot={() => (
                 <div class="flex justify-end w-full">
                   <RLButton color="primary" onClick={() => setOpen(false)}>
                     Acknowledge

@@ -442,7 +442,7 @@ export const pageSectionAudit: ComponentAuditDefinition = {
               variant: "subtle",
             },
           ]}
-          footer={<p class="text-xs text-muted">{"Custom footer slot content."}</p>}
+          footerSlot={<p class="text-xs text-muted">{"Custom footer slot content."}</p>}
         />
       ),
     },
@@ -459,7 +459,7 @@ export const pageSectionAudit: ComponentAuditDefinition = {
           orientation="vertical"
           title={"Background and content-visibility"}
           description="The background slot is mounted behind the section container at -z-1."
-          background={
+          backgroundSlot={
             <div class="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-secondary/20" />
           }
           contentVisibility="auto"
@@ -477,7 +477,7 @@ export const pageSectionAudit: ComponentAuditDefinition = {
       render: () => (
         <RLPageSection
           orientation="vertical"
-          header={
+          headerSlot={
             <div class="flex flex-col items-center gap-2 text-center">
               <span class="text-3xl" aria-hidden="true">
                 🌌
@@ -486,8 +486,8 @@ export const pageSectionAudit: ComponentAuditDefinition = {
               <p class="text-muted">{"The header slot replaces the default header entirely."}</p>
             </div>
           }
-          body={<SectionPlaceholder label="Body slot" />}
-          footer={
+          bodySlot={<SectionPlaceholder label="Body slot" />}
+          footerSlot={
             <RLButton variant="outline" icon="arrow-right" trailingIcon="arrow-right">
               Custom footer button
             </RLButton>

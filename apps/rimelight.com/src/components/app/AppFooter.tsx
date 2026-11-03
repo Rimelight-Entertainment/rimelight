@@ -80,7 +80,7 @@ export const AppFooter: Component = () => {
       contain={false}
       data-theme="dark"
       class="bg-black z-50"
-      left={
+      leftSlot={
         <div class="flex flex-col gap-xl justify-between items-center lg:items-start flex-1">
           <NewsletterSignup />
           <div class="flex flex-col items-center gap-xs lg:items-start mt-auto">
@@ -90,12 +90,12 @@ export const AppFooter: Component = () => {
           </div>
         </div>
       }
-      center={
+      centerSlot={
         <div class="flex flex-col md:flex-row gap-12">
           <For each={columns()}>{(column) => <RLLinkGroup {...column} />}</For>
         </div>
       }
-      right={
+      rightSlot={
         <div class="flex flex-col items-center lg:items-end flex-1 justify-between gap-sm">
           <div class="flex flex-col gap-sm items-center lg:items-end">
             <RLThemeSelector class="min-w-44" />

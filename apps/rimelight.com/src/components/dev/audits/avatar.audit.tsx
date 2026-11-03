@@ -244,7 +244,9 @@ export const avatarAudit: ComponentAuditDefinition = {
           <RLPopover
             mode="hover"
             placement="top"
-            trigger={<RLAvatar src="https://github.com/benjamincanac.png" alt={"Benjamin Canac"} />}
+            triggerSlot={
+              <RLAvatar src="https://github.com/benjamincanac.png" alt={"Benjamin Canac"} />
+            }
           >
             <RLAvatar
               src="https://github.com/benjamincanac.png"
@@ -254,7 +256,7 @@ export const avatarAudit: ComponentAuditDefinition = {
             />
           </RLPopover>
 
-          <RLPopover mode="hover" placement="top" trigger={<RLAvatar alt={"Daniel Marchi"} />}>
+          <RLPopover mode="hover" placement="top" triggerSlot={<RLAvatar alt={"Daniel Marchi"} />}>
             <RLAvatar
               src="https://github.com/benjamincanac.png"
               alt={"Daniel Marchi"}
@@ -263,7 +265,7 @@ export const avatarAudit: ComponentAuditDefinition = {
             />
           </RLPopover>
 
-          <RLPopover mode="hover" placement="top" trigger={<RLAvatar alt={"Hugo Richard"} />}>
+          <RLPopover mode="hover" placement="top" triggerSlot={<RLAvatar alt={"Hugo Richard"} />}>
             <RLAvatar
               alt={"Hugo Richard"}
               title={"Hugo Richard"}
@@ -272,7 +274,11 @@ export const avatarAudit: ComponentAuditDefinition = {
             />
           </RLPopover>
 
-          <RLPopover mode="hover" placement="top" trigger={<RLAvatar alt={"Sebastien Chopin"} />}>
+          <RLPopover
+            mode="hover"
+            placement="top"
+            triggerSlot={<RLAvatar alt={"Sebastien Chopin"} />}
+          >
             <RLAvatar
               alt={"Sebastien Chopin"}
               title={"Sebastien Chopin"}

@@ -623,20 +623,20 @@ export const accordionAudit: ComponentAuditDefinition = {
         "Maps to Nuxt's #leading #trailing #body #content slots. Custom badge leading, action trailing, markdown-ish body. The last item's fully custom content area starts from scratch (Nuxt semantics) so it carries its own px-4 to align with default body text.",
       render: () => (
         <RLAccordion
-          leading={(item) => (
+          leadingSlot={(item) => (
             <span class="shrink-0 size-5 rounded bg-primary/15 text-primary text-[10px] font-black flex items-center justify-center">
               {(item.label ?? "?").slice(0, 1)}
             </span>
           )}
-          trailing={(_item, index) => (
+          trailingSlot={(_item, index) => (
             <span class="shrink-0 ms-auto text-[10px] font-mono text-muted">#{index}</span>
           )}
-          body={(item) => (
+          bodySlot={(item) => (
             <p class="text-sm">
               <strong>{item.label}</strong> — {item.content}
             </p>
           )}
-          content={(item, index) =>
+          contentSlot={(item, index) =>
             index === 2 ? (
               <div class="px-4 pb-3.5">
                 <div class="rounded border border-primary/40 bg-primary/5 p-3 text-xs">
@@ -682,7 +682,7 @@ export const accordionAudit: ComponentAuditDefinition = {
         <RLAccordion
           type="multiple"
           defaultValue={["s0", "s1"]}
-          body={(item) =>
+          bodySlot={(item) =>
             item.value === "s1" ? (
               <p class="text-sm text-primary font-medium">{item.content} ★</p>
             ) : (

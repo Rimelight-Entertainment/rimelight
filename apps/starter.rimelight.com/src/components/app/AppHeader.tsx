@@ -123,7 +123,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
       stackIndex={props.stackIndex ?? 0}
       data-theme="dark"
       class="bg-black"
-      left={
+      leftSlot={
         <div class="flex items-center gap-md">
           <div class="hidden md:flex flex-row gap-md items-center">
             <RLLogo href={getLocaleUrl("/")} variant="logomark" class="h-10 w-auto" mode="color" />
@@ -164,7 +164,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
             <RLSlideover
               side="left"
               title={t("app.header.menu.title")}
-              trigger={
+              triggerSlot={
                 <RLButton
                   color="neutral"
                   variant="ghost"
@@ -221,14 +221,14 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
           </div>
         </div>
       }
-      center={
+      centerSlot={
         <div class="flex items-center gap-md">
           <div class="block md:hidden">
             <RLLogo href={getLocaleUrl("/")} variant="logomark" class="h-10 w-auto" mode="color" />
           </div>
         </div>
       }
-      right={
+      rightSlot={
         <div class="flex items-center gap-md">
           <RLSearch />
           <RLButton
@@ -246,7 +246,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
             <RLSlideover
               side="right"
               title={t("app.header.actions.title")}
-              trigger={
+              triggerSlot={
                 <RLButton
                   color="neutral"
                   variant="ghost"

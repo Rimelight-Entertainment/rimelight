@@ -146,7 +146,7 @@ export const CardSandbox = (): JSX.Element => {
           mediaSrc={hasMedia() ? "https://picsum.photos/seed/rimelight/600/300" : undefined}
           overlay={isOverlay()}
           href={isLink() ? "#card-action" : undefined}
-          footer={
+          footerSlot={
             hasFooter() ? (
               <span class="text-xs text-muted">{t("app.text.card-footer-content")}</span>
             ) : undefined
@@ -189,7 +189,7 @@ export const cardAudit: ComponentAuditDefinition = {
                 variant={v}
                 title={`Variant: ${v}`}
                 description={`This card demonstrates the ${v} variant.`}
-                footer={<span class="text-xs text-muted">{"Footer slot"}</span>}
+                footerSlot={<span class="text-xs text-muted">{"Footer slot"}</span>}
               >
                 <p class="text-sm">Main content area for variant {v}.</p>
               </RLCard>
@@ -217,7 +217,7 @@ export const cardAudit: ComponentAuditDefinition = {
             <p class="text-sm text-muted">{"Both title and description rendered in header."}</p>
           </RLCard>
           <RLCard
-            header={
+            headerSlot={
               <div class="flex items-center justify-between">
                 <span class="font-semibold text-sm text-highlighted">{"Custom Header Slot"}</span>
                 <span class="text-xs px-2 py-0.5 rounded bg-primary/10 text-primary font-mono">
@@ -293,7 +293,7 @@ export const cardAudit: ComponentAuditDefinition = {
             mediaSrc="https://picsum.photos/seed/cardmedia/600/250"
             title={"Card with Media"}
             description="Media image displayed at the top."
-            footer={<span class="text-xs text-muted">{"Media Card Footer"}</span>}
+            footerSlot={<span class="text-xs text-muted">{"Media Card Footer"}</span>}
           >
             <p class="text-sm text-muted">{"Standard layout with media header."}</p>
           </RLCard>
@@ -302,7 +302,7 @@ export const cardAudit: ComponentAuditDefinition = {
             overlay
             title={"Overlay Title"}
             description="Text content layered directly over the background image."
-            footer={<span class="text-xs text-white/80">{"Overlay Footer Action"}</span>}
+            footerSlot={<span class="text-xs text-white/80">{"Overlay Footer Action"}</span>}
           >
             <p class="text-sm text-white/90">{"Card body in overlay mode."}</p>
           </RLCard>
@@ -328,7 +328,9 @@ export const cardAudit: ComponentAuditDefinition = {
             href="#card-link"
             title={"Link Card"}
             description="Renders as <a> with identical card styling."
-            footer={<span class="text-xs text-primary font-medium">Click to navigate &rarr;</span>}
+            footerSlot={
+              <span class="text-xs text-primary font-medium">Click to navigate &rarr;</span>
+            }
           >
             <p class="text-sm text-muted">
               Renders as semantic anchor without altering border or cosmetics.
@@ -349,7 +351,7 @@ export const cardAudit: ComponentAuditDefinition = {
         <RLCard
           title={"Custom Styled Card"}
           description="Custom padding, font styling, and border treatment."
-          footer={<span class="text-xs font-mono text-primary">{"Status: Active"}</span>}
+          footerSlot={<span class="text-xs font-mono text-primary">{"Status: Active"}</span>}
           ui={{
             root: "border-2 border-primary/40 shadow-lg",
             header: "bg-primary/5 p-6",

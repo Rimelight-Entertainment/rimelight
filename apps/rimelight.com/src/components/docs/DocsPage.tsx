@@ -188,7 +188,7 @@ export const DocsPage: Component<{ path?: string | undefined }> = (props) => {
           fixed
           data-docs-subheader=""
           class="w-full border-b border-default bg-default/95 backdrop-blur"
-          left={
+          leftSlot={
             <div class="lg:hidden">
               <RLButton
                 variant="ghost"
@@ -202,7 +202,7 @@ export const DocsPage: Component<{ path?: string | undefined }> = (props) => {
               />
             </div>
           }
-          right={
+          rightSlot={
             <Show when={headings().length > 0}>
               <RLButton
                 variant="ghost"

@@ -325,7 +325,7 @@ export const compareAudit: ComponentAuditDefinition = {
       render: () => (
         <RLCompare
           defaultValue={45}
-          before={
+          beforeSlot={
             <div class="w-full h-full bg-slate-950 text-slate-100 p-6 flex flex-col justify-between">
               <div>
                 <span class="text-xs font-mono uppercase tracking-wider text-primary">
@@ -342,7 +342,7 @@ export const compareAudit: ComponentAuditDefinition = {
               </div>
             </div>
           }
-          after={
+          afterSlot={
             <div class="w-full h-full bg-slate-50 text-slate-900 p-6 flex flex-col justify-between">
               <div>
                 <span class="text-xs font-mono uppercase tracking-wider text-sky-600">
@@ -416,7 +416,7 @@ export const compareAudit: ComponentAuditDefinition = {
         <RLCompare
           beforeSrc={IMG_BEFORE}
           afterSrc={IMG_AFTER}
-          handle={({ value }) => (
+          handleSlot={({ value }) => (
             <div class="px-2 py-1 bg-primary text-inverted text-xs font-mono font-bold rounded-full shadow-lg border border-white/20 whitespace-nowrap">
               {Math.round(value)}%
             </div>

@@ -334,7 +334,7 @@ export const calloutAudit: ComponentAuditDefinition = {
             close
           />
           <RLCallout
-            leading={
+            iconSlot={
               <span class="text-xl" aria-hidden="true">
                 🎉
               </span>
@@ -390,7 +390,7 @@ export const calloutAudit: ComponentAuditDefinition = {
         <RLCallout
           color="secondary"
           variant="outline"
-          leading={<span aria-hidden="true">🌟</span>}
+          iconSlot={<span aria-hidden="true">🌟</span>}
           titleSlot={
             <span>
               Custom <strong>{"titleSlot"}</strong> formatting

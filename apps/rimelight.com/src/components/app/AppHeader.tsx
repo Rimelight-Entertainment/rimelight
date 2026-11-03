@@ -818,7 +818,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
       stackIndex={props.stackIndex ?? 0}
       data-theme="dark"
       class="scroll-header bg-black"
-      left={
+      leftSlot={
         <div class="flex items-center gap-md">
           <div class="hidden md:flex flex-row gap-md items-center">
             <RLLogo variant="logomark" class="h-10 w-auto" mode="color" />
@@ -836,7 +836,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
             <RLSlideover
               side="left"
               title={t("app.text.menu")}
-              trigger={
+              triggerSlot={
                 <RLButton
                   color="neutral"
                   variant="ghost"
@@ -860,14 +860,14 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
           </div>
         </div>
       }
-      center={
+      centerSlot={
         <div class="flex items-center gap-md">
           <div class="block md:hidden">
             <RLLogo variant="logomark" class="h-10 w-auto" mode="color" />
           </div>
         </div>
       }
-      right={
+      rightSlot={
         <div class="flex items-center gap-md">
           <RLSearch />
           <RLButton
@@ -888,7 +888,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
                 items={userDropdownItems()}
                 content={{ align: "end", side: "bottom" }}
                 class="text-white"
-                trigger={
+                triggerSlot={
                   <div class="flex items-center gap-xs cursor-pointer text-white hover:text-primary-400 transition-colors py-1 px-2 rounded-lg">
                     <div class="relative">
                       <RLAvatar
@@ -920,7 +920,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
                 <RLSlideover
                   side="right"
                   title={t("app.text.actions")}
-                  trigger={
+                  triggerSlot={
                     <RLButton
                       color="neutral"
                       variant="ghost"
@@ -943,7 +943,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
                 items={userDropdownItems()}
                 content={{ align: "end", side: "bottom" }}
                 class="text-white"
-                trigger={
+                triggerSlot={
                   <div class="flex items-center gap-xs cursor-pointer text-white hover:text-primary-400 transition-colors py-1 px-2 rounded-lg">
                     <div class="relative">
                       <RLAvatar

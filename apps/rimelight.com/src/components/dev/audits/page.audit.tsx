@@ -46,8 +46,8 @@ export const PageSandbox = (): JSX.Element => {
       </div>
 
       <RLPage
-        left={hasLeft() ? <Placeholder label="left" /> : undefined}
-        right={hasRight() ? <Placeholder label="right" /> : undefined}
+        leftSlot={hasLeft() ? <Placeholder label="left" /> : undefined}
+        rightSlot={hasRight() ? <Placeholder label="right" /> : undefined}
       >
         <Placeholder label="default (center)" />
       </RLPage>
@@ -86,7 +86,7 @@ export const pageAudit: ComponentAuditDefinition = {
       description:
         "The left slot renders in its own column and the default slot spans lg:col-span-8.",
       render: () => (
-        <RLPage left={<Placeholder label="left slot" />}>
+        <RLPage leftSlot={<Placeholder label="left slot" />}>
           <Placeholder label="default slot" />
         </RLPage>
       ),
@@ -99,7 +99,7 @@ export const pageAudit: ComponentAuditDefinition = {
       description:
         "The right slot renders in its own column, ordered first on mobile and last on large screens.",
       render: () => (
-        <RLPage right={<Placeholder label="right slot" />}>
+        <RLPage rightSlot={<Placeholder label="right slot" />}>
           <Placeholder label="default slot" />
         </RLPage>
       ),
@@ -113,7 +113,10 @@ export const pageAudit: ComponentAuditDefinition = {
         return t("app.text.the-default-slot-narrows-to-lg-col-span-6-when-b");
       },
       render: () => (
-        <RLPage left={<Placeholder label="left slot" />} right={<Placeholder label="right slot" />}>
+        <RLPage
+          leftSlot={<Placeholder label="left slot" />}
+          rightSlot={<Placeholder label="right slot" />}
+        >
           <Placeholder label="default slot" />
         </RLPage>
       ),

@@ -99,7 +99,7 @@ export const ConfirmSandbox = (): JSX.Element => {
             setLastAction("Cancelled");
             setOpen(false);
           }}
-          trigger={
+          triggerSlot={
             <RLButton
               color={variant() === "destructive" ? "error" : "primary"}
               onClick={() => setOpen(true)}
@@ -186,14 +186,14 @@ export const confirmAudit: ComponentAuditDefinition = {
               open={open()}
               onOpenChange={setOpen}
               triggerLabel="Confirm with Custom Slots"
-              titleSlot={
+              titleSlot={() => (
                 <span class="text-error-500 font-bold">{"⚠️ Warning: Sensitive Action"}</span>
-              }
-              descriptionSlot={
+              )}
+              descriptionSlot={() => (
                 <span class="text-xs text-muted">
                   Custom formatted notice regarding your data export request.
                 </span>
-              }
+              )}
               actionLabel="Proceed"
               cancelLabel="Abort"
               onConfirm={() => setOpen(false)}

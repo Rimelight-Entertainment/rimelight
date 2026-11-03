@@ -69,7 +69,7 @@ export const HomePage: Component = () => {
           title: "text-white",
           description: "text-neutral-300",
         }}
-        background={
+        backgroundSlot={
           <div class="w-full h-full">
             <RLImage
               src="https://cdn.rimelight.com/images/placeholder_home_hero_background.webp"
@@ -98,7 +98,7 @@ export const HomePage: Component = () => {
           title: "text-white",
           description: "text-neutral-300",
         }}
-        background={
+        backgroundSlot={
           <div class="w-full h-full">
             <RLImage
               src="https://cdn.rimelight.com/images/placeholder_home_company_background.webp"
@@ -110,7 +110,7 @@ export const HomePage: Component = () => {
             <div class="absolute inset-0 bg-black/90" />
           </div>
         }
-        body={
+        bodySlot={
           <div class="grid grid-cols-2 gap-lg mt-8 border-t border-neutral-800/50 pt-8 max-w-xl">
             <div>
               <div class="text-4xl lg:text-5xl font-black text-white tracking-tight">3+</div>
@@ -145,7 +145,7 @@ export const HomePage: Component = () => {
             "text-white text-4xl lg:text-5xl font-extrabold uppercase tracking-tight text-center",
           description: "hidden",
         }}
-        background={
+        backgroundSlot={
           <div class="w-full h-full">
             <RLImage
               src="https://cdn.rimelight.com/images/placeholder_home_projects_background.webp"
@@ -157,7 +157,7 @@ export const HomePage: Component = () => {
             <div class="absolute inset-0 bg-neutral-950/80" />
           </div>
         }
-        body={
+        bodySlot={
           <div class="flex flex-wrap justify-center gap-lg mt-12 w-full max-w-7xl mx-auto px-4">
             <a
               href={getLocaleUrl("/franchises/grand-tale")}
@@ -225,7 +225,7 @@ export const HomePage: Component = () => {
             "text-white text-4xl lg:text-5xl font-extrabold uppercase tracking-tight text-center",
           description: "text-neutral-400 text-center max-w-2xl mx-auto mt-4",
         }}
-        background={
+        backgroundSlot={
           <div class="w-full h-full">
             <RLImage
               src="https://cdn.rimelight.com/images/placeholder_home_news_background.webp"
@@ -237,7 +237,7 @@ export const HomePage: Component = () => {
             <div class="absolute inset-0 bg-black/85" />
           </div>
         }
-        body={
+        bodySlot={
           <div class="w-full mt-12 max-w-7xl mx-auto px-4">
             <RLGrid>
               <For each={latestPosts() || []}>
@@ -295,7 +295,7 @@ export const HomePage: Component = () => {
             "text-white text-5xl lg:text-6xl font-black uppercase tracking-tight text-center leading-none",
           description: "text-neutral-300 text-lg md:text-xl text-center max-w-xl mx-auto mt-4",
         }}
-        background={
+        backgroundSlot={
           <div class="w-full h-full">
             <RLImage
               src="https://cdn.rimelight.com/images/placeholder_home_cta_background.webp"
