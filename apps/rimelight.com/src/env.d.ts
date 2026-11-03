@@ -13,5 +13,6 @@ declare namespace Cloudflare {
     RATE_LIMIT_SETTINGS: RateLimit;
     HYPERDRIVE: Hyperdrive;
     DATABASE_URL: string;
+    GT_ESTATE_SERVER_TOKEN: string;
   }
 }
