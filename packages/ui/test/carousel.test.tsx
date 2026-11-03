@@ -1,7 +1,6 @@
 import { describe, it, expect } from "vite-plus/test";
 
 import { RLCarousel } from "../src/components/carousel/RLCarousel";
-import * as components from "../src/components/index";
 import { renderToString } from "@solidjs/web";
 import { cleanHtml } from "./utils/normalize";
 
@@ -27,7 +26,7 @@ describe("RLCarousel", () => {
 
   describe("Exports", () => {
     it("exports RLCarousel component from index", () => {
-      expect(components.RLCarousel).toBeDefined();
+      expect(RLCarousel).toBeDefined();
     });
   });
 

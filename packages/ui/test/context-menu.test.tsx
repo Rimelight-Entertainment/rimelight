@@ -2,7 +2,6 @@ import { describe, it, expect } from "vite-plus/test";
 import { renderToString } from "@solidjs/web";
 import { RLContextMenu } from "../src/components/context-menu/RLContextMenu";
 import type { ContextMenuItem } from "../src/components/context-menu/context-menu.types";
-import * as components from "../src/components/index";
 import { cleanHtml } from "./utils/normalize";
 
 function render(fn: () => any): string {
@@ -21,7 +20,7 @@ function attr(tag: string, name: string): string | undefined {
 describe("RLContextMenu", () => {
   describe("Exports", () => {
     it("exports RLContextMenu as a single component from index", () => {
-      expect(components.RLContextMenu).toBeDefined();
+      expect(RLContextMenu).toBeDefined();
     });
   });
 

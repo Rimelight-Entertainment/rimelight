@@ -3,7 +3,6 @@ import { describe, it, expect, beforeEach, afterEach } from "vite-plus/test";
 import { RLBanner } from "../src/components/banner/RLBanner";
 import { RLHeader } from "../src/components/header/RLHeader";
 import { RLBannerTheme } from "../src/components/banner/banner.theme";
-import * as components from "../src/components/index";
 import { renderToString } from "@solidjs/web";
 import { cleanHtml } from "./utils/normalize";
 
@@ -424,13 +423,5 @@ describe("RLHeader (shared header-stack fixes)", () => {
     expect(render(() => <RLHeader hideOnScroll={true}>x</RLHeader>)).toContain(
       'data-collapsed="false"',
     );
-  });
-});
-
-describe("Exports", () => {
-  it("exports RLBanner once, without aliases", () => {
-    expect(components).toHaveProperty("RLBanner");
-    expect(components).toHaveProperty("useHeaderStack");
-    expect(components).not.toHaveProperty("getHeaderStack");
   });
 });

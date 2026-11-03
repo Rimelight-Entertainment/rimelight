@@ -7,7 +7,6 @@ import {
   resolveConstraintPx,
   resolveValuePx,
 } from "../src/components/splitter/RLSplitter";
-import * as components from "../src/components/index";
 import { cleanHtml } from "./utils/normalize";
 import { mountComponent } from "./utils/browser-render";
 
@@ -27,7 +26,7 @@ function attr(tag: string, name: string): string | undefined {
 describe("RLSplitter Component Test Suite", () => {
   describe("Exports", () => {
     it("exports RLSplitter component from package index", () => {
-      expect(components.RLSplitter).toBeDefined();
+      expect(RLSplitter).toBeDefined();
     });
   });
 

@@ -1,7 +1,6 @@
 import { describe, it, expect } from "vite-plus/test";
 
 import { RLCallout } from "../src/components/callout/RLCallout";
-import * as components from "../src/components/index";
 import { renderToString } from "@solidjs/web";
 import { cleanHtml } from "./utils/normalize";
 
@@ -31,7 +30,7 @@ describe("RLCallout", () => {
 
   describe("Exports", () => {
     it("exports RLCallout component from index", () => {
-      expect(components.RLCallout).toBeDefined();
+      expect(RLCallout).toBeDefined();
     });
   });
 

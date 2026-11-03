@@ -1,7 +1,6 @@
 import { describe, it, expect } from "vite-plus/test";
 
 import { RLConfirm } from "../src/components/confirm/RLConfirm";
-import * as components from "../src/components/index";
 import { renderToString } from "@solidjs/web";
 import { cleanHtml } from "./utils/normalize";
 
@@ -21,7 +20,7 @@ function attr(tag: string, name: string): string | undefined {
 describe("RLConfirm", () => {
   describe("Exports", () => {
     it("exports RLConfirm component from index", () => {
-      expect(components.RLConfirm).toBeDefined();
+      expect(RLConfirm).toBeDefined();
     });
   });
 

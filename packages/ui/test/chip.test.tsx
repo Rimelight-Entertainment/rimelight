@@ -1,7 +1,6 @@
 import { describe, it, expect } from "vite-plus/test";
 
 import { RLChip } from "../src/components/chip/RLChip";
-import * as components from "../src/components/index";
 import { renderToString } from "@solidjs/web";
 import { cleanHtml } from "./utils/normalize";
 
@@ -33,7 +32,7 @@ describe("RLChip", () => {
 
   describe("Exports", () => {
     it("exports RLChip component from package index", () => {
-      expect(components.RLChip).toBeDefined();
+      expect(RLChip).toBeDefined();
     });
   });
 

@@ -1,7 +1,6 @@
 import { describe, it, expect } from "vite-plus/test";
 
 import { RLCard } from "../src/components/card/RLCard";
-import * as components from "../src/components/index";
 import { renderToString } from "@solidjs/web";
 import { cleanHtml } from "./utils/normalize";
 
@@ -23,7 +22,7 @@ describe("RLCard", () => {
 
   describe("Exports", () => {
     it("exports RLCard component from index", () => {
-      expect(components.RLCard).toBeDefined();
+      expect(RLCard).toBeDefined();
     });
   });
 

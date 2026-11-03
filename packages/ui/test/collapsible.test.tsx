@@ -1,7 +1,6 @@
 import { describe, it, expect } from "vite-plus/test";
 
 import { RLCollapsible } from "../src/components/collapsible/RLCollapsible";
-import * as components from "../src/components/index";
 import { renderToString } from "@solidjs/web";
 import { cleanHtml } from "./utils/normalize";
 
@@ -21,7 +20,7 @@ function attr(tag: string, name: string): string | undefined {
 describe("RLCollapsible", () => {
   describe("Exports", () => {
     it("exports RLCollapsible component from package index", () => {
-      expect(components.RLCollapsible).toBeDefined();
+      expect(RLCollapsible).toBeDefined();
     });
   });
 

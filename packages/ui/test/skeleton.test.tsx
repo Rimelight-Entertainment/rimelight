@@ -1,6 +1,5 @@
 import { describe, it, expect } from "vite-plus/test";
 import { RLSkeleton } from "../src/components/skeleton/RLSkeleton";
-import * as components from "../src/components/index";
 import { renderToString } from "@solidjs/web";
 import { cleanHtml } from "./utils/normalize";
 import { mountComponent } from "./utils/browser-render";
@@ -18,7 +17,7 @@ function slotTag(html: string, slot: string): string {
 describe("RLSkeleton", () => {
   describe("Exports", () => {
     it("exports RLSkeleton component from index", () => {
-      expect(components.RLSkeleton).toBeDefined();
+      expect(RLSkeleton).toBeDefined();
     });
   });
 

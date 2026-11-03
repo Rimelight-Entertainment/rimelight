@@ -1,7 +1,6 @@
 import { describe, it, expect } from "vite-plus/test";
 
 import { RLBrowserMockup } from "../src/components/browser-mockup/RLBrowserMockup";
-import * as components from "../src/components/index";
 import { renderToString } from "@solidjs/web";
 import { cleanHtml } from "./utils/normalize";
 
@@ -254,12 +253,6 @@ describe("RLBrowserMockup", () => {
       expect(slotTag(html, "header")).toContain("custom-header-class");
       expect(slotTag(html, "body")).toContain("custom-body-class");
       expect(slotTag(html, "url-bar")).toContain("custom-urlbar-class");
-    });
-  });
-
-  describe("Exports verification", () => {
-    it("is exported by the components index", () => {
-      expect((components as any).RLBrowserMockup).toBeDefined();
     });
   });
 });

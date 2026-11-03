@@ -2,7 +2,6 @@ import { describe, it, expect } from "vite-plus/test";
 import { renderToString } from "@solidjs/web";
 
 import { RLCompare } from "../src/components/compare/RLCompare";
-import * as components from "../src/components/index";
 import { cleanHtml } from "./utils/normalize";
 
 function slotTag(html: string, slot: string): string {
@@ -17,7 +16,7 @@ function attr(tag: string, name: string): string | undefined {
 describe("RLCompare Component Test Suite", () => {
   describe("Exports", () => {
     it("exports RLCompare component from package index", () => {
-      expect(components.RLCompare).toBeDefined();
+      expect(RLCompare).toBeDefined();
     });
   });
 

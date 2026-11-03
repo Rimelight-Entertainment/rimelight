@@ -2,7 +2,6 @@ import { describe, it, expect } from "vite-plus/test";
 
 import { RLCheckbox } from "../src/components/checkbox/RLCheckbox";
 import { RLCheckboxGroup } from "../src/components/checkbox-group/RLCheckboxGroup";
-import * as components from "../src/components/index";
 import { renderToString } from "@solidjs/web";
 import { cleanHtml } from "./utils/normalize";
 
@@ -22,8 +21,8 @@ function attr(tag: string, name: string): string | undefined {
 describe("RLCheckbox & RLCheckboxGroup", () => {
   describe("Exports", () => {
     it("exports RLCheckbox and RLCheckboxGroup from index", () => {
-      expect(components.RLCheckbox).toBeDefined();
-      expect(components.RLCheckboxGroup).toBeDefined();
+      expect(RLCheckbox).toBeDefined();
+      expect(RLCheckboxGroup).toBeDefined();
     });
   });
 

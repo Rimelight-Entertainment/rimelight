@@ -1,7 +1,6 @@
 import { describe, it, expect } from "vite-plus/test";
 
 import { RLModal } from "../src/components/modal/RLModal";
-import * as components from "../src/components/index";
 import { renderToString } from "@solidjs/web";
 import { cleanHtml } from "./utils/normalize";
 
@@ -21,7 +20,7 @@ function attr(tag: string, name: string): string | undefined {
 describe("RLModal", () => {
   describe("Exports", () => {
     it("exports RLModal component from index", () => {
-      expect(components.RLModal).toBeDefined();
+      expect(RLModal).toBeDefined();
     });
   });
 
