@@ -835,19 +835,21 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
     };
   });
 
-  if (!isServer) {
-    onSettled(() => {
-      if (isVirtual()) {
-        const scrollEl = virtualOpts().getScrollElement?.() || containerRef;
-        if (scrollEl) {
-          const handleScroll = () => setScrollTop(scrollEl.scrollTop);
-          scrollEl.addEventListener("scroll", handleScroll, { passive: true });
-          return () => scrollEl.removeEventListener("scroll", handleScroll);
-        }
+  // Called on both server and client: Solid's server onSettled consumes a hydration
+  // child id that the client's onSettled also consumes. Guarding it with !isServer
+  // desyncs ids and yields "Hydration key miss" on every element after the table root.
+  onSettled(() => {
+    if (isServer) return undefined;
+    if (isVirtual()) {
+      const scrollEl = virtualOpts().getScrollElement?.() || containerRef;
+      if (scrollEl) {
+        const handleScroll = () => setScrollTop(scrollEl.scrollTop);
+        scrollEl.addEventListener("scroll", handleScroll, { passive: true });
+        return () => scrollEl.removeEventListener("scroll", handleScroll);
       }
-      return undefined;
-    });
-  }
+    }
+    return undefined;
+  });
 
   // ─── Column offsets ──────────────────────────────────────────────────────────
   const getColSizeNumber = (col: TableColumn<T>): number => {
