@@ -369,15 +369,6 @@ importers:
       '@neondatabase/serverless':
         specifier: 1.2.0
         version: 1.2.0
-      '@rimelight/auth':
-        specifier: workspace:*
-        version: link:../auth
-      '@rimelight/i18n':
-        specifier: workspace:*
-        version: link:../i18n
-      '@rimelight/ui':
-        specifier: workspace:*
-        version: link:../ui
       '@solidjs/web':
         specifier: 2.0.0-rc.20
         version: 2.0.0-rc.20(solid-js@2.0.0-rc.20)
@@ -403,9 +394,18 @@ importers:
         specifier: 4.6.7
         version: 4.6.7
     devDependencies:
+      '@rimelight/auth':
+        specifier: workspace:*
+        version: link:../auth
       '@rimelight/config':
         specifier: workspace:*
         version: link:../config
+      '@rimelight/i18n':
+        specifier: workspace:*
+        version: link:../i18n
+      '@rimelight/ui':
+        specifier: workspace:*
+        version: link:../ui
       '@solidjs/router':
         specifier: 2.0.0-next.43
         version: 2.0.0-next.43(@solidjs/web@2.0.0-rc.20(solid-js@2.0.0-rc.20))(filesystem-routing@0.4.2(@types/node@26.6.5)(jiti@2.7.0)(supports-color@10.2.2)(typescript@7.1.0-beta))(solid-js@2.0.0-rc.20)
@@ -465,9 +465,6 @@ importers:
 
   packages/seo:
     dependencies:
-      '@rimelight/i18n':
-        specifier: workspace:*
-        version: link:../i18n
       vite-plus:
         specifier: ^1.0.0
         version: 1.4.0(@types/node@26.6.5)(@vitest/ui@5.0.5)(happy-dom@21.0.4)(jiti@2.7.0)(typescript@7.1.0-beta)
@@ -475,6 +472,9 @@ importers:
       '@rimelight/config':
         specifier: workspace:*
         version: link:../config
+      '@rimelight/i18n':
+        specifier: workspace:*
+        version: link:../i18n
       '@solidjs/web':
         specifier: 2.0.0-rc.20
         version: 2.0.0-rc.20(solid-js@2.0.0-rc.20)
@@ -484,9 +484,6 @@ importers:
 
   packages/ui:
     dependencies:
-      '@rimelight/i18n':
-        specifier: workspace:*
-        version: link:../i18n
       '@unocss/vite':
         specifier: 66.12.0
         version: 66.12.0(@voidzero-dev/vite-plus-core@1.4.0(@types/node@26.6.5)(jiti@2.7.0)(typescript@7.1.0-beta))(cac@7.1.0)(srvx@1.0.7)
@@ -500,6 +497,9 @@ importers:
       '@rimelight/config':
         specifier: workspace:*
         version: link:../config
+      '@rimelight/i18n':
+        specifier: workspace:*
+        version: link:../i18n
       '@solidjs/router':
         specifier: 2.0.0-next.43
         version: 2.0.0-next.43(@solidjs/web@2.0.0-rc.20(solid-js@2.0.0-rc.20))(filesystem-routing@0.4.2(@types/node@26.6.5)(jiti@2.7.0)(supports-color@10.2.2)(typescript@7.1.0-beta))(solid-js@2.0.0-rc.20)
