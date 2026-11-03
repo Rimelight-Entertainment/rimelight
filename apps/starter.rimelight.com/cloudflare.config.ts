@@ -1,4 +1,4 @@
-import { bindings, defineConfig, triggers } from "cf/config";
+import { bindings, defineConfig } from "cf/config";
 
 export default defineConfig({
   worker: {
@@ -17,10 +17,6 @@ export default defineConfig({
     cache: {
       enabled: true,
     },
-    triggers: [
-      triggers.fetch({ pattern: "starter.rimelight.com/*", zone: "rimelight.com" }),
-      triggers.fetch({ pattern: "www.starter.rimelight.com/*", zone: "rimelight.com" }),
-    ],
     env: {
       ASSETS: bindings.assets(),
       IMAGES: bindings.images(),
