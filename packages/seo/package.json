@@ -1,6 +1,6 @@
 {
   "name": "@rimelight/seo",
-  "version": "0.0.40",
+  "version": "0.0.41",
   "private": false,
   "description": "Rimelight Entertainment's SEO Package",
   "homepage": "https://rimelight.com/docs",
@@ -82,15 +82,14 @@
     "build": "vp pack",
     "prepack": "vp pack"
   },
-  "dependencies": {
-    "@rimelight/i18n": "workspace:*"
-  },
   "devDependencies": {
     "@rimelight/config": "workspace:*",
+    "@rimelight/i18n": "workspace:*",
     "@solidjs/web": "2.0.0-rc.20",
     "hono": "5.0.0-rc.1"
   },
   "peerDependencies": {
+    "@rimelight/i18n": "^0.1.20",
     "@solidjs/web": ">=2.0.0-rc.18",
     "hono": "^5.0.0-rc.1",
     "vite-plus": "^1.0.0"

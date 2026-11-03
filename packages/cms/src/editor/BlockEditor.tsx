@@ -678,7 +678,7 @@ const BlockMenu: Component<{
       disabled={opts.disabled}
       leadingIcon={icon}
       label={label}
-      trailing={opts.hint ? <span class="text-[11px] text-muted">{opts.hint}</span> : undefined}
+      trailingSlot={opts.hint ? <span class="text-[11px] text-muted">{opts.hint}</span> : undefined}
       onClick={(e: MouseEvent) => {
         e.stopPropagation();
         fn();

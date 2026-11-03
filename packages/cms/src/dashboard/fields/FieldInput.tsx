@@ -488,7 +488,7 @@ const ReferenceInput: Component<{
                 color="neutral"
                 class="w-full justify-between"
                 label={r.excerptTitle}
-                trailing={<span class="text-xs text-muted">{r.collection}</span>}
+                trailingSlot={<span class="text-xs text-muted">{r.collection}</span>}
                 onClick={() => pick(r)}
               />
             )}
