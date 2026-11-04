@@ -1,4 +1,5 @@
 import type { HeadProps, OpenGraphMeta, SeoConfig, TwitterMeta } from "./types";
+import { config as virtualConfig } from "virtual:rimelight-seo";
 export type { HeadProps } from "./types";
 import {
   buildCanonicalUrl,
@@ -527,7 +528,10 @@ function generateTags(props: HeadProps, baseConfig?: SeoConfig): HeadTag[] {
  * Builds the strongly-typed head tag list for a page's <head>. Feed the result directly to
  * `useHead()` from @solidjs/web.
  */
-export function createPageHead(props: HeadProps = {}, boundConfig?: SeoConfig): HeadTag[] {
+export function createPageHead(
+  props: HeadProps = {},
+  boundConfig: SeoConfig = virtualConfig,
+): HeadTag[] {
   return generateTags(props, boundConfig);
 }
 
@@ -546,7 +550,10 @@ export function defineSeoConfig(config: SeoConfig) {
  * the runtime ignores once the shell has flushed: `charset` is shell-only, so pages and layouts
  * (`createPageHead`) never emit it.
  */
-export function createDocumentHead(props: HeadProps = {}, boundConfig?: SeoConfig): HeadTag[] {
+export function createDocumentHead(
+  props: HeadProps = {},
+  boundConfig: SeoConfig = virtualConfig,
+): HeadTag[] {
   // Server only: on the client the browser already parsed charset, and useHead warns when it is re-registered.
   const shell: HeadTag[] =
     typeof document === "undefined" ? [{ tag: "meta", props: { charset: "utf-8" } }] : [];
