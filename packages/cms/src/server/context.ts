@@ -13,6 +13,8 @@ export interface CmsServerOptions {
   /** Treat unauthenticated requests as an admin. Only honoured when `import.meta.env.DEV`. */
   devBypassAuth?: boolean;
   previewSecret?: string;
+  /** Public API mount path (e.g. `/api/cms`), used to build same-origin media file URLs. */
+  apiPath?: string;
 }
 
 const isDev = () =>

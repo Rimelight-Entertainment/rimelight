@@ -172,7 +172,7 @@ export const collectionPresets: CollectionPreset[] = [
       labelPlural: "Legal",
       icon: "i-lucide-scale",
       features: { routable: "/legal/{slug}" },
-      workflow: { minApprovals: 1, allowSelfApproval: false },
+      workflow: { minApprovals: 1, allowSelfApproval: true },
       fields: {
         effectiveDate: {
           type: "date",

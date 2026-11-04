@@ -452,6 +452,7 @@ export function createCmsRouter(options: CmsRouterOptions = {}): Hono {
   // ── Media ──────────────────────────────────────────────────────────────────
   registerCmsMediaRoutes(app, "/media", {
     ...(options.config?.storage ? { storage: options.config.storage } : {}),
+    fileBasePath: `${(options.apiPath ?? "/api/cms").replace(/\/$/, "")}/media/file`,
     getSession: async (req) => {
       // Media handlers are framework-agnostic; reuse the CMS auth via a minimal context.
       const fake = { req: { raw: req }, get: () => undefined, env: undefined };

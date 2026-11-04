@@ -475,6 +475,7 @@ const EditorWorkspace: Component<{
             <RichTextProvider collections={rich.collections} mentionTitles={mentionTitles()}>
               <PagePreview
                 title={resolveLabel(props.entry.title) || props.entry.slug}
+                description={resolveLabel(props.entry.description) || undefined}
                 blocks={editor.doc.blocks}
                 locale={locale()}
                 badge="Draft"

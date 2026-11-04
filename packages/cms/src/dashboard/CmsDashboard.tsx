@@ -257,7 +257,7 @@ const Sidebar: Component<{ active: string }> = (props) => {
       href={href(p)}
       variant={isActive(p) ? "soft" : "ghost"}
       color={isActive(p) ? "primary" : "neutral"}
-      class="justify-start"
+      justify="start"
       leadingIcon={icon}
       label={label}
     />

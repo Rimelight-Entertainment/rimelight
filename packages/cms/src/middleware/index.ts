@@ -13,8 +13,14 @@ import { getCmsDb } from "../db/index";
  *   app.use(cms());
  */
 export function cms(): MiddlewareHandler {
+  // Plugin-level `storage` overrides the config file's, so the bucket can be set in vite.config.ts.
+  const cmsConfig = {
+    ...config,
+    ...(options.storage ? { storage: options.storage } : {}),
+  };
   const api = createCmsApi({
-    config,
+    config: cmsConfig,
+    apiPath: (options.apiPath ?? "/api/cms").replace(/\/$/, ""),
     ...(options.devBypassAuth ? { devBypassAuth: true } : {}),
   });
   const apiPath = (options.apiPath ?? "/api/cms").replace(/\/$/, "");

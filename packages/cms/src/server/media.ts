@@ -1,8 +1,20 @@
-import { getR2Bucket, listR2Files, uploadR2File, deleteR2File } from "../storage/index";
+import {
+  getR2Bucket,
+  listR2Files,
+  uploadR2File,
+  deleteR2File,
+  createR2Folder,
+  deleteR2Prefix,
+  moveR2Object,
+  moveR2Prefix,
+  normalizeFolder,
+} from "../storage/index";
 import type { StorageConfig } from "../storage/index";
 
 export interface MediaRouteContext {
   storage?: StorageConfig | undefined;
+  /** Same-origin path that serves stored files, e.g. `/api/cms/media/file`. */
+  fileBasePath?: string | undefined;
   getSession?: ((request: Request) => Promise<any>) | undefined;
   getBucket?: ((bindingName: string) => Promise<any>) | undefined;
 }
@@ -47,7 +59,12 @@ export async function handleMediaList(
 
   try {
     const url = new URL(request.url);
-    const prefix = (url.searchParams.get("prefix") ?? ctx.storage?.prefix ?? "media/") as string;
+    const base = ctx.storage?.prefix ?? "";
+    // `folder` lists one level (folders + direct files); "/" is the root. Without it the whole
+    // bucket under the base prefix is listed flat, which is what search and type filters use.
+    const folderParam = url.searchParams.get("folder");
+    const delimited = folderParam !== null;
+    const prefix = delimited ? `${base}${normalizeFolder(folderParam)}` : base;
     const cursor = (url.searchParams.get("cursor") || undefined) as string | undefined;
     const limit = Number(url.searchParams.get("limit")) || 50;
     const search = url.searchParams.get("search")?.toLowerCase();
@@ -65,14 +82,49 @@ export async function handleMediaList(
       );
     }
 
-    const apiBasePath = `${url.pathname.replace(/\/$/, "")}/file`;
+    const apiBasePath = ctx.fileBasePath ?? `${url.pathname.replace(/\/$/, "")}/file`;
+
+    // Whole bucket in one response (the dashboard browses, searches and builds the tree locally).
+    if (url.searchParams.has("all")) {
+      const all: any[] = [];
+      const folderSet = new Set<string>();
+      let page: string | undefined;
+      do {
+        const next = await listR2Files(bucket, {
+          prefix: base,
+          allKeys: true,
+          limit: 1000,
+          cursor: page,
+          publicUrl: ctx.storage?.publicUrl,
+          apiBasePath,
+        });
+        all.push(...next.files);
+        for (const f of next.folders ?? []) folderSet.add(f.slice(base.length));
+        page = next.truncated ? next.cursor : undefined;
+      } while (page);
+      return json({
+        success: true,
+        data: {
+          base,
+          files: all.map((f) => ({ ...f, path: f.key.slice(base.length) })),
+          folders: [...folderSet].filter(Boolean).sort(),
+          truncated: false,
+          provider: ctx.storage?.provider ?? "r2",
+          binding: bindingName,
+        },
+      });
+    }
+
     const result = await listR2Files(bucket, {
       prefix,
+      delimited,
       cursor,
       limit,
       publicUrl: ctx.storage?.publicUrl,
       apiBasePath,
     });
+    // Folder paths are returned relative to the base prefix, so the client never sees it.
+    const folders = (result.folders ?? []).map((f) => f.slice(base.length));
 
     let files = result.files;
     if (search) {
@@ -99,6 +151,7 @@ export async function handleMediaList(
       success: true,
       data: {
         files,
+        folders,
         truncated: result.truncated,
         cursor: result.cursor,
         provider: ctx.storage?.provider ?? "r2",
@@ -138,10 +191,19 @@ export async function handleMediaUpload(
       );
     }
 
+    // Upload into the folder the user is viewing ("" = root). Keep the real filename; only add a
+    // timestamp when a file with that name already exists.
+    const base = ctx.storage?.prefix ?? "";
+    const folderField = formData.get("folder");
+    const folder = `${base}${normalizeFolder(typeof folderField === "string" ? folderField : "")}`;
+    const safeName = file.name.replace(/[\\/]/g, "_");
+    let key = `${folder}${safeName}`;
+    if (await bucket.head(key)) key = `${folder}${Date.now()}-${safeName}`;
+
     const url = new URL(request.url);
-    const apiBasePath = `${url.pathname.replace(/\/$/, "")}/file`;
+    const apiBasePath = ctx.fileBasePath ?? `${url.pathname.replace(/\/$/, "")}/file`;
     const uploaded = await uploadR2File(bucket, file, {
-      prefix: ctx.storage?.prefix ?? "media/",
+      key,
       publicUrl: ctx.storage?.publicUrl,
       apiBasePath,
     });
@@ -183,6 +245,108 @@ export async function handleMediaDelete(
     return json({ success: true, message: `File "${key}" deleted successfully.` });
   } catch (error: any) {
     return json({ success: false, error: error.message || "Failed to delete file" }, 500);
+  }
+}
+
+/** Creates an empty folder. Body: `{ path }` relative to the base prefix. */
+export async function handleMediaFolderCreate(
+  request: Request,
+  ctx: MediaRouteContext = {},
+): Promise<Response> {
+  const auth = await requireSession(request, ctx);
+  if (auth.error) return auth.error;
+
+  try {
+    const bindingName = ctx.storage?.binding ?? "BLOB";
+    const bucket = await resolveBucket(request, ctx, bindingName);
+    if (!bucket)
+      return json({ success: false, error: `Storage binding "${bindingName}" not found.` }, 500);
+
+    const body = (await request.json().catch(() => ({}))) as { path?: string };
+    const base = ctx.storage?.prefix ?? "";
+    const path = await createR2Folder(bucket, `${base}${normalizeFolder(body.path)}`);
+    return json({ success: true, data: { path: path.slice(base.length) } }, 201);
+  } catch (error: any) {
+    return json({ success: false, error: error.message || "Failed to create folder" }, 500);
+  }
+}
+
+/**
+ * Moves a file or a folder. Body:
+ * - file: `{ kind: "file", key, folder }` moves `key` into `folder` (relative, "" = root)
+ * - folder: `{ kind: "folder", path, folder }` moves the folder `path` into `folder`
+ */
+export async function handleMediaMove(
+  request: Request,
+  ctx: MediaRouteContext = {},
+): Promise<Response> {
+  const auth = await requireSession(request, ctx);
+  if (auth.error) return auth.error;
+
+  try {
+    const bindingName = ctx.storage?.binding ?? "BLOB";
+    const bucket = await resolveBucket(request, ctx, bindingName);
+    if (!bucket)
+      return json({ success: false, error: `Storage binding "${bindingName}" not found.` }, 500);
+
+    const body = (await request.json().catch(() => ({}))) as {
+      kind?: string;
+      key?: string;
+      path?: string;
+      folder?: string;
+    };
+    const base = ctx.storage?.prefix ?? "";
+    const destination = `${base}${normalizeFolder(body.folder)}`;
+
+    if (body.kind === "folder") {
+      const from = `${base}${normalizeFolder(body.path)}`;
+      if (!from) return json({ success: false, error: "Cannot move the root folder." }, 400);
+      const name = from.replace(/\/$/, "").split("/").pop() ?? "";
+      const to = `${destination}${name}/`;
+      if (to === from) return json({ success: true, data: { moved: 0 } });
+      if (to.startsWith(from)) {
+        return json({ success: false, error: "A folder cannot be moved into itself." }, 400);
+      }
+      const moved = await moveR2Prefix(bucket, from, to);
+      return json({ success: true, data: { moved } });
+    }
+
+    if (!body.key) return json({ success: false, error: "Missing 'key'." }, 400);
+    const name = body.key.split("/").pop() ?? "";
+    const to = `${destination}${name}`;
+    if (to === body.key) return json({ success: true, data: { key: to } });
+    if (await bucket.head(to)) {
+      return json({ success: false, error: `A file named "${name}" already exists there.` }, 409);
+    }
+    await moveR2Object(bucket, body.key, to);
+    return json({ success: true, data: { key: to } });
+  } catch (error: any) {
+    return json({ success: false, error: error.message || "Failed to move" }, 500);
+  }
+}
+
+/** Deletes a folder and everything in it. Query: `path` relative to the base prefix. */
+export async function handleMediaFolderDelete(
+  request: Request,
+  ctx: MediaRouteContext = {},
+): Promise<Response> {
+  const auth = await requireSession(request, ctx);
+  if (auth.error) return auth.error;
+
+  try {
+    const bindingName = ctx.storage?.binding ?? "BLOB";
+    const bucket = await resolveBucket(request, ctx, bindingName);
+    if (!bucket)
+      return json({ success: false, error: `Storage binding "${bindingName}" not found.` }, 500);
+
+    const path = new URL(request.url).searchParams.get("path");
+    const prefix = `${ctx.storage?.prefix ?? ""}${normalizeFolder(path)}`;
+    if (!normalizeFolder(path))
+      return json({ success: false, error: "Cannot delete the root." }, 400);
+    const deleted = await deleteR2Prefix(bucket, prefix);
+    return json({ success: true, data: { deleted } });
+  } catch (error: any) {
+    return json({ success: false, error: error.message || "Failed to delete folder" }, 500);
   }
 }
 
@@ -230,6 +394,9 @@ export function registerCmsMediaRoutes(
   router.get(basePath, (c) => handleMediaList(c.req.raw, withEnv(c)));
   router.post(basePath, (c) => handleMediaUpload(c.req.raw, withEnv(c)));
   router.delete(basePath, (c) => handleMediaDelete(c.req.raw, withEnv(c)));
+  router.post(`${basePath}/folder`, (c) => handleMediaFolderCreate(c.req.raw, withEnv(c)));
+  router.delete(`${basePath}/folder`, (c) => handleMediaFolderDelete(c.req.raw, withEnv(c)));
+  router.post(`${basePath}/move`, (c) => handleMediaMove(c.req.raw, withEnv(c)));
   router.get(`${basePath}/file/*`, (c) => {
     const key = decodeURIComponent(c.req.path.split(`${basePath}/file/`)[1] ?? "");
     return handleMediaFile(c.req.raw, key, withEnv(c));

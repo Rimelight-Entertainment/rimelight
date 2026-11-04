@@ -183,14 +183,24 @@ export function createApi(base = "/api/cms") {
     reindex: () => call<{ indexed: number }>("POST", "/search/reindex"),
 
     media: {
-      list: (p: { search?: string; type?: string; cursor?: string } = {}) =>
-        call<{ success: boolean; data: { files: any[]; cursor?: string; truncated: boolean } }>(
-          "GET",
-          `/media${qs(p)}`,
-        ),
-      upload: async (file: File) => {
+      /** `folder` lists one level ("/" = root); omit it to list flat (search and type filters). */
+      list: (
+        p: { search?: string; type?: string; cursor?: string; folder?: string; all?: boolean } = {},
+      ) =>
+        call<{
+          success: boolean;
+          data: {
+            base: string;
+            files: any[];
+            folders: string[];
+            cursor?: string;
+            truncated: boolean;
+          };
+        }>("GET", `/media${p.all ? `?all=1` : qs(p)}`),
+      upload: async (file: File, folder = "") => {
         const form = new FormData();
         form.set("file", file);
+        form.set("folder", folder);
         const res = await fetch(`${base}/media`, {
           method: "POST",
           body: form,
@@ -207,6 +217,18 @@ export function createApi(base = "/api/cms") {
         };
       },
       remove: (key: string) => call("DELETE", `/media${qs({ key })}`),
+      createFolder: (path: string) =>
+        call<{ success: boolean; data: { path: string } }>("POST", "/media/folder", { path }),
+      removeFolder: (path: string) =>
+        call<{ success: boolean; data: { deleted: number } }>(
+          "DELETE",
+          `/media/folder${qs({ path })}`,
+        ),
+      move: (
+        body:
+          | { kind: "file"; key: string; folder: string }
+          | { kind: "folder"; path: string; folder: string },
+      ) => call<{ success: boolean; data: unknown }>("POST", "/media/move", body),
     },
   };
 }

@@ -114,6 +114,8 @@ const DEVICE_WIDTH: Record<PreviewDevice, string> = {
 /** Renders blocks exactly as readers see them (view mode), with a device-width switcher. */
 export const PagePreview: Component<{
   title: string;
+  /** Page description, shown under the title as readers see it. */
+  description?: string | undefined;
   blocks: BaseBlock[];
   locale?: string;
   /** Optional label shown in the header, e.g. "Draft" or "v3". */
@@ -180,6 +182,9 @@ export const PagePreview: Component<{
         >
           <article class="rimelight-cms-page px-6 py-8">
             <h1 class="mb-6 text-3xl font-bold text-highlighted">{props.title}</h1>
+            <Show when={props.description}>
+              <p class="-mt-4 mb-6 text-lg text-muted">{props.description}</p>
+            </Show>
             <For
               each={blocks()}
               fallback={<p class="text-sm text-muted">{cmsT("text.nothing-to-preview-yet")}</p>}
