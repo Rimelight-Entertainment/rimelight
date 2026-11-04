@@ -83,6 +83,12 @@ const OMIT_KEYS = [
   "onColumnOrderChange",
   "enableRowReordering",
   "onRowReorder",
+  "rowDraggable",
+  "rowClass",
+  "onRowDragStart",
+  "onRowDragOver",
+  "onRowDragLeave",
+  "onRowDrop",
   "editingCell",
   "onEditingCellChange",
   "searchable",
@@ -1651,7 +1657,7 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
                     return (
                       <>
                         <tr
-                          class={`${classes().tr} ${trMetaClass()}`}
+                          class={`${classes().tr} ${trMetaClass()} ${props.rowClass?.(row) ?? ""}`}
                           style={trMetaStyle() || undefined}
                           data-slot="tr"
                           data-row-id={row.id}
@@ -1659,7 +1665,10 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
                           data-expanded={row.getIsExpanded() ? "true" : undefined}
                           data-pinned={row.getIsPinned() || undefined}
                           data-drop-position={rowDropPos()}
+                          draggable={props.rowDraggable?.(row) ? "true" : undefined}
+                          onDragStart={(e) => props.onRowDragStart?.(e, row)}
                           onDragOver={(e) => {
+                            props.onRowDragOver?.(e, row);
                             if (!props.enableRowReordering || draggedRowIndex() === null) return;
                             e.preventDefault();
                             const tr = e.currentTarget as HTMLElement;
@@ -1670,12 +1679,14 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
                               setDropTargetRow({ id: row.id, index: row.index, position: pos });
                             }
                           }}
-                          onDragLeave={() => {
+                          onDragLeave={(e) => {
+                            props.onRowDragLeave?.(e, row);
                             if (dropTargetRow()?.id === row.id) {
                               setDropTargetRow(null);
                             }
                           }}
                           onDrop={(e) => {
+                            props.onRowDrop?.(e, row);
                             if (
                               !props.enableRowReordering ||
                               draggedRowIndex() === null ||

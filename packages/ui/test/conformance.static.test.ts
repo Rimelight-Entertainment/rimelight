@@ -59,7 +59,6 @@ const STUB_FROZEN = [
   "speed-dial",
   "spoiler",
   "tour",
-  "tree",
   "user",
   "watermark",
   "window-mockup",

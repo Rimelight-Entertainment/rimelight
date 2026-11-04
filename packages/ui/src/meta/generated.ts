@@ -14661,13 +14661,89 @@ export const componentMeta: ComponentMetaMap = {
     name: "Tree",
     solidComponent: "RLTree.tsx",
     frameworks: ["solid"],
-    props: [],
-    slots: [],
+    props: [
+      {
+        name: "items",
+        type: "TreeItem[] | undefined",
+        required: false,
+        description: "The nodes to render.",
+      },
+      {
+        name: "selected",
+        type: "string | null | undefined",
+        required: false,
+        description:
+          "Selected node id (controlled). `null` or `undefined` with no `onSelect` means none.",
+      },
+      {
+        name: "onSelect",
+        type: "((item: TreeItem) => void) | undefined",
+        required: false,
+        description: "Called when a row is clicked.",
+      },
+      {
+        name: "expanded",
+        type: "string[] | undefined",
+        required: false,
+        description: "Expanded node ids (controlled). Leave undefined to let the tree manage it.",
+      },
+      {
+        name: "defaultExpanded",
+        type: "string[] | undefined",
+        required: false,
+        description: "Expanded node ids on first render when uncontrolled.",
+      },
+      {
+        name: "onExpandedChange",
+        type: "((ids: string[]) => void) | undefined",
+        required: false,
+        description: "Called with the new expanded ids when a node opens or closes.",
+      },
+      {
+        name: "itemAttrs",
+        type: "((item: TreeItem, depth: number) => Record<string, unknown>) | undefined",
+        required: false,
+        description:
+          "Extra attributes for a row (drag-and-drop handlers, data attributes, and so on).",
+      },
+      {
+        name: "itemClass",
+        type: "((item: TreeItem, depth: number) => string | undefined) | undefined",
+        required: false,
+        description: "Extra class names for a row.",
+      },
+      {
+        name: "class",
+        type: "string | undefined",
+        required: false,
+        description: "",
+      },
+    ],
+    slots: [
+      {
+        name: "item",
+        bindings: {},
+        description: "Replaces the default row content (icon and label).",
+      },
+      {
+        name: "default",
+        bindings: {},
+        description: "",
+      },
+    ],
     emits: [],
     theme: {
-      slots: ["root"],
+      slots: ["root", "item", "row", "toggle", "label", "icon", "children", "itemSlot"],
       base: {
-        root: "",
+        root: "flex flex-col gap-0.5 text-sm",
+        item: "flex flex-col",
+        row: "flex items-center gap-1 rounded-md pr-2 py-1 text-highlighted hover:bg-elevated data-[selected=true]:bg-primary/10 data-[selected=true]:text-primary data-[disabled=true]:opacity-50",
+        toggle:
+          "flex size-5 shrink-0 cursor-pointer items-center justify-center rounded text-muted hover:text-highlighted disabled:cursor-default disabled:opacity-0",
+        label: "flex min-w-0 flex-1 cursor-pointer items-center gap-1.5 truncate text-left",
+        icon: "shrink-0 text-muted data-[selected=true]:text-primary",
+        children: "flex flex-col gap-0.5",
+        itemSlot: "",
       },
       variants: {},
       compoundVariants: [],

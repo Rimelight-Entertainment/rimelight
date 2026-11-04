@@ -7,7 +7,7 @@ import { resolveLinkAttrs } from "../link/helpers";
 import { uiT } from "../../locale";
 import type { SlotRenderer } from "../../types";
 
-const OMIT_KEYS = ["items", "separatorIcon", "labelKey", "maxVisible"] as const;
+const OMIT_KEYS = ["items", "separatorIcon", "labelKey", "maxVisible", "itemAttrs"] as const;
 
 interface VisibleItemEntry {
   item: BreadcrumbItem;
@@ -264,6 +264,21 @@ export const RLBreadcrumb: Component<RLBreadcrumbProps> = (props) => {
       );
     }
 
+    if (item.onSelect) {
+      return (
+        <button
+          type="button"
+          class={classes().link}
+          data-slot="link"
+          aria-current={active ? "page" : undefined}
+          disabled={disabled}
+          onClick={() => item.onSelect?.(item)}
+        >
+          {content}
+        </button>
+      );
+    }
+
     return (
       <span class={classes().link} data-slot="link" aria-current={active ? "page" : undefined}>
         {content}
@@ -314,7 +329,11 @@ export const RLBreadcrumb: Component<RLBreadcrumbProps> = (props) => {
 
               const itemTheme = getThemeClasses(item, isLast);
               return (
-                <li class={itemTheme.classes().item} data-slot="item">
+                <li
+                  class={itemTheme.classes().item}
+                  data-slot="item"
+                  {...(props.itemAttrs?.(item, originalIndex) ?? {})}
+                >
                   {renderItemContent(item, originalIndex, itemTheme)}
                   {!isLast && renderSeparator(item, originalIndex)}
                 </li>

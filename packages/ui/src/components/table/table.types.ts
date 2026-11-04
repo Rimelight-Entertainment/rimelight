@@ -403,6 +403,14 @@ export type RLTableProps<T = unknown> = Omit<InferThemeProps<typeof RLTableTheme
    * Called when a row is reordered via drag-and-drop.
    */
   onRowReorder?: ((newOrder: T[], fromIndex: number, toIndex: number) => void) | undefined;
+  /** Whether a data row can be dragged (sets `draggable`). */
+  rowDraggable?: ((row: TableRow<T>) => boolean) | undefined;
+  /** Extra class names for a data row (for example a drop-target highlight). */
+  rowClass?: ((row: TableRow<T>) => string | undefined) | undefined;
+  onRowDragStart?: ((e: DragEvent, row: TableRow<T>) => void) | undefined;
+  onRowDragOver?: ((e: DragEvent, row: TableRow<T>) => void) | undefined;
+  onRowDragLeave?: ((e: DragEvent, row: TableRow<T>) => void) | undefined;
+  onRowDrop?: ((e: DragEvent, row: TableRow<T>) => void) | undefined;
   /**
    * Active cell being edited — `{ rowId: string, columnId: string } | null`.
    */

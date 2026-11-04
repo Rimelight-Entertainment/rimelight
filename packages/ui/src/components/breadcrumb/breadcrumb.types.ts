@@ -31,6 +31,10 @@ export interface BreadcrumbItem {
    */
   href?: string | undefined;
   /**
+   * Called when a non-link item is clicked (an item with `onSelect` renders as a button).
+   */
+  onSelect?: ((item: BreadcrumbItem) => void) | undefined;
+  /**
    * Opens the link as external (adds the link attributes resolved by `resolveLinkAttrs`).
    * @default false
    */
@@ -100,4 +104,8 @@ export type RLBreadcrumbProps<T extends object = BreadcrumbItem> = InferThemePro
    * Separator element, or a render function receiving `{ item, index }`.
    */
   separatorSlot?: SlotRenderer<{ item?: T | undefined; index?: number | undefined }>;
+  /**
+   * Extra attributes for each item's <li> (drag and drop handlers, data attributes, and so on).
+   */
+  itemAttrs?: ((item: T, index: number) => Record<string, unknown>) | undefined;
 };

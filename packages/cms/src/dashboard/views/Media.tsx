@@ -7,14 +7,20 @@ import {
   onSettled,
   type Component,
 } from "solid-js";
-import { resolveLabel } from "../../core/collections/define";
 import { useDashboard } from "../context";
+import { resolveLabel } from "../../core/collections/define";
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
 import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
 import { RLSelect } from "@rimelight/ui/components/select/RLSelect.tsx";
 import { RLImage } from "@rimelight/ui/components/image/RLImage.tsx";
 import { RLFileUpload } from "@rimelight/ui/components/file-upload/RLFileUpload.tsx";
 import { RLTabs } from "@rimelight/ui/components/tabs/RLTabs.tsx";
+import { RLTable } from "@rimelight/ui/components/table/RLTable.tsx";
+import type { TableColumn, TableRow } from "@rimelight/ui/components/table/table.types.ts";
+import { RLCheckbox } from "@rimelight/ui/components/checkbox/RLCheckbox.tsx";
+import { RLBreadcrumb } from "@rimelight/ui/components/breadcrumb/RLBreadcrumb.tsx";
+import { RLTree } from "@rimelight/ui/components/tree/RLTree.tsx";
+import type { TreeItem } from "@rimelight/ui/components/tree/tree.types.ts";
 import { Empty, Loading, Modal, PageHeader } from "../ui";
 import { cmsT } from "../../locale";
 import type { MediaAssetRecord, MediaFolderRecord, MediaUsageRecord } from "../api";
@@ -29,10 +35,23 @@ type Dialog =
   | { kind: "detail"; asset: MediaAssetRecord }
   | { kind: "crop"; asset: MediaAssetRecord };
 
+/** A table row: a folder or a file, keyed the same way as a selection. */
+interface MediaRow {
+  kind: "file" | "folder";
+  id: string;
+  folder?: MediaFolderRecord;
+  asset?: MediaAssetRecord;
+}
+
 const DRAG_TYPE = "application/x-rimelight-media";
+const ROOT_ID = "root";
 const kb = (n: number) =>
   n > 1e6 ? `${(n / 1e6).toFixed(1)} MB` : `${Math.max(1, Math.ceil(n / 1e3))} KB`;
 const sel = (s: Selection) => `${s.kind}:${s.id}`;
+const parseSel = (key: string): Selection => {
+  const [kind, ...rest] = key.split(":");
+  return { kind: kind === "folder" ? "folder" : "file", id: rest.join(":") };
+};
 
 /** Immediate children of a folder (null = top level), sorted by name. */
 const childrenOf = (folders: MediaFolderRecord[], parentId: string | null) =>
@@ -68,6 +87,15 @@ const subtreeOf = (folders: MediaFolderRecord[], folderId: string): Set<string> 
   return out;
 };
 
+/** The folder list as a tree, for RLTree. */
+const toTreeItems = (folders: MediaFolderRecord[], parentId: string | null): TreeItem[] =>
+  childrenOf(folders, parentId).map((f) => ({
+    id: f.id,
+    label: f.name,
+    icon: "folder",
+    children: toTreeItems(folders, f.id),
+  }));
+
 const readImageSize = async (file: File): Promise<{ width: number; height: number } | null> => {
   if (!file.type.startsWith("image/") || typeof createImageBitmap !== "function") return null;
   try {
@@ -80,62 +108,50 @@ const readImageSize = async (file: File): Promise<{ width: number; height: numbe
   }
 };
 
-/** Folder tree. Clicking selects; folders and files can be dropped onto it. */
+/**
+ * Folder tree: RLTree with the folders as items. The root item is the library itself. Folders
+ * accept drops of files and folders (to move them in) when `dropTarget` is given.
+ */
 const FolderTree: Component<{
   folders: MediaFolderRecord[];
-  current: string | null;
-  hover: string | null;
+  selected: string | null;
+  hover?: string | null;
   onSelect: (id: string | null) => void;
-  onDragOver: (e: DragEvent, id: string | null) => void;
-  onDrop: (e: DragEvent, id: string | null) => void;
-  onDragLeave: () => void;
-}> = (props) => {
-  const Node: Component<{ id: string | null; name: string; depth: number }> = (node) => {
-    const kids = () => childrenOf(props.folders, node.id);
-    const [open, setOpen] = createSignal(
-      node.depth === 0 || pathTo(props.folders, props.current).some((f) => f.id === node.id),
-    );
-    return (
-      <div>
-        <div
-          class={`flex cursor-pointer items-center gap-1 rounded py-1 pr-2 text-sm ${
-            props.current === node.id ? "bg-primary/10 text-primary" : "text-highlighted"
-          } ${props.hover === (node.id ?? "root") ? "ring-2 ring-primary" : ""}`}
-          style={{ "padding-left": `${node.depth * 12 + 4}px` }}
-          onClick={() => props.onSelect(node.id)}
-          onDragOver={(e) => props.onDragOver(e, node.id)}
-          onDragLeave={() => props.onDragLeave()}
-          onDrop={(e) => props.onDrop(e, node.id)}
-        >
-          <button
-            type="button"
-            class="flex size-4 shrink-0 items-center justify-center text-muted"
-            disabled={kids().length === 0}
-            onClick={(e) => {
-              e.stopPropagation();
-              setOpen(!open());
-            }}
-          >
-            <Show when={kids().length > 0}>
-              <span
-                class={open() ? "i-lucide-chevron-down size-3" : "i-lucide-chevron-right size-3"}
-              />
-            </Show>
-          </button>
-          <span
-            class={`${open() ? "i-lucide-folder-open" : "i-lucide-folder"} size-4 text-primary`}
-          />
-          <span class="min-w-0 truncate">{node.name}</span>
-        </div>
-        <Show when={open()}>
-          <For each={kids()}>
-            {(child) => <Node id={child.id} name={child.name} depth={node.depth + 1} />}
-          </For>
-        </Show>
-      </div>
-    );
+  dropTarget?: {
+    over: (e: DragEvent, id: string | null) => void;
+    drop: (e: DragEvent, id: string | null) => void;
+    leave: () => void;
   };
-  return <Node id={null} name={cmsT("text.media") || "All files"} depth={0} />;
+}> = (props) => {
+  const items = createMemo<TreeItem[]>(() => [
+    {
+      id: ROOT_ID,
+      label: cmsT("text.media") || "Media",
+      icon: "image",
+      children: toTreeItems(props.folders, null),
+    },
+  ]);
+  const idOf = (id: string) => (id === ROOT_ID ? null : id);
+  return (
+    <RLTree
+      items={items()}
+      selected={props.selected ?? ROOT_ID}
+      defaultExpanded={[ROOT_ID]}
+      onSelect={(item: TreeItem) => props.onSelect(idOf(item.id))}
+      itemClass={(item: TreeItem) =>
+        props.dropTarget && props.hover === item.id ? "ring-2 ring-primary" : undefined
+      }
+      itemAttrs={(item: TreeItem) =>
+        props.dropTarget
+          ? {
+              onDragOver: (e: DragEvent) => props.dropTarget!.over(e, idOf(item.id)),
+              onDragLeave: () => props.dropTarget!.leave(),
+              onDrop: (e: DragEvent) => props.dropTarget!.drop(e, idOf(item.id)),
+            }
+          : {}
+      }
+    />
+  );
 };
 
 /**
@@ -145,14 +161,12 @@ const FolderTree: Component<{
  */
 const MediaManager: Component<{ onPick?: (asset: MediaAssetRecord) => void }> = (props) => {
   const { api, toast, locales } = useDashboard();
+  const [view, setView] = createSignal<View>("grid");
   const [folders, setFolders] = createSignal<MediaFolderRecord[]>([]);
-  const [assets, setAssets] = createSignal<MediaAssetRecord[]>([]);
   const [folderId, setFolderId] = createSignal<string | null>(null);
   const [search, setSearch] = createSignal("");
   const [type, setType] = createSignal("all");
-  const [view, setView] = createSignal<View>("grid");
-  const [loading, setLoading] = createSignal(false);
-  const [loadError, setLoadError] = createSignal<string | null>(null);
+  const [query, setQuery] = createSignal("");
   const [selected, setSelected] = createSignal<Selection[]>([]);
   const [dialog, setDialog] = createSignal<Dialog | null>(null);
   const [hover, setHover] = createSignal<string | null>(null);
@@ -160,7 +174,6 @@ const MediaManager: Component<{ onPick?: (asset: MediaAssetRecord) => void }> = 
   const [moveTarget, setMoveTarget] = createSignal<string | null>(null);
   const [uploadFiles, setUploadFiles] = createSignal<File[]>([]);
   const [uploadProgress, setUploadProgress] = createSignal<string | null>(null);
-  let seq = 0;
 
   const searching = () => search().trim() !== "" || type() !== "all";
   const crumbs = createMemo(() => pathTo(folders(), folderId()));
@@ -171,9 +184,40 @@ const MediaManager: Component<{ onPick?: (asset: MediaAssetRecord) => void }> = 
       prev.some((x) => sel(x) === sel(s)) ? prev.filter((x) => sel(x) !== sel(s)) : [...prev, s],
     );
   const folderName = (id: string | null) =>
-    id === null
-      ? cmsT("text.media") || "All files"
-      : (folders().find((f) => f.id === id)?.name ?? "");
+    id === null ? cmsT("text.media") || "Media" : (folders().find((f) => f.id === id)?.name ?? "");
+
+  /**
+   * The file list currently on screen, tagged with the request it answers. Loads are explicit: the
+   * caller passes the folder, search and type, so nothing depends on when a memo happens to run.
+   * Only the newest load may write, so an older response can never replace the current list.
+   */
+  const [listing, setListing] = createSignal<{
+    folder: string | null;
+    assets: MediaAssetRecord[];
+    error: string | null;
+  } | null>(null);
+  let loadSeq = 0;
+  const loadAssets = async (
+    folder: string | null = folderId(),
+    q: string = query(),
+    t: string = type(),
+  ) => {
+    const id = ++loadSeq;
+    try {
+      const res = await api.media.list({ folderId: folder, search: q, type: t });
+      if (id === loadSeq) setListing({ folder, assets: res.data.assets, error: null });
+    } catch (err) {
+      if (id === loadSeq) setListing({ folder, assets: [], error: (err as Error).message });
+    }
+  };
+  const assets = () => listing()?.assets ?? [];
+  const loadError = () => listing()?.error ?? null;
+
+  /** Rows for the table: folders first, then files. */
+  const rows = createMemo<MediaRow[]>(() => [
+    ...subfolders().map((f) => ({ kind: "folder" as const, id: f.id, folder: f })),
+    ...assets().map((a) => ({ kind: "file" as const, id: a.id, asset: a })),
+  ]);
 
   const loadFolders = async () => {
     try {
@@ -184,34 +228,15 @@ const MediaManager: Component<{ onPick?: (asset: MediaAssetRecord) => void }> = 
     }
   };
 
-  const loadAssets = async () => {
-    const id = ++seq;
-    setLoading(true);
-    try {
-      const res = await api.media.list({
-        folderId: folderId(),
-        search: search(),
-        type: type(),
-      });
-      if (id === seq) {
-        setAssets(res.data.assets);
-        setLoadError(null);
-      }
-    } catch (err) {
-      if (id === seq) setLoadError((err as Error).message);
-    } finally {
-      if (id === seq) setLoading(false);
-    }
-  };
-
   const refresh = async () => {
-    await Promise.all([loadFolders(), loadAssets()]);
+    await loadFolders();
+    await loadAssets();
   };
 
   const navigate = (id: string | null) => {
     setFolderId(id);
     setSelected([]);
-    void loadAssets();
+    void loadAssets(id);
   };
 
   onSettled(() => void refresh());
@@ -220,14 +245,15 @@ const MediaManager: Component<{ onPick?: (asset: MediaAssetRecord) => void }> = 
   const moveItems = async (items: Selection[], target: string | null) => {
     const tree = folders();
     const work = items.filter((s) => {
-      if (s.kind === "file") {
-        const current = assets().find((a) => a.id === s.id)?.folderId ?? null;
-        return current !== target;
-      }
+      // Files are always sent: the server knows their real folder, the list on screen may not.
+      if (s.kind === "file") return true;
       if (s.id === target) return false;
       return !(target && subtreeOf(tree, s.id).has(target));
     });
-    if (work.length === 0) return;
+    if (work.length === 0) {
+      toast("Nothing to move", "error");
+      return;
+    }
     const results = await Promise.allSettled(
       work.map((s) =>
         s.kind === "file"
@@ -244,19 +270,20 @@ const MediaManager: Component<{ onPick?: (asset: MediaAssetRecord) => void }> = 
     await refresh();
   };
 
-  const onItemDragStart = (e: DragEvent, s: Selection) => {
+  const dragStart = (e: DragEvent, s: Selection) => {
     const items = isSelected(s) ? selected() : [s];
     e.dataTransfer?.setData(DRAG_TYPE, JSON.stringify(items));
     if (e.dataTransfer) e.dataTransfer.effectAllowed = "move";
   };
   const isInternal = (e: DragEvent) => Array.from(e.dataTransfer?.types ?? []).includes(DRAG_TYPE);
-  const onTargetOver = (e: DragEvent, id: string | null) => {
+  const dragOver = (e: DragEvent, id: string | null) => {
     if (!isInternal(e)) return;
     e.preventDefault();
     if (e.dataTransfer) e.dataTransfer.dropEffect = "move";
-    setHover(id ?? "root");
+    setHover(id ?? ROOT_ID);
   };
-  const onTargetDrop = (e: DragEvent, id: string | null) => {
+  const dragLeave = () => setHover(null);
+  const drop = (e: DragEvent, id: string | null) => {
     if (!isInternal(e)) return;
     e.preventDefault();
     e.stopPropagation();
@@ -264,6 +291,7 @@ const MediaManager: Component<{ onPick?: (asset: MediaAssetRecord) => void }> = 
     const items = JSON.parse(e.dataTransfer?.getData(DRAG_TYPE) || "[]") as Selection[];
     void moveItems(items, id);
   };
+  const dropTarget = { over: dragOver, drop, leave: dragLeave };
 
   const createFolder = async () => {
     const name = newName().trim();
@@ -324,6 +352,112 @@ const MediaManager: Component<{ onPick?: (asset: MediaAssetRecord) => void }> = 
   };
 
   const openDetail = (asset: MediaAssetRecord) => setDialog({ kind: "detail", asset });
+  const thumb = (asset: MediaAssetRecord) => asset.previewUrl ?? asset.url;
+  const closeDialog = () => setDialog(null);
+  const altOf = (asset: MediaAssetRecord) =>
+    resolveLabel(asset.alt as any, locales[0] ?? "en") || asset.filename;
+  const selectionOf = (row: MediaRow): Selection => ({ kind: row.kind, id: row.id });
+
+  /** Row selection for RLTable, keyed by the same ids as selections. */
+  const rowSelection = createMemo(() => Object.fromEntries(selected().map((s) => [sel(s), true])));
+
+  const columns: TableColumn<MediaRow>[] = [
+    {
+      id: "select",
+      header: () => (
+        <RLCheckbox
+          aria-label="Select all"
+          checked={rows().length > 0 && selected().length === rows().length}
+          onChange={() =>
+            setSelected(selected().length === rows().length ? [] : rows().map(selectionOf))
+          }
+        />
+      ),
+      cell: ({ row }) => (
+        <RLCheckbox
+          aria-label={`Select ${row.original.kind === "folder" ? row.original.folder?.name : row.original.asset?.filename}`}
+          checked={isSelected(selectionOf(row.original))}
+          onChange={() => toggle(selectionOf(row.original))}
+        />
+      ),
+    },
+    {
+      id: "preview",
+      header: "",
+      cell: ({ row }) => {
+        const a = row.original.asset;
+        if (!a) return <span class="i-lucide-folder size-5 text-primary" />;
+        return (
+          <Show
+            when={a.mimeType.startsWith("image/")}
+            fallback={<span class="i-lucide-file size-5 text-muted" />}
+          >
+            <div class="size-10 overflow-hidden rounded bg-elevated">
+              <RLImage
+                src={thumb(a)}
+                alt={altOf(a)}
+                lightbox={false}
+                class="size-full object-cover"
+              />
+            </div>
+          </Show>
+        );
+      },
+    },
+    {
+      id: "name",
+      header: "Name",
+      cell: ({ row }) => (
+        <span class="font-medium text-highlighted">
+          {row.original.kind === "folder"
+            ? row.original.folder?.name
+            : row.original.asset?.filename}
+        </span>
+      ),
+    },
+    {
+      id: "type",
+      header: "Type",
+      cell: ({ row }) => <span class="text-muted">{row.original.asset?.mimeType ?? "Folder"}</span>,
+    },
+    {
+      id: "size",
+      header: "Size",
+      cell: ({ row }) => (
+        <span class="text-muted">{row.original.asset ? kb(row.original.asset.size) : "—"}</span>
+      ),
+    },
+    {
+      id: "dimensions",
+      header: "Dimensions",
+      cell: ({ row }) => {
+        const a = row.original.asset;
+        return (
+          <span class="text-muted">{a?.width && a?.height ? `${a.width} × ${a.height}` : "—"}</span>
+        );
+      },
+    },
+    {
+      id: "uploaded",
+      header: "Uploaded",
+      cell: ({ row }) => (
+        <span class="text-muted">
+          {row.original.asset ? new Date(row.original.asset.createdAt).toLocaleDateString() : "—"}
+        </span>
+      ),
+    },
+  ];
+
+  const onRowClick = (row: MediaRow) => {
+    if (row.kind === "folder") {
+      navigate(row.id);
+      return;
+    }
+    const a = row.asset;
+    if (!a) return;
+    if (props.onPick) props.onPick(a);
+    else openDetail(a);
+  };
 
   const onTileClick = (e: MouseEvent, asset: MediaAssetRecord) => {
     if (e.ctrlKey || e.metaKey || selected().length > 0) {
@@ -334,20 +468,22 @@ const MediaManager: Component<{ onPick?: (asset: MediaAssetRecord) => void }> = 
     else openDetail(asset);
   };
 
-  const thumb = (asset: MediaAssetRecord) => asset.previewUrl ?? asset.url;
-  const closeDialog = () => setDialog(null);
+  /** Breadcrumb: the library root, then each ancestor folder. Ids line up with the item index. */
+  const crumbIds = createMemo<(string | null)[]>(() => [null, ...crumbs().map((c) => c.id)]);
+  const breadcrumbItems = createMemo(() => [
+    { label: folderName(null), onSelect: () => navigate(null) },
+    ...crumbs().map((c) => ({ label: c.name, onSelect: () => navigate(c.id) })),
+  ]);
 
   return (
-    <div class="flex min-h-[60vh] gap-4">
-      <aside class="w-56 shrink-0 overflow-y-auto rounded-lg border border-default p-2">
+    <div class="flex min-h-[60vh] flex-col gap-4 md:flex-row">
+      <aside class="max-h-56 w-full overflow-y-auto rounded-lg border border-default p-2 md:max-h-none md:w-56 md:shrink-0">
         <FolderTree
           folders={folders()}
-          current={folderId()}
+          selected={folderId() ?? ROOT_ID}
           hover={hover()}
           onSelect={navigate}
-          onDragOver={onTargetOver}
-          onDrop={onTargetDrop}
-          onDragLeave={() => setHover(null)}
+          dropTarget={dropTarget}
         />
       </aside>
 
@@ -366,53 +502,21 @@ const MediaManager: Component<{ onPick?: (asset: MediaAssetRecord) => void }> = 
           }
         }}
       >
+        {/* Row 1: search, and the two actions on the right. */}
         <div class="flex flex-wrap items-center gap-2">
           <RLInput
-            class="max-w-xs"
+            class="min-w-0 w-full md:max-w-md md:flex-1"
             placeholder={cmsT("text.search-files")}
             value={search()}
             onInput={(e) => setSearch(e.currentTarget.value)}
-            onChange={() => void loadAssets()}
-          />
-          <RLSelect
-            class="w-36"
-            value={type()}
-            items={[
-              { label: "All types", value: "all" },
-              { label: "Images", value: "images" },
-              { label: "Videos", value: "videos" },
-              { label: "Audio", value: "audio" },
-              { label: "Documents", value: "documents" },
-            ]}
-            onChange={(e) => {
-              setType(e.currentTarget.value);
-              void loadAssets();
+            onChange={() => {
+              setQuery(search());
+              void loadAssets(folderId(), search(), type());
             }}
           />
-          <div class="ml-auto flex items-center gap-2">
-            <div class="flex rounded-md border border-default p-0.5">
-              <button
-                type="button"
-                class={`rounded px-2 py-1 text-sm ${view() === "grid" ? "bg-primary/10 text-primary" : "text-muted"}`}
-                aria-pressed={view() === "grid" ? "true" : "false"}
-                onClick={() => {
-                  setView("grid");
-                }}
-              >
-                <span class="i-lucide-layout-grid size-4" />
-              </button>
-              <button
-                type="button"
-                class={`rounded px-2 py-1 text-sm ${view() === "table" ? "bg-primary/10 text-primary" : "text-muted"}`}
-                aria-pressed={view() === "table" ? "true" : "false"}
-                onClick={() => {
-                  setView("table");
-                }}
-              >
-                <span class="i-lucide-table size-4" />
-              </button>
-            </div>
+          <div class="ml-auto flex shrink-0 items-center gap-2">
             <RLButton
+              class="whitespace-nowrap"
               color="neutral"
               variant="outline"
               leadingIcon="i-lucide-folder-plus"
@@ -422,6 +526,7 @@ const MediaManager: Component<{ onPick?: (asset: MediaAssetRecord) => void }> = 
               New folder
             </RLButton>
             <RLButton
+              class="whitespace-nowrap"
               color="primary"
               leadingIcon="i-lucide-upload"
               onClick={() => setDialog({ kind: "upload" })}
@@ -431,43 +536,61 @@ const MediaManager: Component<{ onPick?: (asset: MediaAssetRecord) => void }> = 
           </div>
         </div>
 
-        <Show
-          when={!searching()}
-          fallback={<p class="text-sm text-muted">Showing matches from every folder.</p>}
-        >
-          <nav class="flex flex-wrap items-center gap-1 text-sm">
-            <button
-              type="button"
-              class={`rounded px-1.5 py-0.5 text-primary hover:underline ${hover() === "root" ? "ring-2 ring-primary" : ""}`}
-              onClick={() => navigate(null)}
-              onDragOver={(e) => onTargetOver(e, null)}
-              onDragLeave={() => setHover(null)}
-              onDrop={(e) => onTargetDrop(e, null)}
-            >
-              {folderName(null)}
-            </button>
-            <For each={crumbs()}>
-              {(c) => (
-                <>
-                  <span class="text-muted">/</span>
-                  <button
-                    type="button"
-                    class={`rounded px-1.5 py-0.5 text-primary hover:underline ${hover() === c.id ? "ring-2 ring-primary" : ""}`}
-                    onClick={() => navigate(c.id)}
-                    onDragOver={(e) => onTargetOver(e, c.id)}
-                    onDragLeave={() => setHover(null)}
-                    onDrop={(e) => onTargetDrop(e, c.id)}
-                  >
-                    {c.name}
-                  </button>
-                </>
-              )}
-            </For>
-          </nav>
-        </Show>
+        {/* Row 2: type filter on the left, view switch on the right. */}
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div class="w-40 md:w-48">
+            <RLSelect
+              class="w-full"
+              value={type()}
+              items={[
+                { label: "All types", value: "all" },
+                { label: "Images", value: "images" },
+                { label: "Videos", value: "videos" },
+                { label: "Audio", value: "audio" },
+                { label: "Documents", value: "documents" },
+              ]}
+              onChange={(e) => {
+                setType(e.currentTarget.value);
+                void loadAssets(folderId(), query(), e.currentTarget.value);
+              }}
+            />
+          </div>
+          <div class="flex shrink-0 items-center">
+            <RLTabs
+              size="xs"
+              items={[
+                { value: "grid", label: "Grid", icon: "i-lucide-layout-grid" },
+                { value: "table", label: "Table", icon: "i-lucide-table" },
+              ]}
+              value={view()}
+              onValueChange={(v: string) => setView(v === "table" ? "table" : "grid")}
+            />
+          </div>
+        </div>
+
+        {/* Row 3: the location (breadcrumb). */}
+        <div class="flex min-w-0 items-center overflow-x-auto">
+          <Show
+            when={!searching()}
+            fallback={<p class="text-sm text-muted">Showing matches from every folder.</p>}
+          >
+            <RLBreadcrumb
+              class="w-fit max-w-full"
+              items={breadcrumbItems()}
+              itemAttrs={(_item: unknown, index: number) => {
+                const id = crumbIds()[index] ?? null;
+                return {
+                  onDragOver: (e: DragEvent) => dragOver(e, id),
+                  onDragLeave: dragLeave,
+                  onDrop: (e: DragEvent) => drop(e, id),
+                };
+              }}
+            />
+          </Show>
+        </div>
 
         <Show when={selected().length > 0}>
-          <div class="flex items-center gap-2 rounded-lg border border-primary/40 bg-primary/5 px-3 py-2 text-sm">
+          <div class="flex flex-wrap items-center gap-2 rounded-lg border border-primary/40 bg-primary/5 px-3 py-2 text-sm">
             <span class="font-medium text-highlighted">{selected().length} selected</span>
             <RLButton
               size="xs"
@@ -490,13 +613,15 @@ const MediaManager: Component<{ onPick?: (asset: MediaAssetRecord) => void }> = 
             >
               Delete
             </RLButton>
-            <button
-              type="button"
-              class="ml-auto text-muted hover:text-highlighted"
+            <RLButton
+              size="xs"
+              variant="ghost"
+              color="neutral"
+              class="ml-auto"
               onClick={() => setSelected([])}
             >
               Clear
-            </button>
+            </RLButton>
           </div>
         </Show>
 
@@ -510,9 +635,9 @@ const MediaManager: Component<{ onPick?: (asset: MediaAssetRecord) => void }> = 
             />
           }
         >
-          <Loading when={loading() && assets().length === 0 && subfolders().length === 0}>
+          <Loading when={false}>
             <Show
-              when={subfolders().length || assets().length}
+              when={rows().length}
               fallback={
                 <Empty
                   icon="i-lucide-image"
@@ -522,193 +647,134 @@ const MediaManager: Component<{ onPick?: (asset: MediaAssetRecord) => void }> = 
               }
             >
               <Show
-                when={view() === "grid"}
+                when={view() === "table"}
                 fallback={
-                  <div class="overflow-x-auto rounded-lg border border-default">
-                    <table class="w-full text-left text-sm">
-                      <thead class="bg-elevated text-xs uppercase text-muted">
-                        <tr>
-                          <th class="w-8 px-2 py-2" />
-                          <th class="w-14 px-2 py-2" />
-                          <th class="px-2 py-2">Name</th>
-                          <th class="px-2 py-2">Type</th>
-                          <th class="px-2 py-2">Size</th>
-                          <th class="px-2 py-2">Dimensions</th>
-                          <th class="px-2 py-2">Uploaded</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <For each={subfolders()}>
-                          {(f) => {
-                            const s: Selection = { kind: "folder", id: f.id };
-                            return (
-                              <tr
-                                class="cursor-pointer border-t border-default hover:bg-elevated"
-                                draggable="true"
-                                onDragStart={(e) => onItemDragStart(e, s)}
-                                onDragOver={(e) => onTargetOver(e, f.id)}
-                                onDragLeave={() => setHover(null)}
-                                onDrop={(e) => onTargetDrop(e, f.id)}
-                                onClick={() => navigate(f.id)}
+                  <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4">
+                    <For each={subfolders()}>
+                      {(f) => {
+                        const s: Selection = { kind: "folder", id: f.id };
+                        return (
+                          <div
+                            class={`group relative flex flex-col overflow-hidden rounded-lg border border-default ${
+                              hover() === f.id || isSelected(s) ? "ring-2 ring-primary" : ""
+                            }`}
+                            onDragOver={(e) => dragOver(e, f.id)}
+                            onDragLeave={dragLeave}
+                            onDrop={(e) => drop(e, f.id)}
+                          >
+                            <div class="absolute left-2 top-2 z-10">
+                              <RLCheckbox
+                                aria-label={`Select ${f.name}`}
+                                checked={isSelected(s)}
+                                onChange={() => toggle(s)}
+                              />
+                            </div>
+                            <RLButton
+                              variant="ghost"
+                              color="neutral"
+                              class="flex aspect-[4/3] w-full items-center justify-center rounded-none bg-elevated"
+                              draggable="true"
+                              onDragStart={(e: DragEvent) => dragStart(e, s)}
+                              onClick={() => navigate(f.id)}
+                            >
+                              <span class="i-lucide-folder size-12 text-primary" />
+                            </RLButton>
+                            <div
+                              class="truncate px-2 py-1.5 text-[11px] text-highlighted"
+                              title={f.name}
+                            >
+                              {f.name}
+                            </div>
+                          </div>
+                        );
+                      }}
+                    </For>
+                    <For each={assets()}>
+                      {(a) => {
+                        const s: Selection = { kind: "file", id: a.id };
+                        return (
+                          <div
+                            class={`group relative flex flex-col overflow-hidden rounded-lg border border-default ${
+                              isSelected(s) ? "ring-2 ring-primary" : ""
+                            }`}
+                          >
+                            <div class="absolute left-2 top-2 z-10">
+                              <RLCheckbox
+                                aria-label={`Select ${a.filename}`}
+                                checked={isSelected(s)}
+                                onChange={() => toggle(s)}
+                              />
+                            </div>
+                            <RLButton
+                              variant="ghost"
+                              color="neutral"
+                              class="flex aspect-[4/3] w-full items-center justify-center overflow-hidden rounded-none bg-elevated"
+                              draggable="true"
+                              onDragStart={(e: DragEvent) => dragStart(e, s)}
+                              onClick={(e: MouseEvent) => onTileClick(e, a)}
+                            >
+                              <Show
+                                when={a.mimeType.startsWith("image/")}
+                                fallback={<span class="i-lucide-file size-10 text-muted" />}
                               >
-                                <td class="px-2 py-2" onClick={(e) => e.stopPropagation()}>
-                                  <input
-                                    type="checkbox"
-                                    checked={isSelected(s)}
-                                    onChange={() => toggle(s)}
-                                    aria-label={`Select ${f.name}`}
-                                  />
-                                </td>
-                                <td class="px-2 py-2">
-                                  <span class="i-lucide-folder size-5 text-primary" />
-                                </td>
-                                <td class="px-2 py-2 font-medium text-highlighted">{f.name}</td>
-                                <td class="px-2 py-2 text-muted">Folder</td>
-                                <td />
-                                <td />
-                                <td />
-                              </tr>
-                            );
-                          }}
-                        </For>
-                        <For each={assets()}>
-                          {(a) => {
-                            const s: Selection = { kind: "file", id: a.id };
-                            return (
-                              <tr
-                                class="cursor-pointer border-t border-default hover:bg-elevated"
-                                draggable="true"
-                                onDragStart={(e) => onItemDragStart(e, s)}
-                                onClick={(e) => onTileClick(e, a)}
+                                <RLImage
+                                  src={thumb(a)}
+                                  alt={altOf(a)}
+                                  lightbox={false}
+                                  class="size-full object-cover"
+                                />
+                              </Show>
+                            </RLButton>
+                            <div class="flex items-center gap-1 px-2 py-1.5 text-[11px]">
+                              <span
+                                class="min-w-0 flex-1 truncate text-highlighted"
+                                title={a.filename}
                               >
-                                <td class="px-2 py-2" onClick={(e) => e.stopPropagation()}>
-                                  <input
-                                    type="checkbox"
-                                    checked={isSelected(s)}
-                                    onChange={() => toggle(s)}
-                                    aria-label={`Select ${a.filename}`}
-                                  />
-                                </td>
-                                <td class="px-2 py-2">
-                                  <Show
-                                    when={a.mimeType.startsWith("image/")}
-                                    fallback={<span class="i-lucide-file size-5 text-muted" />}
-                                  >
-                                    <div class="size-10 overflow-hidden rounded bg-elevated">
-                                      <RLImage
-                                        src={thumb(a)}
-                                        alt={a.alt?.[locales[0] ?? "en"] ?? a.filename}
-                                        lightbox={false}
-                                        class="size-full object-cover"
-                                      />
-                                    </div>
-                                  </Show>
-                                </td>
-                                <td class="px-2 py-2 font-medium text-highlighted">{a.filename}</td>
-                                <td class="px-2 py-2 text-muted">{a.mimeType}</td>
-                                <td class="px-2 py-2 text-muted">{kb(a.size)}</td>
-                                <td class="px-2 py-2 text-muted">
-                                  {a.width && a.height ? `${a.width} × ${a.height}` : "—"}
-                                </td>
-                                <td class="px-2 py-2 text-muted">
-                                  {new Date(a.createdAt).toLocaleDateString()}
-                                </td>
-                              </tr>
-                            );
-                          }}
-                        </For>
-                      </tbody>
-                    </table>
+                                {a.filename}
+                              </span>
+                              <span class="text-muted">{kb(a.size)}</span>
+                            </div>
+                          </div>
+                        );
+                      }}
+                    </For>
                   </div>
                 }
               >
-                <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4">
-                  <For each={subfolders()}>
-                    {(f) => {
-                      const s: Selection = { kind: "folder", id: f.id };
-                      return (
-                        <div
-                          class={`group relative flex flex-col overflow-hidden rounded-lg border border-default ${
-                            hover() === f.id || isSelected(s) ? "ring-2 ring-primary" : ""
-                          }`}
-                          draggable="true"
-                          onDragStart={(e) => onItemDragStart(e, s)}
-                          onDragOver={(e) => onTargetOver(e, f.id)}
-                          onDragLeave={() => setHover(null)}
-                          onDrop={(e) => onTargetDrop(e, f.id)}
-                        >
-                          <input
-                            type="checkbox"
-                            class="absolute left-2 top-2 z-10 size-4 accent-primary"
-                            checked={isSelected(s)}
-                            aria-label={`Select ${f.name}`}
-                            onChange={() => toggle(s)}
-                          />
-                          <button
-                            type="button"
-                            class="flex aspect-[4/3] items-center justify-center bg-elevated"
-                            onClick={() => navigate(f.id)}
-                          >
-                            <span class="i-lucide-folder size-12 text-primary" />
-                          </button>
-                          <div
-                            class="px-2 py-1.5 text-[11px] text-highlighted truncate"
-                            title={f.name}
-                          >
-                            {f.name}
-                          </div>
-                        </div>
-                      );
-                    }}
-                  </For>
-                  <For each={assets()}>
-                    {(a) => {
-                      const s: Selection = { kind: "file", id: a.id };
-                      return (
-                        <div
-                          class={`group relative flex flex-col overflow-hidden rounded-lg border border-default ${
-                            isSelected(s) ? "ring-2 ring-primary" : ""
-                          }`}
-                          draggable="true"
-                          onDragStart={(e) => onItemDragStart(e, s)}
-                        >
-                          <input
-                            type="checkbox"
-                            class="absolute left-2 top-2 z-10 size-4 accent-primary"
-                            checked={isSelected(s)}
-                            aria-label={`Select ${a.filename}`}
-                            onChange={() => toggle(s)}
-                          />
-                          <button
-                            type="button"
-                            class="flex aspect-[4/3] items-center justify-center overflow-hidden bg-elevated"
-                            onClick={(e) => onTileClick(e, a)}
-                          >
-                            <Show
-                              when={a.mimeType.startsWith("image/")}
-                              fallback={<span class="i-lucide-file size-10 text-muted" />}
-                            >
-                              <RLImage
-                                src={thumb(a)}
-                                alt={a.alt?.[locales[0] ?? "en"] ?? a.filename}
-                                lightbox={false}
-                                class="size-full object-cover"
-                              />
-                            </Show>
-                          </button>
-                          <div class="flex items-center gap-1 px-2 py-1.5 text-[11px]">
-                            <span
-                              class="min-w-0 flex-1 truncate text-highlighted"
-                              title={a.filename}
-                            >
-                              {a.filename}
-                            </span>
-                            <span class="text-muted">{kb(a.size)}</span>
-                          </div>
-                        </div>
-                      );
-                    }}
-                  </For>
+                <div class="overflow-x-auto">
+                  <RLTable
+                    data={rows()}
+                    columns={columns}
+                    getRowId={(row: MediaRow) => `${row.kind}:${row.id}`}
+                    rowSelection={rowSelection()}
+                    onRowSelectionChange={(state: Record<string, boolean>) =>
+                      setSelected(
+                        Object.keys(state)
+                          .filter((k) => state[k])
+                          .map(parseSel),
+                      )
+                    }
+                    onSelect={(_e: Event, row: TableRow<MediaRow>) => onRowClick(row.original)}
+                    rowDraggable={() => true}
+                    rowClass={(row: TableRow<MediaRow>) =>
+                      row.original.kind === "folder" && hover() === row.original.id
+                        ? "ring-2 ring-inset ring-primary"
+                        : undefined
+                    }
+                    onRowDragStart={(e: DragEvent, row: TableRow<MediaRow>) =>
+                      dragStart(e, selectionOf(row.original))
+                    }
+                    onRowDragOver={(e: DragEvent, row: TableRow<MediaRow>) =>
+                      row.original.kind === "folder" ? dragOver(e, row.original.id) : undefined
+                    }
+                    onRowDragLeave={dragLeave}
+                    onRowDrop={(e: DragEvent, row: TableRow<MediaRow>) =>
+                      row.original.kind === "folder" ? drop(e, row.original.id) : undefined
+                    }
+                    hoverable
+                    striped
+                    bordered
+                  />
                 </div>
               </Show>
             </Show>
@@ -818,15 +884,7 @@ const MediaManager: Component<{ onPick?: (asset: MediaAssetRecord) => void }> = 
         <div class="flex flex-col gap-2">
           <p class="text-sm text-muted">Pick a destination folder.</p>
           <div class="max-h-[50vh] overflow-y-auto rounded-lg border border-default p-2">
-            <FolderTree
-              folders={folders()}
-              current={moveTarget()}
-              hover={null}
-              onSelect={setMoveTarget}
-              onDragOver={() => {}}
-              onDrop={() => {}}
-              onDragLeave={() => {}}
-            />
+            <FolderTree folders={folders()} selected={moveTarget()} onSelect={setMoveTarget} />
           </div>
           <p class="text-xs text-muted">Destination: {folderName(moveTarget())}</p>
         </div>
@@ -1524,7 +1582,7 @@ export const MediaLibrary: Component = () => (
       title={cmsT("text.media")}
       description="Images and files stored in your bucket. Drag files anywhere on this page to upload."
     />
-    <div class="p-6">
+    <div class="p-4 md:p-6">
       <MediaManager />
     </div>
   </div>
