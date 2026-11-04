@@ -10187,12 +10187,12 @@ export const componentMeta: ComponentMetaMap = {
         trigger: "",
         overlay: "fixed inset-0 z-50",
         backdrop: "",
-        content:
-          "bg-default divide-y divide-default flex flex-col focus:outline-none z-50 pointer-events-auto",
-        header: "flex items-center gap-1.5 p-4 sm:px-6 min-h-14 relative",
+        content: "bg-default flex flex-col focus:outline-none z-50 pointer-events-auto",
+        header:
+          "flex items-center gap-1.5 p-4 sm:px-6 min-h-14 relative border-b border-default/30",
         wrapper: "",
         body: "flex-1 p-4 sm:p-6",
-        footer: "flex items-center gap-1.5 p-4 sm:px-6",
+        footer: "flex items-center gap-1.5 p-4 sm:px-6 border-t border-default/30",
         title: "text-highlighted font-semibold text-base",
         description: "mt-1 text-muted text-sm leading-relaxed",
         close: "absolute top-4 right-4 end-4",

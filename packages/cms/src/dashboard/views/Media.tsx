@@ -112,6 +112,19 @@ const readImageSize = async (file: File): Promise<{ width: number; height: numbe
  * Folder tree: RLTree with the folders as items. The root item is the library itself. Folders
  * accept drops of files and folders (to move them in) when `dropTarget` is given.
  */
+type CropRect = { x: number; y: number; w: number; h: number };
+type CropDrag =
+  | { mode: "move"; startX: number; startY: number; start: CropRect }
+  | {
+      mode: "resize";
+      edges: { l: boolean; r: boolean; t: boolean; b: boolean };
+      startX: number;
+      startY: number;
+      start: CropRect;
+    };
+const MIN_CROP = 0.05;
+const clamp = (v: number, lo: number, hi: number) => Math.min(Math.max(v, lo), hi);
+
 const FolderTree: Component<{
   folders: MediaFolderRecord[];
   selected: string | null;
@@ -523,7 +536,7 @@ const MediaManager: Component<{ onPick?: (asset: MediaAssetRecord) => void }> = 
               disabled={searching()}
               onClick={() => setDialog({ kind: "newFolder" })}
             >
-              New folder
+              Create Folder
             </RLButton>
             <RLButton
               class="whitespace-nowrap"
@@ -531,7 +544,7 @@ const MediaManager: Component<{ onPick?: (asset: MediaAssetRecord) => void }> = 
               leadingIcon="i-lucide-upload"
               onClick={() => setDialog({ kind: "upload" })}
             >
-              Upload
+              Upload Files
             </RLButton>
           </div>
         </div>
@@ -816,9 +829,10 @@ const MediaManager: Component<{ onPick?: (asset: MediaAssetRecord) => void }> = 
         wide
         footer={
           <>
-            <RLButton variant="ghost" color="neutral" onClick={closeDialog}>
+            <RLButton variant="outline" color="error" onClick={closeDialog}>
               Cancel
             </RLButton>
+            <span class="flex-1" />
             <RLButton
               color="primary"
               disabled={uploadFiles().length === 0 || uploadProgress() !== null}
@@ -934,7 +948,6 @@ const MediaManager: Component<{ onPick?: (asset: MediaAssetRecord) => void }> = 
             onChanged={async () => {
               await refresh();
             }}
-            onCrop={(asset) => setDialog({ kind: "crop", asset })}
             onDelete={(asset) =>
               setDialog({ kind: "delete", items: [{ kind: "file", id: asset.id }] })
             }
@@ -946,53 +959,41 @@ const MediaManager: Component<{ onPick?: (asset: MediaAssetRecord) => void }> = 
           />
         )}
       </Show>
-
-      {/* Crop */}
-      <Show
-        when={dialog()?.kind === "crop" ? (dialog() as Extract<Dialog, { kind: "crop" }>) : null}
-      >
-        {(d) => (
-          <CropDialog
-            asset={d().asset}
-            onClose={() => setDialog({ kind: "detail", asset: d().asset })}
-            onSaved={async () => {
-              setDialog(null);
-              await refresh();
-            }}
-          />
-        )}
-      </Show>
     </div>
   );
 };
 
-/** Detail dialog: details, editing (per-locale alt and caption, focal point, replace), usage. */
+type DetailTab = "details" | "edit" | "used";
+type EditMode = "crop" | "focal";
+type CropApi = { save: (mode: "copy" | "replace") => Promise<void>; busy: () => boolean };
+
+/** Detail dialog: details, per-locale alt and captions, edit image (crop and focal point), usage. */
 const AssetDetail: Component<{
   asset: MediaAssetRecord;
   folders: MediaFolderRecord[];
   locales: string[];
   onClose: () => void;
   onChanged: () => Promise<void>;
-  onCrop: (asset: MediaAssetRecord) => void;
-  onDelete: (asset: MediaAssetRecord) => void;
   onMove: (asset: MediaAssetRecord) => void;
+  onDelete: (asset: MediaAssetRecord) => void;
 }> = (props) => {
   const { api, toast } = useDashboard();
-  const [tab, setTab] = createSignal("details");
+  const [tab, setTab] = createSignal<DetailTab>("details");
+  const [editMode, setEditMode] = createSignal<EditMode>("crop");
+  const [current, setCurrent] = createSignal<MediaAssetRecord>(props.asset);
   const [filename, setFilename] = createSignal(props.asset.filename);
   const [alt, setAlt] = createSignal<Record<string, string>>({ ...props.asset.alt });
   const [caption, setCaption] = createSignal<Record<string, string>>({
     ...props.asset.caption,
   });
-  const [focal, setFocal] = createSignal<{ x: number | null; y: number | null }>({
-    x: props.asset.focalX,
-    y: props.asset.focalY,
-  });
-  const [current, setCurrent] = createSignal<MediaAssetRecord>(props.asset);
+  const [folderId, setFolderId] = createSignal<string | null>(props.asset.folderId);
   const [saving, setSaving] = createSignal(false);
-  let imageWrap: HTMLDivElement | undefined;
+  let fileInput: HTMLInputElement | undefined;
+  let cropApi: CropApi | undefined;
   const isImage = () => current().mimeType.startsWith("image/");
   const locales = () => (props.locales.length ? props.locales : ["en"]);
+  const kbOf = (n: number) =>
+    n > 1e6 ? `${(n / 1e6).toFixed(1)} MB` : `${Math.max(1, Math.ceil(n / 1e3))} KB`;
 
   const save = async () => {
     setSaving(true);
@@ -1001,8 +1002,7 @@ const AssetDetail: Component<{
         filename: filename(),
         alt: alt(),
         caption: caption(),
-        focalX: focal().x,
-        focalY: focal().y,
+        folderId: folderId(),
       });
       toast("Saved", "success");
       await props.onChanged();
@@ -1013,132 +1013,224 @@ const AssetDetail: Component<{
     }
   };
 
-  const setFocalFromClick = (e: MouseEvent) => {
-    if (!imageWrap) return;
-    const rect = imageWrap.getBoundingClientRect();
-    const x = Math.min(Math.max((e.clientX - rect.left) / rect.width, 0), 1);
-    const y = Math.min(Math.max((e.clientY - rect.top) / rect.height, 0), 1);
-    setFocal({ x: Number(x.toFixed(3)), y: Number(y.toFixed(3)) });
-  };
-
-  const replace = async (file: File) => {
+  const replaceWith = async (file: File) => {
     try {
       const size = isImage() ? await readImageSize(file) : null;
       const updated = await api.media.replace(current().id, file, size ?? {});
       setCurrent({ ...current(), ...updated });
-      toast("Replaced. The file has a new URL.", "success");
+      toast("Replaced. The URL stays the same.", "success");
       await props.onChanged();
     } catch (err) {
       toast((err as Error).message, "error");
     }
   };
 
+  const setFocal = async (x: number, y: number) => {
+    try {
+      await api.media.update(current().id, { focalX: x, focalY: y });
+      setCurrent({ ...current(), focalX: x, focalY: y });
+      await props.onChanged();
+    } catch (err) {
+      toast((err as Error).message, "error");
+    }
+  };
+
+  const clearFocal = async () => {
+    try {
+      await api.media.update(current().id, { focalX: null, focalY: null });
+      setCurrent({ ...current(), focalX: null, focalY: null });
+      await props.onChanged();
+    } catch (err) {
+      toast((err as Error).message, "error");
+    }
+  };
+
+  // Assets synced from the bucket have no size stored. Read it from the image once, and save it.
+  if (isImage() && (current().width == null || current().height == null)) {
+    const probe = new Image();
+    probe.onload = () => {
+      if (!probe.naturalWidth) return;
+      const id = current().id;
+      void api.media
+        .update(id, { width: probe.naturalWidth, height: probe.naturalHeight })
+        .then(() =>
+          setCurrent({ ...current(), width: probe.naturalWidth, height: probe.naturalHeight }),
+        )
+        .catch(() => undefined);
+    };
+    probe.src = current().previewUrl ?? current().url;
+  }
+
   const folderItems = () => [
-    { label: "All files", value: "" },
+    { label: "Top level", value: "" },
     ...props.folders
       .slice()
       .sort((a, b) => a.name.localeCompare(b.name))
       .map((f) => ({ label: f.name, value: f.id })),
   ];
 
-  return (
-    <Modal open={true} title={current().filename} onClose={props.onClose} wide>
-      <div class="grid gap-4 md:grid-cols-[1fr_1fr]">
-        <div class="flex flex-col gap-3">
-          <div
-            ref={(el) => (imageWrap = el)}
-            class="relative flex min-h-48 items-center justify-center overflow-hidden rounded-lg bg-elevated"
-            onClick={(e) => {
-              if (tab() === "edit" && isImage()) setFocalFromClick(e);
-            }}
+  const footer = () => {
+    if (tab() === "edit") {
+      return (
+        <>
+          <RLButton variant="outline" color="neutral" onClick={props.onClose}>
+            Cancel
+          </RLButton>
+          <RLButton
+            variant="outline"
+            color="neutral"
+            disabled={cropApi?.busy() ?? false}
+            onClick={() => void cropApi?.save("replace")}
           >
-            <Show when={isImage()} fallback={<span class="i-lucide-file size-16 text-muted" />}>
-              <RLImage
-                src={current().previewUrl ?? current().url}
-                alt={alt()[locales()[0]!] ?? current().filename}
-                lightbox={false}
-                class="max-h-[50vh] w-auto object-contain"
-              />
-            </Show>
-            <Show when={focal().x !== null && focal().y !== null && isImage()}>
-              <span
-                class="pointer-events-none absolute size-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-primary shadow"
-                style={{
-                  left: `${(focal().x ?? 0.5) * 100}%`,
-                  top: `${(focal().y ?? 0.5) * 100}%`,
-                }}
-              />
-            </Show>
-          </div>
-          <Show when={tab() === "edit" && isImage()}>
-            <p class="text-xs text-muted">Click the image to set the focal point.</p>
-          </Show>
-        </div>
+            Replace original
+          </RLButton>
+          <RLButton
+            color="primary"
+            loading={cropApi?.busy() ?? false}
+            onClick={() => void cropApi?.save("copy")}
+          >
+            Create cropped copy
+          </RLButton>
+        </>
+      );
+    }
+    if (tab() === "used") {
+      return (
+        <>
+          <RLButton
+            color="error"
+            leadingIcon="i-lucide-trash-2"
+            onClick={() => props.onDelete(current())}
+          >
+            Delete
+          </RLButton>
+          <span class="flex-1" />
+          <RLButton variant="outline" color="neutral" onClick={props.onClose}>
+            Close
+          </RLButton>
+        </>
+      );
+    }
+    return (
+      <>
+        <RLButton
+          color="error"
+          leadingIcon="i-lucide-trash-2"
+          onClick={() => props.onDelete(current())}
+        >
+          Delete
+        </RLButton>
+        <RLButton
+          variant="outline"
+          color="neutral"
+          leadingIcon="i-lucide-replace"
+          onClick={() => fileInput?.click()}
+        >
+          Replace image
+        </RLButton>
+        <input
+          ref={(el) => (fileInput = el)}
+          type="file"
+          class="hidden"
+          accept={isImage() ? "image/*" : undefined}
+          onChange={(e) => {
+            const file = e.currentTarget.files?.[0];
+            if (file) void replaceWith(file);
+            e.currentTarget.value = "";
+          }}
+        />
+        <span class="flex-1" />
+        <RLButton variant="outline" color="neutral" onClick={props.onClose}>
+          Cancel
+        </RLButton>
+        <RLButton color="primary" loading={saving()} onClick={() => void save()}>
+          Save
+        </RLButton>
+      </>
+    );
+  };
 
-        <div class="flex flex-col gap-3">
-          <RLTabs
-            items={[
-              { label: "Details", value: "details" },
-              { label: "Edit", value: "edit" },
-              { label: "Used in", value: "used" },
-            ]}
-            value={tab()}
-            onValueChange={(v: string) => setTab(v)}
-          />
+  return (
+    <Modal
+      open={true}
+      title="Media details"
+      description={current().filename}
+      onClose={props.onClose}
+      wide="xl"
+      footer={footer}
+    >
+      <div class="flex flex-col gap-5">
+        <RLTabs
+          items={[
+            { value: "details", label: "Details" },
+            { value: "edit", label: "Edit image" },
+            { value: "used", label: "Used in" },
+          ]}
+          value={tab()}
+          onValueChange={(v: string) => setTab(v as DetailTab)}
+        />
 
-          <Show when={tab() === "details"}>
-            <dl class="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm">
-              <dt class="text-muted">Type</dt>
-              <dd>{current().mimeType}</dd>
-              <dt class="text-muted">Size</dt>
-              <dd>{kb(current().size)}</dd>
-              <dt class="text-muted">Dimensions</dt>
-              <dd>
-                {current().width && current().height
-                  ? `${current().width} × ${current().height}`
-                  : "—"}
-              </dd>
-              <dt class="text-muted">Uploaded</dt>
-              <dd>{new Date(current().createdAt).toLocaleString()}</dd>
-              <dt class="text-muted">URL</dt>
-              <dd class="break-all">
-                <button
-                  type="button"
-                  class="text-left text-primary hover:underline"
-                  onClick={() => {
-                    void navigator.clipboard.writeText(current().url);
-                    toast("URL copied");
-                  }}
-                >
-                  {current().url}
-                </button>
-              </dd>
-            </dl>
-            <div class="flex flex-wrap gap-2">
-              <RLButton
-                variant="outline"
-                color="neutral"
-                leadingIcon="i-lucide-move"
-                onClick={() => props.onMove(current())}
-              >
-                Move
-              </RLButton>
-              <RLButton
-                variant="outline"
-                color="error"
-                leadingIcon="i-lucide-trash-2"
-                onClick={() => props.onDelete(current())}
-              >
-                Delete
-              </RLButton>
+        <Show when={tab() === "details"}>
+          <div class="grid gap-6 md:grid-cols-2">
+            <div class="flex flex-col gap-4">
+              <div class="flex min-h-56 items-center justify-center overflow-hidden rounded-lg border border-default bg-elevated p-3">
+                <Show when={isImage()} fallback={<span class="i-lucide-file size-16 text-muted" />}>
+                  <RLImage
+                    src={current().previewUrl ?? current().url}
+                    alt={filename()}
+                    lightbox={false}
+                    class="max-h-[50vh] w-auto object-contain"
+                  />
+                </Show>
+              </div>
+              <dl class="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
+                <dt class="text-muted">Size</dt>
+                <dd>{kbOf(current().size)}</dd>
+                <dt class="text-muted">Dimensions</dt>
+                <dd>
+                  {current().width && current().height
+                    ? `${current().width} × ${current().height}`
+                    : "—"}
+                </dd>
+                <dt class="text-muted">Uploaded</dt>
+                <dd>{new Date(current().createdAt).toLocaleString()}</dd>
+                <dt class="text-muted">Format</dt>
+                <dd>{current().mimeType}</dd>
+              </dl>
+              <div class="flex flex-col gap-1 text-sm">
+                <span class="font-medium text-toned">URL</span>
+                <div class="flex items-center gap-2">
+                  <RLInput
+                    class="min-w-0 flex-1 font-mono text-xs"
+                    readonly
+                    value={current().url}
+                  />
+                  <RLButton
+                    variant="outline"
+                    color="neutral"
+                    icon="i-lucide-copy"
+                    aria-label="Copy URL"
+                    onClick={() => {
+                      void navigator.clipboard.writeText(current().url);
+                      toast("URL copied");
+                    }}
+                  />
+                </div>
+              </div>
             </div>
-          </Show>
 
-          <Show when={tab() === "edit"}>
-            <div class="flex flex-col gap-3">
+            <div class="flex flex-col gap-4">
               <label class="flex flex-col gap-1 text-sm">
                 <span class="font-medium text-toned">Filename</span>
                 <RLInput value={filename()} onInput={(e) => setFilename(e.currentTarget.value)} />
+              </label>
+              <label class="flex flex-col gap-1 text-sm">
+                <span class="font-medium text-toned">Location</span>
+                <RLSelect
+                  value={folderId() ?? ""}
+                  items={folderItems()}
+                  onChange={(e) => setFolderId(e.currentTarget.value || null)}
+                />
               </label>
               <Show when={isImage()}>
                 <For each={locales()}>
@@ -1166,68 +1258,38 @@ const AssetDetail: Component<{
                   </label>
                 )}
               </For>
-              <label class="flex flex-col gap-1 text-sm">
-                <span class="font-medium text-toned">Folder</span>
-                <RLSelect
-                  value={current().folderId ?? ""}
-                  items={folderItems()}
-                  onChange={async (e) => {
-                    const next = e.currentTarget.value || null;
-                    try {
-                      await api.media.update(current().id, { folderId: next });
-                      setCurrent({ ...current(), folderId: next });
-                      await props.onChanged();
-                    } catch (err) {
-                      toast((err as Error).message, "error");
-                    }
-                  }}
-                />
-              </label>
-              <div class="flex flex-wrap gap-2">
-                <Show when={isImage()}>
-                  <RLButton
-                    variant="outline"
-                    color="neutral"
-                    leadingIcon="i-lucide-crop"
-                    onClick={() => props.onCrop(current())}
-                  >
-                    Crop (save as copy)
-                  </RLButton>
-                  <Show when={focal().x !== null}>
-                    <RLButton
-                      variant="ghost"
-                      color="neutral"
-                      onClick={() => setFocal({ x: null, y: null })}
-                    >
-                      Clear focal point
-                    </RLButton>
-                  </Show>
-                </Show>
-                <label class="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-default px-3 py-1.5 text-sm hover:bg-elevated">
-                  <span class="i-lucide-replace size-4" />
-                  Replace file
-                  <input
-                    type="file"
-                    class="hidden"
-                    accept={isImage() ? "image/*" : undefined}
-                    onChange={(e) => {
-                      const file = e.currentTarget.files?.[0];
-                      if (file) void replace(file);
-                      e.currentTarget.value = "";
-                    }}
-                  />
-                </label>
-              </div>
-              <RLButton color="primary" loading={saving()} onClick={() => void save()}>
-                Save
-              </RLButton>
             </div>
-          </Show>
+          </div>
+        </Show>
 
-          <Show when={tab() === "used"}>
-            <UsedIn assetId={current().id} />
+        <Show when={tab() === "edit"}>
+          <Show
+            when={isImage()}
+            fallback={<p class="text-sm text-muted">Only images can be edited.</p>}
+          >
+            <EditImagePanel
+              asset={current()}
+              mode={editMode()}
+              onMode={setEditMode}
+              onFocal={(x, y) => void setFocal(x, y)}
+              onClearFocal={() => void clearFocal()}
+              apiRef={(api) => (cropApi = api)}
+              onCreated={async () => {
+                toast("Cropped copy saved", "success");
+                await props.onChanged();
+              }}
+              onReplaced={async (updated) => {
+                setCurrent({ ...current(), ...updated });
+                toast("Replaced. The URL stays the same.", "success");
+                await props.onChanged();
+              }}
+            />
           </Show>
-        </div>
+        </Show>
+
+        <Show when={tab() === "used"}>
+          <UsedIn assetId={current().id} />
+        </Show>
       </div>
     </Modal>
   );
@@ -1251,7 +1313,11 @@ const UsedIn: Component<{ assetId: string }> = (props) => {
   const titleOf = (u: MediaUsageRecord) =>
     resolveLabel(u.title as any, locales[0] ?? "en") || u.slug;
   return (
-    <div class="flex flex-col gap-2 text-sm">
+    <div class="flex flex-col gap-3 text-sm">
+      <div>
+        <p class="font-semibold text-highlighted">Used in</p>
+        <p class="text-muted">See where this file is used.</p>
+      </div>
       <Show when={!error()} fallback={<p class="text-error-500">{error()}</p>}>
         <Show when={usage()} fallback={<p class="text-muted">Checking where this file is used…</p>}>
           {(list) => (
@@ -1259,18 +1325,18 @@ const UsedIn: Component<{ assetId: string }> = (props) => {
               when={list().length}
               fallback={<p class="text-muted">Not used by any page yet.</p>}
             >
-              <p class="text-xs text-muted">
-                Used by {list().length} {list().length === 1 ? "page" : "pages"}. Deleting it breaks
-                these images.
-              </p>
-              <ul class="flex flex-col divide-y divide-default rounded-md border border-default">
+              <ul class="flex flex-col gap-2">
                 <For each={list()}>
                   {(u) => (
-                    <li class="flex items-center justify-between gap-2 px-3 py-2">
-                      <span class="min-w-0 truncate text-highlighted">{titleOf(u)}</span>
-                      <span class="shrink-0 text-xs text-muted">
-                        {u.type} · {u.status === "draft" ? "draft only" : "published"}
-                      </span>
+                    <li class="flex items-center gap-3 rounded-lg border border-default px-3 py-2">
+                      <span class="i-lucide-file-text size-5 shrink-0 text-muted" />
+                      <div class="min-w-0 flex-1">
+                        <p class="truncate font-medium text-highlighted">{titleOf(u)}</p>
+                        <p class="text-xs text-muted">
+                          {u.type} · {u.status === "draft" ? "Draft" : "Published"}
+                        </p>
+                      </div>
+                      <span class="shrink-0 text-xs text-muted">Open ↗</span>
                     </li>
                   )}
                 </For>
@@ -1283,42 +1349,32 @@ const UsedIn: Component<{ assetId: string }> = (props) => {
   );
 };
 
-type CropRect = { x: number; y: number; w: number; h: number };
-type CropDrag =
-  | { mode: "move"; startX: number; startY: number; start: CropRect }
-  | {
-      mode: "resize";
-      edges: { l: boolean; r: boolean; t: boolean; b: boolean };
-      startX: number;
-      startY: number;
-      start: CropRect;
-    };
-
-const MIN_CROP = 0.05;
-const clamp = (v: number, lo: number, hi: number) => Math.min(Math.max(v, lo), hi);
-
 /**
- * Crop with drag handles: drag the box to move it, the corners and edges to resize. An aspect ratio
- * locks the shape. The crop is saved as a new file; the original stays untouched.
+ * Edit image: crop with handles (aspect-locked), saved as a copy or as a replacement of the original;
+ * or set the focal point by clicking the image. The footer buttons call back through `apiRef`.
  */
-const CropDialog: Component<{
+const EditImagePanel: Component<{
   asset: MediaAssetRecord;
-  onClose: () => void;
-  onSaved: () => Promise<void>;
+  mode: EditMode;
+  onMode: (mode: EditMode) => void;
+  onFocal: (x: number, y: number) => void;
+  onClearFocal: () => void;
+  apiRef: (api: CropApi) => void;
+  onCreated: () => Promise<void>;
+  onReplaced: (updated: MediaAssetRecord) => Promise<void>;
 }> = (props) => {
   const { api, toast } = useDashboard();
   const [aspect, setAspect] = createSignal<string>("free");
   const [rect, setRect] = createSignal<CropRect>({ x: 0.1, y: 0.1, w: 0.8, h: 0.8 });
-  const [busy, setBusy] = createSignal(false);
   const [natural, setNatural] = createSignal<{ w: number; h: number }>({
     w: props.asset.width ?? 1,
     h: props.asset.height ?? 1,
   });
+  const [busy, setBusy] = createSignal(false);
   let wrap: HTMLDivElement | undefined;
   let img: HTMLImageElement | undefined;
   let drag: CropDrag | null = null;
 
-  /** Aspect as width/height in image pixels, or null when free. */
   const ratio = () => {
     const v = aspect();
     if (v === "free") return null;
@@ -1326,7 +1382,6 @@ const CropDialog: Component<{
     return w && h ? w / h : null;
   };
 
-  /** Applies the aspect lock to a rect, keeping the anchored corner or edge fixed. */
   const lockAspect = (
     r: CropRect,
     anchor: { x: "l" | "r" | "c"; y: "t" | "b" | "c" },
@@ -1334,24 +1389,17 @@ const CropDialog: Component<{
     const want = ratio();
     if (!want) return r;
     const { w: iw, h: ih } = natural();
-    // Work in pixels so the ratio is the real image ratio, not the fractional one.
     const pxW = r.w * iw;
     const pxH = pxW / want;
     let h = pxH / ih;
     let w = r.w;
     if (h > r.h + 1e-9) {
-      // Height is the limiting side: grow width instead.
       h = r.h;
       w = (h * ih * want) / iw;
     }
     const x = anchor.x === "l" ? r.x : anchor.x === "r" ? r.x + r.w - w : r.x + (r.w - w) / 2;
     const y = anchor.y === "t" ? r.y : anchor.y === "b" ? r.y + r.h - h : r.y + (r.h - h) / 2;
-    return {
-      x: clamp(x, 0, 1 - w),
-      y: clamp(y, 0, 1 - h),
-      w,
-      h,
-    };
+    return { x: clamp(x, 0, 1 - w), y: clamp(y, 0, 1 - h), w, h };
   };
 
   const onPointerMove = (e: PointerEvent) => {
@@ -1374,11 +1422,12 @@ const CropDialog: Component<{
     if (t) y0 = clamp(s.y + dy, 0, y1 - MIN_CROP);
     if (b) y1 = clamp(s.y + s.h + dy, y0 + MIN_CROP, 1);
     const next: CropRect = { x: x0, y: y0, w: x1 - x0, h: y1 - y0 };
-    const anchor = {
-      x: l ? ("r" as const) : r ? ("l" as const) : ("c" as const),
-      y: t ? ("b" as const) : b ? ("t" as const) : ("c" as const),
-    };
-    setRect(lockAspect(next, anchor));
+    setRect(
+      lockAspect(next, {
+        x: l ? "r" : r ? "l" : "c",
+        y: t ? "b" : b ? "t" : "c",
+      }),
+    );
   };
 
   const onPointerUp = () => {
@@ -1395,64 +1444,67 @@ const CropDialog: Component<{
     window.addEventListener("pointerup", onPointerUp);
   };
 
-  const onHandleDown = (
-    e: PointerEvent,
-    edges: { l: boolean; r: boolean; t: boolean; b: boolean },
-  ) => startDrag(e, { mode: "resize", edges, startX: e.clientX, startY: e.clientY, start: rect() });
-
-  const onBoxDown = (e: PointerEvent) =>
-    startDrag(e, { mode: "move", startX: e.clientX, startY: e.clientY, start: rect() });
-
-  const setAspectTo = (v: string) => {
-    setAspect(v);
-    const r = ratio();
-    if (r) setRect(lockAspect(rect(), { x: "c", y: "c" }));
-  };
-
   const onImageLoad = () => {
     if (!img) return;
     setNatural({ w: img.naturalWidth || 1, h: img.naturalHeight || 1 });
-    // Start with the largest centred box in the chosen shape.
-    setRect(lockAspect({ x: 0, y: 0, w: 1, h: 1 }, { x: "c", y: "c" }));
-    const want = ratio();
-    if (!want) setRect({ x: 0.1, y: 0.1, w: 0.8, h: 0.8 });
+    if (ratio()) setRect(lockAspect({ x: 0, y: 0, w: 1, h: 1 }, { x: "c", y: "c" }));
   };
 
-  const save = async () => {
-    if (!img) return;
+  const setAspectTo = (v: string) => {
+    setAspect(v);
+    if (ratio()) setRect(lockAspect(rect(), { x: "c", y: "c" }));
+    else setRect({ x: 0.1, y: 0.1, w: 0.8, h: 0.8 });
+  };
+
+  const cropBlob = async (): Promise<File | null> => {
+    if (!img) return null;
     const r = rect();
     const { w: iw, h: ih } = natural();
     const sx = Math.round(r.x * iw);
     const sy = Math.round(r.y * ih);
     const sw = Math.max(1, Math.round(r.w * iw));
     const sh = Math.max(1, Math.round(r.h * ih));
-    const maxSide = 1600;
-    const scale = Math.min(1, maxSide / Math.max(sw, sh));
+    const scale = Math.min(1, 1600 / Math.max(sw, sh));
     const canvas = document.createElement("canvas");
     canvas.width = Math.max(1, Math.round(sw * scale));
     canvas.height = Math.max(1, Math.round(sh * scale));
     canvas.getContext("2d")?.drawImage(img, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
-    setBusy(true);
-    try {
-      const blob = await new Promise<Blob | null>((resolve) =>
-        canvas.toBlob(resolve, "image/webp", 0.9),
-      );
-      if (!blob) throw new Error("Could not create the cropped image.");
-      const base = props.asset.filename.replace(/\.[^.]+$/, "");
-      const file = new File([blob], `${base}-crop.webp`, { type: "image/webp" });
-      await api.media.upload(file, {
-        folderId: props.asset.folderId,
-        width: canvas.width,
-        height: canvas.height,
-      });
-      toast("Cropped copy saved", "success");
-      await props.onSaved();
-    } catch (err) {
-      toast((err as Error).message, "error");
-    } finally {
-      setBusy(false);
-    }
+    const blob = await new Promise<Blob | null>((resolve) =>
+      canvas.toBlob(resolve, "image/webp", 0.9),
+    );
+    if (!blob) return null;
+    const base = props.asset.filename.replace(/\.[^.]+$/, "");
+    return new File([blob], `${base}-crop.webp`, { type: "image/webp" });
   };
+
+  props.apiRef({
+    busy,
+    save: async (mode) => {
+      setBusy(true);
+      try {
+        const file = await cropBlob();
+        if (!file) throw new Error("Could not create the cropped image.");
+        if (mode === "copy") {
+          await api.media.upload(file, {
+            folderId: props.asset.folderId,
+            width: Math.round(rect().w * natural().w),
+            height: Math.round(rect().h * natural().h),
+          });
+          await props.onCreated();
+        } else {
+          const updated = await api.media.replace(props.asset.id, file, {
+            width: Math.round(rect().w * natural().w),
+            height: Math.round(rect().h * natural().h),
+          });
+          await props.onReplaced(updated);
+        }
+      } catch (err) {
+        toast((err as Error).message, "error");
+      } finally {
+        setBusy(false);
+      }
+    },
+  });
 
   const handles: {
     name: string;
@@ -1501,51 +1553,35 @@ const CropDialog: Component<{
     },
   ];
 
+  const outputSize = () =>
+    `${Math.round(rect().w * natural().w)} × ${Math.round(rect().h * natural().h)}`;
+
   return (
-    <Modal
-      open={true}
-      title="Crop"
-      onClose={props.onClose}
-      wide
-      footer={
-        <>
-          <RLButton variant="ghost" color="neutral" onClick={props.onClose}>
-            Back
-          </RLButton>
-          <RLButton color="primary" loading={busy()} onClick={() => void save()}>
-            Save as copy
-          </RLButton>
-        </>
-      }
-    >
-      <div class="flex flex-col gap-3">
-        <RLSelect
-          class="w-48"
-          value={aspect()}
-          items={[
-            { label: "Free", value: "free" },
-            { label: "Square (1:1)", value: "1:1" },
-            { label: "4:3", value: "4:3" },
-            { label: "16:9", value: "16:9" },
-            { label: "3:2", value: "3:2" },
-          ]}
-          onChange={(e) => setAspectTo(e.currentTarget.value)}
-        />
-        <div class="flex items-center justify-center rounded-lg bg-elevated p-3">
-          <div ref={(el) => (wrap = el)} class="relative inline-block select-none touch-none">
-            <img
-              ref={(el) => {
-                img = el;
-                if (el.complete && el.naturalWidth) onImageLoad();
-              }}
-              src={props.asset.previewUrl ?? props.asset.url}
-              alt=""
-              draggable={false}
-              class="block max-h-[60vh] max-w-full"
-              onLoad={onImageLoad}
-            />
+    <div class="grid gap-6 md:grid-cols-[1fr_260px]">
+      <div class="flex items-center justify-center rounded-lg bg-elevated p-3">
+        <div ref={(el) => (wrap = el)} class="relative inline-block select-none touch-none">
+          <img
+            ref={(el) => {
+              img = el;
+              if (el.complete && el.naturalWidth) onImageLoad();
+            }}
+            src={props.asset.previewUrl ?? props.asset.url}
+            alt=""
+            draggable={false}
+            class="block max-h-[55vh] max-w-full"
+            onLoad={onImageLoad}
+            onClick={(e: MouseEvent) => {
+              if (props.mode !== "focal" || !wrap) return;
+              const box = wrap.getBoundingClientRect();
+              props.onFocal(
+                clamp((e.clientX - box.left) / box.width, 0, 1),
+                clamp((e.clientY - box.top) / box.height, 0, 1),
+              );
+            }}
+          />
+          <Show when={props.mode === "crop"}>
             <div
-              class="absolute cursor-move border-2 border-white"
+              class="absolute cursor-move border border-primary"
               style={{
                 left: `${rect().x * 100}%`,
                 top: `${rect().y * 100}%`,
@@ -1553,25 +1589,97 @@ const CropDialog: Component<{
                 height: `${rect().h * 100}%`,
                 "box-shadow": "0 0 0 9999px rgba(0,0,0,0.55)",
               }}
-              onPointerDown={onBoxDown}
+              onPointerDown={(e: PointerEvent) =>
+                startDrag(e, { mode: "move", startX: e.clientX, startY: e.clientY, start: rect() })
+              }
             >
               <For each={handles}>
                 {(h) => (
                   <span
                     class={`absolute size-3 rounded-sm border border-white bg-primary ${h.cls}`}
                     aria-label={`Resize ${h.name}`}
-                    onPointerDown={(e) => onHandleDown(e, h.edges)}
+                    onPointerDown={(e: PointerEvent) =>
+                      startDrag(e, {
+                        mode: "resize",
+                        edges: h.edges,
+                        startX: e.clientX,
+                        startY: e.clientY,
+                        start: rect(),
+                      })
+                    }
                   />
                 )}
               </For>
             </div>
-          </div>
+          </Show>
+          <Show
+            when={
+              props.mode === "focal" && props.asset.focalX !== null && props.asset.focalY !== null
+            }
+          >
+            <span
+              class="pointer-events-none absolute size-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-primary shadow"
+              style={{
+                left: `${(props.asset.focalX ?? 0.5) * 100}%`,
+                top: `${(props.asset.focalY ?? 0.5) * 100}%`,
+              }}
+            />
+          </Show>
         </div>
-        <p class="text-xs text-muted">
-          Drag the box to move it, or the handles to resize. The original file is not changed.
-        </p>
       </div>
-    </Modal>
+
+      <div class="flex flex-col gap-4">
+        <RLTabs
+          items={[
+            { value: "crop", label: "Crop" },
+            { value: "focal", label: "Focal point" },
+          ]}
+          value={props.mode}
+          onValueChange={(v: string) => props.onMode(v === "focal" ? "focal" : "crop")}
+        />
+        <Show when={props.mode === "crop"}>
+          <div class="flex flex-col gap-3 text-sm">
+            <div class="flex items-center gap-2">
+              <RLSelect
+                class="min-w-0 flex-1"
+                value={aspect()}
+                items={[
+                  { label: "Original", value: "free" },
+                  { label: "Square (1:1)", value: "1:1" },
+                  { label: "4:3", value: "4:3" },
+                  { label: "16:9", value: "16:9" },
+                  { label: "3:2", value: "3:2" },
+                ]}
+                onChange={(e) => setAspectTo(e.currentTarget.value)}
+              />
+              <RLButton
+                variant="outline"
+                color="neutral"
+                leadingIcon="i-lucide-rotate-ccw"
+                onClick={() => setAspectTo(aspect())}
+              >
+                Reset
+              </RLButton>
+            </div>
+            <div class="flex items-center justify-between rounded-md border border-default px-3 py-2">
+              <span class="text-muted">Output size</span>
+              <span class="font-medium text-highlighted">{outputSize()}</span>
+            </div>
+          </div>
+        </Show>
+        <Show when={props.mode === "focal"}>
+          <div class="flex flex-col gap-3 text-sm">
+            <p class="text-muted">
+              Click the image to set the focal point. It decides what stays in view when the image
+              is cropped by the page.
+            </p>
+            <RLButton variant="outline" color="neutral" onClick={props.onClearFocal}>
+              Clear focal point
+            </RLButton>
+          </div>
+        </Show>
+      </div>
+    </div>
   );
 };
 

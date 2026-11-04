@@ -276,6 +276,8 @@ export async function handleMediaUpdate(
       patch.caption = body.caption && typeof body.caption === "object" ? body.caption : null;
     if ("focalX" in body) patch.focalX = typeof body.focalX === "number" ? body.focalX : null;
     if ("focalY" in body) patch.focalY = typeof body.focalY === "number" ? body.focalY : null;
+    if (typeof body.width === "number") patch.width = body.width;
+    if (typeof body.height === "number") patch.height = body.height;
     if ("folderId" in body)
       patch.folderId = typeof body.folderId === "string" ? body.folderId : null;
     const asset = await cms.media.updateAsset(id, patch as any);

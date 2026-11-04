@@ -77,19 +77,22 @@ export const Button: Component<{
 export const Modal: Component<{
   open: boolean;
   title: string;
+  description?: string | undefined;
   onClose: () => void;
   children: JSX.Element;
-  footer?: JSX.Element;
-  wide?: boolean;
+  /** Footer content, or a function that returns it (so it can change with the active tab). */
+  footer?: JSX.Element | (() => JSX.Element) | undefined;
+  wide?: boolean | "xl";
 }> = (props) => (
   <RLModal
     open={props.open}
     title={props.title}
+    {...(props.description ? { description: props.description } : {})}
     onOpenChange={(next: boolean) => {
       if (!next) props.onClose();
     }}
-    footerSlot={() => props.footer}
-    ui={{ content: props.wide ? "max-w-4xl" : "max-w-lg" }}
+    footerSlot={() => (typeof props.footer === "function" ? props.footer() : props.footer)}
+    ui={{ content: props.wide === "xl" ? "max-w-6xl" : props.wide ? "max-w-4xl" : "max-w-lg" }}
   >
     {props.children}
   </RLModal>

@@ -47,6 +47,8 @@ export interface MediaAssetRecord {
 }
 
 export interface MediaAssetPatch {
+  width?: number;
+  height?: number;
   filename?: string;
   alt?: Record<string, string> | null;
   caption?: Record<string, string> | null;
