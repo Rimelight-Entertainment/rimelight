@@ -10,3 +10,4 @@ export * from "./site_settings";
 export * from "./taxonomies";
 export * from "./bylines";
 export * from "./content_types";
+export * from "./media";

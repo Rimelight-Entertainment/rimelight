@@ -1,5 +1,6 @@
 import { For, Show, type Component } from "solid-js";
 import type { BlockEditorProps } from "../core/blocks/registry";
+import { resolveLabel } from "../core/collections/define";
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
 import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
 import { cmsT } from "../locale";
@@ -189,19 +190,15 @@ const ImageEditor: Component<BlockEditorProps> = (props) => {
       >
         <img
           src={src()}
-          alt={props.block.props["alt"] ?? ""}
+          alt={resolveLabel(props.block.props["alt"] as any)}
           class="max-h-96 rounded-md object-contain"
         />
       </Show>
-      <RLInput
-        variant="ghost"
-        size="sm"
-        class="text-center text-xs"
-        placeholder={cmsT("text.caption")}
-        value={props.block.props["caption"] ?? ""}
-        disabled={props.readOnly}
-        onInput={(e) => props.update({ caption: e.currentTarget.value })}
-      />
+      <Show when={resolveLabel(props.block.props["caption"] as any)}>
+        <figcaption class="text-center text-xs italic text-muted">
+          {resolveLabel(props.block.props["caption"] as any)}
+        </figcaption>
+      </Show>
     </figure>
   );
 };

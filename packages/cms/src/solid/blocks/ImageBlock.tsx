@@ -1,10 +1,12 @@
 import { Show, type Component } from "solid-js";
 import type { BlockViewProps } from "./ParagraphBlock";
+import { resolveLabel } from "../../core/collections/define";
 
 export const ImageBlock: Component<BlockViewProps> = (props) => {
   const src = () => (props.block.props?.["src"] as string) ?? "";
-  const alt = () => (props.block.props?.["alt"] as string) ?? "Image";
-  const caption = () => (props.block.props?.["caption"] as string) ?? "";
+  /** Alt text is per-locale ({ en, pt, … }) or a plain string; resolves to the current locale. */
+  const alt = () => resolveLabel(props.block.props?.["alt"] as any) || "Image";
+  const caption = () => resolveLabel(props.block.props?.["caption"] as any);
 
   return (
     <figure

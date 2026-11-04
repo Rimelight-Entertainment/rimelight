@@ -47,6 +47,11 @@ export interface FieldDefinition {
   collections?: string[];
   /** Per-locale value (`{ en, pt }`) instead of a single value. */
   translatable?: boolean;
+  /**
+   * For media fields: when a library file is picked, copy these asset fields into sibling props, e.g.
+   * `{ alt: "alt", caption: "caption" }`. Only props that are still empty are filled.
+   */
+  autofill?: Record<string, string>;
   min?: number;
   max?: number;
   pattern?: string;

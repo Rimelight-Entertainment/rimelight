@@ -12,6 +12,7 @@ describe("migrator", () => {
       "0006_collection_color",
       "0008_taxonomies_and_retired_columns",
       "0009_drop_legacy_schema_column",
+      "0010_media_library",
     ]);
   });
 

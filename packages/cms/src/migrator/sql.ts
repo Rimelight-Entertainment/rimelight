@@ -259,6 +259,37 @@ ALTER TABLE \`content_types\` DROP COLUMN \`ecom_settings\`;
     sql: `ALTER TABLE \`content_types\` DROP COLUMN \`schema\`;
 `,
   },
+  {
+    name: "0010_media_library",
+    sql: `CREATE TABLE IF NOT EXISTS "media_folders" (
+	"id" text PRIMARY KEY NOT NULL,
+	"parent_id" text,
+	"name" text NOT NULL,
+	"created_at" integer NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "media_assets" (
+	"id" text PRIMARY KEY NOT NULL,
+	"storage_key" text NOT NULL,
+	"filename" text NOT NULL,
+	"mime_type" text NOT NULL,
+	"size" integer NOT NULL,
+	"width" integer,
+	"height" integer,
+	"alt" text,
+	"caption" text,
+	"focal_x" real,
+	"focal_y" real,
+	"folder_id" text,
+	"created_at" integer NOT NULL,
+	"updated_at" integer
+);
+--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS "media_assets_storage_key_idx" ON "media_assets" ("storage_key");
+--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "media_assets_folder_idx" ON "media_assets" ("folder_id");
+`,
+  },
 ];
 
 export const PG_CMS_MIGRATIONS = [
@@ -544,6 +575,37 @@ ALTER TABLE "content_types" DROP COLUMN IF EXISTS "ecom_settings";
   {
     name: "0009_drop_legacy_schema_column",
     sql: `ALTER TABLE "content_types" DROP COLUMN IF EXISTS "schema";
+`,
+  },
+  {
+    name: "0010_media_library",
+    sql: `CREATE TABLE IF NOT EXISTS "media_folders" (
+	"id" text PRIMARY KEY NOT NULL,
+	"parent_id" text,
+	"name" text NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "media_assets" (
+	"id" text PRIMARY KEY NOT NULL,
+	"storage_key" text NOT NULL,
+	"filename" text NOT NULL,
+	"mime_type" text NOT NULL,
+	"size" integer NOT NULL,
+	"width" integer,
+	"height" integer,
+	"alt" jsonb,
+	"caption" jsonb,
+	"focal_x" double precision,
+	"focal_y" double precision,
+	"folder_id" text,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone
+);
+--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS "media_assets_storage_key_idx" ON "media_assets" ("storage_key");
+--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "media_assets_folder_idx" ON "media_assets" ("folder_id");
 `,
   },
 ];

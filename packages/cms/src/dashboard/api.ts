@@ -18,6 +18,57 @@ export class ApiError extends Error {
 }
 
 /** Thin typed client for the admin API (`/api/cms`). */
+export interface MediaFolderRecord {
+  id: string;
+  parentId: string | null;
+  name: string;
+}
+
+/** A library file as the API returns it. `alt` and `caption` are per-locale maps. */
+export interface MediaAssetRecord {
+  id: string;
+  storageKey: string;
+  filename: string;
+  name: string;
+  path: string;
+  mimeType: string;
+  size: number;
+  width: number | null;
+  height: number | null;
+  alt: Record<string, string> | null;
+  caption: Record<string, string> | null;
+  focalX: number | null;
+  focalY: number | null;
+  folderId: string | null;
+  url: string;
+  previewUrl?: string | undefined;
+  createdAt: string;
+  updatedAt: string | null;
+}
+
+export interface MediaAssetPatch {
+  filename?: string;
+  alt?: Record<string, string> | null;
+  caption?: Record<string, string> | null;
+  focalX?: number | null;
+  focalY?: number | null;
+  folderId?: string | null;
+}
+
+export interface MediaUsageRecord {
+  pageId: string;
+  slug: string;
+  title: Record<string, string>;
+  type: string;
+  status: "published" | "draft";
+}
+
+export interface MediaListData {
+  assets: MediaAssetRecord[];
+  folders: MediaFolderRecord[];
+  nextCursor: string | null;
+}
+
 export function createApi(base = "/api/cms") {
   const call = async <T>(method: string, path: string, body?: unknown): Promise<T> => {
     const res = await fetch(`${base}${path}`, {
@@ -183,24 +234,53 @@ export function createApi(base = "/api/cms") {
     reindex: () => call<{ indexed: number }>("POST", "/search/reindex"),
 
     media: {
-      /** `folder` lists one level ("/" = root); omit it to list flat (search and type filters). */
+      /** Folder contents. Pass `folderId` (null = top level), or `search`/`type` to search every folder. */
       list: (
-        p: { search?: string; type?: string; cursor?: string; folder?: string; all?: boolean } = {},
-      ) =>
-        call<{
-          success: boolean;
-          data: {
-            base: string;
-            files: any[];
-            folders: string[];
-            cursor?: string;
-            truncated: boolean;
-          };
-        }>("GET", `/media${p.all ? `?all=1` : qs(p)}`),
-      upload: async (file: File, folder = "") => {
+        p: {
+          folderId?: string | null;
+          search?: string;
+          type?: string;
+          cursor?: string;
+          limit?: number;
+        } = {},
+      ) => {
+        const searching = Boolean(p.search?.trim()) || (p.type !== undefined && p.type !== "all");
+        return call<{ success: boolean; data: MediaListData }>(
+          "GET",
+          `/media${qs({
+            folder: searching ? undefined : (p.folderId ?? "root"),
+            search: p.search,
+            type: p.type,
+            cursor: p.cursor,
+            limit: p.limit,
+          })}`,
+        );
+      },
+      folders: () =>
+        call<{ success: boolean; data: { folders: MediaFolderRecord[] } }>("GET", "/media/folders"),
+      createFolder: (name: string, parentId: string | null = null) =>
+        call<{ success: boolean; data: { folder: MediaFolderRecord } }>("POST", "/media/folders", {
+          name,
+          parentId,
+        }),
+      updateFolder: (id: string, patch: { name?: string; parentId?: string | null }) =>
+        call<{ success: boolean }>("PATCH", `/media/folders/${id}`, patch),
+      removeFolder: (id: string) => call<{ success: boolean }>("DELETE", `/media/folders/${id}`),
+      upload: async (
+        file: File,
+        opts: {
+          folderId?: string | null;
+          alt?: Record<string, string>;
+          width?: number;
+          height?: number;
+        } = {},
+      ) => {
         const form = new FormData();
         form.set("file", file);
-        form.set("folder", folder);
+        if (opts.folderId) form.set("folderId", opts.folderId);
+        if (opts.alt) form.set("alt", JSON.stringify(opts.alt));
+        if (opts.width) form.set("width", String(opts.width));
+        if (opts.height) form.set("height", String(opts.height));
         const res = await fetch(`${base}/media`, {
           method: "POST",
           body: form,
@@ -208,27 +288,36 @@ export function createApi(base = "/api/cms") {
         });
         const data = (await res.json()) as any;
         if (!res.ok || !data.success) throw new ApiError(res.status, data.error ?? "Upload failed");
-        return data.data.file as {
-          key: string;
-          url: string;
-          name: string;
-          mimeType: string;
-          size: number;
-        };
+        return data.data.file as MediaAssetRecord;
       },
-      remove: (key: string) => call("DELETE", `/media${qs({ key })}`),
-      createFolder: (path: string) =>
-        call<{ success: boolean; data: { path: string } }>("POST", "/media/folder", { path }),
-      removeFolder: (path: string) =>
-        call<{ success: boolean; data: { deleted: number } }>(
-          "DELETE",
-          `/media/folder${qs({ path })}`,
+      replace: async (id: string, file: File, opts: { width?: number; height?: number } = {}) => {
+        const form = new FormData();
+        form.set("file", file);
+        if (opts.width) form.set("width", String(opts.width));
+        if (opts.height) form.set("height", String(opts.height));
+        const res = await fetch(`${base}/media/${id}/replace`, {
+          method: "POST",
+          body: form,
+          credentials: "same-origin",
+        });
+        const data = (await res.json()) as any;
+        if (!res.ok || !data.success)
+          throw new ApiError(res.status, data.error ?? "Replace failed");
+        return data.data.file as MediaAssetRecord;
+      },
+      update: (id: string, patch: MediaAssetPatch) =>
+        call<{ success: boolean; data: { file: MediaAssetRecord } }>(
+          "PATCH",
+          `/media/${id}`,
+          patch,
         ),
-      move: (
-        body:
-          | { kind: "file"; key: string; folder: string }
-          | { kind: "folder"; path: string; folder: string },
-      ) => call<{ success: boolean; data: unknown }>("POST", "/media/move", body),
+      remove: (id: string) => call<{ success: boolean }>("DELETE", `/media/${id}`),
+      usage: (id: string) =>
+        call<{ success: boolean; data: { usage: MediaUsageRecord[] } }>(
+          "GET",
+          `/media/${id}/usage`,
+        ),
+      sync: () => call<{ success: boolean; data: { imported: number } }>("POST", "/media/sync"),
     },
   };
 }

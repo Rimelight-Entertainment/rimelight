@@ -120,13 +120,23 @@ export const builtinBlocks: BlockDefinition<any>[] = [
     keywords: ["picture", "photo", "media"],
     defaultProps: { src: "", alt: "" },
     fields: {
-      src: { type: "media", label: { en: "Image", es: "Image", pt: "Image" }, required: true },
+      src: {
+        type: "media",
+        label: { en: "Image", es: "Image", pt: "Image" },
+        required: true,
+        autofill: { alt: "alt", caption: "caption" },
+      },
       alt: {
         type: "text",
+        translatable: true,
         label: { en: "Alt text", es: "Alt text", pt: "Alt text" },
         required: true,
       },
-      caption: { type: "text", label: { en: "Caption", es: "Caption", pt: "Caption" } },
+      caption: {
+        type: "text",
+        translatable: true,
+        label: { en: "Caption", es: "Caption", pt: "Caption" },
+      },
       width: { type: "number", label: { en: "Width", es: "Width", pt: "Width" } },
       height: { type: "number", label: { en: "Height", es: "Height", pt: "Height" } },
     },

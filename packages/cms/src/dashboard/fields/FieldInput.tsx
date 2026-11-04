@@ -1,6 +1,7 @@
 import { For, Show, createEffect, createSignal, type Component } from "solid-js";
 import type { FieldDefinition } from "../../core/collections/types";
 import { resolveLabel } from "../../core/collections/define";
+import type { MediaAssetRecord } from "../api";
 import { useDashboard } from "../context";
 import { MediaPicker } from "../views/Media";
 import { InlineText } from "../../editor/InlineText";
@@ -25,6 +26,8 @@ export interface FieldInputProps {
   onChange: (value: unknown) => void;
   readOnly?: boolean;
   locale?: string;
+  /** Called with the library file chosen for a media field. */
+  onAssetPick?: ((asset: MediaAssetRecord) => void) | undefined;
 }
 
 /** Only for composite boxes that wrap several native pieces (the tag chips). */
@@ -86,6 +89,7 @@ export const FieldInput: Component<FieldInputProps> = (props) => {
         value={value()}
         onChange={set}
         readOnly={!!props.readOnly}
+        onAssetPick={props.onAssetPick}
       />
       <Show when={props.field.description}>
         <span class="text-[11px] text-muted">{resolveLabel(props.field.description)}</span>
@@ -100,6 +104,7 @@ const Control: Component<{
   value: unknown;
   onChange: (v: unknown) => void;
   readOnly: boolean;
+  onAssetPick?: ((asset: MediaAssetRecord) => void) | undefined;
 }> = (props) => {
   const f = () => props.field;
   const text = () =>
@@ -238,7 +243,14 @@ const Control: Component<{
         />
       );
     case "media":
-      return <MediaInput value={props.value} onChange={props.onChange} readOnly={props.readOnly} />;
+      return (
+        <MediaInput
+          value={props.value}
+          onChange={props.onChange}
+          readOnly={props.readOnly}
+          onAssetPick={props.onAssetPick}
+        />
+      );
     case "reference":
     case "references":
       return (
@@ -351,6 +363,7 @@ const MediaInput: Component<{
   value: unknown;
   onChange: (v: unknown) => void;
   readOnly: boolean;
+  onAssetPick?: ((asset: MediaAssetRecord) => void) | undefined;
 }> = (props) => {
   const [open, setOpen] = createSignal(false);
   const src = () =>
@@ -382,8 +395,9 @@ const MediaInput: Component<{
       <MediaPicker
         open={open()}
         onClose={() => setOpen(false)}
-        onPick={(file) => {
-          props.onChange(file.url);
+        onPick={(asset) => {
+          props.onChange(asset.url);
+          props.onAssetPick?.(asset);
           setOpen(false);
         }}
       />
@@ -523,8 +537,25 @@ export const FieldGroups: Component<{
   groups?: Record<string, { label: unknown; defaultOpen?: boolean }>;
   values: Record<string, unknown>;
   onChange: (key: string, value: unknown) => void;
+  /** Applies several prop changes at once (used by media autofill). */
+  onPatch?: ((patch: Record<string, unknown>) => void) | undefined;
   readOnly?: boolean;
 }> = (props) => {
+  /** Copies asset fields into empty sibling props, as declared by the field's `autofill`. */
+  const autofillFrom = (field: FieldDefinition, asset: MediaAssetRecord) => {
+    if (!field.autofill || !props.onPatch) return;
+    const isBlank = (v: unknown) =>
+      v === undefined ||
+      v === null ||
+      v === "" ||
+      (typeof v === "object" && Object.values(v as object).every((x) => !x));
+    const patch: Record<string, unknown> = {};
+    for (const [assetField, propName] of Object.entries(field.autofill)) {
+      const incoming = (asset as unknown as Record<string, unknown>)[assetField];
+      if (isBlank(props.values[propName]) && !isBlank(incoming)) patch[propName] = incoming;
+    }
+    if (Object.keys(patch).length) props.onPatch(patch);
+  };
   const grouped = () => {
     const out = new Map<string, [string, FieldDefinition][]>();
     for (const [key, field] of Object.entries(props.fields)) {
@@ -544,6 +575,7 @@ export const FieldGroups: Component<{
             value={props.values[key]}
             readOnly={!!props.readOnly}
             onChange={(v) => props.onChange(key, v)}
+            onAssetPick={(asset) => autofillFrom(field, asset)}
           />
         )}
       </For>

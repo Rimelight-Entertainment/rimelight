@@ -4,6 +4,7 @@ import * as collections from "./collections";
 import * as entries from "./entries";
 import * as templates from "./templates";
 import * as taxonomies from "./taxonomies";
+import * as media from "./media";
 import * as bylines from "./bylines";
 import * as search from "./search";
 import * as settings from "./site-settings";
@@ -83,6 +84,7 @@ export interface Cms {
   entries: BindAll<typeof entries>;
   templates: BindAll<typeof templates>;
   taxonomies: BindAll<typeof taxonomies>;
+  media: BindAll<typeof media>;
   bylines: BindAll<typeof bylines>;
   search: BindAll<typeof search>;
   mentions: BindAll<typeof mentions>;
@@ -98,6 +100,7 @@ export function createCms(input: CmsContextInput | CmsContext): Cms {
     entries: bind(ctx, entries),
     templates: bind(ctx, templates),
     taxonomies: bind(ctx, taxonomies),
+    media: bind(ctx, media),
     bylines: bind(ctx, bylines),
     search: bind(ctx, search),
     mentions: bind(ctx, mentions),

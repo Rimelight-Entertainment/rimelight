@@ -3,6 +3,7 @@ import {
   sqliteTable,
   text,
   integer,
+  real,
   uniqueIndex,
   index,
   type AnySQLiteColumn,
@@ -431,3 +432,38 @@ export const contentTypes: SQLiteTableWithColumns<any> = sqliteTable(
 
 export type ContentType = typeof contentTypes.$inferSelect;
 export type InsertContentType = typeof contentTypes.$inferInsert;
+
+// 11. Media library
+/** A folder in the media tree. Virtual: moving or renaming a folder never touches storage. */
+export const mediaFolders: SQLiteTableWithColumns<any> = sqliteTable("media_folders", {
+  id: text("id").primaryKey().notNull(),
+  parentId: text("parent_id"),
+  name: text("name").notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" })
+    .$defaultFn(() => new Date())
+    .notNull(),
+});
+
+/**
+ * A file in the media library. `storageKey` is immutable (`{id}{ext}` for uploads), so the public
+ * URL never changes when the file is moved, renamed or given new metadata.
+ */
+export const mediaAssets: SQLiteTableWithColumns<any> = sqliteTable("media_assets", {
+  id: text("id").primaryKey().notNull(),
+  storageKey: text("storage_key").notNull().unique(),
+  filename: text("filename").notNull(),
+  mimeType: text("mime_type").notNull(),
+  size: integer("size").notNull(),
+  width: integer("width"),
+  height: integer("height"),
+  /** Localized alt text, keyed by locale (same shape as other localized CMS text). */
+  alt: text("alt", { mode: "json" }).$type<Localized>(),
+  caption: text("caption", { mode: "json" }).$type<Localized>(),
+  focalX: real("focal_x"),
+  focalY: real("focal_y"),
+  folderId: text("folder_id"),
+  createdAt: integer("created_at", { mode: "timestamp" })
+    .$defaultFn(() => new Date())
+    .notNull(),
+  updatedAt: integer("updated_at", { mode: "timestamp" }).$onUpdate(() => new Date()),
+});

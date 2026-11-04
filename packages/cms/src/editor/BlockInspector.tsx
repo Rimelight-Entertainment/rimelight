@@ -51,6 +51,7 @@ export const BlockInspector: Component<{ editor: BlockEditorState }> = (props) =
               values={sel().block.props}
               readOnly={props.editor.readOnly || sel().block.templatedProps === true}
               onChange={(k, v) => update({ [k]: v })}
+              onPatch={(patch) => update(patch)}
             />
           </Show>
 

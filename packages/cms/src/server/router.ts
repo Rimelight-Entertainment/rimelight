@@ -451,6 +451,7 @@ export function createCmsRouter(options: CmsRouterOptions = {}): Hono {
 
   // ── Media ──────────────────────────────────────────────────────────────────
   registerCmsMediaRoutes(app, "/media", {
+    getCms: (c: any) => cmsForRequest(c, options),
     ...(options.config?.storage ? { storage: options.config.storage } : {}),
     fileBasePath: `${(options.apiPath ?? "/api/cms").replace(/\/$/, "")}/media/file`,
     getSession: async (req) => {
