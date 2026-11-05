@@ -19,6 +19,11 @@ const OMIT_KEYS = [
 ] as const;
 
 export const RLSelect: Component<RLSelectProps> = (props) => {
+  /** The leading icon scales with the select, so an icon-only control matches the button scale. */
+  const leadingIconSize = () =>
+    ({ xs: "size-3.5", sm: "size-4", md: "size-4", lg: "size-5", xl: "size-6" })[
+      props.size ?? "md"
+    ];
   const { Tag, classes, rest, slots, id, children, theme } = RLSelectTheme.setup(props, {
     slots: ["leadingSlot"] as const,
     omit: OMIT_KEYS,
@@ -84,8 +89,9 @@ export const RLSelect: Component<RLSelectProps> = (props) => {
         value={currentValueStr()}
         ref={props.ref}
         onBlur={props.onBlur}
-        class={classes().select}
+        class={`rl-select ${classes().select}`}
         data-slot="select"
+        data-variant={props.layout === "icon" ? "icon" : undefined}
         {...rest}
         onChange={handleChange}
       >
@@ -97,7 +103,7 @@ export const RLSelect: Component<RLSelectProps> = (props) => {
             </span>
           ) : props.leadingIcon ? (
             <span class={classes().leading} data-slot="leading">
-              <RLIcon name={props.leadingIcon} size="sm" class="size-4" />
+              <RLIcon name={props.leadingIcon} size="sm" class={leadingIconSize()} />
             </span>
           ) : null}
           <selectedcontent class={classes().label} />

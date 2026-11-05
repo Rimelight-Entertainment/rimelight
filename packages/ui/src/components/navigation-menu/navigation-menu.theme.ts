@@ -24,7 +24,7 @@ export const RLNavigationMenuTheme = defineTheme("navigation-menu", {
     list: "flex flex-1 list-none",
     item: "relative",
     // Shared by plain links AND dropdown triggers, so one `ui.link` override styles both.
-    link: "text-highlighted inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium transition-colors hover:text-primary focus-visible:text-primary focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 aria-[current]:text-primary data-[state=open]:text-primary",
+    link: "text-highlighted inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50",
     // Trigger-only extras on top of `link`.
     trigger: "cursor-pointer select-none bg-transparent",
     content: "w-full ps-4",
@@ -44,6 +44,15 @@ export const RLNavigationMenuTheme = defineTheme("navigation-menu", {
     childDescription: "mt-1 text-xs text-muted line-clamp-2",
   },
   variants: {
+    // Hover, focus, current and open colour. Set `accent` rather than overriding the classes.
+    accent: {
+      primary: {
+        link: "hover:text-primary focus-visible:text-primary aria-[current]:text-primary data-[state=open]:text-primary",
+      },
+      secondary: {
+        link: "hover:text-secondary-400 focus-visible:text-secondary-400 aria-[current]:text-secondary-400 data-[state=open]:text-secondary-400",
+      },
+    },
     orientation: {
       horizontal: {
         root: "items-center",
@@ -60,6 +69,7 @@ export const RLNavigationMenuTheme = defineTheme("navigation-menu", {
     },
   },
   defaultVariants: {
+    accent: "primary",
     orientation: "horizontal",
   },
 });

@@ -10325,7 +10325,7 @@ export const componentMeta: ComponentMetaMap = {
         root: "relative z-10 flex",
         list: "flex flex-1 list-none",
         item: "relative",
-        link: "text-highlighted inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium transition-colors hover:text-primary focus-visible:text-primary focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 aria-[current]:text-primary data-[state=open]:text-primary",
+        link: "text-highlighted inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50",
         trigger: "cursor-pointer select-none bg-transparent",
         content: "w-full ps-4",
         viewportWrapper: "fixed inset-x-0 top-[var(--rl-header-height,4rem)] z-40 overflow-hidden",
@@ -10343,6 +10343,14 @@ export const componentMeta: ComponentMetaMap = {
         childDescription: "mt-1 text-xs text-muted line-clamp-2",
       },
       variants: {
+        accent: {
+          primary: {
+            link: "hover:text-primary focus-visible:text-primary aria-[current]:text-primary data-[state=open]:text-primary",
+          },
+          secondary: {
+            link: "hover:text-secondary-400 focus-visible:text-secondary-400 aria-[current]:text-secondary-400 data-[state=open]:text-secondary-400",
+          },
+        },
         orientation: {
           horizontal: {
             root: "items-center",
@@ -10360,6 +10368,7 @@ export const componentMeta: ComponentMetaMap = {
       },
       compoundVariants: [],
       defaultVariants: {
+        accent: "primary",
         orientation: "horizontal",
       },
     },
@@ -11872,7 +11881,7 @@ export const componentMeta: ComponentMetaMap = {
           },
           icon: {
             select:
-              "w-auto rounded-lg focus-within:ring-2 focus-within:ring-[var(--rl-ring)] inline-flex items-center justify-center border-[var(--rl-border)]/60 text-[var(--rl-text)] hover:border-[var(--rl-border)] hover:bg-[var(--rl-bg)]/10",
+              "w-auto rounded-lg focus-within:ring-2 focus-within:ring-[var(--rl-ring)] inline-flex items-center justify-center text-[var(--rl-text)]",
             trigger: "justify-center",
             label: "hidden",
           },
@@ -11891,8 +11900,8 @@ export const componentMeta: ComponentMetaMap = {
             label: "text-sm",
           },
           lg: {
-            select: "text-base",
-            label: "text-base",
+            select: "text-sm",
+            label: "text-sm",
           },
           xl: {
             select: "text-base",
@@ -11921,35 +11930,35 @@ export const componentMeta: ComponentMetaMap = {
           layout: "default",
           size: "xs",
           class: {
-            select: "px-2 py-0.5",
+            select: "px-2 py-1 leading-none",
           },
         },
         {
           layout: "default",
           size: "sm",
           class: {
-            select: "px-2.5 py-1",
+            select: "px-2.5 py-1.5 leading-none",
           },
         },
         {
           layout: "default",
           size: "md",
           class: {
-            select: "px-3 py-1.5",
+            select: "px-2.5 py-1.5 leading-none",
           },
         },
         {
           layout: "default",
           size: "lg",
           class: {
-            select: "px-3.5 py-2",
+            select: "px-3 py-2 leading-none",
           },
         },
         {
           layout: "default",
           size: "xl",
           class: {
-            select: "px-4 py-2.5",
+            select: "px-3 py-2 leading-none",
           },
         },
         {
@@ -11984,7 +11993,7 @@ export const componentMeta: ComponentMetaMap = {
           layout: "icon",
           size: "xl",
           class: {
-            select: "p-3",
+            select: "p-2",
           },
         },
       ],
@@ -12599,7 +12608,7 @@ export const componentMeta: ComponentMetaMap = {
         trigger: "",
         backdrop: "fixed inset-0 z-[1000] bg-black/60 backdrop-blur-sm transition-all duration-300",
         content: [
-          "fixed z-[1001] bg-elevated text-highlighted p-6 shadow-2xl border-default transition-all duration-300 outline-none overflow-y-auto max-h-screen",
+          "fixed z-[1001] bg-elevated text-highlighted p-6 shadow-2xl transition-all duration-300 outline-none overflow-y-auto max-h-screen",
           "data-[state=open]:animate-in data-[state=closed]:animate-out",
         ],
         header: "flex flex-col gap-1.5 mb-4",
@@ -12615,19 +12624,19 @@ export const componentMeta: ComponentMetaMap = {
         side: {
           top: {
             content:
-              "inset-x-0 top-0 border-b border-default data-[state=open]:slide-in-from-top data-[state=closed]:slide-out-to-top",
+              "inset-x-0 top-0 data-[state=open]:slide-in-from-top data-[state=closed]:slide-out-to-top",
           },
           bottom: {
             content:
-              "inset-x-0 bottom-0 border-t border-default data-[state=open]:slide-in-from-bottom data-[state=closed]:slide-out-to-bottom",
+              "inset-x-0 bottom-0 data-[state=open]:slide-in-from-bottom data-[state=closed]:slide-out-to-bottom",
           },
           left: {
             content:
-              "inset-y-0 left-0 right-auto h-full w-4/5 max-w-sm border-r border-default m-0 max-h-none data-[state=open]:slide-in-from-left data-[state=closed]:slide-out-to-left",
+              "inset-y-0 left-0 right-auto h-full w-4/5 max-w-sm m-0 max-h-none data-[state=open]:slide-in-from-left data-[state=closed]:slide-out-to-left",
           },
           right: {
             content:
-              "inset-y-0 right-0 left-auto h-full w-4/5 max-w-sm border-l border-default m-0 max-h-none data-[state=open]:slide-in-from-right data-[state=closed]:slide-out-to-right",
+              "inset-y-0 right-0 left-auto h-full w-4/5 max-w-sm m-0 max-h-none data-[state=open]:slide-in-from-right data-[state=closed]:slide-out-to-right",
           },
         },
       },

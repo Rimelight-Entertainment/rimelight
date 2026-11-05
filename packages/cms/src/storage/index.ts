@@ -133,7 +133,11 @@ export async function listR2Files(
   });
 
   const files: StorageFile[] = (result.objects || [])
-    .filter((obj: any) => !String(obj.key).endsWith(`/${FOLDER_PLACEHOLDER}`))
+    // Folder markers (keys ending in `/`) and placeholders are not files.
+    .filter(
+      (obj: any) =>
+        !String(obj.key).endsWith("/") && !String(obj.key).endsWith(`/${FOLDER_PLACEHOLDER}`),
+    )
     .map((obj: any) => {
       const rawKey = obj.key as string;
       const name = rawKey.startsWith(prefix) ? rawKey.slice(prefix.length) : rawKey;

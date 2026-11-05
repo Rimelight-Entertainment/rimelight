@@ -63,7 +63,7 @@ export const RLLocaleSelector: Component<RLLocaleSelectorProps> = (props) => {
           onChange={handleChange}
           size={props.size}
           layout={props.mode === "icon" ? "icon" : "default"}
-          variant={props.variant}
+          variant={props.variant ?? (props.mode === "icon" ? "ghost" : undefined)}
           color={props.color === "auto" ? undefined : props.color}
           aria-label={uiT("locale-selector.label")}
           class={classes().select}

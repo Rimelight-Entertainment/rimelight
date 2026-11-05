@@ -89,6 +89,7 @@ export const RLThemeSelector: Component<RLThemeSelectorProps> = (props) => {
     >
       <div class={classes().wrapper}>
         <RLSelect
+          variant={mode() === "icon" ? "ghost" : undefined}
           items={themeItems()}
           value={currentPreference()}
           onChange={(e) => applyTheme(e.currentTarget.value)}

@@ -140,6 +140,12 @@ export function rimelightUiPreset({ colors, icons, fonts, presets = {} }: UIConf
 [data-theme="light"] { color-scheme: light; }
 body { background-color: var(--rl-neutral-50); color: var(--rl-neutral-950); }
 
+/* Text selection uses the primary colour. */
+::selection {
+  background-color: var(--rl-primary-500);
+  color: #fff;
+}
+
 /* Reduced motion - disable all animations for users who prefer it */
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -159,7 +165,7 @@ select.rl-select {
 }
 select.rl-select::picker(select) {
   appearance: base-select;
-  border: 1px solid var(--rl-neutral-200);
+  border: 1px solid var(--rl-border);
   border-radius: 0.5rem;
   background: var(--rl-neutral-50);
   color: var(--rl-neutral-950);
@@ -227,11 +233,12 @@ select.rl-select option {
 }
 select.rl-select option:hover,
 select.rl-select option:focus {
-  background: var(--rl-neutral-200);
+  background: color-mix(in oklab, var(--rl-primary-500) 15%, transparent);
   outline: none;
 }
 select.rl-select option:checked {
   font-weight: 600;
+  color: var(--rl-primary-600);
 }
 select.rl-select option::checkmark {
   order: 1;

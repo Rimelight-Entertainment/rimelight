@@ -17,7 +17,7 @@ export const RLSlideoverTheme = defineTheme("slideover", {
     trigger: "",
     backdrop: "fixed inset-0 z-[1000] bg-black/60 backdrop-blur-sm transition-all duration-300",
     content: [
-      "fixed z-[1001] bg-elevated text-highlighted p-6 shadow-2xl border-default transition-all duration-300 outline-none overflow-y-auto max-h-screen",
+      "fixed z-[1001] bg-elevated text-highlighted p-6 shadow-2xl transition-all duration-300 outline-none overflow-y-auto max-h-screen",
       "data-[state=open]:animate-in data-[state=closed]:animate-out",
     ],
     header: "flex flex-col gap-1.5 mb-4",
@@ -33,19 +33,19 @@ export const RLSlideoverTheme = defineTheme("slideover", {
     side: {
       top: {
         content:
-          "inset-x-0 top-0 border-b border-default data-[state=open]:slide-in-from-top data-[state=closed]:slide-out-to-top",
+          "inset-x-0 top-0 data-[state=open]:slide-in-from-top data-[state=closed]:slide-out-to-top",
       },
       bottom: {
         content:
-          "inset-x-0 bottom-0 border-t border-default data-[state=open]:slide-in-from-bottom data-[state=closed]:slide-out-to-bottom",
+          "inset-x-0 bottom-0 data-[state=open]:slide-in-from-bottom data-[state=closed]:slide-out-to-bottom",
       },
       left: {
         content:
-          "inset-y-0 left-0 right-auto h-full w-4/5 max-w-sm border-r border-default m-0 max-h-none data-[state=open]:slide-in-from-left data-[state=closed]:slide-out-to-left",
+          "inset-y-0 left-0 right-auto h-full w-4/5 max-w-sm m-0 max-h-none data-[state=open]:slide-in-from-left data-[state=closed]:slide-out-to-left",
       },
       right: {
         content:
-          "inset-y-0 right-0 left-auto h-full w-4/5 max-w-sm border-l border-default m-0 max-h-none data-[state=open]:slide-in-from-right data-[state=closed]:slide-out-to-right",
+          "inset-y-0 right-0 left-auto h-full w-4/5 max-w-sm m-0 max-h-none data-[state=open]:slide-in-from-right data-[state=closed]:slide-out-to-right",
       },
     },
   },
