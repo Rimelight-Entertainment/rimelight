@@ -1,4 +1,4 @@
-import { type Component, For } from "solid-js";
+import type { Component } from "solid-js";
 import { RLHeader } from "@rimelight/ui/components/header/RLHeader.tsx";
 import { RLLogo } from "@rimelight/ui/components/logo/RLLogo.tsx";
 import { RLNavigationMenu } from "@rimelight/ui/components/navigation-menu/RLNavigationMenu.tsx";
@@ -7,7 +7,6 @@ import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
 import { RLSlideover } from "@rimelight/ui/components/slideover/RLSlideover.tsx";
 import { RLSearch } from "@rimelight/ui/components/search/RLSearch.tsx";
 import { RLImage } from "@rimelight/ui/components/image/RLImage.tsx";
-import type { RLButtonProps } from "@rimelight/ui/components/button/button.types.ts";
 import type { RLLinkGroupProps } from "@rimelight/ui/components/link-group/link-group.types.ts";
 import { useShortcuts } from "@rimelight/ui/shortcuts";
 import type { NavigationMenuItem } from "@rimelight/ui/components/navigation-menu/navigation-menu.types.ts";
@@ -22,7 +21,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
 
   const startLinkGroup = (): RLLinkGroupProps => ({
     label: t("app.header.link-groups.center.start.label"),
-    leadingIcon: "lucide:rocket",
+    leadingIcon: "i-lucide-rocket",
     links: [
       {
         label: t("app.header.link-groups.center.start.links.introduction"),
@@ -41,7 +40,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
 
   const customizeLinkGroup = (): RLLinkGroupProps => ({
     label: t("app.header.link-groups.center.customize.label"),
-    leadingIcon: "lucide:palette",
+    leadingIcon: "i-lucide-palette",
     links: [
       {
         label: t("app.header.link-groups.center.customize.links.branding"),
@@ -64,12 +63,12 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
 
   const resourcesLinkGroup = (): RLLinkGroupProps => ({
     label: t("app.header.link-groups.right.resources.label"),
-    leadingIcon: "lucide:library",
+    leadingIcon: "i-lucide-library",
     links: [
       {
         label: t("app.header.link-groups.right.resources.links.docs"),
         href: getLocaleUrl("/docs"),
-        leadingIcon: "lucide:file-text size-4",
+        leadingIcon: "i-lucide-file-text size-4",
       },
       {
         label: t("app.header.link-groups.right.resources.links.github"),
@@ -114,8 +113,6 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
       to: getLocaleUrl("/contact"),
     },
   ];
-
-  const actions = (): RLButtonProps[] => [];
 
   return (
     <RLHeader
@@ -227,41 +224,15 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
         </div>
       }
       trailingSlot={
-        <div class="flex items-center gap-md">
-          <RLSearch />
+        <div class="ml-auto flex items-center">
           <RLButton
             variant="ghost"
             color="neutral"
-            leadingIcon="lucide:keyboard"
+            leadingIcon="i-lucide-keyboard"
             aria-label={t("app.header.shortcuts.open")}
             onClick={() => useShortcuts().open()}
           />
-          <div class="hidden md:flex flex-row gap-md">
-            <For each={actions()}>{(buttonProps) => <RLButton {...buttonProps} />}</For>
-          </div>
-
-          <div class="block md:hidden">
-            <RLSlideover
-              side="right"
-              title={t("app.header.actions.title")}
-              triggerSlot={
-                <RLButton
-                  color="neutral"
-                  variant="ghost"
-                  shape="pill"
-                  leadingIcon="ellipsis-vertical"
-                  class="!text-white"
-                  aria-label={t("app.header.actions.open")}
-                />
-              }
-            >
-              <div class="flex flex-col gap-md">
-                <For each={actions()}>
-                  {(buttonProps) => <RLButton {...buttonProps} block={true} />}
-                </For>
-              </div>
-            </RLSlideover>
-          </div>
+          <RLSearch />
         </div>
       }
     />

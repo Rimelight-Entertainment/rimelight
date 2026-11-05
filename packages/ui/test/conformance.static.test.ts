@@ -57,7 +57,7 @@ const STUB_FROZEN = [
 /** Internal (non-public) props types that are not theme surfaces; exempt from rule 2. */
 const RULE2_INTERNAL_PROPS = ["ContextMenuLayerProps", "SidebarItemListProps"];
 const SIZE_KEYS = ["xs", "sm", "md", "lg", "xl"];
-const VARIANT_KEYS = ["solid", "outline", "soft", "subtle", "ghost", "link"];
+const VARIANT_KEYS = ["solid", "outline", "soft", "subtle", "ghost", "link", "unstyled"];
 const BANNED_PROP_NAMES = [
   "onClose",
   "dismissable",
@@ -306,6 +306,7 @@ const NON_COLOR_VALUE =
   /^(?:\d|(?:xs|sm|base|lg|xl|left|center|right|top|bottom|justify|start|end|wrap|nowrap|balance|pretty|ellipsis|uppercase|lowercase|capitalize|fixed|local|scroll|cover|contain|none|solid|dashed|dotted|double|hidden|collapse|separate|inset|auto)$|(?:clip|repeat|no-repeat|gradient|linear|radial|conic|origin|blend|spacing|opacity|shadow)(?:-|$)|offset-\d|[xytrblse](?:-|$))/;
 const COLOR_LITERAL =
   /#(?:[0-9a-fA-F]{8}|[0-9a-fA-F]{6}|[0-9a-fA-F]{4}|[0-9a-fA-F]{3})(?![0-9a-zA-Z_-])|\b(?:rgba?|hsla?)\(/i;
+const IMPORTANT_MODIFIER = /(?:^|[\s:])!(?=[a-z[-])/;
 const DATA_NAME = /^data-[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const ARIA_STATE_DATA = [
   "data-expanded",
@@ -649,6 +650,14 @@ describe("global rules", () => {
       return (
         text !== undefined && utilityBases(text).some((base) => isUnknownColorName(base, allowed))
       );
+    });
+    expect(offenders).toEqual([]);
+  }, 60_000);
+
+  it("rule 39: theme class strings use no ! important modifier", () => {
+    const offenders = findIn(themeFiles(), (n) => {
+      const text = literalText(n);
+      return text !== undefined && IMPORTANT_MODIFIER.test(text);
     });
     expect(offenders).toEqual([]);
   }, 60_000);

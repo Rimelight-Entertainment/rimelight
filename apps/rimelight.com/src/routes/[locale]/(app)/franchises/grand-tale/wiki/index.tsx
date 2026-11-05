@@ -12,25 +12,25 @@ export const WikiIndexPage: Component = () => {
       title: t("app.text.getting-started"),
       description: t("app.text.new-to-grand-tale-start-here-to-learn-the-basics"),
       href: "/franchises/grand-tale/wiki/getting-started",
-      icon: "lucide:book-open",
+      icon: "i-lucide-book-open",
     },
     {
       title: t("app.text.characters"),
       description: t("app.text.explore-the-heroes-villains-and-legends-of-the-w"),
       href: "/franchises/grand-tale/wiki/lore/characters",
-      icon: "lucide:users",
+      icon: "i-lucide-users",
     },
     {
       title: t("app.text.locations"),
       description: t("app.text.discover-the-regions-cities-and-landmarks"),
       href: "/franchises/grand-tale/wiki/lore/locations",
-      icon: "lucide:map-pin",
+      icon: "i-lucide-map-pin",
     },
     {
       title: t("app.text.heroes"),
       description: t("app.text.master-the-playable-heroes-and-their-abilities"),
       href: "/franchises/grand-tale/wiki/lore/heroes",
-      icon: "lucide:shield-check",
+      icon: "i-lucide-shield-check",
     },
   ];
   const trendingArticles = [
@@ -97,7 +97,7 @@ export const WikiIndexPage: Component = () => {
 
       <section class="space-y-8">
         <h2 class="text-2xl font-bold text-white uppercase tracking-tight flex items-center gap-3">
-          <RLIcon name="lucide:compass" class="text-indigo-400 size-6" />
+          <RLIcon name="i-lucide-compass" class="text-indigo-400 size-6" />
           Quick Navigation
         </h2>
 
@@ -126,7 +126,7 @@ export const WikiIndexPage: Component = () => {
 
       <section class="space-y-8">
         <h2 class="text-2xl font-bold text-white uppercase tracking-tight flex items-center gap-3">
-          <RLIcon name="lucide:flame" class="text-indigo-400 size-6" />
+          <RLIcon name="i-lucide-flame" class="text-indigo-400 size-6" />
           Trending Articles
         </h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">

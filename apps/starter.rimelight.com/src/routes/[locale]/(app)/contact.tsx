@@ -71,7 +71,7 @@ export const ContactPage: Component = () => {
           <RLCard class="p-6 md:p-8 flex flex-col justify-between">
             <div>
               <h2 class="text-2xl font-bold text-[var(--rl-text)] mb-6 flex items-center gap-2">
-                <RLIcon name="lucide:mail" class="size-6 text-primary-500" />
+                <RLIcon name="i-lucide-mail" class="size-6 text-primary-500" />
                 {t("page.contact.form.title")}
               </h2>
 
@@ -152,7 +152,7 @@ export const ContactPage: Component = () => {
                   color="primary"
                   variant="solid"
                   block={true}
-                  leadingIcon="lucide:send"
+                  leadingIcon="i-lucide-send"
                   label={t("page.contact.form.send.button")}
                   class="mt-2"
                 />

@@ -164,7 +164,7 @@ export const CalloutSandbox = (): JSX.Element => {
         orientation={orientation()}
         title={title()}
         description={description()}
-        icon={hasIcon() && !hasAvatar() ? "lucide:terminal" : undefined}
+        icon={hasIcon() && !hasAvatar() ? "i-lucide-terminal" : undefined}
         avatar={hasAvatar() ? { src: "https://github.com/nuxt.png", alt: "Nuxt" } : undefined}
         dismissible={isClosable()}
         actions={
@@ -230,7 +230,7 @@ export const calloutAudit: ComponentAuditDefinition = {
               <RLCallout
                 variant={v}
                 color="primary"
-                icon="lucide:terminal"
+                icon="i-lucide-terminal"
                 title={`Variant: ${v}`}
                 description={`This callout is rendered with variant="${v}".`}
                 dismissible
@@ -264,7 +264,7 @@ export const calloutAudit: ComponentAuditDefinition = {
           <RLCallout
             orientation="vertical"
             color="info"
-            icon="lucide:rocket"
+            icon="i-lucide-rocket"
             title={"Vertical Orientation with Action Buttons"}
             description="Actions render stacked underneath description with size='xs' buttons."
             actions={[
@@ -320,7 +320,7 @@ export const calloutAudit: ComponentAuditDefinition = {
       render: () => (
         <div class="flex flex-col gap-3">
           <RLCallout
-            icon="lucide:terminal"
+            icon="i-lucide-terminal"
             color="secondary"
             title={"Icon-based Callout"}
             description="Uses standard RLIcon resolution with aria-hidden for accessibility."

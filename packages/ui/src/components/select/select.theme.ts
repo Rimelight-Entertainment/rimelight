@@ -1,15 +1,16 @@
 import { defineTheme } from "../../resolver";
 
 export const RLSelectTheme = defineTheme("select", {
-  slots: ["root", "select", "trigger", "leading", "icon", "label", "option"],
+  slots: ["root", "select", "trigger", "leading", "icon", "label", "option", "chevron"],
   base: {
     root: "relative inline-flex items-center",
     select:
       "rl-select w-full rounded-md border shadow-sm transition-colors cursor-pointer focus-within:outline-none",
-    trigger: "flex items-center gap-2 w-full min-w-0 cursor-pointer",
+    trigger: "w-full min-w-0",
     label: "truncate",
     leading: "flex items-center text-current shrink-0 pointer-events-none",
     icon: "shrink-0",
+    chevron: "ml-auto shrink-0 size-3.5 text-current",
     option: "bg-default text-highlighted",
   },
   variants: {
@@ -46,7 +47,7 @@ export const RLSelectTheme = defineTheme("select", {
       icon: {
         select:
           "w-auto rounded-lg focus-within:ring-2 focus-within:ring-[var(--rl-ring)] inline-flex items-center justify-center text-[var(--rl-text)]",
-        trigger: "justify-center",
+        chevron: "hidden",
         label: "hidden",
       },
     },

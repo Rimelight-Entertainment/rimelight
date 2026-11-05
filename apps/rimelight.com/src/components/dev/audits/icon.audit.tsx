@@ -10,16 +10,16 @@ const COLORS = AUDIT_COLORS;
 
 const FEATURED = [
   "star",
-  "lucide:rocket",
+  "i-lucide-rocket",
   "sparkles",
   "image",
   "download",
   "external-link",
   "search",
-  "lucide:settings",
+  "i-lucide-settings",
   "user",
   "lock",
-  "lucide:eye",
+  "i-lucide-eye",
   "bell",
   "check",
   "info",
@@ -136,7 +136,7 @@ export const iconAudit: ComponentAuditDefinition = {
           <For each={COLORS}>
             {(c) => (
               <div class="flex flex-col items-center gap-2">
-                <RLIcon name="lucide:rocket" size="lg" class={`text-${c}`} />
+                <RLIcon name="i-lucide-rocket" size="lg" class={`text-${c}`} />
                 <span class="text-[10px] font-mono text-muted">{c}</span>
               </div>
             )}
@@ -173,8 +173,8 @@ export const iconAudit: ComponentAuditDefinition = {
         "A bare Lucide name resolves through the bundled collection; a full i-<set>-<name> class name passes through verbatim.",
       render: () => (
         <div class="flex items-center gap-6">
-          <RLIcon name="lucide:circle-gauge" size="xl" class="text-primary" />
-          <RLIcon name="lucide:compass" size="xl" class="text-secondary" />
+          <RLIcon name="i-lucide-circle-gauge" size="xl" class="text-primary" />
+          <RLIcon name="i-lucide-compass" size="xl" class="text-secondary" />
         </div>
       ),
     },
@@ -200,7 +200,7 @@ export const iconAudit: ComponentAuditDefinition = {
             <span>{"Rate limit approaching — 82% consumed."}</span>
           </p>
           <p class="flex items-center gap-2">
-            <RLIcon name="lucide:circle-x" class="text-error" />
+            <RLIcon name="i-lucide-circle-x" class="text-error" />
             <span>{"Build failed at step 4 of 9."}</span>
           </p>
         </div>

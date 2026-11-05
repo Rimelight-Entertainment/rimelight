@@ -187,7 +187,7 @@ export const RLAudioTheme = defineTheme("audio", {
       vertical: {
         header: "flex flex-col items-center gap-4 text-center w-full",
         artwork:
-          "w-full !size-auto max-w-xs sm:max-w-sm aspect-square rounded-2xl overflow-hidden shadow-lg border border-default/30",
+          "w-full size-auto max-w-xs sm:max-w-sm aspect-square rounded-2xl overflow-hidden shadow-lg border border-default/30",
         details: "items-center text-center w-full",
         metaBadge: "mx-auto self-center",
       },

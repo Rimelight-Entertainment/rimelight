@@ -8,7 +8,7 @@ import { t } from "@rimelight/i18n";
 const COLORS = AUDIT_COLORS;
 
 const defaultItems = (): BreadcrumbItem[] => [
-  { label: t("app.text.docs"), icon: "lucide:book-open", href: "/docs" },
+  { label: t("app.text.docs"), icon: "i-lucide-book-open", href: "/docs" },
   { label: t("app.text.components"), icon: "layers", href: "/docs/components" },
   { label: t("app.text.breadcrumb") },
 ];
@@ -41,7 +41,7 @@ export const BreadcrumbSandbox = (): JSX.Element => {
     {
       label: t("app.text.documentation"),
       href: "/docs",
-      icon: showIcons() ? "lucide:book-open" : undefined,
+      icon: showIcons() ? "i-lucide-book-open" : undefined,
     },
     {
       label: t("app.text.components"),
@@ -51,7 +51,7 @@ export const BreadcrumbSandbox = (): JSX.Element => {
     {
       label: t("app.text.breadcrumb"),
       href: "/docs/components/breadcrumb",
-      icon: showIcons() ? "lucide:link" : undefined,
+      icon: showIcons() ? "i-lucide-link" : undefined,
     },
   ];
 
@@ -80,7 +80,7 @@ export const BreadcrumbSandbox = (): JSX.Element => {
 
         <div class="flex items-center gap-1.5 flex-wrap">
           <span class="text-muted mr-1">{t("app.text.separator")}</span>
-          <For each={["chevron-right", "arrow-right", "lucide:slash"]}>
+          <For each={["chevron-right", "arrow-right", "i-lucide-slash"]}>
             {(icon) => (
               <button
                 type="button"

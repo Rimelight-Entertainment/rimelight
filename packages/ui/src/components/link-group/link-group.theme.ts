@@ -8,7 +8,7 @@ export const RLLinkGroupTheme = defineTheme("link-group", {
     heading: "flex items-center gap-1.5",
     titleLink: "hover:underline flex items-center gap-1.5",
     list: "flex flex-col gap-2",
-    link: "w-full !justify-start text-sm text-muted hover:text-highlighted transition-colors",
+    link: "w-full justify-start text-sm text-muted hover:text-highlighted transition-colors",
   },
   variants: {},
 });

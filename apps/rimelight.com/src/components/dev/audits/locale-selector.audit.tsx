@@ -123,7 +123,11 @@ const testScenarios: TestScenario[] = [
     title: "leadingIcon",
     description: "leadingIcon sets the icon name. Default is globe.",
     render: () => (
-      <RLLocaleSelector locales={["en", "de"]} currentLocale="en" leadingIcon="lucide:languages" />
+      <RLLocaleSelector
+        locales={["en", "de"]}
+        currentLocale="en"
+        leadingIcon="i-lucide-languages"
+      />
     ),
   },
   {

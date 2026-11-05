@@ -12,13 +12,13 @@ const ITEMS = [
   {
     title: "Account",
     description: "Create your login",
-    icon: "lucide:user",
+    icon: "i-lucide-user",
     content: "Enter your details.",
   },
   {
     title: "Billing",
     description: "Add a payment method",
-    icon: "lucide:credit-card",
+    icon: "i-lucide-credit-card",
     content: "Pay securely.",
   },
   {

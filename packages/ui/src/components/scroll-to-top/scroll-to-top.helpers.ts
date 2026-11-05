@@ -1,4 +1,4 @@
-import type { ScrollState, ScrollToTopGaugeVars } from "./scroll-to-top.types";
+import type { ScrollState } from "./scroll-to-top.types";
 
 export const DEFAULT_THRESHOLD = 200;
 export const DEFAULT_PROGRESS_WIDTH = 6;
@@ -13,14 +13,6 @@ export function scrollState(
   return {
     isVisible: scrollTop > threshold,
     scrollPercentage: scrollable > 0 ? Math.min(100, (scrollTop / scrollable) * 100) : 0,
-  };
-}
-
-export function gaugeVars(progressWidth: number, scrollPercentage: number): ScrollToTopGaugeVars {
-  const sweep = `${(scrollPercentage / 100) * 360}deg`;
-  return {
-    "--rl-stt-border": `${progressWidth * 0.5}px`,
-    "--rl-stt-gauge": `conic-gradient(from 0deg, currentColor ${sweep}, transparent ${sweep})`,
   };
 }
 

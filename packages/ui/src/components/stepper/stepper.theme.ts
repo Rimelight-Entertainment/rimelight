@@ -22,7 +22,7 @@ export const RLStepperTheme = defineTheme("stepper", {
     item: "group flex-1 flex flex-col items-center text-center relative",
     container: "flex items-center justify-center relative w-full",
     trigger:
-      "rounded-full font-medium text-center align-middle flex items-center justify-center font-semibold group-data-[state=completed]:bg-[var(--rl-bg)] group-data-[state=completed]:border-[var(--rl-bg)] group-data-[state=completed]:!text-inverted group-data-[state=active]:bg-[var(--rl-bg)] group-data-[state=active]:border-[var(--rl-bg)] group-data-[state=active]:!text-inverted text-muted bg-muted border border-default transition-all cursor-pointer z-10",
+      "rounded-full font-medium text-center align-middle flex items-center justify-center font-semibold group-data-[state=completed]:bg-[var(--rl-bg)] group-data-[state=completed]:border-[var(--rl-bg)] group-data-[state=completed]:text-inverted group-data-[state=active]:bg-[var(--rl-bg)] group-data-[state=active]:border-[var(--rl-bg)] group-data-[state=active]:text-inverted text-muted bg-muted border border-default transition-all cursor-pointer z-10",
     indicator: "flex items-center justify-center size-full text-current",
     icon: "shrink-0 size-4 text-current transition-colors",
     separator:

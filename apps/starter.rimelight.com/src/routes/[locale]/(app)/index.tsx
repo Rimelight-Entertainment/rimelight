@@ -36,7 +36,7 @@ export const HomePage: Component = () => {
   const heroLinks = (): RLButtonProps[] => [
     {
       variant: "outline",
-      leadingIcon: "lucide:github",
+      leadingIcon: "i-lucide-github",
       label: t("page.home.section.hero.link.github.label"),
       href: "https://github.com/Rimelight-Entertainment/rimelight/tree/main/packages/starter.rimelight.com",
     },
@@ -64,13 +64,13 @@ export const HomePage: Component = () => {
   const ctaLinks = (): RLButtonProps[] => [
     {
       variant: "outline",
-      leadingIcon: "lucide:github",
+      leadingIcon: "i-lucide-github",
       label: t("page.home.section.cta.view-on-github"),
       href: "https://github.com/Rimelight-Entertainment/rimelight",
     },
     {
       label: t("page.home.section.cta.learn-how"),
-      trailingIcon: "lucide:square-arrow-out-up-right",
+      trailingIcon: "i-lucide-square-arrow-out-up-right",
       href: `https://rimelight.com/${getCurrentLocale()}/company/docs/overview/contributing/introduction`,
     },
   ];

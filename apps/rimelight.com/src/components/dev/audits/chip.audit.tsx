@@ -188,7 +188,7 @@ export const ChipSandbox = (): JSX.Element => {
               />
             ) : (
               <RLButton
-                icon="lucide:mail"
+                icon="i-lucide-mail"
                 color="neutral"
                 variant="subtle"
                 aria-label={t("app.text.inbox")}
@@ -223,7 +223,7 @@ export const chipAudit: ComponentAuditDefinition = {
           <For each={COLORS}>
             {(c) => (
               <RLChip color={c} size="md">
-                <RLButton icon="lucide:mail" color="neutral" variant="subtle" aria-label={c} />
+                <RLButton icon="i-lucide-mail" color="neutral" variant="subtle" aria-label={c} />
               </RLChip>
             )}
           </For>
@@ -302,7 +302,7 @@ export const chipAudit: ComponentAuditDefinition = {
         <div class="flex items-center gap-6 flex-wrap">
           <RLChip text={5} size="xl" color="error">
             <RLButton
-              icon="lucide:mail"
+              icon="i-lucide-mail"
               color="neutral"
               variant="subtle"
               aria-label={"5 unread emails"}

@@ -2,7 +2,6 @@ import { describe, it, expect, vi, afterEach } from "vite-plus/test";
 
 import { RLScrollToTop } from "../src/components/scroll-to-top/RLScrollToTop";
 import {
-  gaugeVars,
   scrollState,
   scrollToTop,
   trackScroll,
@@ -29,22 +28,6 @@ describe("scrollState", () => {
   it("maps scroll position to the scrollable distance and clamps at 100", () => {
     expect(scrollState(1000, 3000, 1000, 0).scrollPercentage).toBe(50);
     expect(scrollState(2500, 3000, 1000, 0).scrollPercentage).toBe(100);
-  });
-});
-
-describe("gaugeVars", () => {
-  it("sizes the ring from half the progress width", () => {
-    expect(gaugeVars(6, 0)["--rl-stt-border"]).toBe("3px");
-  });
-
-  it("leaves the gauge empty at the top of the page", () => {
-    expect(gaugeVars(6, 0)["--rl-stt-gauge"]).toContain("currentColor 0deg, transparent 0deg");
-  });
-
-  it("sweeps a full turn at 100%", () => {
-    expect(gaugeVars(6, 100)["--rl-stt-gauge"]).toContain(
-      "currentColor 360deg, transparent 360deg",
-    );
   });
 });
 

@@ -427,10 +427,12 @@ select.rl-select[data-variant="icon"] [data-slot="leading"] {
   margin: 0 auto;
 }
 select.rl-select::picker-icon {
-  color: var(--rl-neutral-500);
+  display: none;
+}
+select.rl-select [data-slot="chevron"] {
   transition: rotate 0.15s;
 }
-select.rl-select:open::picker-icon {
+select.rl-select:open [data-slot="chevron"] {
   rotate: 180deg;
 }
 select.rl-select option {

@@ -89,7 +89,7 @@ export const LinkSandbox = (): JSX.Element => {
       <RLLink
         label={label()}
         href={isExternal() ? "https://rimelight.com" : "/dev/components?comp=link"}
-        leadingIcon={hasLeadingIcon() ? "lucide:book-open" : undefined}
+        leadingIcon={hasLeadingIcon() ? "i-lucide-book-open" : undefined}
         trailingIcon={hasTrailingIcon() ? "arrow-right" : undefined}
         active={isActive()}
         disabled={isDisabled()}
@@ -165,7 +165,7 @@ export const linkAudit: ComponentAuditDefinition = {
         "Leading and trailing icons, leadingSlot and trailingSlot overrides, and the external icon toggle.",
       render: () => (
         <div class="flex items-center gap-4 flex-wrap">
-          <RLLink href="/dev/components" label="Leading icon" leadingIcon="lucide:book-open" />
+          <RLLink href="/dev/components" label="Leading icon" leadingIcon="i-lucide-book-open" />
           <RLLink href="/dev/components" label="Trailing icon" trailingIcon="arrow-right" />
           <RLLink
             href="/dev/components"

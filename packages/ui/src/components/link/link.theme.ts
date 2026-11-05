@@ -9,27 +9,26 @@ export const RLLinkTheme = defineTheme("link", {
     externalHint: "sr-only",
   },
   variants: {
+    unstyled: {
+      true: {},
+      false: {},
+    },
     active: {
-      true: { root: "text-primary" },
-      false: { root: "text-muted" },
+      true: {},
+      false: {},
     },
     disabled: {
       true: { root: "cursor-not-allowed opacity-75" },
     },
   },
   compoundVariants: [
-    {
-      active: false,
-      disabled: false,
-      class: { root: "hover:text-default" },
-    },
-    {
-      active: true,
-      disabled: false,
-      class: { root: "hover:text-primary" },
-    },
+    { unstyled: false, active: false, class: { root: "text-muted" } },
+    { unstyled: false, active: false, disabled: false, class: { root: "hover:text-default" } },
+    { unstyled: false, active: true, class: { root: "text-primary" } },
+    { unstyled: false, active: true, disabled: false, class: { root: "hover:text-primary" } },
   ],
   defaultVariants: {
+    unstyled: false,
     active: false,
   },
 });

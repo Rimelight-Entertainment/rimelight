@@ -24,7 +24,7 @@ export const RLDropdownMenuTheme = defineTheme("dropdown-menu", {
   base: {
     root: "relative inline-block text-left",
     trigger:
-      "inline-flex justify-center items-center w-full rounded-md border border-default bg-default font-medium shadow-sm hover:bg-muted focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed data-[icon-only]:aspect-square data-[icon-only]:shrink-0 data-[icon-only]:!px-1.5 data-[icon-only]:!py-1.5",
+      "inline-flex justify-center items-center w-full rounded-md border border-default bg-default font-medium shadow-sm hover:bg-muted focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed data-[icon-only]:aspect-square data-[icon-only]:shrink-0 data-[icon-only]:px-1.5 data-[icon-only]:py-1.5",
     triggerIcon: "shrink-0",
     body: "fixed z-[99999] mt-1 top-[var(--rl-dd-top,0px)] left-[var(--rl-dd-left,auto)] right-[var(--rl-dd-right,auto)] min-w-32 rounded-md border border-default bg-elevated p-1 text-highlighted shadow-md ring-1 ring-scrim/5 focus:outline-none flex flex-col gap-0.5",
     viewport: "flex flex-col gap-0.5",

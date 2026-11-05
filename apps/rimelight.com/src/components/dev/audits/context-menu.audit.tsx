@@ -23,7 +23,7 @@ export const ContextMenuSandbox = (): JSX.Element => {
   const menuItems = (): ContextMenuItems => [
     {
       label: "Cut",
-      icon: "lucide:scissors",
+      icon: "i-lucide-scissors",
       kbds: ["Ctrl", "X"],
       onSelect: () => setLastAction("Cut"),
     },
@@ -35,14 +35,14 @@ export const ContextMenuSandbox = (): JSX.Element => {
     },
     {
       label: "Paste",
-      icon: "lucide:clipboard",
+      icon: "i-lucide-clipboard",
       kbds: ["Ctrl", "V"],
       onSelect: () => setLastAction("Paste"),
     },
     { type: "separator" },
     {
       label: "Sort by",
-      icon: "lucide:arrow-up-down",
+      icon: "i-lucide-arrow-up-down",
       children: [
         {
           type: "radio",
@@ -101,7 +101,7 @@ export const ContextMenuSandbox = (): JSX.Element => {
     { type: "separator" },
     {
       label: "Delete",
-      icon: "lucide:trash",
+      icon: "i-lucide-trash",
       color: "error",
       kbds: ["Del"],
       onSelect: () => setLastAction("Delete"),
@@ -200,7 +200,7 @@ export const ContextMenuSandbox = (): JSX.Element => {
       >
         <div class="h-64 border-2 border-dashed border-default hover:border-primary/50 transition-colors rounded-2xl flex flex-col items-center justify-center gap-3 select-none bg-surface/50 p-6 text-center">
           <div class="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center">
-            <RLIcon name="lucide:mouse-pointer-click" class="w-6 h-6" />
+            <RLIcon name="i-lucide-mouse-pointer-click" class="w-6 h-6" />
           </div>
           <div>
             <p class="font-medium text-highlighted text-sm">
@@ -244,7 +244,7 @@ const testScenarios: TestScenario[] = [
               items={[
                 {
                   label: "Open in Editor",
-                  icon: "lucide:code",
+                  icon: "i-lucide-code",
                   onSelect: () => setStatus("Opening document.tsx"),
                 },
                 {
@@ -255,14 +255,14 @@ const testScenarios: TestScenario[] = [
                 { type: "separator" },
                 {
                   label: "Delete File",
-                  icon: "lucide:trash",
+                  icon: "i-lucide-trash",
                   color: "error",
                   onSelect: () => setStatus("Deleted document.tsx"),
                 },
               ]}
             >
               <div class="p-4 rounded-xl border border-default bg-surface hover:bg-elevated/40 transition-colors cursor-context-menu flex items-center gap-3">
-                <RLIcon name="lucide:file-code" class="w-8 h-8 text-primary" />
+                <RLIcon name="i-lucide-file-code" class="w-8 h-8 text-primary" />
                 <div class="flex-1 min-w-0">
                   <div class="font-medium text-sm truncate">document.tsx</div>
                   <div class="text-xs text-muted">2.4 KB &bull; TypeScript</div>
@@ -274,18 +274,18 @@ const testScenarios: TestScenario[] = [
               items={[
                 {
                   label: "Preview Image",
-                  icon: "lucide:eye",
+                  icon: "i-lucide-eye",
                   onSelect: () => setStatus("Previewing banner.png"),
                 },
                 {
                   label: "Copy Image URL",
-                  icon: "lucide:link",
+                  icon: "i-lucide-link",
                   onSelect: () => setStatus("URL copied"),
                 },
                 { type: "separator" },
                 {
                   label: "Move to Trash",
-                  icon: "lucide:trash",
+                  icon: "i-lucide-trash",
                   color: "error",
                   onSelect: () => setStatus("Moved banner.png to trash"),
                 },
@@ -315,11 +315,11 @@ const testScenarios: TestScenario[] = [
           items={[
             {
               label: "Preferences",
-              icon: "lucide:settings",
+              icon: "i-lucide-settings",
               children: [
                 {
                   label: "Appearance",
-                  icon: "lucide:palette",
+                  icon: "i-lucide-palette",
                   children: [
                     {
                       type: "radio",
@@ -349,7 +349,7 @@ const testScenarios: TestScenario[] = [
                 },
                 {
                   label: "Language",
-                  icon: "lucide:globe",
+                  icon: "i-lucide-globe",
                   children: [
                     { label: "English", onSelect: () => {} },
                     { label: "Spanish", onSelect: () => {} },
@@ -413,9 +413,9 @@ const testScenarios: TestScenario[] = [
         )}
         items={[
           { label: "Account Settings", icon: "user" },
-          { label: "Billing & Plans", icon: "lucide:credit-card" },
+          { label: "Billing & Plans", icon: "i-lucide-credit-card" },
           { type: "separator" },
-          { label: "Log Out", icon: "lucide:log-out", color: "error" },
+          { label: "Log Out", icon: "i-lucide-log-out", color: "error" },
         ]}
       >
         <div class="p-6 rounded-xl border border-default bg-elevated/10 text-center cursor-context-menu">
@@ -439,7 +439,7 @@ const testScenarios: TestScenario[] = [
         }
         items={[
           { label: "Duplicate", icon: "copy" },
-          { label: "Archive", icon: "lucide:archive" },
+          { label: "Archive", icon: "i-lucide-archive" },
         ]}
       />
     ),

@@ -1,6 +1,6 @@
 import { createMemo, createSignal, For, Show, type Component } from "solid-js";
-import { RLIcon } from "../icon/RLIcon";
 import { RLButton } from "../button/RLButton";
+import { RLIcon } from "../icon/RLIcon";
 import { renderSlot } from "../../slot";
 import { RLSelectTheme } from "./select.theme";
 import type { RLSelectProps } from "./select.types";
@@ -83,7 +83,13 @@ export const RLSelect: Component<RLSelectProps> = (props) => {
         onChange={handleChange}
       >
         {/* The select button. <selectedcontent> mirrors the chosen option, so the closed control shows its label. */}
-        <RLButton type="button" class={classes().trigger} data-slot="trigger">
+        <RLButton
+          variant="unstyled"
+          shape="bare"
+          justify={iconLayout() ? "center" : "start"}
+          class={classes().trigger}
+          data-slot="trigger"
+        >
           <Show
             when={slots.leadingSlot()}
             fallback={
@@ -104,6 +110,7 @@ export const RLSelect: Component<RLSelectProps> = (props) => {
             </span>
           </Show>
           <selectedcontent class={classes().label} data-slot="label" />
+          <RLIcon name="chevron-down" class={classes().chevron} data-slot="chevron" />
         </RLButton>
 
         <Show when={showPlaceholder()}>

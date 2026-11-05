@@ -10,7 +10,7 @@ const SIDES = ["top", "right", "bottom", "left"] as const;
 const groupedItems = [
   [
     { label: "Profile", icon: "user", shortcut: "⌘P", onSelect: () => {} },
-    { label: "Settings", icon: "lucide:settings", kbds: ["⌘", ","], onSelect: () => {} },
+    { label: "Settings", icon: "i-lucide-settings", kbds: ["⌘", ","], onSelect: () => {} },
   ],
   [
     { type: "label" as const, label: "Workspace" },
@@ -116,7 +116,7 @@ export const dropdownMenuAudit: ComponentAuditDefinition = {
       render: () => (
         <RLDropdownMenu
           label="Options"
-          icon="lucide:ellipsis"
+          icon="i-lucide-ellipsis"
           hasArrow
           items={groupedItems}
           aria-label="Options"
@@ -129,7 +129,7 @@ export const dropdownMenuAudit: ComponentAuditDefinition = {
       description:
         "No label, no children, and no triggerSlot: the trigger renders as an icon button.",
       render: () => (
-        <RLDropdownMenu icon="lucide:ellipsis" items={groupedItems} aria-label="More actions" />
+        <RLDropdownMenu icon="i-lucide-ellipsis" items={groupedItems} aria-label="More actions" />
       ),
     },
     {

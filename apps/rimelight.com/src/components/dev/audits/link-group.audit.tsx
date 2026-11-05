@@ -26,7 +26,7 @@ const LinkGroupSandbox = (): JSX.Element => {
       <RLLinkGroup
         label="Resources"
         href={withHref() ? "/resources" : undefined}
-        leadingIcon={withIcons() ? "lucide:globe" : undefined}
+        leadingIcon={withIcons() ? "i-lucide-globe" : undefined}
         trailingIcon={withIcons() ? "chevron-right" : undefined}
         links={LINKS}
       />
@@ -65,7 +65,7 @@ const testScenarios: TestScenario[] = [
       <RLLinkGroup
         label="Support"
         href="/support"
-        leadingIcon="lucide:globe"
+        leadingIcon="i-lucide-globe"
         trailingIcon="chevron-right"
         links={[{ label: "Contact", href: "/contact" }]}
       />

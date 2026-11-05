@@ -338,7 +338,7 @@ export const checkboxAudit: ComponentAuditDefinition = {
           />
           <RLCheckbox
             defaultChecked="indeterminate"
-            indeterminateIcon="lucide:plus"
+            indeterminateIcon="i-lucide-plus"
             label="Custom Indeterminate Icon"
             description="Uses custom icon token."
           />

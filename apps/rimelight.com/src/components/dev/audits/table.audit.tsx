@@ -292,7 +292,7 @@ export const TableSandbox = (): JSX.Element => {
               ? [
                   {
                     label: row.getIsExpanded() ? "Collapse Sub-rows" : "Expand Sub-rows",
-                    icon: row.getIsExpanded() ? "lucide:chevron-up" : "chevron-down",
+                    icon: row.getIsExpanded() ? "i-lucide-chevron-up" : "chevron-down",
                     onSelect: () => row.toggleExpanded(),
                   },
                 ]
@@ -301,14 +301,14 @@ export const TableSandbox = (): JSX.Element => {
           [
             {
               label: row.getIsPinned() ? "Unpin Row" : "Pin to Top",
-              icon: "lucide:pin",
+              icon: "i-lucide-pin",
               onSelect: () => row.pin(row.getIsPinned() ? false : "top"),
             },
           ],
           [
             {
               label: t("app.text.delete-payment"),
-              icon: "lucide:trash",
+              icon: "i-lucide-trash",
               color: "error" as const,
               onSelect: () => {
                 setData(data().filter((item) => item.id !== row.id));

@@ -512,7 +512,7 @@ export const splitterAudit: ComponentAuditDefinition = {
           <div class="h-48 w-full border border-default/60 rounded-xl overflow-hidden bg-card/30">
             <RLSplitter
               defaultValue={["50%", "50%"]}
-              handleIcon="lucide:ellipsis"
+              handleIcon="i-lucide-ellipsis"
               panels={[{ children: "Left" }, { children: "Right" }]}
             />
           </div>

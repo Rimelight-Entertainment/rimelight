@@ -59,7 +59,7 @@ export const RLBannerTheme = defineTheme("banner", {
     {
       color: "neutral",
       class: {
-        root: "!bg-inverted",
+        root: "bg-inverted",
       },
     },
     {
@@ -72,7 +72,7 @@ export const RLBannerTheme = defineTheme("banner", {
       color: "neutral",
       to: true,
       class: {
-        root: "hover:!bg-inverted/90",
+        root: "hover:bg-inverted/90",
       },
     },
   ],

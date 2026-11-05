@@ -8,8 +8,8 @@ import type {
 import { RLNavigationMenuTheme } from "./navigation-menu.theme";
 import { createMemo, createSignal, For, Show, onSettled, type Component } from "solid-js";
 import type { JSX } from "@solidjs/web";
-import { RLIcon } from "../icon/RLIcon";
 import { RLButton } from "../button/RLButton";
+import { RLIcon } from "../icon/RLIcon";
 import { RLLink } from "../link/RLLink";
 import { localizeHref } from "../link/link.helpers";
 import { renderSlot } from "../../slot";
@@ -219,6 +219,7 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (props) => {
                         <RLLink
                           href={resolveHref(item) ?? "#"}
                           localize={false}
+                          unstyled
                           class={classes().link}
                           data-slot="link"
                           aria-current={isActive() ? "page" : undefined}
@@ -231,7 +232,8 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (props) => {
                       }
                     >
                       <RLButton
-                        type="button"
+                        variant="unstyled"
+                        shape="bare"
                         class={triggerClass()}
                         data-slot="trigger"
                         data-nav-trigger

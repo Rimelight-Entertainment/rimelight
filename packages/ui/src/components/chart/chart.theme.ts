@@ -32,7 +32,7 @@ export const RLChartTheme = defineTheme("chart", {
     barItem: "flex flex-col items-center gap-1 flex-1 group",
     barValue:
       "text-[10px] text-muted font-mono opacity-0 group-hover:opacity-100 transition-opacity",
-    bar: "h-full w-full overflow-hidden rounded-t transition-all hover:opacity-85 !bg-transparent",
+    bar: "h-full w-full overflow-hidden rounded-t transition-all hover:opacity-85 bg-transparent",
     barSvg: "h-full w-full overflow-visible",
     axis: "text-[10px] text-muted",
     svg: "w-full h-full",

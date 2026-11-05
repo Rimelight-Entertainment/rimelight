@@ -6,7 +6,7 @@ export const RLDashboardSidebarTheme = defineTheme("dashboard-sidebar", {
     root: [
       "group relative hidden lg:flex flex-col h-full min-h-0 shrink-0 transition-[width] duration-300 w-64 min-w-64 max-w-64",
       "data-[collapsed]:w-16 data-[collapsed]:min-w-16 data-[collapsed]:max-w-16 data-[collapsed]:overflow-hidden",
-      "data-[mobile-open]:!flex data-[mobile-open]:fixed data-[mobile-open]:inset-y-0 data-[mobile-open]:left-0 data-[mobile-open]:z-50 data-[mobile-open]:w-72 data-[mobile-open]:max-w-[85vw] data-[mobile-open]:bg-default data-[mobile-open]:shadow-2xl data-[mobile-open]:border-e data-[mobile-open]:border-default",
+      "data-[mobile-open]:flex data-[mobile-open]:fixed data-[mobile-open]:inset-y-0 data-[mobile-open]:left-0 data-[mobile-open]:z-50 data-[mobile-open]:w-72 data-[mobile-open]:max-w-[85vw] data-[mobile-open]:bg-default data-[mobile-open]:shadow-2xl data-[mobile-open]:border-e data-[mobile-open]:border-default",
     ],
     header:
       "h-16 min-h-16 shrink-0 flex items-center gap-3 px-6 py-4 border-b border-default group-data-[collapsed]:justify-center group-data-[collapsed]:items-center group-data-[collapsed]:gap-0 group-data-[collapsed]:px-0",

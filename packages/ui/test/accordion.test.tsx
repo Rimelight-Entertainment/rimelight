@@ -7,7 +7,7 @@ import { renderSolid } from "./utils/normalize";
 const SAMPLE_ITEMS: AccordionItem[] = [
   {
     label: "Getting Started",
-    icon: "lucide:rocket",
+    icon: "i-lucide-rocket",
     content: "Installation and quick start guide.",
   },
   { label: "Component Architecture", icon: "layers", content: "Reactive primitives and tokens." },

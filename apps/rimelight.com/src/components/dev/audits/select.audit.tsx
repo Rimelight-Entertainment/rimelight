@@ -189,7 +189,7 @@ export const selectAudit: ComponentAuditDefinition = {
       id: "leading-icon",
       title: "leadingIcon",
       description: "Icon rendered in the leading position of the trigger.",
-      render: () => <RLSelect items={ITEMS} leadingIcon="lucide:apple" />,
+      render: () => <RLSelect items={ITEMS} leadingIcon="i-lucide-apple" />,
     },
     {
       id: "leading-slot",
@@ -203,7 +203,7 @@ export const selectAudit: ComponentAuditDefinition = {
       id: "layout-icon",
       title: "layout icon",
       description: "Compact icon-only layout.",
-      render: () => <RLSelect items={ITEMS} layout="icon" leadingIcon="lucide:apple" />,
+      render: () => <RLSelect items={ITEMS} layout="icon" leadingIcon="i-lucide-apple" />,
     },
     {
       id: "default-slot",

@@ -81,8 +81,7 @@ export const RLTableTheme = defineTheme("table", {
     reorderCell: "flex items-center justify-center",
     reorderIcon: "size-4",
     actionsCell: "flex items-center justify-end",
-    actionsTrigger:
-      "aspect-square !px-1.5 !py-1.5 inline-flex items-center justify-center shrink-0",
+    actionsTrigger: "aspect-square px-1.5 py-1.5 inline-flex items-center justify-center shrink-0",
     actionsIcon: "size-4",
     toolbarActions: "ml-auto flex items-center gap-2 shrink-0",
     scroller: "overflow-x-auto w-full relative",

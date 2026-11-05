@@ -12,7 +12,7 @@ const ITEMS = [
   {
     label: "Settings",
     value: "settings",
-    icon: "lucide:settings",
+    icon: "i-lucide-settings",
     content: "Settings panel content.",
   },
   { label: "Inbox", value: "inbox", badge: 12, content: "Inbox panel content." },

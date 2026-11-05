@@ -103,7 +103,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
       {
         label: t("app.header.link-groups.right.grand-tale.resources.support"),
         href: getLocaleUrl("/franchises/grand-tale/support"),
-        leadingIcon: "lucide:headset",
+        leadingIcon: "i-lucide-headset",
       },
     ],
   });
@@ -218,7 +218,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
       {
         label: t("app.header.link-groups.right.company.resources.docs"),
         href: getLocaleUrl("/company/docs"),
-        leadingIcon: "lucide:file-text",
+        leadingIcon: "i-lucide-file-text",
       },
       {
         label: t("app.header.link-groups.right.company.resources.branding"),
@@ -228,7 +228,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
       {
         label: t("app.header.link-groups.right.company.resources.legal"),
         href: getLocaleUrl("/company/legal"),
-        leadingIcon: "lucide:scale",
+        leadingIcon: "i-lucide-scale",
       },
     ],
   });
@@ -351,12 +351,12 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
       {
         label: t("app.header.link-groups.right.store.assistance.orders"),
         href: getLocaleUrl("/store/orders"),
-        leadingIcon: "lucide:shopping-bag",
+        leadingIcon: "i-lucide-shopping-bag",
       },
       {
         label: t("app.header.link-groups.right.store.assistance.customer-support"),
         href: getLocaleUrl("/franchises/grand-tale/support"),
-        leadingIcon: "lucide:circle-question-mark",
+        leadingIcon: "i-lucide-circle-question-mark",
       },
     ],
   });
@@ -642,7 +642,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
           },
           {
             label: t("app.header.user.dropdown.dashboard"),
-            icon: "lucide:layout-dashboard",
+            icon: "i-lucide-layout-dashboard",
             href: getLocaleUrl("/dashboard"),
           },
           {
@@ -652,7 +652,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
           },
           {
             label: t("app.header.user.dropdown.settings"),
-            icon: "lucide:cog",
+            icon: "i-lucide-cog",
             href: getLocaleUrl("/dashboard/settings"),
           },
           {
@@ -660,7 +660,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
           },
           {
             label: t("app.header.user.dropdown.sign-out"),
-            icon: "lucide:log-out",
+            icon: "i-lucide-log-out",
             href: "/api/auth/logout",
             color: "error",
           },
@@ -871,7 +871,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
           <RLButton
             variant="ghost"
             color="neutral"
-            leadingIcon="lucide:keyboard"
+            leadingIcon="i-lucide-keyboard"
             aria-label={t("app.text.keyboard-shortcuts")}
             onClick={() => useShortcuts().open()}
           />

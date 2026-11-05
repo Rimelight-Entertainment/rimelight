@@ -13,7 +13,7 @@ const NAV: SidebarItem[] = [
   { label: "Overview", href: "#overview", icon: "layers", active: true },
   {
     label: "Guides",
-    icon: "lucide:compass",
+    icon: "i-lucide-compass",
     badge: "New",
     children: [
       { label: "Install", href: "#install" },
@@ -22,13 +22,13 @@ const NAV: SidebarItem[] = [
   },
   {
     label: "Components",
-    icon: "lucide:blocks",
+    icon: "i-lucide-blocks",
     children: [
-      { label: "Button", href: "#button", icon: "lucide:square" },
-      { label: "Modal", href: "#modal", icon: "lucide:square-stack", badge: "Beta" },
+      { label: "Button", href: "#button", icon: "i-lucide-square" },
+      { label: "Modal", href: "#modal", icon: "i-lucide-square-stack", badge: "Beta" },
     ],
   },
-  { label: "Settings", href: "#settings", icon: "lucide:settings" },
+  { label: "Settings", href: "#settings", icon: "i-lucide-settings" },
 ];
 
 export const SidebarSandbox = (): JSX.Element => {
@@ -204,8 +204,8 @@ export const sidebarAudit: ComponentAuditDefinition = {
             { label: "Home", href: "#home", icon: "house" },
             {
               label: "Files",
-              icon: "lucide:folder",
-              children: [{ label: "Docs", href: "#docs", icon: "lucide:file-text" }],
+              icon: "i-lucide-folder",
+              children: [{ label: "Docs", href: "#docs", icon: "i-lucide-file-text" }],
             },
           ]}
         />

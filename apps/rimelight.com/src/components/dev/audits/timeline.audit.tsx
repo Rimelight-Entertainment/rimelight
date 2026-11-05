@@ -20,14 +20,14 @@ const ITEMS = [
     date: "Feb 12",
     title: "Design review",
     description: "Feedback collected from three reviewers.",
-    icon: "lucide:eye",
+    icon: "i-lucide-eye",
   },
   {
     value: "launch",
     date: "Mar 30",
     title: "Launch",
     description: "Version 1.0 shipped to production.",
-    icon: "lucide:rocket",
+    icon: "i-lucide-rocket",
   },
 ];
 

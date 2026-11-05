@@ -169,7 +169,7 @@ export const bannerAudit: ComponentAuditDefinition = {
         <div class="flex flex-col gap-3">
           <RLBanner
             title={"We just raised Series A funding!"}
-            icon="lucide:rocket"
+            icon="i-lucide-rocket"
             color="secondary"
             actions={[
               {

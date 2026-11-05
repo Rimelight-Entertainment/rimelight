@@ -42,6 +42,9 @@ export const RLButtonTheme = defineTheme("button", {
       link: {
         root: "text-[var(--rl-text)] hover:text-[var(--rl-text)]/75 active:text-[var(--rl-text)]/75 disabled:text-[var(--rl-text)] aria-disabled:text-[var(--rl-text)] focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--rl-ring)]",
       },
+      unstyled: {
+        root: "cursor-pointer focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--rl-ring)]",
+      },
     },
     color: "auto",
     size: {
@@ -66,6 +69,7 @@ export const RLButtonTheme = defineTheme("button", {
       square: { root: "aspect-square justify-center rounded-md" },
       rounded: { root: "rounded-md" },
       pill: { root: "rounded-full" },
+      bare: { root: "p-0" },
     },
   },
   compoundVariants: [

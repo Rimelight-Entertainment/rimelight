@@ -264,7 +264,7 @@ const Sidebar: Component<{ active: string }> = (props) => {
   const item = (p: string, label: string, icon: string) => (
     <RLLink
       href={href(p)}
-      class={`justify-start ${isActive(p) ? "bg-primary-500/10 font-medium text-primary-500" : "text-toned hover:bg-elevated"}`}
+      class={`flex items-center justify-start gap-2 rounded-md px-2.5 py-2 ${isActive(p) ? "bg-primary-500/10 font-medium text-primary-500" : "text-toned hover:bg-elevated"}`}
       leadingIcon={icon}
       label={label}
     />

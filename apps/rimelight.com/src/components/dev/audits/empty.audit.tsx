@@ -7,7 +7,7 @@ const SIZES = ["xs", "sm", "md", "lg", "xl"] as const;
 const VARIANTS = ["solid", "outline", "soft", "subtle", "ghost"] as const;
 
 const sampleActions = [
-  { label: "Create item", icon: "lucide:plus", variant: "solid" as const },
+  { label: "Create item", icon: "i-lucide-plus", variant: "solid" as const },
   { label: "Read docs", href: "/docs" },
 ];
 
@@ -164,7 +164,7 @@ export const emptyAudit: ComponentAuditDefinition = {
       id: "loading",
       title: "Loading state",
       description: "The loading variant with loadingIcon overriding the default icon.",
-      render: () => <RLEmpty title="Loading" loading={true} loadingIcon="lucide:loader" />,
+      render: () => <RLEmpty title="Loading" loading={true} loadingIcon="i-lucide-loader" />,
     },
   ],
 };

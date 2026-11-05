@@ -98,7 +98,7 @@ export const CollapsibleSandbox = (): JSX.Element => {
               variant="subtle"
               color="neutral"
               disabled={isDisabled()}
-              trailingIcon={open ? "lucide:chevron-up" : "chevron-down"}
+              trailingIcon={open ? "i-lucide-chevron-up" : "chevron-down"}
               block
             />
           )}

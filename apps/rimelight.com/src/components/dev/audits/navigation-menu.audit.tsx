@@ -23,7 +23,7 @@ const GROUPED_ITEMS: NavigationMenuItem[] = [
       {
         label: "Learn",
         children: [
-          { label: "Guides", href: "/guides", icon: "lucide:book-open" },
+          { label: "Guides", href: "/guides", icon: "i-lucide-book-open" },
           { label: "Tutorials", href: "/tutorials" },
         ],
       },

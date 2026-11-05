@@ -6,8 +6,6 @@ export type ScrollState = {
   scrollPercentage: number;
 };
 
-export type ScrollToTopGaugeVars = Record<`--rl-stt-${string}`, string>;
-
 export type RLScrollToTopProps = InferThemeProps<typeof RLScrollToTopTheme> & {
   /**
    * The scroll distance in pixels after which the button becomes visible.

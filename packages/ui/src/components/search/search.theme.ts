@@ -32,7 +32,7 @@ export const RLSearchTheme = defineTheme("search", {
     header: "flex items-center border-b border-default px-5 py-4 gap-3",
     headerIcon: "text-muted size-4 shrink-0",
     inputRoot:
-      "relative flex items-center w-full !bg-transparent !border-none !shadow-none !p-0 !ring-0",
+      "relative flex items-center w-full bg-transparent border-none shadow-none p-0 ring-0",
     input:
       "w-full bg-transparent px-3 py-1 text-sm outline-none text-highlighted placeholder:text-muted",
     inputActions: "flex items-center gap-2",

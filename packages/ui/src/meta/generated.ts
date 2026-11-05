@@ -642,7 +642,7 @@ export const componentMeta: ComponentMetaMap = {
           vertical: {
             header: "flex flex-col items-center gap-4 text-center w-full",
             artwork:
-              "w-full !size-auto max-w-xs sm:max-w-sm aspect-square rounded-2xl overflow-hidden shadow-lg border border-default/30",
+              "w-full size-auto max-w-xs sm:max-w-sm aspect-square rounded-2xl overflow-hidden shadow-lg border border-default/30",
             details: "items-center text-center w-full",
             metaBadge: "mx-auto self-center",
           },
@@ -1516,7 +1516,7 @@ export const componentMeta: ComponentMetaMap = {
         {
           color: "neutral",
           class: {
-            root: "!bg-inverted",
+            root: "bg-inverted",
           },
         },
         {
@@ -1529,7 +1529,7 @@ export const componentMeta: ComponentMetaMap = {
           color: "neutral",
           to: true,
           class: {
-            root: "hover:!bg-inverted/90",
+            root: "hover:bg-inverted/90",
           },
         },
       ],
@@ -2172,6 +2172,9 @@ export const componentMeta: ComponentMetaMap = {
           link: {
             root: "text-[var(--rl-text)] hover:text-[var(--rl-text)]/75 active:text-[var(--rl-text)]/75 disabled:text-[var(--rl-text)] aria-disabled:text-[var(--rl-text)] focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--rl-ring)]",
           },
+          unstyled: {
+            root: "cursor-pointer focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--rl-ring)]",
+          },
         },
         size: {
           xs: {
@@ -2225,6 +2228,9 @@ export const componentMeta: ComponentMetaMap = {
           },
           pill: {
             root: "rounded-full",
+          },
+          bare: {
+            root: "p-0",
           },
         },
       },
@@ -3427,18 +3433,18 @@ export const componentMeta: ComponentMetaMap = {
           orientation: "horizontal",
           controls: "inside",
           class: {
-            prev: "!start-3 !top-1/2 !-translate-y-1/2",
-            next: "!end-3 !top-1/2 !-translate-y-1/2",
-            dots: "!inset-x-0 !bottom-3 !flex-row !gap-1.5",
+            prev: "start-3 top-1/2 -translate-y-1/2",
+            next: "end-3 top-1/2 -translate-y-1/2",
+            dots: "inset-x-0 bottom-3 flex-row gap-1.5",
           },
         },
         {
           orientation: "vertical",
           controls: "inside",
           class: {
-            prev: "!top-3 !left-1/2 !-translate-x-1/2 !rotate-90 rtl:!-rotate-90",
-            next: "!bottom-3 !left-1/2 !-translate-x-1/2 !rotate-90 rtl:!-rotate-90",
-            dots: "!inset-y-0 !end-3 !flex-col !gap-1.5",
+            prev: "top-3 left-1/2 -translate-x-1/2 rotate-90 rtl:-rotate-90",
+            next: "bottom-3 left-1/2 -translate-x-1/2 rotate-90 rtl:-rotate-90",
+            dots: "inset-y-0 end-3 flex-col gap-1.5",
           },
         },
       ],
@@ -3523,7 +3529,7 @@ export const componentMeta: ComponentMetaMap = {
         barItem: "flex flex-col items-center gap-1 flex-1 group",
         barValue:
           "text-[10px] text-muted font-mono opacity-0 group-hover:opacity-100 transition-opacity",
-        bar: "h-full w-full overflow-hidden rounded-t transition-all hover:opacity-85 !bg-transparent",
+        bar: "h-full w-full overflow-hidden rounded-t transition-all hover:opacity-85 bg-transparent",
         barSvg: "h-full w-full overflow-visible",
         axis: "text-[10px] text-muted",
         svg: "w-full h-full",
@@ -6423,7 +6429,7 @@ export const componentMeta: ComponentMetaMap = {
         root: [
           "group relative hidden lg:flex flex-col h-full min-h-0 shrink-0 transition-[width] duration-300 w-64 min-w-64 max-w-64",
           "data-[collapsed]:w-16 data-[collapsed]:min-w-16 data-[collapsed]:max-w-16 data-[collapsed]:overflow-hidden",
-          "data-[mobile-open]:!flex data-[mobile-open]:fixed data-[mobile-open]:inset-y-0 data-[mobile-open]:left-0 data-[mobile-open]:z-50 data-[mobile-open]:w-72 data-[mobile-open]:max-w-[85vw] data-[mobile-open]:bg-default data-[mobile-open]:shadow-2xl data-[mobile-open]:border-e data-[mobile-open]:border-default",
+          "data-[mobile-open]:flex data-[mobile-open]:fixed data-[mobile-open]:inset-y-0 data-[mobile-open]:left-0 data-[mobile-open]:z-50 data-[mobile-open]:w-72 data-[mobile-open]:max-w-[85vw] data-[mobile-open]:bg-default data-[mobile-open]:shadow-2xl data-[mobile-open]:border-e data-[mobile-open]:border-default",
         ],
         header:
           "h-16 min-h-16 shrink-0 flex items-center gap-3 px-6 py-4 border-b border-default group-data-[collapsed]:justify-center group-data-[collapsed]:items-center group-data-[collapsed]:gap-0 group-data-[collapsed]:px-0",
@@ -6859,7 +6865,7 @@ export const componentMeta: ComponentMetaMap = {
       base: {
         root: "relative inline-block text-left",
         trigger:
-          "inline-flex justify-center items-center w-full rounded-md border border-default bg-default font-medium shadow-sm hover:bg-muted focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed data-[icon-only]:aspect-square data-[icon-only]:shrink-0 data-[icon-only]:!px-1.5 data-[icon-only]:!py-1.5",
+          "inline-flex justify-center items-center w-full rounded-md border border-default bg-default font-medium shadow-sm hover:bg-muted focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed data-[icon-only]:aspect-square data-[icon-only]:shrink-0 data-[icon-only]:px-1.5 data-[icon-only]:py-1.5",
         triggerIcon: "shrink-0",
         body: "fixed z-[99999] mt-1 top-[var(--rl-dd-top,0px)] left-[var(--rl-dd-left,auto)] right-[var(--rl-dd-right,auto)] min-w-32 rounded-md border border-default bg-elevated p-1 text-highlighted shadow-md ring-1 ring-scrim/5 focus:outline-none flex flex-col gap-0.5",
         viewport: "flex flex-col gap-0.5",
@@ -10261,14 +10267,6 @@ export const componentMeta: ComponentMetaMap = {
         externalHint: "sr-only",
       },
       variants: {
-        active: {
-          true: {
-            root: "text-primary",
-          },
-          false: {
-            root: "text-muted",
-          },
-        },
         disabled: {
           true: {
             root: "cursor-not-allowed opacity-75",
@@ -10277,6 +10275,14 @@ export const componentMeta: ComponentMetaMap = {
       },
       compoundVariants: [
         {
+          unstyled: false,
+          active: false,
+          class: {
+            root: "text-muted",
+          },
+        },
+        {
+          unstyled: false,
           active: false,
           disabled: false,
           class: {
@@ -10284,6 +10290,14 @@ export const componentMeta: ComponentMetaMap = {
           },
         },
         {
+          unstyled: false,
+          active: true,
+          class: {
+            root: "text-primary",
+          },
+        },
+        {
+          unstyled: false,
           active: true,
           disabled: false,
           class: {
@@ -10292,6 +10306,7 @@ export const componentMeta: ComponentMetaMap = {
         },
       ],
       defaultVariants: {
+        unstyled: false,
         active: false,
       },
     },
@@ -10347,7 +10362,7 @@ export const componentMeta: ComponentMetaMap = {
         heading: "flex items-center gap-1.5",
         titleLink: "hover:underline flex items-center gap-1.5",
         list: "flex flex-col gap-2",
-        link: "w-full !justify-start text-sm text-muted hover:text-highlighted transition-colors",
+        link: "w-full justify-start text-sm text-muted hover:text-highlighted transition-colors",
       },
       variants: {},
       compoundVariants: [],
@@ -12320,15 +12335,15 @@ export const componentMeta: ComponentMetaMap = {
     theme: {
       slots: ["root", "button", "progressBase", "track", "progress", "iconContainer", "icon"],
       base: {
-        root: "fixed bottom-6 right-6 z-50 invisible opacity-0 pointer-events-none transition-[opacity,visibility] duration-300 data-[state=visible]:visible data-[state=visible]:opacity-100 data-[state=visible]:pointer-events-auto",
-        button: "size-14 lg:size-12 p-0 rounded-full bg-scrim/85 text-on-scrim",
+        root: "fixed bottom-6 right-6 z-50 transition-opacity duration-300 opacity-0 pointer-events-none data-[state=visible]:opacity-100 data-[state=visible]:pointer-events-auto",
+        button: "size-14 lg:size-12 rounded-full bg-scrim/85",
         progressBase: "relative size-full",
         track:
-          "absolute inset-0 rounded-full border-solid border-[length:var(--rl-stt-border)] border-[color:color-mix(in_oklab,var(--rl-border)_30%,transparent)] bg-scrim",
+          "absolute inset-0 rounded-full border-solid border-[length:var(--rl-stt-border)] border-[color:var(--rl-stt-track)] bg-scrim",
         progress:
-          "absolute inset-0 rounded-full text-[var(--rl-border)] bg-[image:var(--rl-stt-gauge)] [-webkit-mask:radial-gradient(circle_closest-side,transparent_calc(100%_-_var(--rl-stt-border)),currentColor_calc(100%_-_var(--rl-stt-border)))] [mask:radial-gradient(circle_closest-side,transparent_calc(100%_-_var(--rl-stt-border)),currentColor_calc(100%_-_var(--rl-stt-border)))]",
+          "absolute inset-0 rounded-full bg-[image:var(--rl-stt-gauge)] [-webkit-mask:var(--rl-stt-mask)] [mask:var(--rl-stt-mask)]",
         iconContainer: "absolute inset-0 flex items-center justify-center text-center",
-        icon: "size-6",
+        icon: "size-6 text-on-scrim",
       },
       variants: {},
       compoundVariants: [],
@@ -12426,7 +12441,7 @@ export const componentMeta: ComponentMetaMap = {
         header: "flex items-center border-b border-default px-5 py-4 gap-3",
         headerIcon: "text-muted size-4 shrink-0",
         inputRoot:
-          "relative flex items-center w-full !bg-transparent !border-none !shadow-none !p-0 !ring-0",
+          "relative flex items-center w-full bg-transparent border-none shadow-none p-0 ring-0",
         input:
           "w-full bg-transparent px-3 py-1 text-sm outline-none text-highlighted placeholder:text-muted",
         inputActions: "flex items-center gap-2",
@@ -12570,15 +12585,16 @@ export const componentMeta: ComponentMetaMap = {
     ],
     emits: [],
     theme: {
-      slots: ["root", "select", "trigger", "leading", "icon", "label", "option"],
+      slots: ["root", "select", "trigger", "leading", "icon", "label", "option", "chevron"],
       base: {
         root: "relative inline-flex items-center",
         select:
           "rl-select w-full rounded-md border shadow-sm transition-colors cursor-pointer focus-within:outline-none",
-        trigger: "flex items-center gap-2 w-full min-w-0 cursor-pointer",
+        trigger: "w-full min-w-0",
         label: "truncate",
         leading: "flex items-center text-current shrink-0 pointer-events-none",
         icon: "shrink-0",
+        chevron: "ml-auto shrink-0 size-3.5 text-current",
         option: "bg-default text-highlighted",
       },
       variants: {
@@ -12615,7 +12631,7 @@ export const componentMeta: ComponentMetaMap = {
           icon: {
             select:
               "w-auto rounded-lg focus-within:ring-2 focus-within:ring-[var(--rl-ring)] inline-flex items-center justify-center text-[var(--rl-text)]",
-            trigger: "justify-center",
+            chevron: "hidden",
             label: "hidden",
           },
         },
@@ -13235,7 +13251,7 @@ export const componentMeta: ComponentMetaMap = {
         root: "animate-pulse bg-elevated shrink-0",
         container: "relative w-full",
         measure:
-          "pointer-events-none select-none [&_*:not([data-skeleton-ignore],[data-skeleton-ignore]_*)]:!text-transparent [&_img:not([data-skeleton-ignore],[data-skeleton-ignore]_*)]:opacity-0 [&_svg:not([data-skeleton-ignore],[data-skeleton-ignore]_*)]:opacity-0 [&_video:not([data-skeleton-ignore],[data-skeleton-ignore]_*)]:opacity-0 [&_canvas:not([data-skeleton-ignore],[data-skeleton-ignore]_*)]:opacity-0",
+          "pointer-events-none select-none [&_*:not([data-skeleton-ignore],[data-skeleton-ignore]_*)]:text-transparent [&_img:not([data-skeleton-ignore],[data-skeleton-ignore]_*)]:opacity-0 [&_svg:not([data-skeleton-ignore],[data-skeleton-ignore]_*)]:opacity-0 [&_video:not([data-skeleton-ignore],[data-skeleton-ignore]_*)]:opacity-0 [&_canvas:not([data-skeleton-ignore],[data-skeleton-ignore]_*)]:opacity-0",
         overlay: "absolute inset-0 overflow-hidden pointer-events-none",
         shimmer:
           "absolute bg-elevated overflow-hidden left-[var(--rl-skel-x,0px)] top-[var(--rl-skel-y,0px)] w-[var(--rl-skel-w,0px)] h-[var(--rl-skel-h,0px)] rounded-[var(--rl-skel-r,var(--rl-skel-r-default,0.375rem))]",
@@ -13864,7 +13880,7 @@ export const componentMeta: ComponentMetaMap = {
         item: "group flex-1 flex flex-col items-center text-center relative",
         container: "flex items-center justify-center relative w-full",
         trigger:
-          "rounded-full font-medium text-center align-middle flex items-center justify-center font-semibold group-data-[state=completed]:bg-[var(--rl-bg)] group-data-[state=completed]:border-[var(--rl-bg)] group-data-[state=completed]:!text-inverted group-data-[state=active]:bg-[var(--rl-bg)] group-data-[state=active]:border-[var(--rl-bg)] group-data-[state=active]:!text-inverted text-muted bg-muted border border-default transition-all cursor-pointer z-10",
+          "rounded-full font-medium text-center align-middle flex items-center justify-center font-semibold group-data-[state=completed]:bg-[var(--rl-bg)] group-data-[state=completed]:border-[var(--rl-bg)] group-data-[state=completed]:text-inverted group-data-[state=active]:bg-[var(--rl-bg)] group-data-[state=active]:border-[var(--rl-bg)] group-data-[state=active]:text-inverted text-muted bg-muted border border-default transition-all cursor-pointer z-10",
         indicator: "flex items-center justify-center size-full text-current",
         icon: "shrink-0 size-4 text-current transition-colors",
         separator:
@@ -14353,7 +14369,7 @@ export const componentMeta: ComponentMetaMap = {
         reorderIcon: "size-4",
         actionsCell: "flex items-center justify-end",
         actionsTrigger:
-          "aspect-square !px-1.5 !py-1.5 inline-flex items-center justify-center shrink-0",
+          "aspect-square px-1.5 py-1.5 inline-flex items-center justify-center shrink-0",
         actionsIcon: "size-4",
         toolbarActions: "ml-auto flex items-center gap-2 shrink-0",
         scroller: "overflow-x-auto w-full relative",
