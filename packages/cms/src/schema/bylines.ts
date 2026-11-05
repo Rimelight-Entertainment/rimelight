@@ -1,5 +1,6 @@
 import {
   pgTable,
+  boolean,
   uuid,
   text,
   jsonb,
@@ -7,6 +8,7 @@ import {
   uniqueIndex,
   type PgTableWithColumns,
 } from "drizzle-orm/pg-core";
+import type { BylineFieldStored } from "../core/types/bylines";
 
 export const bylines: PgTableWithColumns<any> = pgTable(
   "bylines",
@@ -20,6 +22,8 @@ export const bylines: PgTableWithColumns<any> = pgTable(
     userId: text("user_id"),
     socials: jsonb("socials").$type<Record<string, string>>().default({}),
     metadata: jsonb("metadata").$type<Record<string, any>>().default({}),
+    isGuest: boolean("is_guest").default(false).notNull(),
+    fields: jsonb("fields").$type<Record<string, BylineFieldStored>>().default({}).notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
     deletedAt: timestamp("deleted_at"),

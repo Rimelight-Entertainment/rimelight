@@ -280,12 +280,12 @@ const Sidebar: Component<{ active: string }> = (props) => {
       {item("/c", "Content", "i-lucide-files")}
       {item("/media", "Media", "i-lucide-image")}
       {item("/taxonomies", "Taxonomies", "i-lucide-tags")}
-      {item("/bylines", "Bylines", "i-lucide-users")}
       {heading("Workflow")}
       {item("/reviews", "Reviews", "i-lucide-check-check")}
-      {heading("Configure")}
+      {heading("Configuration")}
       {item("/schemas", "Collections", "i-lucide-database")}
       {item("/templates", "Templates", "i-lucide-layout-template")}
+      {item("/bylines", "Bylines", "i-lucide-users")}
       {item("/settings", "Settings", "i-lucide-settings")}
       <div class="mt-auto flex items-center gap-2 border-t border-default px-2.5 pt-3 text-xs text-muted">
         <span class="i-lucide-circle-user size-4" />

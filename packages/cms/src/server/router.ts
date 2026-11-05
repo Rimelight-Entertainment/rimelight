@@ -417,6 +417,27 @@ export function createCmsRouter(options: CmsRouterOptions = {}): Hono {
     "/bylines/:id",
     route(({ cms, actor, c }) => cms.bylines.deleteByline(actor, p(c, "id"))),
   );
+  app.get(
+    "/byline-fields",
+    route(async ({ cms }) => ({ fields: await cms.bylines.listBylineFields() })),
+  );
+  app.post(
+    "/byline-fields",
+    route(
+      async ({ cms, actor, body }) => ({ field: await cms.bylines.createBylineField(actor, body) }),
+      201,
+    ),
+  );
+  app.put(
+    "/byline-fields/:id",
+    route(async ({ cms, actor, c, body }) => ({
+      field: await cms.bylines.updateBylineField(actor, p(c, "id"), body),
+    })),
+  );
+  app.delete(
+    "/byline-fields/:id",
+    route(({ cms, actor, c }) => cms.bylines.deleteBylineField(actor, p(c, "id"))),
+  );
 
   // ── Settings, search ───────────────────────────────────────────────────────
   app.get(

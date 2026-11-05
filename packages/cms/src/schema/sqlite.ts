@@ -11,7 +11,7 @@ import {
 } from "drizzle-orm/sqlite-core";
 import type { BaseBlock } from "../core/types/blocks";
 import type { EntryStatus, Localized } from "../core/types/pages";
-import type { BylineCredit } from "../core/types/bylines";
+import type { BylineCredit, BylineFieldStored, BylineFieldType } from "../core/types/bylines";
 import type { PageVersionStatus } from "../core/types/versioning";
 import type { TemplateApprovalRules, TemplateRolePermissions } from "../core/types/templates";
 
@@ -375,6 +375,11 @@ export const bylines: SQLiteTableWithColumns<any> = sqliteTable(
     metadata: text("metadata", { mode: "json" })
       .$type<Record<string, any>>()
       .default(sql`'{}'`),
+    isGuest: integer("is_guest", { mode: "boolean" }).default(false).notNull(),
+    fields: text("fields", { mode: "json" })
+      .$type<Record<string, BylineFieldStored>>()
+      .default(sql`'{}'`)
+      .notNull(),
     createdAt: integer("created_at", { mode: "timestamp" })
       .$defaultFn(() => new Date())
       .notNull(),
@@ -385,6 +390,36 @@ export const bylines: SQLiteTableWithColumns<any> = sqliteTable(
   },
   (table) => [uniqueIndex("bylines_slug_idx").on(table.slug)],
 );
+
+// Custom field definitions shown on every byline (see services/bylines.ts).
+export const bylineFields: SQLiteTableWithColumns<any> = sqliteTable(
+  "byline_fields",
+  {
+    id: text("id")
+      .$defaultFn(() => crypto.randomUUID())
+      .primaryKey(),
+    slug: text("slug").notNull(),
+    label: text("label").notNull(),
+    type: text("type").$type<BylineFieldType>().notNull(),
+    required: integer("required", { mode: "boolean" }).default(false).notNull(),
+    translatable: integer("translatable", { mode: "boolean" }).default(false).notNull(),
+    options: text("options", { mode: "json" })
+      .$type<string[]>()
+      .default(sql`'[]'`)
+      .notNull(),
+    sortOrder: integer("sort_order").default(0).notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .$defaultFn(() => new Date())
+      .notNull(),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .$defaultFn(() => new Date())
+      .notNull(),
+  },
+  (table) => [uniqueIndex("byline_fields_slug_idx").on(table.slug)],
+);
+
+export type BylineField = typeof bylineFields.$inferSelect;
+export type NewBylineField = typeof bylineFields.$inferInsert;
 
 export type Byline = typeof bylines.$inferSelect;
 export type NewByline = typeof bylines.$inferInsert;

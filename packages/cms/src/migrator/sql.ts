@@ -290,6 +290,28 @@ CREATE UNIQUE INDEX IF NOT EXISTS "media_assets_storage_key_idx" ON "media_asset
 CREATE INDEX IF NOT EXISTS "media_assets_folder_idx" ON "media_assets" ("folder_id");
 `,
   },
+  {
+    name: "0011_byline_fields",
+    sql: `ALTER TABLE "bylines" ADD COLUMN "is_guest" integer DEFAULT 0 NOT NULL;
+--> statement-breakpoint
+ALTER TABLE "bylines" ADD COLUMN "fields" text DEFAULT '{}' NOT NULL;
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "byline_fields" (
+	"id" text PRIMARY KEY NOT NULL,
+	"slug" text NOT NULL,
+	"label" text NOT NULL,
+	"type" text NOT NULL,
+	"required" integer DEFAULT 0 NOT NULL,
+	"translatable" integer DEFAULT 0 NOT NULL,
+	"options" text DEFAULT '[]' NOT NULL,
+	"sort_order" integer DEFAULT 0 NOT NULL,
+	"created_at" integer NOT NULL,
+	"updated_at" integer NOT NULL
+);
+--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS "byline_fields_slug_idx" ON "byline_fields" ("slug");
+`,
+  },
 ];
 
 export const PG_CMS_MIGRATIONS = [
@@ -606,6 +628,28 @@ CREATE TABLE IF NOT EXISTS "media_assets" (
 CREATE UNIQUE INDEX IF NOT EXISTS "media_assets_storage_key_idx" ON "media_assets" ("storage_key");
 --> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "media_assets_folder_idx" ON "media_assets" ("folder_id");
+`,
+  },
+  {
+    name: "0011_byline_fields",
+    sql: `ALTER TABLE "bylines" ADD COLUMN IF NOT EXISTS "is_guest" boolean DEFAULT false NOT NULL;
+--> statement-breakpoint
+ALTER TABLE "bylines" ADD COLUMN IF NOT EXISTS "fields" jsonb DEFAULT '{}'::jsonb NOT NULL;
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "byline_fields" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"slug" text NOT NULL,
+	"label" text NOT NULL,
+	"type" text NOT NULL,
+	"required" boolean DEFAULT false NOT NULL,
+	"translatable" boolean DEFAULT false NOT NULL,
+	"options" jsonb DEFAULT '[]'::jsonb NOT NULL,
+	"sort_order" integer DEFAULT 0 NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS "byline_fields_slug_idx" ON "byline_fields" ("slug");
 `,
   },
 ];

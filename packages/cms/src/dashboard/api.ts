@@ -6,7 +6,53 @@ import type { Taxonomy } from "../services/taxonomies";
 import type { TaxonomyPreset } from "../core/taxonomies/presets";
 import type { CmsActor } from "../services/context";
 import type { LockState } from "../services/entries";
+import type {
+  BylineFieldInput,
+  BylineFieldPatch,
+  BylineFieldStored,
+  BylineFieldType,
+  BylineFieldsPatch,
+} from "../core/types/bylines";
 
+export interface BylineRecord {
+  id: string;
+  name: string;
+  slug: string;
+  bio: string | null;
+  avatar: string | null;
+  websiteUrl: string | null;
+  userId: string | null;
+  isGuest: boolean;
+  socials: Record<string, string>;
+  fields: Record<string, BylineFieldStored>;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface BylineFieldRecord {
+  id: string;
+  slug: string;
+  label: string;
+  type: BylineFieldType;
+  required: boolean;
+  translatable: boolean;
+  options: string[];
+  sortOrder: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface BylineWriteInput {
+  name: string;
+  slug?: string | undefined;
+  bio?: string | null;
+  avatar?: string | null;
+  websiteUrl?: string | null;
+  userId?: string | null;
+  isGuest?: boolean;
+  socials?: Record<string, string>;
+  fields?: BylineFieldsPatch;
+}
 export class ApiError extends Error {
   constructor(
     public status: number,
@@ -346,10 +392,20 @@ export function createApi(base = "/api/cms") {
     },
 
     bylines: {
-      list: () => call<{ bylines: any[] }>("GET", "/bylines"),
-      create: (input: unknown) => call<{ byline: any }>("POST", "/bylines", input),
-      update: (id: string, input: unknown) => call<{ byline: any }>("PUT", `/bylines/${id}`, input),
+      list: () => call<{ bylines: BylineRecord[] }>("GET", "/bylines"),
+      create: (input: BylineWriteInput) =>
+        call<{ byline: BylineRecord }>("POST", "/bylines", input),
+      update: (id: string, input: Partial<BylineWriteInput>) =>
+        call<{ byline: BylineRecord }>("PUT", `/bylines/${id}`, input),
       remove: (id: string) => call("DELETE", `/bylines/${id}`),
+    },
+    bylineFields: {
+      list: () => call<{ fields: BylineFieldRecord[] }>("GET", "/byline-fields"),
+      create: (input: BylineFieldInput) =>
+        call<{ field: BylineFieldRecord }>("POST", "/byline-fields", input),
+      update: (id: string, input: BylineFieldPatch) =>
+        call<{ field: BylineFieldRecord }>("PUT", `/byline-fields/${id}`, input),
+      remove: (id: string) => call("DELETE", `/byline-fields/${id}`),
     },
 
     settings: {
