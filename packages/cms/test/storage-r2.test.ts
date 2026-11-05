@@ -18,7 +18,7 @@ describe("CMS R2 Storage Adapter", () => {
     const config = r2();
     expect(config.provider).toBe("r2");
     expect(config.binding).toBe("BLOB");
-    expect(config.prefix).toBe("media/");
+    expect(config.prefix).toBe("");
   });
 
   it("should extract bucket from locals runtime env", async () => {

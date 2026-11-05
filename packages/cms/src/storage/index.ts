@@ -86,7 +86,7 @@ export function r2(options: R2StorageOptions = {}): StorageConfig {
     provider: "r2",
     binding: options.binding ?? "BLOB",
     publicUrl: options.publicUrl,
-    prefix: options.prefix ?? "media/",
+    prefix: options.prefix ?? "",
   };
 }
 
