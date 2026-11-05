@@ -1,8 +1,8 @@
-import type { RLColorFieldProps } from "./color-field.types";
-import { COLOR_FIELD_DEFAULTS, RLColorFieldTheme } from "./color-field.theme";
 import { createSignal, Show, type Component } from "solid-js";
 import type { JSX } from "@solidjs/web";
+
 import { createControllable } from "../../controllable";
+import { DEFAULT_COLOR_HEX } from "../../constants/color";
 import {
   clamp,
   getChannelRange,
@@ -13,6 +13,8 @@ import {
   rgbToHsb,
   rgbToHsl,
 } from "../color-picker/color";
+import { RLColorFieldTheme } from "./color-field.theme";
+import type { RLColorFieldProps } from "./color-field.types";
 
 const OMIT_KEYS = [
   "channel",
@@ -26,6 +28,9 @@ const OMIT_KEYS = [
   "readonly",
   "required",
   "step",
+  "aria-label",
+  "aria-labelledby",
+  "aria-describedby",
   "onValueChange",
 ] as const;
 
@@ -34,13 +39,17 @@ export const RLColorField: Component<RLColorFieldProps> = (props) => {
     omit: OMIT_KEYS,
   });
 
-  const colorSpace = () => props.colorSpace ?? COLOR_FIELD_DEFAULTS.colorSpace;
+  const colorSpace = () => props.colorSpace ?? "hsl";
+  const step = () => props.step ?? 1;
 
   const [currentHex, setCurrentHex] = createControllable(
     () => props.value,
-    props.defaultValue ?? COLOR_FIELD_DEFAULTS.defaultValue,
+    props.defaultValue ?? DEFAULT_COLOR_HEX,
     (next) => props.onValueChange?.(next),
   );
+
+  /** Text typed by the user, shown until the next committed change or blur. */
+  const [draft, setDraft] = createSignal<string | undefined>(undefined);
 
   const getDisplayValue = () => {
     const hex = currentHex();
@@ -50,19 +59,22 @@ export const RLColorField: Component<RLColorFieldProps> = (props) => {
     if (colorSpace() === "hsl") {
       const hsl = rgbToHsl(rgb[0], rgb[1], rgb[2]);
       const index = ["hue", "saturation", "lightness"].indexOf(props.channel);
-      return index !== -1 ? String(hsl[index]!) : "0";
+      const value = index !== -1 ? hsl[index] : undefined;
+      return value !== undefined ? String(value) : "0";
     } else if (colorSpace() === "hsb") {
       const hsb = rgbToHsb(rgb[0], rgb[1], rgb[2]);
       const index = ["hue", "saturation", "brightness"].indexOf(props.channel);
-      return index !== -1 ? String(hsb[index]!) : "0";
+      const value = index !== -1 ? hsb[index] : undefined;
+      return value !== undefined ? String(value) : "0";
     } else if (colorSpace() === "rgb") {
       const index = ["red", "green", "blue"].indexOf(props.channel);
-      return index !== -1 ? String(rgb[index]!) : "0";
+      const value = index !== -1 ? rgb[index] : undefined;
+      return value !== undefined ? String(value) : "0";
     }
     return "0";
   };
 
-  const [displayValue, setDisplayValue] = createSignal(getDisplayValue);
+  const displayValue = () => draft() ?? getDisplayValue();
 
   const updateFromChannelValue = (val: number) => {
     if (!props.channel) return;
@@ -87,16 +99,18 @@ export const RLColorField: Component<RLColorFieldProps> = (props) => {
       if (index !== -1) newRgb[index] = clampedVal;
     }
 
+    setDraft(undefined);
     setCurrentHex(rgbToHex(newRgb[0], newRgb[1], newRgb[2]));
   };
 
   const handleInputChange: JSX.EventHandler<HTMLInputElement, InputEvent> = (e) => {
     if (props.disabled || props.readonly) return;
     const raw = e.currentTarget.value.trim();
-    setDisplayValue(raw);
+    setDraft(raw);
 
     if (!props.channel) {
       if (/^#[0-9A-F]{6}$/i.test(raw)) {
+        setDraft(undefined);
         setCurrentHex(raw);
       }
     } else {
@@ -107,49 +121,40 @@ export const RLColorField: Component<RLColorFieldProps> = (props) => {
     }
   };
 
+  const handleBlur = () => setDraft(undefined);
+
   const handleKeyDown: JSX.EventHandler<HTMLInputElement, KeyboardEvent> = (e) => {
-    if (props.disabled || props.readonly) return;
-    const stepSize = (e.shiftKey ? 10 : 1) * (props.step ?? COLOR_FIELD_DEFAULTS.step);
+    if (props.disabled || props.readonly || !props.channel) return;
+    const stepSize = (e.shiftKey ? 10 : 1) * step();
+    const currentVal = parseFloat(getDisplayValue()) || 0;
+    let newVal: number;
 
-    if (props.channel) {
-      const currentVal = parseFloat(displayValue()) || 0;
-      let handled = false;
-      let newVal = currentVal;
-
-      if (e.key === "ArrowUp") {
-        newVal = currentVal + stepSize;
-        handled = true;
-      } else if (e.key === "ArrowDown") {
-        newVal = currentVal - stepSize;
-        handled = true;
-      } else if (e.key === "PageUp") {
-        newVal = currentVal + stepSize * 10;
-        handled = true;
-      } else if (e.key === "PageDown") {
-        newVal = currentVal - stepSize * 10;
-        handled = true;
-      } else if (e.key === "Home") {
-        newVal = getChannelRange(props.channel).min;
-        handled = true;
-      } else if (e.key === "End") {
-        newVal = getChannelRange(props.channel).max;
-        handled = true;
-      }
-
-      if (handled) {
-        e.preventDefault();
-        updateFromChannelValue(newVal);
-      }
+    if (e.key === "ArrowUp") {
+      newVal = currentVal + stepSize;
+    } else if (e.key === "ArrowDown") {
+      newVal = currentVal - stepSize;
+    } else if (e.key === "PageUp") {
+      newVal = currentVal + stepSize * 10;
+    } else if (e.key === "PageDown") {
+      newVal = currentVal - stepSize * 10;
+    } else if (e.key === "Home") {
+      newVal = getChannelRange(props.channel).min;
+    } else if (e.key === "End") {
+      newVal = getChannelRange(props.channel).max;
+    } else {
+      return;
     }
+
+    e.preventDefault();
+    updateFromChannelValue(newVal);
   };
 
   const handleWheel: JSX.EventHandler<HTMLInputElement, WheelEvent> = (e) => {
     if (props.disableWheelChange || props.disabled || props.readonly || !props.channel) return;
     e.preventDefault();
     const direction = e.deltaY < 0 ? 1 : -1;
-    const stepSize = (props.step ?? COLOR_FIELD_DEFAULTS.step) * direction;
-    const currentVal = parseFloat(displayValue()) || 0;
-    updateFromChannelValue(currentVal + stepSize);
+    const currentVal = parseFloat(getDisplayValue()) || 0;
+    updateFromChannelValue(currentVal + step() * direction);
   };
 
   return (
@@ -160,8 +165,8 @@ export const RLColorField: Component<RLColorFieldProps> = (props) => {
       data-channel={props.channel}
       data-color-space={colorSpace()}
       data-value={currentHex()}
-      data-disabled={props.disabled ? "true" : "false"}
-      data-readonly={props.readonly ? "true" : "false"}
+      data-disabled={props.disabled ? "" : undefined}
+      data-readonly={props.readonly ? "" : undefined}
       {...rest}
     >
       <div class={classes().swatch} data-slot="swatch" style={{ "--rl-swatch": currentHex() }} />
@@ -173,8 +178,12 @@ export const RLColorField: Component<RLColorFieldProps> = (props) => {
         required={props.required}
         disabled={props.disabled}
         readonly={props.readonly}
+        aria-label={props["aria-label"]}
+        aria-labelledby={props["aria-labelledby"]}
+        aria-describedby={props["aria-describedby"]}
         value={displayValue()}
         onInput={handleInputChange}
+        onBlur={handleBlur}
         onKeyDown={handleKeyDown}
         onWheel={handleWheel}
       />

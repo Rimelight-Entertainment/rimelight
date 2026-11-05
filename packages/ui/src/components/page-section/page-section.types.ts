@@ -1,79 +1,50 @@
-import type { JSX } from "@solidjs/web";
 import type { InferThemeProps } from "../../resolver";
+import type { SlotRenderer } from "../../types";
 import type { RLButtonProps } from "../button/button.types";
 import type { RLPageSectionTheme } from "./page-section.theme";
 
+/** Page section props. */
 export type RLPageSectionProps = Omit<
   InferThemeProps<typeof RLPageSectionTheme>,
-  | "layout"
-  | "ctaVariant"
-  | "orientation"
-  | "reverse"
-  | "headline"
-  | "title"
-  | "description"
-  | "body"
+  "layout" | "ctaVariant" | "orientation" | "contentVisibility" | "hasHeadline" | "hasTitle"
 > & {
-  /**
-   * The layout of the section.
-   *
-   * @default "default"
-   */
+  /** Section layout. @default "default" */
   layout?: "default" | "hero" | "cta";
-  /**
-   * The variant of the section when it's a CTA.
-   *
-   * @default "solid"
-   */
+  /** Surface treatment used when `layout` is `"cta"`. @default "solid" */
   ctaVariant?: "solid" | "outline" | "soft" | "subtle" | "ghost";
-  /**
-   * The headline displayed above the title.
-   */
+  /** Eyebrow text rendered above the title. */
   headline?: string;
-  /**
-   * The icon displayed above the title.
-   */
+  /** Icon name rendered in the leading slot position. */
   icon?: string;
-  /**
-   * The section's title, displayed as a <h1> for the hero layout or <h2> otherwise.
-   */
+  /** Section title. Rendered as an `h1` in the hero layout and an `h2` otherwise. */
   title?: string;
-  /**
-   * The section's description, displayed under the title.
-   */
+  /** Section description rendered below the title. */
   description?: string;
-  /**
-   * Display a list of buttons under the description.
-   */
+  /** Links rendered in the footer. */
   links?: RLButtonProps[];
-  /**
-   * The orientation of the section.
-   *
-   * @default "vertical"
-   */
+  /** Arrangement of the header and body. @default "vertical" */
   orientation?: "vertical" | "horizontal";
-  /**
-   * Reverse the order of the default slot.
-   *
-   * @default false
-   */
+  /** Places the wrapper after the body on the default and cta layouts, and before it on hero. */
   reverse?: boolean;
-  /**
-   * Set content-visibility for offscreen render painting optimization.
-   */
-  contentVisibility?: "auto" | "visible";
-  /**
-   * Dynamic intrinsic size fallback for content-visibility layout stability.
-   */
+  /** Skips rendering of offscreen content with `content-visibility: auto`. */
+  contentVisibility?: "auto";
+  /** Intrinsic size used while offscreen content is skipped, such as `"auto 500px"`. */
   containIntrinsicSize?: string;
-  backgroundSlot?: JSX.Element;
-  headerSlot?: JSX.Element;
-  leadingSlot?: JSX.Element;
-  titleSlot?: JSX.Element;
-  descriptionSlot?: JSX.Element;
-  bodySlot?: JSX.Element;
-  footerSlot?: JSX.Element;
-  actionSlot?: JSX.Element;
-  /** The root element owns its styling; `style` is not accepted. */
+  /** Replaces the background layer. */
+  backgroundSlot?: SlotRenderer;
+  /** Replaces the whole header block, including the default leading, title, and description. */
+  headerSlot?: SlotRenderer;
+  /** Replaces the leading icon. */
+  leadingSlot?: SlotRenderer;
+  /** Replaces the title text. */
+  titleSlot?: SlotRenderer;
+  /** Replaces the description text. */
+  descriptionSlot?: SlotRenderer;
+  /** Content rendered between the header and the footer. */
+  bodySlot?: SlotRenderer;
+  /** Replaces the footer, including `links` and `actionSlot`. */
+  footerSlot?: SlotRenderer;
+  /** Content rendered after `links` in the footer. */
+  actionSlot?: SlotRenderer;
   style?: never;
 };

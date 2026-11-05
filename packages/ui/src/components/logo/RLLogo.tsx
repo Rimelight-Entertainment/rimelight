@@ -1,15 +1,15 @@
 import type { Component } from "solid-js";
-import { createMemo } from "solid-js";
+import { createMemo, Match, Show, Switch } from "solid-js";
 import type { RLLogoProps } from "./logo.types";
 import { RLLogoTheme } from "./logo.theme";
+import { RLLink } from "../link/RLLink";
+import { RLIcon } from "../icon/RLIcon";
 import { getUIConfig } from "../../runtime";
-import { localizeHref } from "../link/helpers";
 
-const OMIT_KEYS = ["variant", "mode", "src", "alt", "href"] as const;
+const OMIT_KEYS = ["variant", "mode", "src", "alt", "href", "aria-label"] as const;
 
 export const RLLogo: Component<RLLogoProps> = (props) => {
-  const { Tag, classes, rest, children, theme } = RLLogoTheme.setup(props, {
-    as: "a",
+  const { classes, rest, children, theme, tagProp } = RLLogoTheme.setup(props, {
     omit: OMIT_KEYS,
   });
 
@@ -44,54 +44,56 @@ export const RLLogo: Component<RLLogoProps> = (props) => {
     return { logoSrc, darkSrc, lightSrc };
   });
 
-  const isIcon = () => {
-    const s = logoInfo().logoSrc;
-    const isUrl = Boolean(s && (s.startsWith("http") || s.startsWith("/") || s.startsWith(".")));
-    return Boolean(s && !isUrl && (s.includes(":") || s.startsWith("i-")));
-  };
-
-  const hasAutoMode = () => {
-    const { darkSrc, lightSrc } = logoInfo();
-    return Boolean(darkSrc && lightSrc && darkSrc !== lightSrc && !props.mode);
-  };
-
-  const renderContent = () => {
+  const kind = createMemo(() => {
     const { logoSrc, darkSrc, lightSrc } = logoInfo();
-    if (!logoSrc) return children();
-    if (isIcon()) {
-      return <span class={`${logoSrc} size-full block shrink-0`} aria-hidden="true" />;
-    }
-    if (hasAutoMode()) {
-      return (
-        <span class="rl-logo-image size-full flex items-center justify-center shrink-0">
-          <img
-            src={lightSrc || ""}
-            alt={props.alt || ""}
-            class="rl-logo-light size-full block object-contain shrink-0"
-          />
-          <img
-            src={darkSrc || ""}
-            alt={props.alt || ""}
-            class="rl-logo-dark size-full hidden object-contain shrink-0"
-          />
-        </span>
-      );
-    }
-    return (
-      <img src={logoSrc} alt={props.alt || ""} class="size-full block object-contain shrink-0" />
-    );
-  };
+    if (!logoSrc) return "children";
+    const isUrl = logoSrc.startsWith("http") || logoSrc.startsWith("/") || logoSrc.startsWith(".");
+    if (!isUrl && (logoSrc.includes(":") || logoSrc.startsWith("i-"))) return "icon";
+    if (darkSrc && lightSrc && darkSrc !== lightSrc && !props.mode) return "auto";
+    return "image";
+  });
 
   return (
-    <Tag
+    <RLLink
+      as={tagProp()}
+      href={props.href ?? "/"}
+      localize
+      aria-label={props["aria-label"] || props.alt || props.variant || "logomark"}
+      class={classes().root}
       data-slot="root"
       data-theme={theme()}
-      class={classes().root}
-      aria-label={props.alt || props.variant || "logomark"}
-      href={localizeHref(props.href ?? "/")}
       {...rest}
     >
-      {renderContent()}
-    </Tag>
+      <Switch>
+        <Match when={kind() === "icon"}>
+          <RLIcon name={logoInfo().logoSrc ?? ""} class={classes().icon} data-slot="icon" />
+        </Match>
+        <Match when={kind() === "auto"}>
+          <img
+            src={logoInfo().lightSrc ?? ""}
+            alt={props.alt || ""}
+            class={classes().lightImage}
+            data-slot="light-image"
+          />
+          <img
+            src={logoInfo().darkSrc ?? ""}
+            alt={props.alt || ""}
+            class={classes().darkImage}
+            data-slot="dark-image"
+          />
+        </Match>
+        <Match when={kind() === "image"}>
+          <img
+            src={logoInfo().logoSrc ?? ""}
+            alt={props.alt || ""}
+            class={classes().image}
+            data-slot="image"
+          />
+        </Match>
+        <Match when={kind() === "children"}>
+          <Show when={children()}>{children()}</Show>
+        </Match>
+      </Switch>
+    </RLLink>
   );
 };

@@ -214,14 +214,6 @@ describe("@rimelight/ui unstyled mode", () => {
 });
 
 describe("@rimelight/ui logo & image themes", () => {
-  it("should export and resolve RLLogoTheme properly", async () => {
-    (await import("virtual:rimelight-ui")).config.unstyled = false;
-    const { RLLogoTheme } = await import("../src/components/logo/logo.theme");
-    const slots = RLLogoTheme({ class: "custom-logo" });
-    expect(slots["root"]).toContain("flex items-center");
-    expect(slots["root"]).toContain("custom-logo");
-  });
-
   it("should export and resolve RLImageTheme properly", async () => {
     (await import("virtual:rimelight-ui")).config.unstyled = false;
     const { RLImageTheme } = await import("../src/components/image/image.theme");

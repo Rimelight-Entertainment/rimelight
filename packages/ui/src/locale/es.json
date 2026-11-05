@@ -1,4 +1,42 @@
 {
+  "chat": {
+    "label": "Conversación"
+  },
+  "chat-messages": {
+    "label": "Mensajes"
+  },
+  "chat-prompt": {
+    "label": "Mensaje",
+    "placeholder": "Escribe un mensaje"
+  },
+  "chat-prompt-submit": {
+    "send": "Enviar mensaje",
+    "stop": "Detener generación"
+  },
+  "chat-reasoning": {
+    "label": "Razonamiento"
+  },
+  "chat-palette": {
+    "label": "Sugerencias"
+  },
+  "chat-tool": {
+    "status": {
+      "pending": "Pendiente",
+      "running": "En ejecución",
+      "completed": "Completado",
+      "error": "Error"
+    }
+  },
+  "command-palette": {
+    "label": "Paleta de comandos",
+    "input": "Buscar comandos"
+  },
+  "color-picker": {
+    "label": "Selector de color"
+  },
+  "dock": {
+    "label": "Barra de herramientas"
+  },
   "link": {
     "opens-in-new-tab": "(se abre en una pestaña nueva)"
   },
@@ -188,6 +226,10 @@
   },
   "toast": {
     "dismiss": "Descartar notificación"
+  },
+  "tree": {
+    "expand": "Expandir",
+    "collapse": "Contraer"
   },
   "video": {
     "defaultTitle": "Reproductor de vídeo de YouTube",

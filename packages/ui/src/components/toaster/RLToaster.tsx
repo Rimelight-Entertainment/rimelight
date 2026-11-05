@@ -44,8 +44,11 @@ export const RLToaster: Component<RLToasterProps> = (props) => {
       const cleanUrl = url.pathname + (url.search ? url.search : "");
       window.history.replaceState({}, "", cleanUrl);
 
-      const payload: Omit<ToastItem, "id"> = { title: toastTitle, color: toastColor };
-      if (toastDesc) payload.description = toastDesc;
+      const payload: Omit<ToastItem, "id"> = {
+        title: toastTitle,
+        color: toastColor,
+        ...(toastDesc ? { description: toastDesc } : {}),
+      };
       addToast(payload);
     }
   });

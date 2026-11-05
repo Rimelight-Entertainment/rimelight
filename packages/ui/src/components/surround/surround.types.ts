@@ -12,11 +12,11 @@ export type RLSurroundProps = Omit<InferThemeProps<typeof RLSurroundTheme>, "sid
    *
    * @default undefined
    */
-  prev?: SurroundItem | null;
+  prev?: SurroundItem | null | undefined;
   /**
    * The next item. Omit or pass `null` to hide the next link.
    *
    * @default undefined
    */
-  next?: SurroundItem | null;
+  next?: SurroundItem | null | undefined;
 };

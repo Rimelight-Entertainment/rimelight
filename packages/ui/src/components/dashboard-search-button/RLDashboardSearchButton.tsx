@@ -1,7 +1,6 @@
-import type { Component } from "solid-js";
+import { For, Show, type Component } from "solid-js";
 import type { RLDashboardSearchButtonProps } from "./dashboard-search-button.types";
 import { RLDashboardSearchButtonTheme } from "./dashboard-search-button.theme";
-import { For, Show } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 import { uiT } from "../../locale";
 
@@ -25,12 +24,12 @@ export const RLDashboardSearchButton: Component<RLDashboardSearchButtonProps> = 
       class={classes().root}
       {...rest}
     >
-      {props.icon !== false && (
+      <Show when={props.icon !== false}>
         <RLIcon
           name={typeof props.icon === "string" ? props.icon : "search"}
-          class="size-5 shrink-0 text-muted"
+          class={classes().icon}
         />
-      )}
+      </Show>
 
       <span data-slot="label" class={classes().label}>
         {props.label ?? uiT("search.label")}
@@ -41,14 +40,14 @@ export const RLDashboardSearchButton: Component<RLDashboardSearchButtonProps> = 
           when={slots.trailingSlot()}
           fallback={
             <Show when={(props.kbds ?? DEFAULT_KBDS).length > 0}>
-              <span class="flex items-center gap-0.5">
+              <span data-slot="kbds" class={classes().kbds}>
                 <For each={props.kbds ?? DEFAULT_KBDS}>
                   {(kbd) => {
-                    const val = typeof kbd === "string" ? kbd : kbd.value;
-                    const txt = val === "meta" ? "⌘" : val === "k" ? "K" : val;
+                    const value = typeof kbd === "string" ? kbd : kbd.value;
+                    const label = value === "meta" ? "⌘" : value === "k" ? "K" : value;
                     return (
-                      <kbd class="inline-flex items-center justify-center rounded border border-default bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted min-w-[20px] h-5">
-                        {txt}
+                      <kbd data-slot="kbd" class={classes().kbd}>
+                        {label}
                       </kbd>
                     );
                   }}

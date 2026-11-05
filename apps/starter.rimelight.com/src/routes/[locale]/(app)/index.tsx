@@ -1,7 +1,7 @@
 import { type Component, For, Show, createMemo } from "solid-js";
 import { useHead } from "@solidjs/web";
 import { createPageHead } from "@rimelight/seo/head";
-import { t, getCurrentLocale, getLocaleUrl } from "@rimelight/i18n";
+import { t, getCurrentLocale } from "@rimelight/i18n";
 import { RLPageSection } from "@rimelight/ui/components/page-section/RLPageSection.tsx";
 import { RLLogo } from "@rimelight/ui/components/logo/RLLogo.tsx";
 import { RLLink } from "@rimelight/ui/components/link/RLLink.tsx";
@@ -36,15 +36,15 @@ export const HomePage: Component = () => {
   const heroLinks = (): RLButtonProps[] => [
     {
       variant: "outline",
-      leadingIcon: "i-lucide-github",
+      leadingIcon: "github",
       label: t("page.home.section.hero.link.github.label"),
       href: "https://github.com/Rimelight-Entertainment/rimelight/tree/main/packages/starter.rimelight.com",
     },
     {
       variant: "solid",
       label: t("page.home.section.hero.link.use-template.label"),
-      trailingIcon: "i-lucide-arrow-right",
-      href: getLocaleUrl("/docs/"),
+      trailingIcon: "arrow-right",
+      href: "/docs/",
     },
   ];
 
@@ -56,7 +56,7 @@ export const HomePage: Component = () => {
     },
     {
       label: t("page.home.section.features.link.read-the-docs.label"),
-      trailingIcon: "i-lucide-arrow-right",
+      trailingIcon: "arrow-right",
       href: "/docs",
     },
   ];
@@ -64,13 +64,13 @@ export const HomePage: Component = () => {
   const ctaLinks = (): RLButtonProps[] => [
     {
       variant: "outline",
-      leadingIcon: "i-lucide-github",
+      leadingIcon: "github",
       label: t("page.home.section.cta.view-on-github"),
       href: "https://github.com/Rimelight-Entertainment/rimelight",
     },
     {
       label: t("page.home.section.cta.learn-how"),
-      trailingIcon: "i-lucide-square-arrow-out-up-right",
+      trailingIcon: "square-arrow-out-up-right",
       href: `https://rimelight.com/${getCurrentLocale()}/company/docs/overview/contributing/introduction`,
     },
   ];
@@ -130,7 +130,7 @@ export const HomePage: Component = () => {
                           : t.localize(category as any)
                         : undefined
                     }
-                    href={getLocaleUrl(`/blog/${post.slug}/`)}
+                    href={`/blog/${post.slug}/`}
                   />
                 );
               }}
@@ -140,8 +140,8 @@ export const HomePage: Component = () => {
           <Show when={latestPosts().length > 0}>
             <RLLink
               label={t("page.home.section.posts.view.all")}
-              trailingIcon="i-lucide-arrow-right"
-              href={getLocaleUrl("/blog")}
+              trailingIcon="arrow-right"
+              href="/blog"
             />
           </Show>
         </div>

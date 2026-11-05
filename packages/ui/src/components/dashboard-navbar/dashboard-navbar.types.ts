@@ -12,10 +12,15 @@ export type RLDashboardNavbarProps = InferThemeProps<typeof RLDashboardNavbarThe
    */
   title?: string;
   /**
+   * Edge the mobile sidebar toggle sits on.
+   * @default "left"
+   */
+  side?: "left" | "right";
+  /**
    * Shows the mobile sidebar toggle button.
    * @default true
    */
-  toggle?: boolean;
+  hasToggle?: boolean;
   /**
    * Replaces the whole leading region (icon, title and toggle excluded from the default layout).
    */
@@ -33,7 +38,7 @@ export type RLDashboardNavbarProps = InferThemeProps<typeof RLDashboardNavbarThe
    */
   centerSlot?: JSX.Element;
   /**
-   * Content rendered at the trailing edge, before the toggle when `toggleSide` is `"right"`.
+   * Content rendered at the trailing edge, before the toggle when `side` is `"right"`.
    */
   trailingSlot?: JSX.Element;
 };

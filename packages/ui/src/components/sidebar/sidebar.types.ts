@@ -17,6 +17,7 @@ export type SidebarBadge = Pick<RLBadgeProps, "color" | "variant"> & {
 export interface SidebarItem {
   label: string;
   href?: string | undefined;
+  /** Bare lucide icon name, e.g. `layers`. */
   icon?: string | undefined;
   badge?: string | SidebarBadge | undefined;
   active?: boolean | undefined;
@@ -27,9 +28,36 @@ export interface SidebarScope {
   id?: string | undefined;
   label: string;
   href?: string | undefined;
+  /** Bare lucide icon name, e.g. `layers`. */
   icon?: string | undefined;
   items?: SidebarItem[] | undefined;
 }
+
+export type SidebarSlot =
+  | "root"
+  | "header"
+  | "content"
+  | "footer"
+  | "item"
+  | "itemLink"
+  | "itemIcon"
+  | "itemBadge"
+  | "itemsContainer"
+  | "itemText"
+  | "itemSummary"
+  | "itemChevron"
+  | "itemDetails"
+  | "itemChildren"
+  | "subItemLink"
+  | "subItemIcon"
+  | "subItemChildren"
+  | "logoWrapper"
+  | "logoIcon"
+  | "logoText"
+  | "toggleButton"
+  | "toggleIcon";
+
+export type SidebarClasses = Record<SidebarSlot, string>;
 
 export type RLSidebarProps = InferThemeProps<typeof RLSidebarTheme> & {
   /**
@@ -48,4 +76,19 @@ export type RLSidebarProps = InferThemeProps<typeof RLSidebarTheme> & {
    * Custom footer content. @default undefined
    */
   footerSlot?: JSX.Element;
+};
+
+export type SidebarItemListProps = {
+  /**
+   * Items rendered at this level.
+   */
+  items: SidebarItem[];
+  /**
+   * Nesting level: 1 for top-level items, deeper for children.
+   */
+  depth: number;
+  /**
+   * Resolved sidebar theme classes.
+   */
+  itemClasses: SidebarClasses;
 };

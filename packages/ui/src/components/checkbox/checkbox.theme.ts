@@ -1,10 +1,21 @@
 import { defineTheme } from "../../resolver";
 
 export const RLCheckboxTheme = defineTheme("checkbox", {
-  slots: ["root", "container", "base", "indicator", "icon", "wrapper", "label", "description"],
+  slots: [
+    "root",
+    "container",
+    "input",
+    "base",
+    "indicator",
+    "icon",
+    "wrapper",
+    "label",
+    "description",
+  ],
   base: {
     root: "relative flex items-start cursor-pointer select-none",
     container: "flex items-center",
+    input: "sr-only peer",
     base: "rounded-sm ring-1 ring-inset ring-accented focus-visible:outline-none bg-default transition-all duration-150 shrink-0",
     indicator:
       "flex items-center justify-center size-full transition-opacity duration-150 rounded-xs",
@@ -14,11 +25,8 @@ export const RLCheckboxTheme = defineTheme("checkbox", {
     description: "text-muted select-none",
   },
   variants: {
-    color: "auto",
     layout: {
-      list: {
-        root: "",
-      },
+      list: {},
       card: {
         root: [
           "border border-default rounded-lg hover:not-has-disabled:not-has-aria-disabled:not-has-focus-visible:not-has-data-[state=checked]:bg-elevated/50",
@@ -26,7 +34,7 @@ export const RLCheckboxTheme = defineTheme("checkbox", {
         ],
       },
     },
-    indicator: {
+    side: {
       start: {
         root: "flex-row",
         wrapper: "ms-2",
@@ -35,7 +43,9 @@ export const RLCheckboxTheme = defineTheme("checkbox", {
         root: "flex-row-reverse",
         wrapper: "me-2",
       },
-      hidden: {
+    },
+    hasIndicator: {
+      false: {
         base: "sr-only",
         wrapper: "flex flex-col items-center gap-1 text-center cursor-pointer",
       },
@@ -72,24 +82,10 @@ export const RLCheckboxTheme = defineTheme("checkbox", {
         wrapper: "text-base",
       },
     },
-    required: {
-      true: {
-        label: "after:content-['*'] after:ms-0.5 after:text-error",
-      },
-    },
-    disabled: {
-      true: {
-        root: "opacity-75 cursor-not-allowed",
-        base: "cursor-not-allowed",
-        label: "cursor-not-allowed",
-        description: "cursor-not-allowed",
-      },
-    },
     highlight: {
       true: {
         base: "ring-2 ring-inset ring-[var(--rl-ring)] outline-2 outline-solid outline-[var(--rl-ring)] outline-offset-2",
       },
-      false: {},
     },
     checked: {
       true: {
@@ -104,7 +100,7 @@ export const RLCheckboxTheme = defineTheme("checkbox", {
   },
   compoundVariants: [
     {
-      indicator: "hidden",
+      hasIndicator: false,
       class: {
         container: "h-auto",
       },
@@ -118,35 +114,35 @@ export const RLCheckboxTheme = defineTheme("checkbox", {
     },
     {
       size: "xs",
-      indicator: "hidden",
+      hasIndicator: false,
       class: {
         icon: "size-3",
       },
     },
     {
       size: "sm",
-      indicator: "hidden",
+      hasIndicator: false,
       class: {
         icon: "size-3.5",
       },
     },
     {
       size: "md",
-      indicator: "hidden",
+      hasIndicator: false,
       class: {
         icon: "size-4",
       },
     },
     {
       size: "lg",
-      indicator: "hidden",
+      hasIndicator: false,
       class: {
         icon: "size-4.5",
       },
     },
     {
       size: "xl",
-      indicator: "hidden",
+      hasIndicator: false,
       class: {
         icon: "size-5",
       },
@@ -188,14 +184,6 @@ export const RLCheckboxTheme = defineTheme("checkbox", {
     },
     {
       layout: "card",
-      disabled: true,
-      class: {
-        root: "cursor-not-allowed",
-      },
-    },
-    // Focus and checked styles for card / list
-    {
-      layout: "card",
       class: {
         root: "outline-[var(--rl-ring)]/25 has-focus-visible:outline-3 not-has-disabled:has-focus-visible:border-[var(--rl-border)] has-focus-visible:z-[1]",
       },
@@ -216,33 +204,32 @@ export const RLCheckboxTheme = defineTheme("checkbox", {
     },
     {
       layout: "list",
-      indicator: ["start", "end"],
+      hasIndicator: true,
       class: {
         base: "outline-[var(--rl-ring)]/25 focus-visible:outline-solid focus-visible:outline-3 focus-visible:ring-[var(--rl-ring)]",
       },
     },
     {
       layout: "list",
-      indicator: "hidden",
+      hasIndicator: false,
       class: {
         root: "outline-[var(--rl-ring)]/25 has-focus-visible:outline-3 not-has-disabled:has-focus-visible:border-[var(--rl-border)] has-focus-visible:z-[1]",
       },
     },
     {
-      indicator: "hidden",
+      hasIndicator: false,
       checked: true,
       class: {
         icon: "text-[var(--rl-text)]",
       },
     },
     {
-      indicator: "hidden",
+      hasIndicator: false,
       highlight: true,
       class: {
         root: "not-has-disabled:not-has-aria-disabled:border-[var(--rl-border)] not-has-disabled:not-has-aria-disabled:has-data-[state=checked]:border-[var(--rl-border)]",
       },
     },
-    // Neutral specifics
     {
       color: "neutral",
       checked: true,
@@ -262,7 +249,7 @@ export const RLCheckboxTheme = defineTheme("checkbox", {
     },
     {
       color: "neutral",
-      indicator: "hidden",
+      hasIndicator: false,
       checked: true,
       class: {
         icon: "text-highlighted",
@@ -270,7 +257,7 @@ export const RLCheckboxTheme = defineTheme("checkbox", {
     },
     {
       color: "neutral",
-      indicator: "hidden",
+      hasIndicator: false,
       highlight: true,
       class: {
         root: "not-has-disabled:not-has-aria-disabled:border-inverted not-has-disabled:not-has-aria-disabled:has-data-[state=checked]:border-inverted",
@@ -297,7 +284,8 @@ export const RLCheckboxTheme = defineTheme("checkbox", {
     size: "md",
     color: "primary",
     layout: "list",
-    indicator: "start",
+    side: "start",
+    hasIndicator: true,
     checked: false,
   },
 });

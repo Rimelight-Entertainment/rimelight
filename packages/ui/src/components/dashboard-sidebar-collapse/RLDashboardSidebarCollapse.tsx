@@ -24,15 +24,15 @@ export const RLDashboardSidebarCollapse: Component<RLDashboardSidebarCollapsePro
     >
       <RLIcon
         name={props.icon || "panel-left"}
-        class="size-5"
+        class={classes().icon}
         data-dashboard-collapse-icon
-        data-expanded
+        data-state="expanded"
       />
       <RLIcon
         name="panel-right"
-        class="size-5 hidden"
+        class={classes().collapsedIcon}
         data-dashboard-collapse-icon
-        data-collapsed
+        data-state="collapsed"
       />
       {children()}
     </Tag>

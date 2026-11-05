@@ -1,26 +1,27 @@
-import type { ThemeColor } from "../../types";
 import type { InferThemeProps } from "../../resolver";
 import type { RLScrollToTopTheme } from "./scroll-to-top.theme";
 
+export type ScrollState = {
+  isVisible: boolean;
+  scrollPercentage: number;
+};
+
+export type ScrollToTopGaugeVars = Record<`--rl-stt-${string}`, string>;
+
 export type RLScrollToTopProps = InferThemeProps<typeof RLScrollToTopTheme> & {
   /**
-   * The color scheme applied to the scroll-to-top button.
-   * @default "primary"
-   */
-  color?: ThemeColor | undefined;
-  /**
-   * The width of the progress indicator line in pixels.
-   * @default 6
-   */
-  progressWidth?: number | undefined;
-  /**
-   * The scroll threshold in pixels before showing the button.
+   * The scroll distance in pixels after which the button becomes visible.
    * @default 200
    */
   threshold?: number | undefined;
   /**
-   * Whether to show the scroll progress indicator.
+   * The width of the progress ring in pixels.
+   * @default 6
+   */
+  progressWidth?: number | undefined;
+  /**
+   * Whether to render the scroll progress ring.
    * @default true
    */
-  showProgress?: boolean | undefined;
+  hasProgress?: boolean | undefined;
 };

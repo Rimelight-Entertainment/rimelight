@@ -5,7 +5,6 @@ import {
   getCurrentLocale,
   getDefaultLocale,
   getLocaleAsset,
-  getLocaleUrl,
   getLocales,
   loadLocale,
   t,
@@ -102,7 +101,8 @@ function Localization() {
           <RLButton
             variant="soft"
             color="neutral"
-            href={getLocaleUrl(location.pathname, code)}
+            href={location.pathname}
+            localize={code}
             label={t("page.dev.localization.goto.locale", { locale: code })}
             rel="external"
           />

@@ -1,14 +1,16 @@
 import type { RLSearchProps, SearchResultItem } from "./search.types";
 import { RLSearchTheme } from "./search.theme";
-import { createSignal, For, onSettled, Show, type Component } from "solid-js";
+import { createMemo, createSignal, For, onSettled, Show, type Component } from "solid-js";
 import { Portal } from "@solidjs/web";
 import { RLIcon } from "../icon/RLIcon";
 import { RLInput } from "../input/RLInput";
 import { RLKbd } from "../kbd/RLKbd";
 import { RLButton } from "../button/RLButton";
+import { RLLink } from "../link/RLLink";
 import { defineShortcuts } from "../../shortcuts";
 import { uiNodes, uiT } from "../../locale";
 import { createControllable } from "../../controllable";
+import { renderSlot } from "../../slot";
 
 export const RLSearch: Component<RLSearchProps> = (props) => {
   const [open, setOpen] = createControllable<boolean>(
@@ -43,6 +45,12 @@ export const RLSearch: Component<RLSearchProps> = (props) => {
     props.messages?.searchPlaceholder || props.placeholder || uiT("search.placeholder");
   const noResultsLabel = () => props.messages?.noResultsLabel || uiT("search.no-results");
   const footerBackendHint = () => props.messages?.footerBackendHint || uiT("search.site-search");
+
+  const triggerContent = createMemo(() => slots.triggerSlot() ?? children());
+  const inputUi = createMemo(() => ({
+    root: classes().inputRoot,
+    input: classes().input,
+  }));
 
   const [query, setQuery] = createSignal("");
   const [results, setResults] = createSignal<SearchResultItem[]>([]);
@@ -144,30 +152,24 @@ export const RLSearch: Component<RLSearchProps> = (props) => {
   };
 
   return (
-    <Tag
-      data-slot="root"
-      data-theme={theme()}
-      class={`${classes().root} rl-search-wrapper`}
-      {...rest}
-    >
-      {slots.triggerSlot() ? (
-        <div class="cursor-pointer" onClick={toggleModal}>
-          {slots.triggerSlot()}
+    <Tag data-slot="root" data-theme={theme()} class={classes().root} {...rest}>
+      <Show
+        when={triggerContent()}
+        fallback={
+          <RLButton
+            variant="ghost"
+            color="neutral"
+            shape="square"
+            leadingIcon="search"
+            aria-label={uiT("search.label")}
+            onClick={toggleModal}
+          />
+        }
+      >
+        <div class={classes().trigger} data-slot="trigger" onClick={toggleModal}>
+          {renderSlot(triggerContent())}
         </div>
-      ) : children() ? (
-        <div class="cursor-pointer" onClick={toggleModal}>
-          {children()}
-        </div>
-      ) : (
-        <RLButton
-          variant="ghost"
-          color="neutral"
-          square
-          leadingIcon="search"
-          aria-label={uiT("search.label")}
-          onClick={toggleModal}
-        />
-      )}
+      </Show>
 
       <Show when={open()}>
         <Portal>
@@ -205,46 +207,49 @@ export const RLSearch: Component<RLSearchProps> = (props) => {
                   }}
                   leadingSlot={<RLIcon name="search" class={classes().headerIcon} />}
                   trailingSlot={
-                    <div class="flex items-center gap-2">
+                    <div class={classes().inputActions}>
                       <Show when={loading()}>
-                        <RLIcon name="loader-circle" class="size-4 animate-spin text-muted" />
+                        <RLIcon name="loader-circle" class={classes().loadingIcon} />
                       </Show>
                       <RLKbd size="sm">{uiT("search.esc")}</RLKbd>
-                      <button
-                        type="button"
-                        class={classes().close}
+                      <RLButton
+                        variant="ghost"
+                        color="neutral"
+                        shape="square"
+                        size="sm"
+                        leadingIcon="x"
                         aria-label={uiT("search.close")}
                         onClick={closeModal}
-                        data-slot="close"
-                      >
-                        <RLIcon name="x" class={classes().closeIcon} />
-                      </button>
+                      />
                     </div>
                   }
-                  ui={{
-                    root: "relative flex items-center w-full !bg-transparent !border-none !shadow-none !p-0 !ring-0",
-                    input:
-                      "w-full bg-transparent px-3 py-1 text-sm outline-none text-highlighted placeholder:text-muted",
-                    leading: "flex items-center justify-center text-muted",
-                    trailing: "flex items-center gap-2",
-                  }}
+                  ui={inputUi()}
                 />
               </div>
 
               <div class={classes().results} data-slot="results">
                 <For each={results()}>
                   {(item) => (
-                    <a href={item.url || "#"} class={classes().resultItem} onClick={closeModal}>
+                    <RLLink
+                      href={item.url || "#"}
+                      class={classes().resultItem}
+                      noExternalIcon
+                      onClick={closeModal}
+                    >
                       <div class={classes().resultHeader}>
                         <span class={classes().resultTitle}>
                           {item.title || uiT("search.untitled")}
                         </span>
-                        {item.sourceType && (
-                          <span class={classes().resultBadge}>{item.sourceType}</span>
-                        )}
+                        <Show when={item.sourceType}>
+                          {(sourceType) => (
+                            <span class={classes().resultBadge}>{sourceType()}</span>
+                          )}
+                        </Show>
                       </div>
-                      {item.snippet && <p class={classes().resultSnippet}>{item.snippet}</p>}
-                    </a>
+                      <Show when={item.snippet}>
+                        {(snippet) => <p class={classes().resultSnippet}>{snippet()}</p>}
+                      </Show>
+                    </RLLink>
                   )}
                 </For>
               </div>
@@ -256,7 +261,7 @@ export const RLSearch: Component<RLSearchProps> = (props) => {
               </Show>
 
               <div class={classes().footer} data-slot="footer">
-                <span class="flex items-center gap-1">
+                <span class={classes().footerKeys}>
                   {uiNodes("search.press-to-close", {
                     escape: <RLKbd size="sm">{uiT("search.esc")}</RLKbd>,
                   })}

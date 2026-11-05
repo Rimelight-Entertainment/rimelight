@@ -9,19 +9,7 @@ export const RLDashboardNavbarTheme = defineTheme("dashboard-navbar", {
     title: "flex items-center gap-2 font-semibold text-highlighted truncate text-lg",
     center: "hidden lg:flex",
     trailing: "flex items-center shrink-0 gap-1.5",
-    toggle: "",
+    toggle: "lg:hidden",
   },
-  variants: {
-    toggleSide: {
-      left: {
-        toggle: "",
-      },
-      right: {
-        toggle: "",
-      },
-    },
-  },
-  defaultVariants: {
-    toggleSide: "left",
-  },
+  variants: {},
 });

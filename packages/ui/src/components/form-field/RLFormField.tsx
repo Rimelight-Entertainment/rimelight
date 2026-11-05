@@ -2,6 +2,8 @@ import type { Component } from "solid-js";
 import { Show } from "solid-js";
 import type { RLFormFieldProps } from "./form-field.types";
 import { RLFormFieldTheme } from "./form-field.theme";
+import { RLLabel } from "../label/RLLabel";
+import { renderSlot } from "../../slot";
 
 export const RLFormField: Component<RLFormFieldProps> = (props) => {
   const { Tag, classes, rest, children, id, slots, theme } = RLFormFieldTheme.setup(props, {
@@ -9,36 +11,62 @@ export const RLFormField: Component<RLFormFieldProps> = (props) => {
     slots: ["labelSlot", "descriptionSlot", "errorSlot", "helpSlot", "hintSlot"] as const,
   });
 
+  const hasLabelSlot = () => Boolean(slots.labelSlot());
+  const hasDescriptionSlot = () => Boolean(slots.descriptionSlot());
+  const hasErrorSlot = () => Boolean(slots.errorSlot());
+  const hasHelpSlot = () => Boolean(slots.helpSlot());
+  const hasHintSlot = () => Boolean(slots.hintSlot());
+  const hasLabel = () => Boolean(props.label) || hasLabelSlot();
+  const hasDescription = () => Boolean(props.description) || hasDescriptionSlot();
+  const hasError = () => Boolean(props.error) || hasErrorSlot();
+  const hasHeader = () => hasLabel() || hasHintSlot();
+
   return (
     <Tag data-slot="root" data-theme={theme()} class={classes().root} {...rest}>
-      <Show when={props.label || slots.labelSlot() || slots.hintSlot()}>
-        <div class="flex items-center justify-between gap-2">
-          <label for={id()} class={classes().label} data-slot="label">
-            {slots.labelSlot() ? slots.labelSlot() : props.label}
-            <Show when={props.required}>
-              <span class="text-error-500 ml-0.5">*</span>
+      <Show when={hasHeader()}>
+        <div class={classes().header} data-slot="header">
+          <RLLabel for={id()} class={classes().label} data-slot="label">
+            <Show when={hasLabelSlot()} fallback={props.label}>
+              {renderSlot(slots.labelSlot())}
             </Show>
-          </label>
-          <Show when={slots.hintSlot()}>{slots.hintSlot()}</Show>
+            <Show when={props.required}>
+              <span class={classes().required} data-slot="required">
+                *
+              </span>
+            </Show>
+          </RLLabel>
+          <Show when={hasHintSlot()}>
+            <span class={classes().hint} data-slot="hint">
+              {renderSlot(slots.hintSlot())}
+            </span>
+          </Show>
         </div>
       </Show>
 
-      <Show when={props.description || slots.descriptionSlot()}>
+      <Show when={hasDescription()}>
         <p class={classes().description} data-slot="description">
-          {slots.descriptionSlot() ? slots.descriptionSlot() : props.description}
+          <Show when={hasDescriptionSlot()} fallback={props.description}>
+            {renderSlot(slots.descriptionSlot())}
+          </Show>
         </p>
       </Show>
 
-      <div class="relative w-full">{children()}</div>
+      <div class={classes().control} data-slot="control">
+        {children()}
+      </div>
 
-      <Show when={props.error || slots.errorSlot()}>
+      <Show when={hasError()}>
         <p class={classes().error} data-slot="error">
-          {slots.errorSlot() ? slots.errorSlot() : props.error}
+          <Show when={hasErrorSlot()} fallback={props.error}>
+            {renderSlot(slots.errorSlot())}
+          </Show>
         </p>
       </Show>
 
-      <Show when={slots.helpSlot()}>
-        <div class="mt-1">{slots.helpSlot()}</div>
+      <Show when={hasHelpSlot()}>
+        <div class={classes().help} data-slot="help">
+          {renderSlot(slots.helpSlot())}
+        </div>
       </Show>
     </Tag>
   );

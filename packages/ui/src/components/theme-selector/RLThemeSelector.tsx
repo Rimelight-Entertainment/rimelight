@@ -28,7 +28,7 @@ export const RLThemeSelector: Component<RLThemeSelectorProps> = (props) => {
     { label: uiT("theme.dark"), value: "dark", icon: "moon" },
   ];
 
-  const applyTheme = (next: string) => {
+  const applyPreference = (next: string) => {
     const preference = parseThemePreference(next) ?? "system";
     setCurrentPreference(preference);
     if (typeof document !== "undefined") {
@@ -53,7 +53,7 @@ export const RLThemeSelector: Component<RLThemeSelectorProps> = (props) => {
     const cycle = () => {
       const cur = currentPreference();
       const next = cur === "system" ? "light" : cur === "light" ? "dark" : "system";
-      applyTheme(next);
+      applyPreference(next);
     };
 
     const cleanupShortcut = defineShortcuts({
@@ -76,7 +76,7 @@ export const RLThemeSelector: Component<RLThemeSelectorProps> = (props) => {
     const pref = currentPreference();
     if (pref === "light") return "sun";
     if (pref === "dark") return "moon";
-    return "i-lucide-laptop";
+    return "laptop";
   };
 
   return (
@@ -84,22 +84,20 @@ export const RLThemeSelector: Component<RLThemeSelectorProps> = (props) => {
       class={classes().root}
       data-slot="root"
       data-theme={theme()}
-      data-theme-selector
       data-mode={mode()}
-      data-theme-preference={currentPreference()}
+      data-state={currentPreference()}
       {...rest}
     >
-      <div class={classes().wrapper}>
+      <div class={classes().wrapper} data-slot="wrapper">
         <RLSelect
           variant={mode() === "icon" ? "ghost" : undefined}
           items={themeItems()}
           value={currentPreference()}
-          onChange={(e) => applyTheme(e.currentTarget.value)}
+          onChange={(e) => applyPreference(e.currentTarget.value)}
           size={props.size ?? "md"}
           layout={mode() === "icon" ? "icon" : "default"}
-          color={props.color === "auto" ? undefined : props.color}
+          color={props.color ?? "primary"}
           aria-label={uiT("theme.toggle")}
-          class={classes().select}
           leadingIcon={activeIcon()}
         />
       </div>

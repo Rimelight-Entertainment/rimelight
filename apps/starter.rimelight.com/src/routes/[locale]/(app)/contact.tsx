@@ -4,6 +4,7 @@ import { createPageHead } from "@rimelight/seo/head";
 import { RLPageSection } from "@rimelight/ui/components/page-section/RLPageSection.tsx";
 import { RLCard } from "@rimelight/ui/components/card/RLCard.tsx";
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
+import { RLIcon } from "@rimelight/ui/components/icon/RLIcon.tsx";
 import Turnstile from "#components/app/Turnstile";
 import { t } from "@rimelight/i18n";
 import { api } from "#api/client";
@@ -70,7 +71,7 @@ export const ContactPage: Component = () => {
           <RLCard class="p-6 md:p-8 flex flex-col justify-between">
             <div>
               <h2 class="text-2xl font-bold text-[var(--rl-text)] mb-6 flex items-center gap-2">
-                <span class="i-lucide-mail size-6 text-primary-500" />
+                <RLIcon name="mail" class="size-6 text-primary-500" />
                 {t("page.contact.form.title")}
               </h2>
 
@@ -151,7 +152,7 @@ export const ContactPage: Component = () => {
                   color="primary"
                   variant="solid"
                   block={true}
-                  leadingIcon="i-lucide-send"
+                  leadingIcon="send"
                   label={t("page.contact.form.send.button")}
                   class="mt-2"
                 />

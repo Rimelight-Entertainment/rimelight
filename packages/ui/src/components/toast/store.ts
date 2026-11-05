@@ -1,19 +1,10 @@
 import { createStore } from "solid-js";
-import type { ThemeColor } from "../../types";
+import type { ToastItem } from "./toast.types";
+export type { ToastItem };
 
-export interface ToastItem {
-  id: string;
-  title: string;
-  description?: string;
-  color?: ThemeColor;
-  duration?: number;
-  icon?: string;
-  onDismiss?: () => void;
-}
+const [toastStore, setToasts] = createStore<ToastItem[]>([]);
 
-export type Toast = ToastItem;
-
-export const [toasts, setToasts] = createStore<ToastItem[]>([]);
+export const toasts = toastStore;
 
 export function addToast(toast: Omit<ToastItem, "id"> & { id?: string }): ToastItem {
   const id =
@@ -43,54 +34,3 @@ export function removeToast(id: string) {
 export function clearToasts() {
   setToasts(() => []);
 }
-
-export type ToastInput = string | (Omit<ToastItem, "id"> & { id?: string });
-
-function normalizeToastInput(
-  input: ToastInput,
-  description?: string,
-  color?: ThemeColor,
-  extra?: Partial<ToastItem>,
-): Omit<ToastItem, "id"> & { id?: string } {
-  if (typeof input === "string") {
-    return {
-      title: input,
-      ...(description !== undefined ? { description } : {}),
-      ...(color ? { color } : {}),
-      ...extra,
-    };
-  }
-  return {
-    ...input,
-    ...(color && !input.color ? { color } : {}),
-    ...extra,
-  };
-}
-
-export const toast = Object.assign(
-  (input: ToastInput, description?: string, options?: Partial<ToastItem>) => {
-    return addToast(normalizeToastInput(input, description, undefined, options));
-  },
-  {
-    error: (input: ToastInput, description?: string, options?: Partial<ToastItem>) =>
-      addToast(normalizeToastInput(input, description, "error", options)),
-    success: (input: ToastInput, description?: string, options?: Partial<ToastItem>) =>
-      addToast(normalizeToastInput(input, description, "success", options)),
-    warning: (input: ToastInput, description?: string, options?: Partial<ToastItem>) =>
-      addToast(normalizeToastInput(input, description, "warning", options)),
-    info: (input: ToastInput, description?: string, options?: Partial<ToastItem>) =>
-      addToast(normalizeToastInput(input, description, "info", options)),
-    add: addToast,
-    remove: removeToast,
-    clear: clearToasts,
-  },
-);
-
-export const showErrorToast = (title: string, description?: string, options?: Partial<ToastItem>) =>
-  toast.error(title, description, options);
-
-export const showSuccessToast = (
-  title: string,
-  description?: string,
-  options?: Partial<ToastItem>,
-) => toast.success(title, description, options);

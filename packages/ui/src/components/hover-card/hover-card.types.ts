@@ -2,17 +2,17 @@ import type { JSX } from "@solidjs/web";
 import type { InferThemeProps } from "../../resolver";
 import type { RLHoverCardTheme } from "./hover-card.theme";
 
-export type RLHoverCardProps = Omit<InferThemeProps<typeof RLHoverCardTheme>, "placement"> & {
+export type RLHoverCardProps = Omit<InferThemeProps<typeof RLHoverCardTheme>, "side"> & {
   /**
    * Label of a default trigger. Rendered only when `triggerSlot` is not set.
    */
   triggerLabel?: string | undefined;
   /**
-   * Placement of the card relative to the trigger.
+   * Edge of the trigger the card attaches to.
    *
    * @default "bottom"
    */
-  placement?: "top" | "bottom" | "left" | "right" | undefined;
+  side?: "top" | "bottom" | "left" | "right" | undefined;
   /**
    * Controlled open state. Hover and focus on the trigger request open changes through `onOpenChange`.
    *
@@ -30,11 +30,11 @@ export type RLHoverCardProps = Omit<InferThemeProps<typeof RLHoverCardTheme>, "p
    */
   children?: JSX.Element | undefined;
   /**
-   * Trigger element. Always rendered, so it is plain JSX.
+   * Trigger element. Replaces `triggerLabel`.
    */
   triggerSlot?: JSX.Element | undefined;
   /**
-   * Called whenever the open state changes through hover or focus.
+   * Called whenever the open state changes through hover, focus, or Escape.
    */
   onOpenChange?: ((open: boolean) => void) | undefined;
 };

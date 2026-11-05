@@ -87,12 +87,6 @@ export const componentMeta: ComponentMetaMap = {
     ],
     slots: [
       {
-        name: "trailingIcon",
-        bindings: {},
-        description:
-          "Static element rendered after the label of every item. Overridden by `trailingSlot`.",
-      },
-      {
         name: "leading",
         bindings: {},
         description: "Custom leading content per item. Falls back to `item.icon`.",
@@ -101,7 +95,7 @@ export const componentMeta: ComponentMetaMap = {
         name: "trailing",
         bindings: {},
         description:
-          "Custom trailing content per item. Falls back to `trailingIconSlot`, then the `trailingIcon` prop / `item.trailingIcon`.",
+          "Custom trailing content per item. Falls back to the `trailingIcon` prop or `item.trailingIcon`.",
       },
       {
         name: "body",
@@ -111,14 +105,13 @@ export const componentMeta: ComponentMetaMap = {
     ],
     emits: [],
     theme: {
-      slots: ["root", "item", "trigger", "content", "body", "leadingIcon", "trailingIcon", "label"],
+      slots: ["root", "item", "trigger", "body", "leadingIcon", "trailingIcon", "label"],
       base: {
         root: "w-full",
         item: "border-b border-default last:border-b-0",
         trigger:
           "group flex w-full flex-1 items-center gap-1.5 font-medium text-sm py-3.5 px-4 focus-visible:outline-primary min-w-0 cursor-pointer list-none [&::-webkit-details-marker]:hidden [&::marker]:hidden",
-        content: "overflow-hidden focus:outline-none pt-1 px-4",
-        body: "text-sm pb-3.5 text-muted",
+        body: "overflow-hidden focus:outline-none pt-1 px-4 pb-3.5 text-sm text-muted",
         leadingIcon: "shrink-0 size-5 text-muted",
         trailingIcon:
           "shrink-0 size-5 ms-auto rotate-0 transition-transform duration-200 group-open:rotate-180 text-muted",
@@ -290,7 +283,7 @@ export const componentMeta: ComponentMetaMap = {
         name: "icons",
         type: "AudioIconOverrides | undefined",
         required: false,
-        description: "Custom icon overrides for all player control buttons.",
+        description: "Custom icon overrides for the player control buttons.",
       },
       {
         name: "progressColor",
@@ -332,7 +325,7 @@ export const componentMeta: ComponentMetaMap = {
         name: "showSkip",
         type: "boolean | undefined",
         required: false,
-        description: "Whether to show or hide skip back/forward buttons (15s default).",
+        description: "Whether to show or hide skip back/forward buttons.",
         default: "true",
       },
       {
@@ -471,12 +464,16 @@ export const componentMeta: ComponentMetaMap = {
         "title",
         "description",
         "metaBadge",
+        "metaDivider",
         "actions",
         "actionButton",
+        "actionIcon",
         "timeline",
         "progressContainer",
         "progressTrack",
+        "progressSvg",
         "progressRange",
+        "progressInput",
         "waveformContainer",
         "waveformSvg",
         "waveformBar",
@@ -484,7 +481,6 @@ export const componentMeta: ComponentMetaMap = {
         "timeDisplay",
         "timeCurrent",
         "timeDuration",
-        "timeDivider",
         "controls",
         "controlsLeft",
         "controlsCenter",
@@ -497,6 +493,7 @@ export const componentMeta: ComponentMetaMap = {
         "navButton",
         "navIcon",
         "repeatButton",
+        "repeatButtonActive",
         "repeatIcon",
         "volumeContainer",
         "volumeButton",
@@ -504,6 +501,8 @@ export const componentMeta: ComponentMetaMap = {
         "volumePopover",
         "volumeSlider",
         "volumeTrack",
+        "volumeSvg",
+        "volumeInput",
         "volumeRange",
         "volumeText",
         "speedContainer",
@@ -515,11 +514,15 @@ export const componentMeta: ComponentMetaMap = {
         "playlistList",
         "playlistItem",
         "playlistItemActive",
+        "playlistItemMain",
+        "playlistItemIndex",
+        "playlistItemInfo",
         "playlistItemTitle",
         "playlistItemDescription",
         "playlistItemDuration",
         "transcript",
         "transcriptToggle",
+        "transcriptIcon",
         "transcriptContent",
       ],
       base: {
@@ -534,15 +537,19 @@ export const componentMeta: ComponentMetaMap = {
         description: "text-xs text-muted truncate mt-0.5",
         metaBadge:
           "inline-flex items-center gap-1.5 text-[11px] font-mono text-muted mt-1 select-none",
+        metaDivider: "opacity-40",
         actions: "flex items-center gap-1 shrink-0 self-start ml-auto",
         actionButton:
           "inline-flex items-center justify-center size-8 rounded-lg text-muted hover:text-highlighted hover:bg-elevated/60 active:bg-elevated transition-colors cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-[var(--rl-ring)] no-underline",
+        actionIcon: "size-4",
         timeline: "flex flex-col gap-1.5 w-full",
         progressContainer: "flex items-center gap-2 w-full",
         progressTrack:
           "relative h-2.5 w-full grow overflow-hidden rounded-full bg-elevated/80 cursor-pointer",
+        progressSvg: "h-full w-full overflow-visible pointer-events-none",
         progressRange:
           "absolute h-full text-[var(--rl-bg)] fill-[var(--rl-bg)] bg-[var(--rl-bg)] rounded-full transition-[width] duration-75",
+        progressInput: "absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10",
         waveformContainer:
           "relative flex items-center h-12 w-full cursor-pointer overflow-hidden rounded-lg transition-colors px-0.5 py-1",
         waveformSvg: "size-full overflow-visible pointer-events-none",
@@ -552,7 +559,6 @@ export const componentMeta: ComponentMetaMap = {
           "flex items-center justify-between text-[11px] font-mono tabular-nums text-muted w-full px-0.5",
         timeCurrent: "text-toned font-medium",
         timeDuration: "text-muted",
-        timeDivider: "hidden",
         controls: "grid grid-cols-[1fr_auto_1fr] items-center gap-2 w-full pt-1",
         controlsLeft: "flex items-center gap-1.5 sm:gap-2 justify-start min-w-0",
         controlsCenter: "flex items-center gap-1.5 sm:gap-2 justify-center shrink-0",
@@ -570,6 +576,7 @@ export const componentMeta: ComponentMetaMap = {
         navIcon: "size-4.5",
         repeatButton:
           "inline-flex items-center justify-center shrink-0 rounded-lg p-2 text-muted hover:text-highlighted hover:bg-elevated/60 active:bg-elevated transition-colors cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-[var(--rl-ring)]",
+        repeatButtonActive: "text-primary bg-primary/10",
         repeatIcon: "size-4.5",
         volumeContainer: "relative inline-flex items-center justify-start shrink-0",
         volumeButton:
@@ -580,6 +587,9 @@ export const componentMeta: ComponentMetaMap = {
           "relative w-2 h-20 flex flex-col justify-end items-center cursor-pointer my-0.5 select-none",
         volumeTrack:
           "relative w-1.5 h-full grow overflow-hidden rounded-full bg-default/80 border border-default/30",
+        volumeSvg: "h-full w-full overflow-visible pointer-events-none",
+        volumeInput:
+          "absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 [writing-mode:vertical-lr] [direction:rtl]",
         volumeRange:
           "text-[var(--rl-bg)] fill-[var(--rl-bg)] rounded-full transition-all duration-75",
         volumeText:
@@ -596,12 +606,16 @@ export const componentMeta: ComponentMetaMap = {
         playlistItem:
           "flex items-center justify-between p-2 rounded-lg cursor-pointer transition-colors text-toned hover:text-highlighted hover:bg-elevated/50",
         playlistItemActive: "bg-primary/10 text-primary font-bold hover:bg-primary/15",
+        playlistItemMain: "flex items-center gap-2 min-w-0",
+        playlistItemIndex: "text-[10px] font-mono opacity-60 w-4",
+        playlistItemInfo: "min-w-0",
         playlistItemTitle: "truncate text-xs",
         playlistItemDescription: "text-[11px] text-muted truncate",
         playlistItemDuration: "text-[10px] font-mono text-muted tabular-nums ml-2 shrink-0",
         transcript: "mt-2 pt-3 border-t border-default/40 flex flex-col gap-1.5 text-xs text-muted",
         transcriptToggle:
           "inline-flex items-center gap-1 text-xs font-medium text-toned hover:text-highlighted cursor-pointer transition-colors self-start outline-none focus-visible:underline",
+        transcriptIcon: "size-3.5",
         transcriptContent:
           "text-xs leading-relaxed text-toned bg-elevated/20 p-3 rounded-lg border border-default/40",
       },
@@ -690,6 +704,7 @@ export const componentMeta: ComponentMetaMap = {
         type: "string | undefined",
         required: false,
         description: "Image URL. When omitted, the fallback content is rendered.",
+        default: "undefined",
       },
       {
         name: "alt",
@@ -697,12 +712,14 @@ export const componentMeta: ComponentMetaMap = {
         required: false,
         description:
           "Alt text for the image. Also used to derive initials when no `text` is given.",
+        default: "undefined",
       },
       {
         name: "icon",
         type: "string | undefined",
         required: false,
-        description: "Icon name rendered as the fallback content (e.g. `i-lucide-user`).",
+        description: "Bare lucide icon name rendered as the fallback content.",
+        default: "undefined",
       },
       {
         name: "text",
@@ -710,6 +727,7 @@ export const componentMeta: ComponentMetaMap = {
         required: false,
         description:
           "Fallback text (e.g. initials) rendered when no image is available. When omitted, initials are derived from `alt`.",
+        default: "undefined",
       },
       {
         name: "chip",
@@ -731,60 +749,77 @@ export const componentMeta: ComponentMetaMap = {
         type: "string | undefined",
         required: false,
         description: "Badge color. Forwarded to the chip.",
+        default: "undefined",
+      },
+      {
+        name: "position",
+        type: '"top-right" | "bottom-right" | "top-left" | "bottom-left" | undefined',
+        required: false,
+        description: "Corner of the avatar where the badge is placed.",
+        default: '"bottom-right"',
       },
       {
         name: "loading",
         type: '"lazy" | "eager" | undefined',
         required: false,
         description: "Image loading strategy.",
+        default: "undefined",
       },
       {
         name: "referrerpolicy",
         type: '"" | "no-referrer" | "no-referrer-when-downgrade" | "origin" | "origin-when-cross-origin" | "same-origin" | "strict-origin" | "strict-origin-when-cross-origin" | "unsafe-url" | undefined',
         required: false,
-        description: "",
+        description: "Referrer policy used when fetching the image.",
+        default: "undefined",
       },
       {
         name: "crossorigin",
         type: '"" | "anonymous" | "use-credentials" | undefined',
         required: false,
-        description: "",
+        description: "CORS setting used when fetching the image.",
+        default: "undefined",
       },
       {
         name: "decoding",
         type: '"async" | "auto" | "sync" | undefined',
         required: false,
-        description: "",
+        description: "Decoding hint for the image.",
+        default: "undefined",
       },
       {
         name: "height",
         type: "string | number | undefined",
         required: false,
-        description: "",
+        description: "Intrinsic height of the image.",
+        default: "undefined",
       },
       {
         name: "width",
         type: "string | number | undefined",
         required: false,
-        description: "",
+        description: "Intrinsic width of the image.",
+        default: "undefined",
       },
       {
         name: "sizes",
         type: "string | undefined",
         required: false,
-        description: "",
+        description: "Sizes attribute of the image.",
+        default: "undefined",
       },
       {
         name: "srcset",
         type: "string | undefined",
         required: false,
-        description: "",
+        description: "Srcset attribute of the image.",
+        default: "undefined",
       },
       {
         name: "usemap",
         type: "string | undefined",
         required: false,
-        description: "",
+        description: "Image map name the image uses.",
+        default: "undefined",
       },
       {
         name: "title",
@@ -792,18 +827,21 @@ export const componentMeta: ComponentMetaMap = {
         required: false,
         description:
           'Display name rendered adjacent to the avatar (e.g. "Daniel Marchi"). Also used as the accessible name when the avatar has no image.',
+        default: "undefined",
       },
       {
         name: "subtitle",
         type: "string | undefined",
         required: false,
         description: 'Secondary description rendered below the title (e.g. "Lead Developer").',
+        default: "undefined",
       },
       {
         name: "imgProps",
         type: "JSX.ImgHTMLAttributes<HTMLImageElement> | undefined",
         required: false,
         description: "Extra attributes forwarded to the `<img>` element.",
+        default: "undefined",
       },
     ],
     slots: [
@@ -820,7 +858,7 @@ export const componentMeta: ComponentMetaMap = {
       {
         name: "badge",
         bindings: {},
-        description: "Custom badge content rendered inside the chip.",
+        description: "Custom badge content rendered inside the chip. Replaces `badge` text.",
       },
     ],
     emits: [],
@@ -829,9 +867,9 @@ export const componentMeta: ComponentMetaMap = {
       base: {
         root: "inline-flex items-center justify-center shrink-0 select-none rounded-full align-middle relative text-[var(--rl-text)] bg-elevated",
         image: "h-full w-full rounded-[inherit] object-cover",
-        fallback: "font-medium truncate text-inherit",
-        icon: "shrink-0 text-inherit",
-        badge: "absolute rounded-full ring-2 ring-bg",
+        fallback: "font-medium truncate text-current",
+        icon: "shrink-0 text-current",
+        badge: "leading-none font-medium",
         wrapper: "inline-flex items-center gap-3",
         text: "flex flex-col leading-tight",
         title: "font-medium text-sm text-default leading-tight",
@@ -841,37 +879,18 @@ export const componentMeta: ComponentMetaMap = {
         size: {
           xs: {
             root: "size-6 text-xs",
-            badge: "size-2",
           },
           sm: {
             root: "size-7 text-sm",
-            badge: "size-2.5",
           },
           md: {
             root: "size-8 text-base",
-            badge: "size-3",
           },
           lg: {
             root: "size-9 text-lg",
-            badge: "size-3",
           },
           xl: {
             root: "size-10 text-xl",
-            badge: "size-3.5",
-          },
-        },
-        badgePosition: {
-          "top-right": {
-            badge: "top-0 right-0",
-          },
-          "bottom-right": {
-            badge: "bottom-0 right-0",
-          },
-          "top-left": {
-            badge: "top-0 left-0",
-          },
-          "bottom-left": {
-            badge: "bottom-0 left-0",
           },
         },
       },
@@ -888,7 +907,6 @@ export const componentMeta: ComponentMetaMap = {
       defaultVariants: {
         size: "md",
         color: "primary",
-        badgePosition: "bottom-right",
       },
     },
   },
@@ -906,7 +924,7 @@ export const componentMeta: ComponentMetaMap = {
       },
       {
         name: "max",
-        type: "number",
+        type: "number | undefined",
         required: false,
         description:
           "Maximum number of avatars to display. The remainder is shown as a `+X` counter. When omitted, every avatar is displayed.",
@@ -918,8 +936,8 @@ export const componentMeta: ComponentMetaMap = {
       slots: ["root", "base", "more"],
       base: {
         root: "inline-flex flex-row-reverse justify-end items-center",
-        base: "relative rounded-full inline-flex shrink-0 aspect-square ring-2 ring-bg first:me-0 hover:z-10 transition-transform",
-        more: "relative rounded-full ring-2 ring-bg first:me-0 inline-flex items-center justify-center shrink-0 select-none cursor-default bg-elevated text-muted font-bold hover:z-10 aspect-square",
+        base: "relative rounded-full inline-flex shrink-0 aspect-square ring-2 ring-default first:me-0 hover:z-10 transition-transform",
+        more: "relative rounded-full ring-2 ring-default first:me-0 inline-flex items-center justify-center shrink-0 select-none cursor-default bg-elevated text-muted font-bold hover:z-10 aspect-square",
       },
       variants: {
         size: {
@@ -968,15 +986,9 @@ export const componentMeta: ComponentMetaMap = {
         name: "icon",
         type: "string | undefined",
         required: false,
-        description: "Icon name shown on the side selected by `leading` / `trailing`.",
+        description:
+          "Icon name shown on the side selected by `trailing`. Without `trailing` it is shown on the left.",
         default: "undefined",
-      },
-      {
-        name: "leading",
-        type: "boolean | undefined",
-        required: false,
-        description: "When `true`, `icon` is displayed on the left side.",
-        default: "false",
       },
       {
         name: "trailing",
@@ -1011,23 +1023,33 @@ export const componentMeta: ComponentMetaMap = {
       {
         name: "leading",
         bindings: {},
-        description: "Custom JSX rendered on the left side. Replaces the leading icon and avatar.",
+        description:
+          "Custom content rendered on the left side. Replaces the leading icon and avatar.",
       },
       {
         name: "trailing",
         bindings: {},
-        description: "Custom JSX rendered on the right side. Replaces the trailing icon.",
+        description: "Custom content rendered on the right side. Replaces the trailing icon.",
       },
     ],
     emits: [],
     theme: {
-      slots: ["root", "label", "leadingIcon", "leadingAvatar", "leadingAvatarSize", "trailingIcon"],
+      slots: [
+        "root",
+        "label",
+        "leadingSlot",
+        "leadingIcon",
+        "leadingAvatar",
+        "trailingSlot",
+        "trailingIcon",
+      ],
       base: {
         root: "font-medium inline-flex items-center transition-all duration-150 select-none",
         label: "truncate",
+        leadingSlot: "inline-flex items-center shrink-0",
         leadingIcon: "shrink-0",
         leadingAvatar: "shrink-0",
-        leadingAvatarSize: "",
+        trailingSlot: "inline-flex items-center shrink-0",
         trailingIcon: "shrink-0",
       },
       variants: {
@@ -1059,42 +1081,29 @@ export const componentMeta: ComponentMetaMap = {
         size: {
           xs: {
             root: "text-xs gap-1",
-            leadingAvatarSize: "xs",
           },
           sm: {
             root: "text-xs gap-1",
-            leadingAvatarSize: "xs",
           },
           md: {
             root: "text-sm gap-1",
-            leadingAvatarSize: "xs",
           },
           lg: {
             root: "text-sm gap-1.5",
-            leadingAvatarSize: "xs",
           },
           xl: {
             root: "text-base gap-1.5",
-            leadingAvatarSize: "xs",
           },
         },
         shape: {
           square: {
-            root: "rounded-none",
+            root: "rounded-none justify-center",
           },
           rounded: {
             root: "rounded-md",
           },
           pill: {
             root: "rounded-full",
-          },
-        },
-        square: {
-          true: {
-            root: "justify-center",
-          },
-          false: {
-            root: "",
           },
         },
       },
@@ -1136,70 +1145,70 @@ export const componentMeta: ComponentMetaMap = {
         },
         {
           size: "xs",
-          square: false,
+          shape: ["rounded", "pill"],
           class: {
             root: "px-1 py-0.5",
           },
         },
         {
           size: "sm",
-          square: false,
+          shape: ["rounded", "pill"],
           class: {
             root: "px-1.5 py-1",
           },
         },
         {
           size: "md",
-          square: false,
+          shape: ["rounded", "pill"],
           class: {
             root: "px-2 py-1",
           },
         },
         {
           size: "lg",
-          square: false,
+          shape: ["rounded", "pill"],
           class: {
             root: "px-2 py-1",
           },
         },
         {
           size: "xl",
-          square: false,
+          shape: ["rounded", "pill"],
           class: {
             root: "px-2.5 py-1",
           },
         },
         {
           size: "xs",
-          square: true,
+          shape: "square",
           class: {
             root: "p-0.5 min-w-4",
           },
         },
         {
           size: "sm",
-          square: true,
+          shape: "square",
           class: {
             root: "p-1 min-w-5",
           },
         },
         {
           size: "md",
-          square: true,
+          shape: "square",
           class: {
             root: "p-1 min-w-6",
           },
         },
         {
           size: "lg",
-          square: true,
+          shape: "square",
           class: {
             root: "p-1 min-w-7",
           },
         },
         {
           size: "xl",
-          square: true,
+          shape: "square",
           class: {
             root: "p-1 min-w-8",
           },
@@ -1224,7 +1233,6 @@ export const componentMeta: ComponentMetaMap = {
         color: "primary",
         size: "md",
         shape: "rounded",
-        square: false,
       },
     },
   },
@@ -1237,19 +1245,23 @@ export const componentMeta: ComponentMetaMap = {
         name: "title",
         type: "string | undefined",
         required: false,
-        description: "Title text of the banner. Use `titleSlot` for JSX.",
+        description: "Title text of the banner. Use `titleSlot` for custom content.",
+        default: "undefined; the children are used as title when unset.",
       },
       {
         name: "icon",
         type: "string | undefined",
         required: false,
-        description: "Icon name displayed next to the title. Use `iconSlot` for JSX.",
+        description:
+          "Bare lucide icon name displayed next to the title. Use `iconSlot` for custom content.",
+        default: "undefined; no icon is rendered when unset.",
       },
       {
         name: "actions",
         type: "RLButtonProps[] | undefined",
         required: false,
         description: "Action buttons displayed before the close button.",
+        default: "undefined; no actions are rendered when unset.",
       },
       {
         name: "dismissible",
@@ -1263,7 +1275,7 @@ export const componentMeta: ComponentMetaMap = {
         name: "closeIcon",
         type: "string | undefined",
         required: false,
-        description: "Icon name displayed in the close button.",
+        description: "Bare lucide icon name displayed in the close button.",
         default: '"x"',
       },
       {
@@ -1271,6 +1283,7 @@ export const componentMeta: ComponentMetaMap = {
         type: "(() => void) | undefined",
         required: false,
         description: "Called after the banner is dismissed.",
+        default: "undefined",
       },
       {
         name: "contain",
@@ -1313,25 +1326,29 @@ export const componentMeta: ComponentMetaMap = {
         type: "string | undefined",
         required: false,
         description: "Link text. When `href` is set the whole banner becomes a link.",
+        default: "undefined",
       },
       {
         name: "leadingIcon",
         type: "string | undefined",
         required: false,
-        description: "Icon name displayed before the link label.",
+        description: "Bare lucide icon name displayed before the link label.",
+        default: "undefined",
       },
       {
         name: "trailingIcon",
         type: "string | undefined",
         required: false,
         description:
-          "Icon name displayed after the link label. Replaces the external icon when set.",
+          "Bare lucide icon name displayed after the link label. Replaces the external icon when set.",
+        default: "undefined",
       },
       {
         name: "href",
         type: "string | undefined",
         required: false,
         description: "URL the banner links to. Setting it makes the banner a link.",
+        default: "undefined",
       },
       {
         name: "external",
@@ -1344,7 +1361,7 @@ export const componentMeta: ComponentMetaMap = {
         name: "externalIcon",
         type: "string | undefined",
         required: false,
-        description: "Icon name for the external link indicator.",
+        description: "Bare lucide icon name for the external link indicator.",
         default: '"external-link"',
       },
       {
@@ -1389,6 +1406,7 @@ export const componentMeta: ComponentMetaMap = {
         required: false,
         description:
           'Accessible label. For external links "(opens in a new tab)" is appended when omitted.',
+        default: "undefined",
       },
       {
         name: "aria-current",
@@ -1463,7 +1481,7 @@ export const componentMeta: ComponentMetaMap = {
         title: "text-sm text-inverted font-medium truncate",
         actions: "relative flex items-center gap-1.5 shrink-0 isolate",
         close:
-          "relative isolate text-inverted hover:bg-black/10 dark:hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-current -me-1.5 lg:me-0 transition-colors",
+          "relative isolate text-inverted hover:bg-inverted/10 focus-visible:ring-2 focus-visible:ring-current -me-1.5 lg:me-0 transition-colors",
       },
       variants: {
         contain: {
@@ -1476,12 +1494,12 @@ export const componentMeta: ComponentMetaMap = {
         },
         sticky: {
           true: {
-            root: "sticky top-0 inset-x-0 z-50 transition-[top,transform] duration-300 ease-in-out data-[collapsed=true]:-translate-y-full",
+            root: "sticky top-0 inset-x-0 z-50 transition-[top,transform] duration-300 ease-in-out data-[collapsed]:-translate-y-full",
           },
         },
         fixed: {
           true: {
-            root: "fixed top-0 left-0 right-0 z-50 transition-[top,transform,opacity] duration-300 ease-in-out data-[collapsed=true]:-translate-y-full",
+            root: "fixed top-0 left-0 right-0 z-50 transition-[top,transform,opacity] duration-300 ease-in-out data-[collapsed]:-translate-y-full",
           },
         },
         to: {
@@ -1534,7 +1552,9 @@ export const componentMeta: ComponentMetaMap = {
         "link",
         "linkLeadingIcon",
         "linkLeadingAvatar",
-        "linkLabel",
+        "itemLeading",
+        "itemLabel",
+        "itemTrailing",
         "separator",
         "separatorIcon",
         "overflow",
@@ -1546,9 +1566,11 @@ export const componentMeta: ComponentMetaMap = {
         list: "flex items-center gap-1.5 flex-wrap",
         item: "inline-flex items-center gap-1.5 min-w-0",
         link: "group relative inline-flex items-center gap-1.5 text-sm min-w-0 rounded-md transition-colors cursor-pointer decoration-none",
-        linkLeadingIcon: "shrink-0 size-4 flex items-center justify-center text-inherit",
+        linkLeadingIcon: "shrink-0 size-4 flex items-center justify-center text-current",
         linkLeadingAvatar: "shrink-0 inline-flex items-center justify-center",
-        linkLabel: "truncate",
+        itemLeading: "shrink-0 inline-flex items-center justify-center",
+        itemLabel: "truncate",
+        itemTrailing: "shrink-0 inline-flex items-center justify-center",
         separator: "inline-flex items-center justify-center shrink-0 select-none",
         separatorIcon: "shrink-0 size-3.5 text-muted flex items-center justify-center",
         overflow: "inline-flex items-center gap-1.5 list-none shrink-0",
@@ -1651,14 +1673,14 @@ export const componentMeta: ComponentMetaMap = {
         description: "Custom content that replaces the navigation buttons.",
       },
       {
-        name: "url",
+        name: "urlBar",
         bindings: {},
         description: "Custom content that replaces the URL bar.",
       },
       {
         name: "urlPrefix",
         bindings: {},
-        description: "Custom content rendered before the URL text.",
+        description: "Custom content that replaces the URL prefix (icon or text).",
       },
       {
         name: "urlSuffix",
@@ -1677,15 +1699,11 @@ export const componentMeta: ComponentMetaMap = {
         "root",
         "header",
         "controls",
-        "dot",
         "dotClose",
         "dotMinimize",
         "dotMaximize",
         "navigation",
         "navButton",
-        "navBack",
-        "navForward",
-        "navReload",
         "urlBar",
         "urlPrefix",
         "urlIcon",
@@ -1699,16 +1717,12 @@ export const componentMeta: ComponentMetaMap = {
         header:
           "flex items-center gap-3 px-4 py-2.5 border-b select-none border-default bg-elevated/40 shrink-0 transition-colors",
         controls: "flex items-center gap-2 shrink-0",
-        dot: "w-3 h-3 rounded-full transition-opacity duration-150 inline-block shrink-0",
-        dotClose: "",
-        dotMinimize: "",
-        dotMaximize: "",
+        dotClose: "w-3 h-3 rounded-full transition-opacity duration-150 inline-block shrink-0",
+        dotMinimize: "w-3 h-3 rounded-full transition-opacity duration-150 inline-block shrink-0",
+        dotMaximize: "w-3 h-3 rounded-full transition-opacity duration-150 inline-block shrink-0",
         navigation: "flex items-center gap-1.5 shrink-0 text-muted",
         navButton:
           "inline-flex items-center justify-center w-6 h-6 rounded-md transition-colors hover:bg-elevated hover:text-highlighted focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary text-muted",
-        navBack: "",
-        navForward: "",
-        navReload: "",
         urlBar:
           "flex-1 min-w-0 flex items-center gap-2 px-3 py-1 rounded-md text-xs font-mono bg-default border border-default text-muted transition-colors",
         urlPrefix: "flex items-center gap-1.5 shrink-0 text-dimmed",
@@ -1749,7 +1763,9 @@ export const componentMeta: ComponentMetaMap = {
         size: {
           xs: {
             header: "px-2 py-1 gap-1.5",
-            dot: "w-2 h-2",
+            dotClose: "w-2 h-2",
+            dotMinimize: "w-2 h-2",
+            dotMaximize: "w-2 h-2",
             controls: "gap-1",
             urlBar: "px-1.5 py-0.5 text-[10px]",
             urlIcon: "w-2.5 h-2.5",
@@ -1758,7 +1774,9 @@ export const componentMeta: ComponentMetaMap = {
           },
           sm: {
             header: "px-3 py-1.5 gap-2",
-            dot: "w-2.5 h-2.5",
+            dotClose: "w-2.5 h-2.5",
+            dotMinimize: "w-2.5 h-2.5",
+            dotMaximize: "w-2.5 h-2.5",
             controls: "gap-1.5",
             urlBar: "px-2 py-0.5 text-[11px]",
             urlIcon: "w-3 h-3",
@@ -1767,7 +1785,9 @@ export const componentMeta: ComponentMetaMap = {
           },
           md: {
             header: "px-4 py-2 gap-3",
-            dot: "w-3 h-3",
+            dotClose: "w-3 h-3",
+            dotMinimize: "w-3 h-3",
+            dotMaximize: "w-3 h-3",
             controls: "gap-2",
             urlBar: "px-3 py-1 text-xs",
             urlIcon: "w-3.5 h-3.5",
@@ -1776,7 +1796,9 @@ export const componentMeta: ComponentMetaMap = {
           },
           lg: {
             header: "px-5 py-2.5 gap-3.5",
-            dot: "w-3.5 h-3.5",
+            dotClose: "w-3.5 h-3.5",
+            dotMinimize: "w-3.5 h-3.5",
+            dotMaximize: "w-3.5 h-3.5",
             controls: "gap-2.5",
             urlBar: "px-3.5 py-1.5 text-sm",
             urlIcon: "w-4 h-4",
@@ -1785,7 +1807,9 @@ export const componentMeta: ComponentMetaMap = {
           },
           xl: {
             header: "px-6 py-3.5 gap-4",
-            dot: "w-4 h-4",
+            dotClose: "w-4 h-4",
+            dotMinimize: "w-4 h-4",
+            dotMaximize: "w-4 h-4",
             controls: "gap-3",
             urlBar: "px-4 py-2 text-base",
             urlIcon: "w-4.5 h-4.5",
@@ -1795,9 +1819,9 @@ export const componentMeta: ComponentMetaMap = {
         },
         controlsVariant: {
           color: {
-            dotClose: "bg-rose-500 hover:opacity-80",
-            dotMinimize: "bg-amber-400 hover:opacity-80",
-            dotMaximize: "bg-emerald-500 hover:opacity-80",
+            dotClose: "bg-error hover:opacity-80",
+            dotMinimize: "bg-warning hover:opacity-80",
+            dotMaximize: "bg-success hover:opacity-80",
           },
           monochrome: {
             dotClose: "bg-inverted opacity-60 hover:opacity-100",
@@ -1815,7 +1839,7 @@ export const componentMeta: ComponentMetaMap = {
         },
         shadow: {
           true: {
-            root: "shadow-lg shadow-black/5 dark:shadow-black/20",
+            root: "shadow-lg shadow-scrim/5 dark:shadow-scrim/20",
           },
           false: {
             root: "shadow-none",
@@ -1876,6 +1900,22 @@ export const componentMeta: ComponentMetaMap = {
         required: false,
         description: "Variant used when the button is in the active state.",
         default: "undefined",
+      },
+      {
+        name: "active",
+        type: "boolean | undefined",
+        required: false,
+        description:
+          "Whether the button is in the active state. Applies `activeColor`, `activeVariant`, and `activeClass`.",
+        default: "false",
+      },
+      {
+        name: "shape",
+        type: 'ButtonVariants["shape"]',
+        required: false,
+        description:
+          "Shape of the button. `square` is used automatically for icon-only buttons without a label.",
+        default: '"rounded"',
       },
       {
         name: "icon",
@@ -2060,7 +2100,7 @@ export const componentMeta: ComponentMetaMap = {
       },
       {
         name: "aria-labelledby",
-        type: "string | undefined",
+        type: "string | JSX.RemoveAttribute | undefined",
         required: false,
         description: "Element ID that labels this button for screen readers.",
         default: "undefined",
@@ -2087,25 +2127,16 @@ export const componentMeta: ComponentMetaMap = {
     ],
     emits: [],
     theme: {
-      slots: [
-        "root",
-        "label",
-        "leadingIcon",
-        "leadingAvatar",
-        "leadingAvatarSize",
-        "trailingIcon",
-        "externalHint",
-      ],
+      slots: ["root", "label", "leadingIcon", "leadingAvatar", "trailingIcon", "externalHint"],
       base: {
         root: [
-          "rounded-md font-medium inline-flex items-center disabled:cursor-not-allowed aria-disabled:cursor-not-allowed disabled:opacity-75 aria-disabled:opacity-75",
+          "font-medium inline-flex items-center disabled:cursor-not-allowed aria-disabled:cursor-not-allowed disabled:opacity-75 aria-disabled:opacity-75",
           "transition-colors outline-none select-none no-underline leading-none",
-          "aria-invalid:border-error-500 aria-invalid:ring-error-500/20",
+          "aria-invalid:border-error aria-invalid:ring-error/20",
         ],
         label: "truncate leading-none",
         leadingIcon: "shrink-0 inline-flex items-center justify-center leading-none",
         leadingAvatar: "shrink-0",
-        leadingAvatarSize: "",
         trailingIcon: "shrink-0 inline-flex items-center justify-center leading-none",
         externalHint: "sr-only",
       },
@@ -2141,23 +2172,18 @@ export const componentMeta: ComponentMetaMap = {
         size: {
           xs: {
             root: "text-xs gap-1 leading-none",
-            leadingAvatarSize: "xs",
           },
           sm: {
             root: "text-xs gap-1.5 leading-none",
-            leadingAvatarSize: "xs",
           },
           md: {
             root: "text-sm gap-1.5 leading-none",
-            leadingAvatarSize: "xs",
           },
           lg: {
             root: "text-sm gap-2 leading-none",
-            leadingAvatarSize: "xs",
           },
           xl: {
             root: "text-base gap-2 leading-none",
-            leadingAvatarSize: "xs",
           },
         },
         justify: {
@@ -2186,25 +2212,15 @@ export const componentMeta: ComponentMetaMap = {
             trailingIcon: "ms-auto",
           },
         },
-        square: {
-          true: {
-            root: "aspect-square justify-center",
+        shape: {
+          square: {
+            root: "aspect-square justify-center rounded-md",
           },
-        },
-        rounded: {
-          true: {
-            root: "rounded-full",
-          },
-          false: {
+          rounded: {
             root: "rounded-md",
           },
-        },
-        active: {
-          true: {
-            root: "",
-          },
-          false: {
-            root: "",
+          pill: {
+            root: "rounded-full",
           },
         },
       },
@@ -2252,70 +2268,70 @@ export const componentMeta: ComponentMetaMap = {
           },
         },
         {
-          square: false,
+          shape: ["rounded", "pill"],
           size: "xs",
           class: {
             root: "px-2 py-1",
           },
         },
         {
-          square: true,
+          shape: "square",
           size: "xs",
           class: {
             root: "p-1",
           },
         },
         {
-          square: false,
+          shape: ["rounded", "pill"],
           size: "sm",
           class: {
             root: "px-2.5 py-1.5",
           },
         },
         {
-          square: true,
+          shape: "square",
           size: "sm",
           class: {
             root: "p-1.5",
           },
         },
         {
-          square: false,
+          shape: ["rounded", "pill"],
           size: "md",
           class: {
             root: "px-2.5 py-1.5",
           },
         },
         {
-          square: true,
+          shape: "square",
           size: "md",
           class: {
             root: "p-1.5",
           },
         },
         {
-          square: false,
+          shape: ["rounded", "pill"],
           size: "lg",
           class: {
             root: "px-3 py-2",
           },
         },
         {
-          square: true,
+          shape: "square",
           size: "lg",
           class: {
             root: "p-2",
           },
         },
         {
-          square: false,
+          shape: ["rounded", "pill"],
           size: "xl",
           class: {
             root: "px-3 py-2",
           },
         },
         {
-          square: true,
+          shape: "square",
           size: "xl",
           class: {
             root: "p-2",
@@ -2349,7 +2365,7 @@ export const componentMeta: ComponentMetaMap = {
         color: "primary",
         size: "md",
         justify: "center",
-        rounded: false,
+        shape: "rounded",
       },
     },
   },
@@ -2652,7 +2668,17 @@ export const componentMeta: ComponentMetaMap = {
       {
         name: "heading",
         bindings: {},
-        description: "Content replacing the heading label. Static JSX; rendered as-is.",
+        description: "Content replacing the heading label.",
+      },
+      {
+        name: "prev",
+        bindings: {},
+        description: "Content replacing the previous month (or previous year) button icon.",
+      },
+      {
+        name: "next",
+        bindings: {},
+        description: "Content replacing the next month (or next year) button icon.",
       },
       {
         name: "weekDay",
@@ -2688,20 +2714,21 @@ export const componentMeta: ComponentMetaMap = {
         "gridWeekDaysRow",
         "gridBody",
         "gridHead",
-        "headCell",
-        "headCellWeek",
+        "weekDay",
         "cell",
+        "day",
+        "monthCell",
+        "yearCell",
         "cellTrigger",
         "cellWeek",
         "srLabel",
         "prevYear",
-        "prevMonth",
-        "nextMonth",
+        "prev",
+        "next",
         "nextYear",
         "viewControl",
       ],
       base: {
-        root: "",
         header: "flex items-center justify-between",
         body: "flex flex-col space-y-4 pt-4 sm:flex-row sm:space-x-4 sm:space-y-0",
         heading: "flex-1 min-w-0 text-center",
@@ -2710,8 +2737,7 @@ export const componentMeta: ComponentMetaMap = {
         gridRow: "grid",
         gridWeekDaysRow: "mb-1 grid w-full grid-cols-7",
         gridBody: "grid",
-        headCell: "rounded-md text-[var(--rl-text)]",
-        headCellWeek: "rounded-md text-muted",
+        weekDay: "rounded-md text-[var(--rl-text)]",
         cell: "relative text-center",
         cellTrigger: [
           "m-0.5 relative flex items-center justify-center whitespace-nowrap focus-visible:outline-3 transition",
@@ -2721,30 +2747,24 @@ export const componentMeta: ComponentMetaMap = {
         ],
         cellWeek: "relative text-center text-muted",
         srLabel: "sr-only",
-        gridHead: "",
-        prevYear: "",
-        prevMonth: "",
-        nextMonth: "",
-        nextYear: "",
-        viewControl: "",
       },
       variants: {
         variant: {
           solid: {
             cellTrigger:
-              "[&[data-selected]]:bg-[var(--rl-bg)] [&[data-selected]]:text-inverted [&[data-today]:not([data-selected])]:text-[var(--rl-text)] [&[data-highlighted]]:bg-[var(--rl-bg)]/20 hover:[&:not([data-selected])]:bg-[var(--rl-bg)]/20",
+              "[&[aria-selected=true]]:bg-[var(--rl-bg)] [&[aria-selected=true]]:text-inverted [&[data-today]:not([aria-selected=true])]:text-[var(--rl-text)] [&[data-highlighted]]:bg-[var(--rl-bg)]/20 hover:[&:not([aria-selected=true])]:bg-[var(--rl-bg)]/20",
           },
           outline: {
             cellTrigger:
-              "[&[data-selected]]:ring [&[data-selected]]:ring-inset [&[data-selected]]:ring-[var(--rl-ring)]/50 [&[data-selected]]:text-[var(--rl-text)] [&[data-selected]]:focus-visible:ring-[var(--rl-ring)] [&[data-today]:not([data-selected])]:text-[var(--rl-text)] [&[data-highlighted]]:bg-[var(--rl-bg)]/10 hover:[&:not([data-selected])]:bg-[var(--rl-bg)]/10",
+              "[&[aria-selected=true]]:ring [&[aria-selected=true]]:ring-inset [&[aria-selected=true]]:ring-[var(--rl-ring)]/50 [&[aria-selected=true]]:text-[var(--rl-text)] [&[aria-selected=true]]:focus-visible:ring-[var(--rl-ring)] [&[data-today]:not([aria-selected=true])]:text-[var(--rl-text)] [&[data-highlighted]]:bg-[var(--rl-bg)]/10 hover:[&:not([aria-selected=true])]:bg-[var(--rl-bg)]/10",
           },
           soft: {
             cellTrigger:
-              "[&[data-selected]]:bg-[var(--rl-bg)]/10 [&[data-selected]]:text-[var(--rl-text)] [&[data-today]:not([data-selected])]:text-[var(--rl-text)] [&[data-highlighted]]:bg-[var(--rl-bg)]/20 hover:[&:not([data-selected])]:bg-[var(--rl-bg)]/20",
+              "[&[aria-selected=true]]:bg-[var(--rl-bg)]/10 [&[aria-selected=true]]:text-[var(--rl-text)] [&[data-today]:not([aria-selected=true])]:text-[var(--rl-text)] [&[data-highlighted]]:bg-[var(--rl-bg)]/20 hover:[&:not([aria-selected=true])]:bg-[var(--rl-bg)]/20",
           },
           subtle: {
             cellTrigger:
-              "[&[data-selected]]:bg-[var(--rl-bg)]/10 [&[data-selected]]:text-[var(--rl-text)] [&[data-selected]]:ring [&[data-selected]]:ring-inset [&[data-selected]]:ring-[var(--rl-ring)]/25 [&[data-selected]]:focus-visible:ring-[var(--rl-ring)] [&[data-today]:not([data-selected])]:text-[var(--rl-text)] [&[data-highlighted]]:bg-[var(--rl-bg)]/20 hover:[&:not([data-selected])]:bg-[var(--rl-bg)]/20",
+              "[&[aria-selected=true]]:bg-[var(--rl-bg)]/10 [&[aria-selected=true]]:text-[var(--rl-text)] [&[aria-selected=true]]:ring [&[aria-selected=true]]:ring-inset [&[aria-selected=true]]:ring-[var(--rl-ring)]/25 [&[aria-selected=true]]:focus-visible:ring-[var(--rl-ring)] [&[data-today]:not([aria-selected=true])]:text-[var(--rl-text)] [&[data-highlighted]]:bg-[var(--rl-bg)]/20 hover:[&:not([aria-selected=true])]:bg-[var(--rl-bg)]/20",
           },
         },
         size: {
@@ -2752,35 +2772,30 @@ export const componentMeta: ComponentMetaMap = {
             headingLabel: "text-xs",
             cell: "text-xs",
             cellWeek: "text-xs",
-            headCell: "text-[10px]",
-            headCellWeek: "text-[10px]",
+            weekDay: "text-[10px]",
             body: "space-y-2 pt-2",
           },
           sm: {
             headingLabel: "text-xs",
-            headCell: "text-xs",
-            headCellWeek: "text-xs",
+            weekDay: "text-xs",
             cellWeek: "text-xs",
             cell: "text-xs",
           },
           md: {
             headingLabel: "text-sm",
-            headCell: "text-xs",
-            headCellWeek: "text-xs",
+            weekDay: "text-xs",
             cellWeek: "text-xs",
             cell: "text-sm",
           },
           lg: {
             headingLabel: "text-sm",
-            headCell: "text-sm",
-            headCellWeek: "text-sm",
+            weekDay: "text-sm",
             cellWeek: "text-sm",
             cell: "text-sm",
           },
           xl: {
             headingLabel: "text-base",
-            headCell: "text-base",
-            headCellWeek: "text-base",
+            weekDay: "text-base",
             cellWeek: "text-base",
             cell: "text-base",
           },
@@ -2804,7 +2819,7 @@ export const componentMeta: ComponentMetaMap = {
         {
           color: "neutral",
           class: {
-            headCell: "text-highlighted",
+            weekDay: "text-highlighted",
             cellTrigger: "outline-inverted/25",
           },
         },
@@ -2813,7 +2828,7 @@ export const componentMeta: ComponentMetaMap = {
           variant: "solid",
           class: {
             cellTrigger:
-              "[&[data-selected]]:bg-inverted [&[data-selected]]:text-inverted [&[data-today]:not([data-selected])]:text-highlighted [&[data-highlighted]]:bg-inverted/20 hover:[&:not([data-selected])]:bg-inverted/10",
+              "[&[aria-selected=true]]:bg-inverted [&[aria-selected=true]]:text-inverted [&[data-today]:not([aria-selected=true])]:text-highlighted [&[data-highlighted]]:bg-inverted/20 hover:[&:not([aria-selected=true])]:bg-inverted/10",
           },
         },
         {
@@ -2821,7 +2836,7 @@ export const componentMeta: ComponentMetaMap = {
           variant: "outline",
           class: {
             cellTrigger:
-              "[&[data-selected]]:ring [&[data-selected]]:ring-inset [&[data-selected]]:ring-accented [&[data-selected]]:text-default [&[data-selected]]:bg-default [&[data-selected]]:focus-visible:ring-inverted [&[data-today]:not([data-selected])]:text-highlighted [&[data-highlighted]]:bg-inverted/10 hover:[&:not([data-selected])]:bg-inverted/10",
+              "[&[aria-selected=true]]:ring [&[aria-selected=true]]:ring-inset [&[aria-selected=true]]:ring-accented [&[aria-selected=true]]:text-default [&[aria-selected=true]]:bg-default [&[aria-selected=true]]:focus-visible:ring-inverted [&[data-today]:not([aria-selected=true])]:text-highlighted [&[data-highlighted]]:bg-inverted/10 hover:[&:not([aria-selected=true])]:bg-inverted/10",
           },
         },
         {
@@ -2829,7 +2844,7 @@ export const componentMeta: ComponentMetaMap = {
           variant: "soft",
           class: {
             cellTrigger:
-              "[&[data-selected]]:bg-elevated [&[data-selected]]:text-default [&[data-today]:not([data-selected])]:text-highlighted [&[data-highlighted]]:bg-inverted/20 hover:[&:not([data-selected])]:bg-inverted/10",
+              "[&[aria-selected=true]]:bg-elevated [&[aria-selected=true]]:text-default [&[data-today]:not([aria-selected=true])]:text-highlighted [&[data-highlighted]]:bg-inverted/20 hover:[&:not([aria-selected=true])]:bg-inverted/10",
           },
         },
         {
@@ -2837,7 +2852,7 @@ export const componentMeta: ComponentMetaMap = {
           variant: "subtle",
           class: {
             cellTrigger:
-              "[&[data-selected]]:bg-elevated [&[data-selected]]:text-default [&[data-selected]]:ring [&[data-selected]]:ring-inset [&[data-selected]]:ring-accented [&[data-selected]]:focus-visible:ring-inverted [&[data-today]:not([data-selected])]:text-highlighted [&[data-highlighted]]:bg-inverted/20 hover:[&:not([data-selected])]:bg-inverted/10",
+              "[&[aria-selected=true]]:bg-elevated [&[aria-selected=true]]:text-default [&[aria-selected=true]]:ring [&[aria-selected=true]]:ring-inset [&[aria-selected=true]]:ring-accented [&[aria-selected=true]]:focus-visible:ring-inverted [&[data-today]:not([aria-selected=true])]:text-highlighted [&[data-highlighted]]:bg-inverted/20 hover:[&:not([aria-selected=true])]:bg-inverted/10",
           },
         },
         {
@@ -2937,25 +2952,29 @@ export const componentMeta: ComponentMetaMap = {
         name: "title",
         type: "string | undefined",
         required: false,
-        description: "Main title text of the callout. Use `titleSlot` for JSX.",
+        description: "Main title text of the callout. Use `titleSlot` for custom content.",
+        default: "undefined; the title is omitted when unset.",
       },
       {
         name: "description",
         type: "string | undefined",
         required: false,
-        description: "Secondary description text of the callout. Use `descriptionSlot` for JSX.",
+        description: "Description text of the callout. Use `descriptionSlot` for custom content.",
+        default: "undefined; the children are used as description when unset.",
       },
       {
         name: "icon",
         type: "string | undefined",
         required: false,
-        description: "Icon name displayed at the start of the callout.",
+        description: "Bare lucide icon name displayed at the start of the callout.",
+        default: "undefined; no icon is rendered when unset.",
       },
       {
         name: "avatar",
         type: "{ src: string; alt: string } | string | undefined",
         required: false,
-        description: "Avatar configuration or image source URL.",
+        description: "Avatar configuration, or an image source URL.",
+        default: "undefined; no avatar is rendered when unset.",
       },
       {
         name: "actions",
@@ -2963,6 +2982,7 @@ export const componentMeta: ComponentMetaMap = {
         required: false,
         description:
           "Action buttons. Rendered under the content when `orientation` is `vertical`, and next to the close button when `orientation` is `horizontal`.",
+        default: "undefined; no actions are rendered when unset.",
       },
       {
         name: "dismissible",
@@ -2975,7 +2995,7 @@ export const componentMeta: ComponentMetaMap = {
         name: "closeIcon",
         type: "string | undefined",
         required: false,
-        description: "Icon name displayed in the close button.",
+        description: "Bare lucide icon name displayed in the close button.",
         default: '"x"',
       },
       {
@@ -2983,6 +3003,7 @@ export const componentMeta: ComponentMetaMap = {
         type: "boolean | undefined",
         required: false,
         description: "Controlled open state. Dismissal sets it to `false` through `onOpenChange`.",
+        default: "undefined; the callout is uncontrolled.",
       },
       {
         name: "defaultOpen",
@@ -2996,12 +3017,14 @@ export const componentMeta: ComponentMetaMap = {
         type: "((open: boolean) => void) | undefined",
         required: false,
         description: "Called whenever the open state changes.",
+        default: "undefined",
       },
       {
         name: "onDismiss",
         type: "(() => void) | undefined",
         required: false,
         description: "Called after the callout is dismissed by the user.",
+        default: "undefined",
       },
       {
         name: "orientation",
@@ -3014,19 +3037,22 @@ export const componentMeta: ComponentMetaMap = {
         name: "aria-label",
         type: "string | undefined",
         required: false,
-        description: "Accessible label of the callout.",
+        description: "Accessible label of the callout, used when no title is rendered.",
+        default: "undefined",
       },
       {
         name: "aria-labelledby",
         type: "string | undefined",
         required: false,
-        description: "Accessible labelledby override.",
+        description: "Id of the element that labels the callout. Overrides the title id.",
+        default: "undefined",
       },
       {
         name: "aria-describedby",
         type: "string | undefined",
         required: false,
-        description: "Accessible describedby override.",
+        description: "Id of the element that describes the callout. Overrides the description id.",
+        default: "undefined",
       },
     ],
     slots: [
@@ -3043,7 +3069,7 @@ export const componentMeta: ComponentMetaMap = {
       {
         name: "header",
         bindings: {},
-        description: "Content rendered between the title and the description.",
+        description: "Replaces the header, rendered between the title and the description.",
       },
       {
         name: "description",
@@ -3068,12 +3094,23 @@ export const componentMeta: ComponentMetaMap = {
     ],
     emits: [],
     theme: {
-      slots: ["root", "wrapper", "title", "description", "icon", "avatar", "actions", "close"],
+      slots: [
+        "root",
+        "wrapper",
+        "title",
+        "description",
+        "header",
+        "icon",
+        "avatar",
+        "actions",
+        "close",
+      ],
       base: {
         root: "relative overflow-hidden w-full rounded-lg p-4 flex gap-2.5",
         wrapper: "min-w-0 flex-1 flex flex-col",
         title: "text-sm font-medium",
         description: "text-sm opacity-90 leading-relaxed",
+        header: "min-w-0",
         icon: "shrink-0 size-5 inline-flex items-center justify-center pointer-events-none",
         avatar: "shrink-0",
         actions: "flex flex-wrap gap-1.5 shrink-0",
@@ -3104,7 +3141,7 @@ export const componentMeta: ComponentMetaMap = {
             actions: "items-start mt-2.5",
           },
         },
-        title: {
+        hasTitle: {
           true: {
             description: "mt-1",
           },
@@ -3156,14 +3193,15 @@ export const componentMeta: ComponentMetaMap = {
         name: "title",
         type: "string | undefined",
         required: false,
-        description: "Title text of the card header. Use `titleSlot` for JSX.",
+        description: "Title text of the card header. Use `titleSlot` for custom content.",
         default: "undefined; the title is omitted when unset.",
       },
       {
         name: "description",
         type: "string | undefined",
         required: false,
-        description: "Description text of the card header. Use `descriptionSlot` for JSX.",
+        description:
+          "Description text of the card header. Use `descriptionSlot` for custom content.",
         default: "undefined; the description is omitted when unset.",
       },
       {
@@ -3258,22 +3296,34 @@ export const componentMeta: ComponentMetaMap = {
       {
         name: "overlay",
         bindings: {},
-        description: "Overlay content. Rendered in place of the header, body and footer.",
+        description:
+          "Overlay content. Rendered over the card in place of the header, body and footer.",
       },
     ],
     emits: [],
     theme: {
-      slots: ["root", "header", "title", "description", "body", "footer", "overlay", "media"],
+      slots: [
+        "root",
+        "header",
+        "title",
+        "description",
+        "body",
+        "footer",
+        "overlay",
+        "media",
+        "image",
+      ],
       base: {
-        root: "block rounded-lg overflow-hidden",
+        root: "relative block rounded-lg overflow-hidden",
         header: "p-4 sm:px-6",
         title: "text-highlighted font-semibold",
         description: "mt-1 text-muted text-sm",
         body: "p-4 sm:p-6",
         footer: "p-4 sm:px-6",
         overlay:
-          "absolute inset-0 z-10 flex flex-col justify-end p-4 sm:p-6 bg-gradient-to-t from-black/80 to-transparent text-white",
+          "absolute inset-0 z-10 flex flex-col justify-end p-4 sm:p-6 bg-gradient-to-t from-scrim/80 to-transparent text-on-scrim",
         media: "relative overflow-hidden",
+        image: "h-full w-full object-cover",
       },
       variants: {
         variant: {
@@ -3292,16 +3342,10 @@ export const componentMeta: ComponentMetaMap = {
             root: "bg-elevated/50 ring ring-default divide-y divide-default",
           },
         },
-        overlay: {
-          true: {
-            root: "relative",
-          },
-        },
       },
       compoundVariants: [],
       defaultVariants: {
         variant: "outline",
-        overlay: false,
       },
     },
   },
@@ -3318,75 +3362,57 @@ export const componentMeta: ComponentMetaMap = {
         "viewport",
         "container",
         "item",
-        "controls",
-        "arrows",
         "prev",
         "next",
         "dots",
         "dot",
-        "slide",
-        "buttonPrev",
-        "buttonNext",
+        "media",
+        "image",
+        "caption",
+        "captionTitle",
+        "captionDescription",
       ],
       base: {
         root: "relative focus:outline-none select-none group/carousel w-full",
         viewport: "overflow-hidden cursor-grab active:cursor-grabbing w-full",
         container:
-          "flex items-start backface-hidden [transform:var(--rl-carousel-transform,none)] [transition:var(--rl-carousel-transition,none)]",
+          "items-start backface-hidden [transform:var(--rl-carousel-transform,none)] [transition:var(--rl-carousel-transition,none)]",
         item: "min-w-0 shrink-0 basis-full relative",
-        slide: "min-w-0 shrink-0 basis-full relative",
-        controls: "",
-        arrows: "",
-        prev: "absolute rounded-full z-10 cursor-pointer p-1.5 bg-background/80 hover:bg-background shadow-md border border-default text-highlighted inline-flex items-center justify-center transition-colors disabled:opacity-40 disabled:pointer-events-none",
-        next: "absolute rounded-full z-10 cursor-pointer p-1.5 bg-background/80 hover:bg-background shadow-md border border-default text-highlighted inline-flex items-center justify-center transition-colors disabled:opacity-40 disabled:pointer-events-none",
-        buttonPrev:
-          "absolute rounded-full z-10 cursor-pointer p-1.5 bg-background/80 hover:bg-background shadow-md border border-default text-highlighted inline-flex items-center justify-center transition-colors disabled:opacity-40 disabled:pointer-events-none",
-        buttonNext:
-          "absolute rounded-full z-10 cursor-pointer p-1.5 bg-background/80 hover:bg-background shadow-md border border-default text-highlighted inline-flex items-center justify-center transition-colors disabled:opacity-40 disabled:pointer-events-none",
+        prev: "absolute rounded-full z-10 cursor-pointer p-1.5 bg-default/80 hover:bg-default shadow-md border border-default text-highlighted inline-flex items-center justify-center transition-colors disabled:opacity-40 disabled:pointer-events-none",
+        next: "absolute rounded-full z-10 cursor-pointer p-1.5 bg-default/80 hover:bg-default shadow-md border border-default text-highlighted inline-flex items-center justify-center transition-colors disabled:opacity-40 disabled:pointer-events-none",
         dots: "absolute flex items-center justify-center z-10",
-        dot: "cursor-pointer size-1.5 rounded-full bg-muted/60 hover:bg-muted focus-visible:outline-2 focus-visible:outline-primary transition-all border-none p-0",
+        dot: "cursor-pointer size-1.5 rounded-full bg-muted/60 hover:bg-muted focus-visible:outline-2 focus-visible:outline-primary transition-all border-none p-0 data-[state=active]:bg-primary data-[state=active]:scale-125",
+        media: "relative w-full aspect-video select-none pointer-events-none [&>img]:h-full",
+        image: "w-full h-auto object-cover rounded-lg select-none pointer-events-none",
+        caption:
+          "absolute bottom-4 left-4 right-4 p-4 rounded-lg bg-scrim/60 backdrop-blur-sm text-on-scrim",
+        captionTitle: "text-sm font-semibold",
+        captionDescription: "text-xs opacity-95 mt-1",
       },
       variants: {
         orientation: {
           vertical: {
             container: "flex-col -mt-4",
             item: "pt-4",
-            slide: "pt-4",
             prev: "top-4 sm:-top-12 left-1/2 -translate-x-1/2 rotate-90 rtl:-rotate-90",
             next: "bottom-4 sm:-bottom-12 left-1/2 -translate-x-1/2 rotate-90 rtl:-rotate-90",
-            buttonPrev: "top-4 sm:-top-12 left-1/2 -translate-x-1/2 rotate-90 rtl:-rotate-90",
-            buttonNext: "bottom-4 sm:-bottom-12 left-1/2 -translate-x-1/2 rotate-90 rtl:-rotate-90",
             dots: "inset-y-0 -end-6 sm:-end-8 flex-col gap-2",
           },
           horizontal: {
             container: "flex-row -ms-4",
             item: "ps-4",
-            slide: "ps-4",
             prev: "start-4 sm:-start-12 top-1/2 -translate-y-1/2",
             next: "end-4 sm:-end-12 top-1/2 -translate-y-1/2",
-            buttonPrev: "start-4 sm:-start-12 top-1/2 -translate-y-1/2",
-            buttonNext: "end-4 sm:-end-12 top-1/2 -translate-y-1/2",
             dots: "inset-x-0 -bottom-6 sm:-bottom-7 flex-row flex-wrap gap-2",
           },
         },
-        controls: {
-          inside: {
-            prev: "",
-            next: "",
-            dots: "",
-          },
-          outside: {
-            prev: "",
-            next: "",
-            dots: "",
-          },
-        },
-        active: {
+        fade: {
           true: {
-            dot: "data-[state=active]:bg-primary bg-primary scale-125",
+            container: "grid grid-cols-1 grid-rows-1 relative w-full overflow-hidden",
+            item: "col-start-1 row-start-1 w-full min-w-0 transition-opacity ease-in-out [transition-duration:var(--rl-carousel-duration,500ms)] data-[state=active]:z-10 data-[state=active]:opacity-100 data-[state=active]:pointer-events-auto data-[state=inactive]:z-0 data-[state=inactive]:opacity-0 data-[state=inactive]:pointer-events-none",
           },
           false: {
-            dot: "",
+            container: "flex",
           },
         },
       },
@@ -3397,20 +3423,7 @@ export const componentMeta: ComponentMetaMap = {
           class: {
             prev: "!start-3 !top-1/2 !-translate-y-1/2",
             next: "!end-3 !top-1/2 !-translate-y-1/2",
-            buttonPrev: "!start-3 !top-1/2 !-translate-y-1/2",
-            buttonNext: "!end-3 !top-1/2 !-translate-y-1/2",
             dots: "!inset-x-0 !bottom-3 !flex-row !gap-1.5",
-          },
-        },
-        {
-          orientation: "horizontal",
-          controls: "outside",
-          class: {
-            prev: "start-4 sm:-start-12 top-1/2 -translate-y-1/2",
-            next: "end-4 sm:-end-12 top-1/2 -translate-y-1/2",
-            buttonPrev: "start-4 sm:-start-12 top-1/2 -translate-y-1/2",
-            buttonNext: "end-4 sm:-end-12 top-1/2 -translate-y-1/2",
-            dots: "inset-x-0 -bottom-6 sm:-bottom-7 flex-row flex-wrap gap-2",
           },
         },
         {
@@ -3419,27 +3432,14 @@ export const componentMeta: ComponentMetaMap = {
           class: {
             prev: "!top-3 !left-1/2 !-translate-x-1/2 !rotate-90 rtl:!-rotate-90",
             next: "!bottom-3 !left-1/2 !-translate-x-1/2 !rotate-90 rtl:!-rotate-90",
-            buttonPrev: "!top-3 !left-1/2 !-translate-x-1/2 !rotate-90 rtl:!-rotate-90",
-            buttonNext: "!bottom-3 !left-1/2 !-translate-x-1/2 !rotate-90 rtl:!-rotate-90",
             dots: "!inset-y-0 !end-3 !flex-col !gap-1.5",
-          },
-        },
-        {
-          orientation: "vertical",
-          controls: "outside",
-          class: {
-            prev: "top-4 sm:-top-12 left-1/2 -translate-x-1/2 rotate-90 rtl:-rotate-90",
-            next: "bottom-4 sm:-bottom-12 left-1/2 -translate-x-1/2 rotate-90 rtl:-rotate-90",
-            buttonPrev: "top-4 sm:-top-12 left-1/2 -translate-x-1/2 rotate-90 rtl:-rotate-90",
-            buttonNext: "bottom-4 sm:-bottom-12 left-1/2 -translate-x-1/2 rotate-90 rtl:-rotate-90",
-            dots: "inset-y-0 -end-6 sm:-end-8 flex-col gap-2",
           },
         },
       ],
       defaultVariants: {
         orientation: "horizontal",
         controls: "outside",
-        active: false,
+        fade: false,
       },
     },
   },
@@ -3486,19 +3486,53 @@ export const componentMeta: ComponentMetaMap = {
     slots: [],
     emits: [],
     theme: {
-      slots: ["root", "title", "container", "svg", "axis", "bar", "line", "tooltip", "legend"],
+      slots: [
+        "root",
+        "title",
+        "container",
+        "barItem",
+        "barValue",
+        "bar",
+        "barSvg",
+        "axis",
+        "svg",
+        "line",
+        "lineWrap",
+        "pieWrap",
+        "pieSvg",
+        "slice",
+        "pieLegend",
+        "pieLegendItem",
+        "pieSwatch",
+        "pieLegendValue",
+        "legend",
+        "legendItem",
+        "legendSwatch",
+      ],
       base: {
         root: "flex flex-col gap-3 p-4 rounded-xl border border-default bg-elevated text-highlighted shadow-sm min-h-[var(--rl-chart-height)]",
         title: "text-sm font-semibold tracking-tight text-highlighted",
         container:
           "relative w-full aspect-video flex items-end justify-between gap-1.5 h-[calc(var(--rl-chart-height)-60px)]",
-        svg: "w-full h-full",
+        barItem: "flex flex-col items-center gap-1 flex-1 group",
+        barValue:
+          "text-[10px] text-muted font-mono opacity-0 group-hover:opacity-100 transition-opacity",
+        bar: "h-full w-full overflow-hidden rounded-t transition-all hover:opacity-85 !bg-transparent",
+        barSvg: "h-full w-full overflow-visible",
         axis: "text-[10px] text-muted",
-        bar: "rounded-t transition-all hover:opacity-85",
+        svg: "w-full h-full",
         line: "stroke-2 fill-none",
-        tooltip:
-          "absolute z-50 bg-default text-highlighted border border-default rounded shadow p-2 text-xs",
+        lineWrap: "relative w-full h-[calc(var(--rl-chart-height)-60px)]",
+        pieWrap: "flex items-center gap-6 justify-center h-[calc(var(--rl-chart-height)-60px)]",
+        pieSvg: "h-full w-auto max-h-48",
+        slice: "transition-opacity hover:opacity-85 cursor-pointer",
+        pieLegend: "flex flex-col gap-1.5",
+        pieLegendItem: "flex items-center gap-2 text-xs text-muted",
+        pieSwatch: "size-3 shrink-0",
+        pieLegendValue: "ml-1 font-mono text-highlighted",
         legend: "flex items-center justify-center gap-4 text-xs text-muted",
+        legendItem: "flex items-center gap-1.5",
+        legendSwatch: "size-2.5 shrink-0",
       },
       variants: {},
       compoundVariants: [],
@@ -3509,13 +3543,29 @@ export const componentMeta: ComponentMetaMap = {
     name: "Chat",
     solidComponent: "RLChat.tsx",
     frameworks: ["solid"],
-    props: [],
+    props: [
+      {
+        name: "status",
+        type: "RLChatStatus | undefined",
+        required: false,
+        description:
+          "Request state of the conversation. `submitted` and `streaming` set `aria-busy`.",
+        default: '"ready"',
+      },
+      {
+        name: "aria-label",
+        type: "string | undefined",
+        required: false,
+        description: "Accessible name for the conversation region.",
+        default: '"Conversation"',
+      },
+    ],
     slots: [],
     emits: [],
     theme: {
       slots: ["root"],
       base: {
-        root: "",
+        root: "flex h-full min-h-0 w-full flex-col",
       },
       variants: {},
       compoundVariants: [],
@@ -3526,30 +3576,48 @@ export const componentMeta: ComponentMetaMap = {
     name: "ChatMessage",
     solidComponent: "RLChatMessage.tsx",
     frameworks: ["solid"],
-    props: [],
+    props: [
+      {
+        name: "from",
+        type: '"user" | "assistant" | "system" | undefined',
+        required: false,
+        description: "Speaker of the message. Drives alignment and styling.",
+        default: '"assistant"',
+      },
+    ],
     slots: [],
     emits: [],
     theme: {
       slots: ["root"],
       base: {
-        root: "",
+        root: "flex w-full flex-col gap-xs text-sm text-highlighted",
       },
       variants: {},
       compoundVariants: [],
-      defaultVariants: {},
+      defaultVariants: {
+        from: "assistant",
+      },
     },
   },
   "chat-messages": {
     name: "ChatMessages",
     solidComponent: "RLChatMessages.tsx",
     frameworks: ["solid"],
-    props: [],
+    props: [
+      {
+        name: "aria-label",
+        type: "string | undefined",
+        required: false,
+        description: "Accessible name for the message log.",
+        default: '"Messages"',
+      },
+    ],
     slots: [],
     emits: [],
     theme: {
       slots: ["root"],
       base: {
-        root: "",
+        root: "flex min-h-0 flex-1 flex-col gap-md overflow-y-auto p-md",
       },
       variants: {},
       compoundVariants: [],
@@ -3560,13 +3628,21 @@ export const componentMeta: ComponentMetaMap = {
     name: "ChatPalette",
     solidComponent: "RLChatPalette.tsx",
     frameworks: ["solid"],
-    props: [],
+    props: [
+      {
+        name: "aria-label",
+        type: "string | undefined",
+        required: false,
+        description: "Accessible name for the palette group.",
+        default: '"Suggestions"',
+      },
+    ],
     slots: [],
     emits: [],
     theme: {
       slots: ["root"],
       base: {
-        root: "",
+        root: "flex flex-wrap gap-sm",
       },
       variants: {},
       compoundVariants: [],
@@ -3577,13 +3653,73 @@ export const componentMeta: ComponentMetaMap = {
     name: "ChatPrompt",
     solidComponent: "RLChatPrompt.tsx",
     frameworks: ["solid"],
-    props: [],
+    props: [
+      {
+        name: "value",
+        type: "string | undefined",
+        required: false,
+        description: "Controlled text. Leave undefined to let the prompt manage its own text.",
+        default: "undefined",
+      },
+      {
+        name: "defaultValue",
+        type: "string | undefined",
+        required: false,
+        description: "Initial text when uncontrolled.",
+        default: '""',
+      },
+      {
+        name: "onValueChange",
+        type: "((value: string) => void) | undefined",
+        required: false,
+        description: "Called with the new text on every edit, including the clear after a submit.",
+        default: "undefined",
+      },
+      {
+        name: "onSubmit",
+        type: "((value: string) => void) | undefined",
+        required: false,
+        description:
+          "Called with the trimmed text when the prompt is submitted. Blank text is never submitted.",
+        default: "undefined",
+      },
+      {
+        name: "placeholder",
+        type: "string | undefined",
+        required: false,
+        description: "Text shown while the field is empty.",
+        default: '"Type a message"',
+      },
+      {
+        name: "name",
+        type: "string | undefined",
+        required: false,
+        description: "Form field name for the text.",
+        default: "undefined",
+      },
+      {
+        name: "disabled",
+        type: "boolean | undefined",
+        required: false,
+        description: "Disables the field and submission.",
+        default: "false",
+      },
+      {
+        name: "aria-label",
+        type: "string | undefined",
+        required: false,
+        description: "Accessible name for the text field.",
+        default: '"Message"',
+      },
+    ],
     slots: [],
     emits: [],
     theme: {
-      slots: ["root"],
+      slots: ["root", "input", "footer"],
       base: {
-        root: "",
+        root: "flex w-full flex-col gap-sm",
+        input: "w-full",
+        footer: "flex items-center justify-end gap-sm",
       },
       variants: {},
       compoundVariants: [],
@@ -3594,13 +3730,43 @@ export const componentMeta: ComponentMetaMap = {
     name: "ChatPromptSubmit",
     solidComponent: "RLChatPromptSubmit.tsx",
     frameworks: ["solid"],
-    props: [],
+    props: [
+      {
+        name: "status",
+        type: "RLChatStatus | undefined",
+        required: false,
+        description:
+          "Request state. `streaming` shows a stop control; `submitted` shows a loading state.",
+        default: '"ready"',
+      },
+      {
+        name: "onStop",
+        type: "(() => void) | undefined",
+        required: false,
+        description: "Called when the stop control is pressed while `status` is `streaming`.",
+        default: "undefined",
+      },
+      {
+        name: "disabled",
+        type: "boolean | undefined",
+        required: false,
+        description: "Disables the button.",
+        default: "false",
+      },
+      {
+        name: "aria-label",
+        type: "string | undefined",
+        required: false,
+        description: "Accessible name for the button.",
+        default: '"Send message" (or "Stop generating" while streaming)',
+      },
+    ],
     slots: [],
     emits: [],
     theme: {
       slots: ["root"],
       base: {
-        root: "",
+        root: "shrink-0 rounded-full",
       },
       variants: {},
       compoundVariants: [],
@@ -3611,13 +3777,37 @@ export const componentMeta: ComponentMetaMap = {
     name: "ChatReasoning",
     solidComponent: "RLChatReasoning.tsx",
     frameworks: ["solid"],
-    props: [],
+    props: [
+      {
+        name: "label",
+        type: "string | undefined",
+        required: false,
+        description: "Summary text shown on the trigger.",
+        default: '"Reasoning"',
+      },
+      {
+        name: "streaming",
+        type: "boolean | undefined",
+        required: false,
+        description: "Shows the summary with a shimmer while the model is still reasoning.",
+        default: "false",
+      },
+      {
+        name: "defaultOpen",
+        type: "boolean | undefined",
+        required: false,
+        description: "Opens the reasoning block on first render.",
+        default: "false",
+      },
+    ],
     slots: [],
     emits: [],
     theme: {
-      slots: ["root"],
+      slots: ["root", "trigger", "body"],
       base: {
-        root: "",
+        root: "group flex w-full flex-col gap-sm",
+        trigger: "flex cursor-pointer list-none items-center gap-xs text-sm text-muted select-none",
+        body: "border-l border-default pl-md text-sm text-muted",
       },
       variants: {},
       compoundVariants: [],
@@ -3634,7 +3824,7 @@ export const componentMeta: ComponentMetaMap = {
     theme: {
       slots: ["root"],
       base: {
-        root: "",
+        root: "inline-block animate-pulse bg-gradient-to-r from-muted via-highlighted to-muted bg-clip-text bg-[length:200%_100%] text-transparent",
       },
       variants: {},
       compoundVariants: [],
@@ -3645,13 +3835,39 @@ export const componentMeta: ComponentMetaMap = {
     name: "ChatTool",
     solidComponent: "RLChatTool.tsx",
     frameworks: ["solid"],
-    props: [],
+    props: [
+      {
+        name: "toolName",
+        type: "string | undefined",
+        required: false,
+        description: "Name of the tool shown in the summary.",
+        default: '""',
+      },
+      {
+        name: "status",
+        type: "RLChatToolStatus | undefined",
+        required: false,
+        description: "Execution state, shown as a localized label in the summary.",
+        default: '"pending"',
+      },
+      {
+        name: "defaultOpen",
+        type: "boolean | undefined",
+        required: false,
+        description: "Opens the tool details on first render.",
+        default: "false",
+      },
+    ],
     slots: [],
     emits: [],
     theme: {
-      slots: ["root"],
+      slots: ["root", "trigger", "name", "status", "body"],
       base: {
-        root: "",
+        root: "group flex w-full flex-col rounded-lg border border-default bg-elevated",
+        trigger: "flex cursor-pointer list-none items-center gap-sm p-sm text-sm select-none",
+        name: "flex-1 font-medium text-highlighted",
+        status: "text-xs text-muted",
+        body: "border-t border-default p-sm text-sm text-muted",
       },
       variants: {},
       compoundVariants: [],
@@ -3674,7 +3890,7 @@ export const componentMeta: ComponentMetaMap = {
         type: "ValidComponent",
         required: false,
         description: "The element or component this component should render as.",
-        default: "'div'",
+        default: "'label'",
       },
       {
         name: "label",
@@ -3686,7 +3902,7 @@ export const componentMeta: ComponentMetaMap = {
         name: "description",
         type: "string | undefined",
         required: false,
-        description: "Description text rendered below or beside the label.",
+        description: "Description text rendered below the label.",
       },
       {
         name: "color",
@@ -3710,11 +3926,19 @@ export const componentMeta: ComponentMetaMap = {
         default: "'md'",
       },
       {
-        name: "indicator",
-        type: "CheckboxIndicator | undefined",
+        name: "side",
+        type: "CheckboxSide | undefined",
         required: false,
-        description: "Position of the indicator checkbox box.",
+        description: "Edge the checkbox box sits on relative to the label.",
         default: "'start'",
+      },
+      {
+        name: "hasIndicator",
+        type: "boolean | undefined",
+        required: false,
+        description:
+          "Whether the checkbox box is rendered. When `false`, `icon` is rendered above the label instead.",
+        default: "true",
       },
       {
         name: "highlight",
@@ -3728,25 +3952,15 @@ export const componentMeta: ComponentMetaMap = {
         type: "string | undefined",
         required: false,
         description:
-          "The icon displayed when checked, or above the label when `indicator` is `hidden`. Defaults to 'check'.",
+          "Bare lucide icon name displayed when checked, or above the label when `hasIndicator` is `false`.",
+        default: "'check'",
       },
       {
         name: "indeterminateIcon",
         type: "string | undefined",
         required: false,
-        description: "The icon displayed when the checkbox is indeterminate. Defaults to 'minus'.",
-      },
-      {
-        name: "ui",
-        type: "CheckboxUi | undefined",
-        required: false,
-        description: "Slot-specific CSS class overrides.",
-      },
-      {
-        name: "class",
-        type: "string | undefined",
-        required: false,
-        description: "Additional CSS classes to apply to the root element.",
+        description: "Bare lucide icon name displayed when the checkbox is indeterminate.",
+        default: "'minus'",
       },
       {
         name: "disabled",
@@ -3803,49 +4017,43 @@ export const componentMeta: ComponentMetaMap = {
         name: "autofocus",
         type: "boolean | string | undefined",
         required: false,
-        description: "Form-related native attributes.",
+        description: "Whether the checkbox has a `form` owner and the `autofocus` attribute.",
       },
       {
         name: "form",
         type: "string | undefined",
         required: false,
-        description: "",
+        description: "ID of the form that owns the checkbox.",
       },
       {
         name: "formaction",
         type: "string | undefined",
         required: false,
-        description: "",
+        description: "URL the owning form submits to when this checkbox is the submitter.",
       },
       {
         name: "formenctype",
-        type: "string | undefined",
+        type: '"application/x-www-form-urlencoded" | "multipart/form-data" | "text/plain" | undefined',
         required: false,
-        description: "",
+        description: "Encoding type used when the owning form is submitted.",
       },
       {
         name: "formmethod",
-        type: "string | undefined",
+        type: '"get" | "post" | "dialog" | undefined',
         required: false,
-        description: "",
+        description: "HTTP method used when the owning form is submitted.",
       },
       {
         name: "formnovalidate",
         type: "boolean | string | undefined",
         required: false,
-        description: "",
+        description: "Bypass form validation when the owning form is submitted.",
       },
       {
         name: "formtarget",
         type: "string | undefined",
         required: false,
-        description: "",
-      },
-      {
-        name: "theme",
-        type: "Theme | undefined",
-        required: false,
-        description: "Theme mode override (pins colors to flat, light, or dark mode).",
+        description: "Browsing context the owning form submits to.",
       },
       {
         name: "onChange",
@@ -3857,32 +4065,38 @@ export const componentMeta: ComponentMetaMap = {
         name: "onCheckedChange",
         type: "((checked: boolean) => void) | undefined",
         required: false,
-        description: "Checked state change callback for reactive binding.",
+        description: "Checked state change callback.",
       },
     ],
     slots: [
       {
         name: "label",
         bindings: {},
-        description: "Slot overrides.",
+        description: "Replaces the label text. Receives the `label` prop.",
       },
       {
         name: "description",
         bindings: {},
-        description: "",
-      },
-      {
-        name: "default",
-        bindings: {},
-        description: "Custom child content (rendered inside label container).",
+        description: "Replaces the description text. Receives the `description` prop.",
       },
     ],
     emits: [],
     theme: {
-      slots: ["root", "container", "base", "indicator", "icon", "wrapper", "label", "description"],
+      slots: [
+        "root",
+        "container",
+        "input",
+        "base",
+        "indicator",
+        "icon",
+        "wrapper",
+        "label",
+        "description",
+      ],
       base: {
         root: "relative flex items-start cursor-pointer select-none",
         container: "flex items-center",
+        input: "sr-only peer",
         base: "rounded-sm ring-1 ring-inset ring-accented focus-visible:outline-none bg-default transition-all duration-150 shrink-0",
         indicator:
           "flex items-center justify-center size-full transition-opacity duration-150 rounded-xs",
@@ -3893,9 +4107,6 @@ export const componentMeta: ComponentMetaMap = {
       },
       variants: {
         layout: {
-          list: {
-            root: "",
-          },
           card: {
             root: [
               "border border-default rounded-lg hover:not-has-disabled:not-has-aria-disabled:not-has-focus-visible:not-has-data-[state=checked]:bg-elevated/50",
@@ -3903,7 +4114,7 @@ export const componentMeta: ComponentMetaMap = {
             ],
           },
         },
-        indicator: {
+        side: {
           start: {
             root: "flex-row",
             wrapper: "ms-2",
@@ -3912,7 +4123,9 @@ export const componentMeta: ComponentMetaMap = {
             root: "flex-row-reverse",
             wrapper: "me-2",
           },
-          hidden: {
+        },
+        hasIndicator: {
+          false: {
             base: "sr-only",
             wrapper: "flex flex-col items-center gap-1 text-center cursor-pointer",
           },
@@ -3949,19 +4162,6 @@ export const componentMeta: ComponentMetaMap = {
             wrapper: "text-base",
           },
         },
-        required: {
-          true: {
-            label: "after:content-['*'] after:ms-0.5 after:text-error",
-          },
-        },
-        disabled: {
-          true: {
-            root: "opacity-75 cursor-not-allowed",
-            base: "cursor-not-allowed",
-            label: "cursor-not-allowed",
-            description: "cursor-not-allowed",
-          },
-        },
         highlight: {
           true: {
             base: "ring-2 ring-inset ring-[var(--rl-ring)] outline-2 outline-solid outline-[var(--rl-ring)] outline-offset-2",
@@ -3980,7 +4180,7 @@ export const componentMeta: ComponentMetaMap = {
       },
       compoundVariants: [
         {
-          indicator: "hidden",
+          hasIndicator: false,
           class: {
             container: "h-auto",
           },
@@ -3994,35 +4194,35 @@ export const componentMeta: ComponentMetaMap = {
         },
         {
           size: "xs",
-          indicator: "hidden",
+          hasIndicator: false,
           class: {
             icon: "size-3",
           },
         },
         {
           size: "sm",
-          indicator: "hidden",
+          hasIndicator: false,
           class: {
             icon: "size-3.5",
           },
         },
         {
           size: "md",
-          indicator: "hidden",
+          hasIndicator: false,
           class: {
             icon: "size-4",
           },
         },
         {
           size: "lg",
-          indicator: "hidden",
+          hasIndicator: false,
           class: {
             icon: "size-4.5",
           },
         },
         {
           size: "xl",
-          indicator: "hidden",
+          hasIndicator: false,
           class: {
             icon: "size-5",
           },
@@ -4064,13 +4264,6 @@ export const componentMeta: ComponentMetaMap = {
         },
         {
           layout: "card",
-          disabled: true,
-          class: {
-            root: "cursor-not-allowed",
-          },
-        },
-        {
-          layout: "card",
           class: {
             root: "outline-[var(--rl-ring)]/25 has-focus-visible:outline-3 not-has-disabled:has-focus-visible:border-[var(--rl-border)] has-focus-visible:z-[1]",
           },
@@ -4091,27 +4284,27 @@ export const componentMeta: ComponentMetaMap = {
         },
         {
           layout: "list",
-          indicator: ["start", "end"],
+          hasIndicator: true,
           class: {
             base: "outline-[var(--rl-ring)]/25 focus-visible:outline-solid focus-visible:outline-3 focus-visible:ring-[var(--rl-ring)]",
           },
         },
         {
           layout: "list",
-          indicator: "hidden",
+          hasIndicator: false,
           class: {
             root: "outline-[var(--rl-ring)]/25 has-focus-visible:outline-3 not-has-disabled:has-focus-visible:border-[var(--rl-border)] has-focus-visible:z-[1]",
           },
         },
         {
-          indicator: "hidden",
+          hasIndicator: false,
           checked: true,
           class: {
             icon: "text-[var(--rl-text)]",
           },
         },
         {
-          indicator: "hidden",
+          hasIndicator: false,
           highlight: true,
           class: {
             root: "not-has-disabled:not-has-aria-disabled:border-[var(--rl-border)] not-has-disabled:not-has-aria-disabled:has-data-[state=checked]:border-[var(--rl-border)]",
@@ -4136,7 +4329,7 @@ export const componentMeta: ComponentMetaMap = {
         },
         {
           color: "neutral",
-          indicator: "hidden",
+          hasIndicator: false,
           checked: true,
           class: {
             icon: "text-highlighted",
@@ -4144,7 +4337,7 @@ export const componentMeta: ComponentMetaMap = {
         },
         {
           color: "neutral",
-          indicator: "hidden",
+          hasIndicator: false,
           highlight: true,
           class: {
             root: "not-has-disabled:not-has-aria-disabled:border-inverted not-has-disabled:not-has-aria-disabled:has-data-[state=checked]:border-inverted",
@@ -4171,7 +4364,8 @@ export const componentMeta: ComponentMetaMap = {
         size: "md",
         color: "primary",
         layout: "list",
-        indicator: "start",
+        side: "start",
+        hasIndicator: true,
         checked: false,
       },
     },
@@ -4189,7 +4383,6 @@ export const componentMeta: ComponentMetaMap = {
         root: "relative",
         fieldset: "flex gap-x-2",
         legend: "mb-1 block font-medium text-default",
-        item: "",
       },
       variants: {
         orientation: {
@@ -4314,13 +4507,6 @@ export const componentMeta: ComponentMetaMap = {
             item: "has-data-[state=checked]:bg-elevated has-data-[state=checked]:border-inverted/50 has-data-[state=checked]:z-[2]",
           },
         },
-        {
-          layout: "table",
-          disabled: true,
-          class: {
-            item: "cursor-not-allowed",
-          },
-        },
       ],
       defaultVariants: {
         highlight: false,
@@ -4353,17 +4539,18 @@ export const componentMeta: ComponentMetaMap = {
     ],
     slots: [
       {
-        name: "text",
+        name: "label",
         bindings: {},
         description: "Replaces the `text` content with custom JSX.",
       },
     ],
     emits: [],
     theme: {
-      slots: ["root", "base"],
+      slots: ["root", "base", "label"],
       base: {
         root: "relative inline-flex items-center justify-center shrink-0",
-        base: "rounded-full ring-2 ring-bg flex items-center justify-center text-inverted font-medium whitespace-nowrap bg-[var(--rl-bg,var(--rl-primary))] text-[8px]",
+        base: "rounded-full ring-2 ring-default flex items-center justify-center text-inverted font-medium bg-[var(--rl-bg,var(--rl-primary))] text-[8px]",
+        label: "whitespace-nowrap",
       },
       variants: {
         size: {
@@ -4397,20 +4584,9 @@ export const componentMeta: ComponentMetaMap = {
             base: "bottom-0 left-0",
           },
         },
-        inset: {
-          false: {
-            base: "",
-          },
-          true: {
-            base: "",
-          },
-        },
         standalone: {
           false: {
             base: "absolute",
-          },
-          true: {
-            base: "",
           },
         },
       },
@@ -4515,12 +4691,11 @@ export const componentMeta: ComponentMetaMap = {
     ],
     emits: [],
     theme: {
-      slots: ["root", "trigger", "content"],
+      slots: ["root", "trigger", "body"],
       base: {
         root: "w-full",
         trigger: "w-full",
-        content:
-          "data-[state=open]:animate-[collapsible-down_200ms_var(--ease-out)] data-[state=closed]:animate-[collapsible-up_200ms_var(--ease-out)] data-[state=closed]:overflow-hidden",
+        body: "data-[state=open]:animate-[collapsible-down_200ms_var(--ease-out)] data-[state=closed]:animate-[collapsible-up_200ms_var(--ease-out)] data-[state=closed]:overflow-hidden",
       },
       variants: {
         disabled: {
@@ -4542,7 +4717,7 @@ export const componentMeta: ComponentMetaMap = {
     props: [
       {
         name: "colorSpace",
-        type: '"hsl" | "rgb" | "hsb"',
+        type: "RLColorAreaColorSpace",
         required: false,
         description: "Color space both axes are expressed in.",
         default: '"hsl"',
@@ -4559,11 +4734,11 @@ export const componentMeta: ComponentMetaMap = {
         type: "string",
         required: false,
         description: "Initial hex color when uncontrolled.",
-        default: '"#ff0000"',
+        default: "DEFAULT_COLOR_AREA_HEX",
       },
       {
         name: "disabled",
-        type: "boolean",
+        type: "boolean | undefined",
         required: false,
         description: "Disables pointer and keyboard interaction.",
         default: "false",
@@ -4578,7 +4753,7 @@ export const componentMeta: ComponentMetaMap = {
       },
       {
         name: "xChannel",
-        type: '"hue" | "saturation" | "red" | "green" | "blue" | "alpha" | "lightness" | "brightness"',
+        type: "RLColorAreaChannel",
         required: false,
         description: "Channel mapped to the horizontal axis.",
         default: '"saturation"',
@@ -4593,7 +4768,7 @@ export const componentMeta: ComponentMetaMap = {
       },
       {
         name: "yChannel",
-        type: '"hue" | "saturation" | "red" | "green" | "blue" | "alpha" | "lightness" | "brightness"',
+        type: "RLColorAreaChannel",
         required: false,
         description: "Channel mapped to the vertical axis.",
         default: '"lightness"',
@@ -4604,6 +4779,27 @@ export const componentMeta: ComponentMetaMap = {
         required: false,
         description:
           "Form name of the hidden input holding the y channel value. No input is rendered when omitted.",
+        default: "undefined",
+      },
+      {
+        name: "aria-label",
+        type: "string | undefined",
+        required: false,
+        description: "Accessible name of the thumb. Overrides the localized default.",
+        default: "undefined",
+      },
+      {
+        name: "aria-labelledby",
+        type: "string | undefined",
+        required: false,
+        description: "Element id that labels the thumb.",
+        default: "undefined",
+      },
+      {
+        name: "aria-describedby",
+        type: "string | undefined",
+        required: false,
+        description: "Element id that describes the thumb.",
         default: "undefined",
       },
       {
@@ -4629,7 +4825,7 @@ export const componentMeta: ComponentMetaMap = {
         root: "relative block touch-none select-none rounded-lg w-full aspect-square outline-none",
         area: "relative w-full h-full rounded-lg cursor-crosshair bg-muted outline-none [background:var(--rl-area-bg)] [background-repeat:no-repeat] [background-size:100%_100%]",
         thumb:
-          "absolute block size-4 rounded-full border-2 border-white shadow-md -translate-x-1/2 -translate-y-1/2 left-[var(--rl-thumb-x,0%)] top-[var(--rl-thumb-y,0%)] [background-color:var(--rl-thumb-bg)] cursor-grab active:cursor-grabbing focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--rl-ring)]/50",
+          "absolute block size-4 rounded-full border-2 border-on-scrim shadow-md -translate-x-1/2 -translate-y-1/2 left-[var(--rl-thumb-x,0%)] top-[var(--rl-thumb-y,0%)] [background-color:var(--rl-thumb-bg)] cursor-grab active:cursor-grabbing focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--rl-ring)]/50",
       },
       variants: {
         disabled: {
@@ -4652,7 +4848,7 @@ export const componentMeta: ComponentMetaMap = {
     props: [
       {
         name: "channel",
-        type: '"hue" | "saturation" | "red" | "green" | "blue" | "alpha" | "lightness" | "brightness"',
+        type: "RLColorFieldChannel",
         required: false,
         description:
           "Channel edited by the field. Without a channel the field edits the full hex value.",
@@ -4660,7 +4856,7 @@ export const componentMeta: ComponentMetaMap = {
       },
       {
         name: "colorSpace",
-        type: '"hsl" | "rgb" | "hsb"',
+        type: "RLColorFieldColorSpace",
         required: false,
         description: "Color space used to read and write `channel`.",
         default: '"hsl"',
@@ -4670,13 +4866,34 @@ export const componentMeta: ComponentMetaMap = {
         type: "string",
         required: false,
         description: "Uncontrolled initial hex value.",
-        default: '"#000000"',
+        default: "DEFAULT_COLOR_HEX",
       },
       {
         name: "value",
         type: "string",
         required: false,
         description: "Controlled hex value. When set, the field does not keep its own state.",
+        default: "undefined",
+      },
+      {
+        name: "aria-label",
+        type: "string | undefined",
+        required: false,
+        description: "Accessible name of the text input. Use when the field has no visible label.",
+        default: "undefined",
+      },
+      {
+        name: "aria-labelledby",
+        type: "string | undefined",
+        required: false,
+        description: "Element id that labels the text input.",
+        default: "undefined",
+      },
+      {
+        name: "aria-describedby",
+        type: "string | undefined",
+        required: false,
+        description: "Element id that describes the text input.",
         default: "undefined",
       },
       {
@@ -4688,7 +4905,7 @@ export const componentMeta: ComponentMetaMap = {
       },
       {
         name: "disabled",
-        type: "boolean",
+        type: "boolean | undefined",
         required: false,
         description: "Disabled state.",
         default: "false",
@@ -4745,7 +4962,7 @@ export const componentMeta: ComponentMetaMap = {
         swatch:
           "w-5 h-5 rounded border border-default mr-2 shrink-0 shadow-sm [background-color:var(--rl-swatch)]",
         input:
-          "w-full bg-transparent border-0 p-0 text-sm focus:outline-none focus:ring-0 text-highlighted placeholder-muted-foreground",
+          "w-full bg-transparent border-0 p-0 text-sm focus:outline-none focus:ring-0 text-highlighted placeholder:text-muted",
       },
       variants: {},
       compoundVariants: [],
@@ -4758,13 +4975,53 @@ export const componentMeta: ComponentMetaMap = {
     name: "ColorPicker",
     solidComponent: "RLColorPicker.tsx",
     frameworks: ["solid"],
-    props: [],
+    props: [
+      {
+        name: "value",
+        type: "string | undefined",
+        required: false,
+        description:
+          "Controlled hex color. Leave undefined to let the picker manage its own color.",
+        default: "undefined",
+      },
+      {
+        name: "defaultValue",
+        type: "string | undefined",
+        required: false,
+        description: "Initial hex color when uncontrolled.",
+        default: '"#ff0000"',
+      },
+      {
+        name: "onValueChange",
+        type: "((value: string) => void) | undefined",
+        required: false,
+        description: "Called with the new hex color on every change.",
+        default: "undefined",
+      },
+      {
+        name: "disabled",
+        type: "boolean | undefined",
+        required: false,
+        description: "Disables every control.",
+        default: "false",
+      },
+      {
+        name: "aria-label",
+        type: "string | undefined",
+        required: false,
+        description: "Accessible name for the picker group.",
+        default: '"Color picker"',
+      },
+    ],
     slots: [],
     emits: [],
     theme: {
-      slots: ["root"],
+      slots: ["root", "area", "hue", "field"],
       base: {
-        root: "",
+        root: "flex w-full flex-col gap-md",
+        area: "w-full",
+        hue: "w-full",
+        field: "w-full",
       },
       variants: {},
       compoundVariants: [],
@@ -4778,13 +5035,13 @@ export const componentMeta: ComponentMetaMap = {
     props: [
       {
         name: "channel",
-        type: '"hue" | "saturation" | "red" | "green" | "blue" | "alpha" | "lightness" | "brightness"',
+        type: "RLColorSliderChannel",
         required: true,
         description: "Channel the slider controls. Required.",
       },
       {
         name: "colorSpace",
-        type: '"hsl" | "rgb" | "hsb"',
+        type: "RLColorSliderColorSpace",
         required: false,
         description: "Color space the channel is expressed in.",
         default: '"hsl"',
@@ -4801,11 +5058,11 @@ export const componentMeta: ComponentMetaMap = {
         type: "string",
         required: false,
         description: "Initial hex color when uncontrolled.",
-        default: '"#000000"',
+        default: "DEFAULT_COLOR_HEX",
       },
       {
         name: "disabled",
-        type: "boolean",
+        type: "boolean | undefined",
         required: false,
         description: "Disables pointer and keyboard interaction.",
         default: "false",
@@ -4840,6 +5097,27 @@ export const componentMeta: ComponentMetaMap = {
         default: "1",
       },
       {
+        name: "aria-label",
+        type: "string | undefined",
+        required: false,
+        description: "Accessible name of the slider thumb. Overrides the localized default.",
+        default: "undefined",
+      },
+      {
+        name: "aria-labelledby",
+        type: "string | undefined",
+        required: false,
+        description: "Element id that labels the slider thumb.",
+        default: "undefined",
+      },
+      {
+        name: "aria-describedby",
+        type: "string | undefined",
+        required: false,
+        description: "Element id that describes the slider thumb.",
+        default: "undefined",
+      },
+      {
         name: "onValueChange",
         type: "(val: string) => void",
         required: false,
@@ -4863,7 +5141,7 @@ export const componentMeta: ComponentMetaMap = {
         track:
           "relative h-3 w-full grow rounded-full border border-default bg-muted cursor-pointer outline-none [background:var(--rl-slider-track)]",
         thumb:
-          "absolute block size-5 rounded-full border-2 border-white shadow-md -translate-x-1/2 -translate-y-1/2 left-[var(--rl-thumb-x,50%)] top-[var(--rl-thumb-y,50%)] [background-color:var(--rl-thumb-bg)] cursor-grab active:cursor-grabbing focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--rl-ring)]/50",
+          "absolute block size-5 rounded-full border-2 border-on-scrim shadow-md -translate-x-1/2 -translate-y-1/2 left-[var(--rl-thumb-x,50%)] top-[var(--rl-thumb-y,50%)] [background-color:var(--rl-thumb-bg)] cursor-grab active:cursor-grabbing focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--rl-ring)]/50",
       },
       variants: {
         disabled: {
@@ -4888,9 +5166,7 @@ export const componentMeta: ComponentMetaMap = {
     emits: [],
     theme: {
       slots: ["root"],
-      base: {
-        root: "",
-      },
+      base: {},
       variants: {},
       compoundVariants: [],
       defaultVariants: {},
@@ -4947,26 +5223,28 @@ export const componentMeta: ComponentMetaMap = {
         name: "beforeSrc",
         type: "string",
         required: false,
-        description: "Shorthand URL for the leading image.",
+        description:
+          "Shorthand URL for the before image, used when `beforeLayerSlot` is not provided.",
       },
       {
         name: "afterSrc",
         type: "string",
         required: false,
-        description: "Shorthand URL for the trailing image.",
+        description:
+          "Shorthand URL for the after image, used when `afterLayerSlot` is not provided.",
       },
       {
         name: "beforeAlt",
         type: "string",
         required: false,
-        description: "Alt text for the leading image when `beforeSrc` is used.",
+        description: "Alt text for the before image when `beforeSrc` is used.",
         default: '"Before" (localized)',
       },
       {
         name: "afterAlt",
         type: "string",
         required: false,
-        description: "Alt text for the trailing image when `afterSrc` is used.",
+        description: "Alt text for the after image when `afterSrc` is used.",
         default: '"After" (localized)',
       },
       {
@@ -4977,16 +5255,18 @@ export const componentMeta: ComponentMetaMap = {
           "Whether to display before/after labels. Defaults to true when either label slot is provided.",
       },
       {
-        name: "beforeLabelPlacement",
-        type: "CompareLabelPlacement",
+        name: "beforeLabelPosition",
+        type: "CompareLabelPosition",
         required: false,
-        description: "Placement for the before side label.",
+        description: "Corner position of the before label.",
+        default: '"top-left"',
       },
       {
-        name: "afterLabelPlacement",
-        type: "CompareLabelPlacement",
+        name: "afterLabelPosition",
+        type: "CompareLabelPosition",
         required: false,
-        description: "Placement for the after side label.",
+        description: "Corner position of the after label.",
+        default: '"top-right" when horizontal, "bottom-left" when vertical',
       },
       {
         name: "handleIcon",
@@ -4995,14 +5275,14 @@ export const componentMeta: ComponentMetaMap = {
         description: "Icon name for the center handle.",
       },
       {
-        name: "showHandle",
+        name: "hasHandle",
         type: "boolean",
         required: false,
         description: "Whether to display the handle thumb.",
         default: "true",
       },
       {
-        name: "showDivider",
+        name: "hasDivider",
         type: "boolean",
         required: false,
         description: "Whether to display the divider line.",
@@ -5031,6 +5311,26 @@ export const componentMeta: ComponentMetaMap = {
         default: "3000",
       },
       {
+        name: "disabled",
+        type: "boolean",
+        required: false,
+        description:
+          "Whether the comparison is locked. Disabled comparisons ignore pointer and keyboard input.",
+        default: "false",
+      },
+      {
+        name: "aria-label",
+        type: "string",
+        required: false,
+        description: "Accessible name for the slider handle.",
+      },
+      {
+        name: "aria-labelledby",
+        type: "string",
+        required: false,
+        description: "Id of the element that labels the slider handle.",
+      },
+      {
         name: "onValueChange",
         type: "(value: number) => void",
         required: false,
@@ -5039,26 +5339,26 @@ export const componentMeta: ComponentMetaMap = {
     ],
     slots: [
       {
-        name: "leading",
+        name: "beforeLayer",
         bindings: {},
         description:
-          "Content rendered in the leading (left/top) section. Can be an element or a function receiving the current position percentage.",
+          "Content rendered in the before layer (the clipped top layer). Can be an element or a function receiving the current position percentage.",
       },
       {
-        name: "trailing",
+        name: "afterLayer",
         bindings: {},
         description:
-          "Content rendered in the trailing (right/bottom) section. Can be an element or a function receiving the current position percentage.",
+          "Content rendered in the after layer (the base layer). Can be an element or a function receiving the current position percentage.",
       },
       {
         name: "beforeLabel",
         bindings: {},
-        description: "Label content for the leading side.",
+        description: "Label content for the before side.",
       },
       {
         name: "afterLabel",
         bindings: {},
-        description: "Label content for the trailing side.",
+        description: "Label content for the after side.",
       },
       {
         name: "handle",
@@ -5081,7 +5381,7 @@ export const componentMeta: ComponentMetaMap = {
         "handleIcon",
       ],
       base: {
-        root: "relative select-none overflow-hidden touch-none group isolate",
+        root: "relative select-none overflow-hidden touch-none group isolate data-[disabled]:opacity-60 data-[disabled]:cursor-not-allowed",
         container: "relative w-full h-full overflow-hidden",
         after: "w-full h-full block select-none",
         before:
@@ -5093,7 +5393,7 @@ export const componentMeta: ComponentMetaMap = {
           "absolute z-2 pointer-events-none transition-opacity font-medium tracking-wide inline-flex items-center justify-center select-none",
         divider: "absolute z-1 pointer-events-none transition-colors",
         handle:
-          "absolute z-3 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center rounded-full border shadow-md transition-shadow cursor-grab active:cursor-grabbing focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 select-none touch-none",
+          "absolute z-3 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center rounded-full border shadow-md transition-shadow cursor-grab active:cursor-grabbing focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 select-none touch-none group-data-[disabled]:cursor-not-allowed group-data-[disabled]:shadow-none",
         handleIcon:
           "shrink-0 transition-transform text-current pointer-events-none select-none inline-flex items-center justify-center",
       },
@@ -5151,25 +5451,25 @@ export const componentMeta: ComponentMetaMap = {
           solid: {
             handle:
               "bg-default text-highlighted border-default shadow-lg hover:border-[var(--rl-border)] focus-visible:ring-[var(--rl-ring)]",
-            divider: "bg-white/90 dark:bg-white/80 shadow-sm",
+            divider: "bg-on-scrim/90 shadow-sm",
             beforeLabel:
-              "bg-background/80 backdrop-blur-sm text-highlighted border border-default/50 shadow-sm",
+              "bg-default/80 backdrop-blur-sm text-highlighted border border-default/50 shadow-sm",
             afterLabel:
-              "bg-background/80 backdrop-blur-sm text-highlighted border border-default/50 shadow-sm",
+              "bg-default/80 backdrop-blur-sm text-highlighted border border-default/50 shadow-sm",
           },
           outline: {
             handle:
-              "bg-background text-[var(--rl-text)] border-2 border-[var(--rl-border)] shadow focus-visible:ring-[var(--rl-ring)]",
+              "bg-default text-[var(--rl-text)] border-2 border-[var(--rl-border)] shadow focus-visible:ring-[var(--rl-ring)]",
             divider: "bg-[var(--rl-bg)] shadow-sm",
             beforeLabel:
-              "bg-background/90 backdrop-blur-sm text-[var(--rl-text)] border border-[var(--rl-border)]/50 shadow-sm",
+              "bg-default/90 backdrop-blur-sm text-[var(--rl-text)] border border-[var(--rl-border)]/50 shadow-sm",
             afterLabel:
-              "bg-background/90 backdrop-blur-sm text-[var(--rl-text)] border border-[var(--rl-border)]/50 shadow-sm",
+              "bg-default/90 backdrop-blur-sm text-[var(--rl-text)] border border-[var(--rl-border)]/50 shadow-sm",
           },
           subtle: {
             handle:
               "bg-elevated text-muted hover:text-highlighted border border-default/60 shadow focus-visible:ring-[var(--rl-ring)]",
-            divider: "bg-border/80 shadow-xs",
+            divider: "bg-accented/80 shadow-xs",
             beforeLabel:
               "bg-elevated/80 backdrop-blur-sm text-muted border border-default/40 shadow-xs",
             afterLabel:
@@ -5177,16 +5477,64 @@ export const componentMeta: ComponentMetaMap = {
           },
           ghost: {
             handle:
-              "bg-white/20 dark:bg-black/30 backdrop-blur-md text-white border border-white/30 shadow-lg hover:bg-white/30 focus-visible:ring-white",
-            divider: "bg-white/70 backdrop-blur-xs",
-            beforeLabel: "bg-black/40 backdrop-blur-md text-white border border-white/20 shadow-sm",
-            afterLabel: "bg-black/40 backdrop-blur-md text-white border border-white/20 shadow-sm",
+              "bg-on-scrim/20 backdrop-blur-md text-on-scrim border border-on-scrim/30 shadow-lg hover:bg-on-scrim/30 focus-visible:ring-on-scrim",
+            divider: "bg-on-scrim/70 backdrop-blur-xs",
+            beforeLabel:
+              "bg-scrim/40 backdrop-blur-md text-on-scrim border border-on-scrim/20 shadow-sm",
+            afterLabel:
+              "bg-scrim/40 backdrop-blur-md text-on-scrim border border-on-scrim/20 shadow-sm",
           },
         },
-        disabled: {
-          true: {
-            root: "opacity-60 cursor-not-allowed",
-            handle: "cursor-not-allowed shadow-none hover:border-default",
+        beforeLabelPosition: {
+          "top-left": {
+            beforeLabel: "top-3 left-3",
+          },
+          "top-right": {
+            beforeLabel: "top-3 right-3",
+          },
+          "bottom-left": {
+            beforeLabel: "bottom-3 left-3",
+          },
+          "bottom-right": {
+            beforeLabel: "bottom-3 right-3",
+          },
+          "top-start": {
+            beforeLabel: "top-3 start-3",
+          },
+          "top-end": {
+            beforeLabel: "top-3 end-3",
+          },
+          "bottom-start": {
+            beforeLabel: "bottom-3 start-3",
+          },
+          "bottom-end": {
+            beforeLabel: "bottom-3 end-3",
+          },
+        },
+        afterLabelPosition: {
+          "top-left": {
+            afterLabel: "top-3 left-3",
+          },
+          "top-right": {
+            afterLabel: "top-3 right-3",
+          },
+          "bottom-left": {
+            afterLabel: "bottom-3 left-3",
+          },
+          "bottom-right": {
+            afterLabel: "bottom-3 right-3",
+          },
+          "top-start": {
+            afterLabel: "top-3 start-3",
+          },
+          "top-end": {
+            afterLabel: "top-3 end-3",
+          },
+          "bottom-start": {
+            afterLabel: "bottom-3 start-3",
+          },
+          "bottom-end": {
+            afterLabel: "bottom-3 end-3",
           },
         },
       },
@@ -5195,7 +5543,7 @@ export const componentMeta: ComponentMetaMap = {
         orientation: "horizontal",
         size: "md",
         variant: "solid",
-        color: "primary",
+        beforeLabelPosition: "top-left",
       },
     },
   },
@@ -5347,7 +5695,8 @@ export const componentMeta: ComponentMetaMap = {
       {
         name: "trigger",
         bindings: {},
-        description: "Trigger element. Always rendered, so it is plain JSX.",
+        description:
+          "Trigger content. Replaces the default trigger button built from `triggerLabel`.",
       },
       {
         name: "title",
@@ -5367,27 +5716,10 @@ export const componentMeta: ComponentMetaMap = {
     ],
     emits: [],
     theme: {
-      slots: [
-        "root",
-        "trigger",
-        "content",
-        "header",
-        "title",
-        "description",
-        "footer",
-        "cancelButton",
-        "actionButton",
-      ],
+      slots: ["root", "actions", "cancelButton", "actionButton"],
       base: {
         root: "relative inline-block",
-        trigger: "",
-        content: "max-w-md",
-        header: "flex flex-col gap-1.5",
-        title: "text-lg font-semibold text-highlighted",
-        description: "text-sm text-muted leading-relaxed",
-        footer: "flex items-center justify-between w-full mt-4",
-        cancelButton: "",
-        actionButton: "",
+        actions: "flex items-center justify-between w-full",
       },
       variants: {},
       compoundVariants: [],
@@ -5549,6 +5881,24 @@ export const componentMeta: ComponentMetaMap = {
         description: "Long-press duration in milliseconds for touch/pen interactions.",
         default: "700",
       },
+      {
+        name: "aria-label",
+        type: "string | undefined",
+        required: false,
+        description: "Accessible name of the trigger element.",
+      },
+      {
+        name: "aria-labelledby",
+        type: "string | undefined",
+        required: false,
+        description: "Id of the element that labels the trigger element.",
+      },
+      {
+        name: "aria-describedby",
+        type: "string | undefined",
+        required: false,
+        description: "Id of the element that describes the trigger element.",
+      },
     ],
     slots: [
       {
@@ -5590,7 +5940,8 @@ export const componentMeta: ComponentMetaMap = {
         "trigger",
         "overlay",
         "positioner",
-        "content",
+        "body",
+        "submenu",
         "group",
         "groupLabel",
         "item",
@@ -5605,21 +5956,23 @@ export const componentMeta: ComponentMetaMap = {
         "itemIndicator",
         "itemSubIndicator",
         "separator",
+        "itemContainer",
+        "sections",
       ],
       base: {
         root: "contents",
         trigger:
-          "select-none outline-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+          "select-none outline-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[disabled]:cursor-not-allowed",
         overlay: "fixed inset-0 z-50 bg-transparent",
         positioner:
-          "fixed z-50 outline-none left-[var(--rl-menu-x,0px)] top-[var(--rl-menu-y,0px)]",
-        content:
-          "min-w-44 rounded-lg border border-default bg-elevated p-1 text-highlighted shadow-lg ring-1 ring-black/5 focus:outline-none flex flex-col gap-0.5 select-none",
+          "fixed z-50 pointer-events-auto outline-none left-[var(--rl-menu-x,0px)] top-[var(--rl-menu-y,0px)]",
+        body: "rounded-lg border border-default bg-elevated p-1 text-highlighted shadow-lg ring-1 ring-scrim/5 focus:outline-none flex flex-col gap-0.5 select-none",
+        submenu: "absolute left-full top-0 ml-1 z-50",
         group: "flex flex-col gap-0.5",
         groupLabel: "px-2 py-1 text-xs font-semibold tracking-wider text-muted select-none",
-        item: "group relative flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm text-left outline-none cursor-pointer select-none transition-colors hover:bg-accented hover:text-highlighted data-[highlighted]:bg-accented data-[highlighted]:text-highlighted data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[danger]:text-error-600 data-[danger]:hover:bg-error-500/10 data-[danger]:data-[highlighted]:bg-error-500/10",
+        item: "group relative flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm text-left outline-none cursor-pointer select-none transition-colors hover:bg-accented hover:text-highlighted data-[highlighted]:bg-accented data-[highlighted]:text-highlighted data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[disabled]:cursor-not-allowed data-[danger]:text-error data-[danger]:hover:bg-error/10 data-[danger]:focus-visible:bg-error/10 data-[danger]:data-[highlighted]:bg-error/10",
         itemLeading:
-          "inline-flex shrink-0 items-center justify-center text-muted group-hover:text-highlighted group-data-[highlighted]:text-highlighted group-data-[danger]:text-error-600",
+          "inline-flex shrink-0 items-center justify-center text-muted group-hover:text-highlighted group-data-[highlighted]:text-highlighted group-data-[danger]:text-error",
         itemLeadingIcon: "shrink-0 size-4",
         itemWrapper: "flex min-w-0 flex-1 flex-col text-left",
         itemLabel: "truncate font-normal leading-tight",
@@ -5628,23 +5981,16 @@ export const componentMeta: ComponentMetaMap = {
         itemKbds: "inline-flex items-center gap-0.5",
         itemKbd:
           "inline-flex items-center justify-center text-[10px] font-mono opacity-80 bg-muted px-1 py-0.5 rounded border border-default leading-none",
-        itemIndicator: "inline-flex shrink-0 items-center justify-center size-4 text-primary-500",
+        itemIndicator: "inline-flex shrink-0 items-center justify-center size-4 text-primary",
         itemSubIndicator: "inline-flex shrink-0 items-center justify-center size-4 text-muted",
         separator: "-mx-1 my-1 h-px border-t border-default",
+        itemContainer: "relative w-full",
+        sections: "flex flex-col w-full",
       },
       variants: {
         size: {
-          xs: {
-            content: "min-w-32 p-1",
-            groupLabel: "px-1.5 py-1 text-[10px]",
-            item: "px-1.5 py-1 text-xs gap-1",
-            itemLeadingIcon: "size-3",
-            itemDescription: "text-[10px]",
-            itemIndicator: "size-3",
-            itemSubIndicator: "size-3",
-          },
           sm: {
-            content: "min-w-36 p-1",
+            body: "min-w-36 p-1",
             groupLabel: "px-1.5 py-1 text-[11px]",
             item: "px-1.5 py-1 text-xs gap-1.5",
             itemLeadingIcon: "size-3.5",
@@ -5653,7 +5999,7 @@ export const componentMeta: ComponentMetaMap = {
             itemSubIndicator: "size-3.5",
           },
           md: {
-            content: "min-w-44 p-1",
+            body: "min-w-44 p-1",
             groupLabel: "px-2 py-1 text-xs",
             item: "px-2 py-1.5 text-sm gap-2",
             itemLeadingIcon: "size-4",
@@ -5662,7 +6008,7 @@ export const componentMeta: ComponentMetaMap = {
             itemSubIndicator: "size-4",
           },
           lg: {
-            content: "min-w-52 p-1.5",
+            body: "min-w-52 p-1.5",
             groupLabel: "px-2.5 py-1.5 text-xs",
             item: "px-2.5 py-2 text-sm gap-2.5",
             itemLeadingIcon: "size-4",
@@ -5670,27 +6016,11 @@ export const componentMeta: ComponentMetaMap = {
             itemIndicator: "size-4",
             itemSubIndicator: "size-4",
           },
-          xl: {
-            content: "min-w-60 p-2",
-            groupLabel: "px-3 py-2 text-sm",
-            item: "px-3 py-2.5 text-base gap-3",
-            itemLeadingIcon: "size-5",
-            itemDescription: "text-sm",
-            itemIndicator: "size-5",
-            itemSubIndicator: "size-5",
-          },
-        },
-        disabled: {
-          true: {
-            trigger: "pointer-events-none opacity-50 cursor-not-allowed",
-            item: "pointer-events-none opacity-50 cursor-not-allowed",
-          },
         },
       },
       compoundVariants: [],
       defaultVariants: {
         size: "md",
-        disabled: false,
       },
     },
   },
@@ -5713,18 +6043,7 @@ export const componentMeta: ComponentMetaMap = {
           "Click handler. Runs after the markdown is copied, so a consumer handler cannot replace the copy.",
       },
     ],
-    slots: [
-      {
-        name: "leading",
-        bindings: {},
-        description: "Content rendered in the leading position of the button.",
-      },
-      {
-        name: "trailing",
-        bindings: {},
-        description: "Content rendered in the trailing position of the button.",
-      },
-    ],
+    slots: [],
     emits: [],
     theme: {
       slots: ["root"],
@@ -5771,7 +6090,14 @@ export const componentMeta: ComponentMetaMap = {
         description: "Title text. Ignored when `titleSlot` is provided.",
       },
       {
-        name: "toggle",
+        name: "side",
+        type: '"left" | "right"',
+        required: false,
+        description: "Edge the mobile sidebar toggle sits on.",
+        default: '"left"',
+      },
+      {
+        name: "hasToggle",
         type: "boolean",
         required: false,
         description: "Shows the mobile sidebar toggle button.",
@@ -5804,7 +6130,7 @@ export const componentMeta: ComponentMetaMap = {
         name: "trailing",
         bindings: {},
         description:
-          'Content rendered at the trailing edge, before the toggle when `toggleSide` is `"right"`.',
+          'Content rendered at the trailing edge, before the toggle when `side` is `"right"`.',
       },
     ],
     emits: [],
@@ -5817,22 +6143,11 @@ export const componentMeta: ComponentMetaMap = {
         title: "flex items-center gap-2 font-semibold text-highlighted truncate text-lg",
         center: "hidden lg:flex",
         trailing: "flex items-center shrink-0 gap-1.5",
-        toggle: "",
+        toggle: "lg:hidden",
       },
-      variants: {
-        toggleSide: {
-          left: {
-            toggle: "",
-          },
-          right: {
-            toggle: "",
-          },
-        },
-      },
+      variants: {},
       compoundVariants: [],
-      defaultVariants: {
-        toggleSide: "left",
-      },
+      defaultVariants: {},
     },
   },
   "dashboard-panel": {
@@ -5865,17 +6180,19 @@ export const componentMeta: ComponentMetaMap = {
         description: "Content rendered below the body. Omitted when not provided.",
       },
       {
-        name: "resizeHandle",
+        name: "handle",
         bindings: {},
         description: "Replaces the default drag handle. Only rendered when `resizable` is set.",
       },
     ],
     emits: [],
     theme: {
-      slots: ["root", "body", "handle"],
+      slots: ["root", "header", "body", "footer", "handle"],
       base: {
         root: "relative flex flex-col min-w-0 h-full min-h-0 lg:not-last:border-e lg:not-last:border-default shrink-0 flex-1",
+        header: "shrink-0",
         body: "flex flex-col gap-4 sm:gap-6 flex-1 overflow-y-auto p-4 sm:p-6",
+        footer: "shrink-0",
         handle:
           "hidden lg:block touch-none select-none cursor-ew-resize relative before:absolute before:inset-y-0 before:-left-1.5 before:-right-1.5 before:z-1",
       },
@@ -5930,18 +6247,35 @@ export const componentMeta: ComponentMetaMap = {
     slots: [],
     emits: [],
     theme: {
-      slots: ["root", "modal", "input"],
+      slots: [
+        "root",
+        "modal",
+        "backdrop",
+        "dialog",
+        "header",
+        "icon",
+        "input",
+        "close",
+        "closeIcon",
+        "body",
+      ],
       base: {
-        root: "",
-        modal: "sm:max-w-3xl h-full sm:h-[28rem]",
+        modal: "fixed inset-0 z-50 flex items-start justify-center sm:pt-16",
+        backdrop: "fixed inset-0 bg-default/80 backdrop-blur-sm",
+        dialog:
+          "relative w-full h-full sm:h-[28rem] sm:max-w-3xl bg-default border border-default sm:rounded-xl shadow-2xl overflow-hidden",
+        header: "flex items-center gap-2 border-b border-default px-4",
+        icon: "size-5 shrink-0 text-muted",
         input:
           "flex-1 h-12 bg-transparent border-0 outline-none text-default placeholder:text-muted",
+        close:
+          "shrink-0 size-8 flex items-center justify-center rounded-md hover:bg-muted text-muted",
+        closeIcon: "size-4",
+        body: "p-4 text-sm text-muted text-center",
       },
       variants: {},
       compoundVariants: [],
-      defaultVariants: {
-        size: "md",
-      },
+      defaultVariants: {},
     },
   },
   "dashboard-search-button": {
@@ -5965,7 +6299,7 @@ export const componentMeta: ComponentMetaMap = {
       },
       {
         name: "kbds",
-        type: "Array<string | { value: string; variant?: string }>",
+        type: "Array<string | { value: string }>",
         required: false,
         description: 'Keyboard shortcut hints. A `"meta"` key renders as ⌘.',
         default: '[{ value: "meta" }, { value: "k" }]',
@@ -5980,11 +6314,14 @@ export const componentMeta: ComponentMetaMap = {
     ],
     emits: [],
     theme: {
-      slots: ["root", "label", "trailing"],
+      slots: ["root", "icon", "label", "trailing", "kbds", "kbd"],
       base: {
         root: "group flex items-center gap-2 w-full rounded-md border border-default px-3 py-2 text-sm text-muted hover:text-default hover:bg-muted transition-colors cursor-pointer",
+        icon: "size-5 shrink-0 text-muted",
         label: "flex-1 text-start truncate",
         trailing: "hidden lg:flex items-center gap-0.5 ms-auto",
+        kbds: "flex items-center gap-0.5",
+        kbd: "inline-flex items-center justify-center rounded border border-default bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted min-w-[20px] h-5",
       },
       variants: {
         collapsed: {
@@ -6005,6 +6342,13 @@ export const componentMeta: ComponentMetaMap = {
     solidComponent: "RLDashboardSidebar.tsx",
     frameworks: ["solid"],
     props: [
+      {
+        name: "side",
+        type: '"left" | "right" | undefined',
+        required: false,
+        description: "Edge of the layout the sidebar attaches to.",
+        default: '"left"',
+      },
       {
         name: "collapsible",
         type: "boolean",
@@ -6069,13 +6413,18 @@ export const componentMeta: ComponentMetaMap = {
     theme: {
       slots: ["root", "header", "body", "footer", "overlay"],
       base: {
-        root: "group relative hidden lg:flex flex-col h-full min-h-0 shrink-0 transition-[width] duration-300 w-64 min-w-64 max-w-64 data-[collapsed=true]:w-16 data-[collapsed=true]:min-w-16 data-[collapsed=true]:max-w-16 data-[collapsed=true]:overflow-hidden data-[collapsed=false]:w-64 data-[collapsed=false]:min-w-64 data-[collapsed=false]:max-w-64",
+        root: [
+          "group relative hidden lg:flex flex-col h-full min-h-0 shrink-0 transition-[width] duration-300 w-64 min-w-64 max-w-64",
+          "data-[collapsed]:w-16 data-[collapsed]:min-w-16 data-[collapsed]:max-w-16 data-[collapsed]:overflow-hidden",
+          "data-[mobile-open]:!flex data-[mobile-open]:fixed data-[mobile-open]:inset-y-0 data-[mobile-open]:left-0 data-[mobile-open]:z-50 data-[mobile-open]:w-72 data-[mobile-open]:max-w-[85vw] data-[mobile-open]:bg-default data-[mobile-open]:shadow-2xl data-[mobile-open]:border-e data-[mobile-open]:border-default",
+        ],
         header:
-          "h-16 min-h-16 shrink-0 flex items-center gap-3 px-6 py-4 border-b border-default group-data-[collapsed=true]:justify-center group-data-[collapsed=true]:items-center group-data-[collapsed=true]:gap-0 group-data-[collapsed=true]:px-0",
-        body: "flex flex-col gap-1 flex-1 overflow-y-auto px-3 py-3 group-data-[collapsed=true]:items-center group-data-[collapsed=true]:px-0 group-data-[collapsed=true]:overflow-hidden",
+          "h-16 min-h-16 shrink-0 flex items-center gap-3 px-6 py-4 border-b border-default group-data-[collapsed]:justify-center group-data-[collapsed]:items-center group-data-[collapsed]:gap-0 group-data-[collapsed]:px-0",
+        body: "flex flex-col gap-1 flex-1 overflow-y-auto px-3 py-3 group-data-[collapsed]:items-center group-data-[collapsed]:px-0 group-data-[collapsed]:overflow-hidden",
         footer:
-          "shrink-0 flex items-center gap-1.5 px-3 py-3 border-t border-default/40 group-data-[collapsed=true]:justify-center group-data-[collapsed=true]:items-center group-data-[collapsed=true]:px-0",
-        overlay: "lg:hidden",
+          "shrink-0 flex items-center gap-1.5 px-3 py-3 border-t border-default/40 group-data-[collapsed]:justify-center group-data-[collapsed]:items-center group-data-[collapsed]:px-0",
+        overlay:
+          "hidden fixed inset-0 z-40 bg-scrim/60 backdrop-blur-sm transition-opacity duration-300 lg:hidden data-[mobile-open]:block",
       },
       variants: {
         menu: {
@@ -6090,13 +6439,7 @@ export const componentMeta: ComponentMetaMap = {
             root: "border-e border-default",
           },
           right: {
-            root: "",
-          },
-        },
-        collapsed: {
-          true: {
-            root: "w-16 min-w-16 max-w-16 overflow-hidden",
-            body: "overflow-hidden",
+            root: "border-s border-default",
           },
         },
       },
@@ -6122,15 +6465,15 @@ export const componentMeta: ComponentMetaMap = {
     slots: [],
     emits: [],
     theme: {
-      slots: ["root"],
+      slots: ["root", "icon", "collapsedIcon"],
       base: {
         root: "hidden lg:inline-flex items-center justify-center rounded-md size-8 text-muted hover:text-default hover:bg-muted transition-colors",
+        icon: "size-5",
+        collapsedIcon: "size-5 hidden",
       },
       variants: {},
       compoundVariants: [],
-      defaultVariants: {
-        side: "left",
-      },
+      defaultVariants: {},
     },
   },
   "dashboard-sidebar-toggle": {
@@ -6149,15 +6492,14 @@ export const componentMeta: ComponentMetaMap = {
     slots: [],
     emits: [],
     theme: {
-      slots: ["root"],
+      slots: ["root", "icon"],
       base: {
         root: "lg:hidden inline-flex items-center justify-center rounded-md size-8 text-muted hover:text-default hover:bg-muted transition-colors",
+        icon: "size-5",
       },
       variants: {},
       compoundVariants: [],
-      defaultVariants: {
-        side: "left",
-      },
+      defaultVariants: {},
     },
   },
   "dashboard-toolbar": {
@@ -6223,9 +6565,7 @@ export const componentMeta: ComponentMetaMap = {
     emits: [],
     theme: {
       slots: ["root"],
-      base: {
-        root: "",
-      },
+      base: {},
       variants: {},
       compoundVariants: [],
       defaultVariants: {},
@@ -6240,9 +6580,7 @@ export const componentMeta: ComponentMetaMap = {
     emits: [],
     theme: {
       slots: ["root"],
-      base: {
-        root: "",
-      },
+      base: {},
       variants: {},
       compoundVariants: [],
       defaultVariants: {},
@@ -6267,10 +6605,10 @@ export const componentMeta: ComponentMetaMap = {
         default: "false",
       },
       {
-        name: "direction",
+        name: "side",
         type: '"bottom" | "top" | "left" | "right" | undefined',
         required: false,
-        description: "Edge the drawer anchors to.",
+        description: "Edge of the viewport the drawer attaches to.",
         default: '"bottom"',
       },
       {
@@ -6323,24 +6661,24 @@ export const componentMeta: ComponentMetaMap = {
       {
         name: "trigger",
         bindings: {},
-        description: "Trigger element. Always rendered, so it is plain JSX.",
+        description: "Trigger content. Rendered inside a clickable wrapper that opens the drawer.",
       },
       {
         name: "title",
         bindings: {},
         description:
-          "Title content. Takes precedence over the `title` string. Function-only: invoked inside the open dialog.",
+          "Title content. Takes precedence over the `title` string. Rendered only while open.",
       },
       {
         name: "description",
         bindings: {},
         description:
-          "Description content. Takes precedence over the `description` string. Function-only: invoked inside the open dialog.",
+          "Description content. Takes precedence over the `description` string. Rendered only while open.",
       },
       {
         name: "footer",
         bindings: {},
-        description: "Footer content. Function-only: invoked inside the open dialog.",
+        description: "Footer content. Rendered only while open.",
       },
     ],
     emits: [],
@@ -6348,21 +6686,19 @@ export const componentMeta: ComponentMetaMap = {
       slots: [
         "root",
         "trigger",
-        "backdrop",
-        "content",
+        "body",
         "handle",
         "header",
         "title",
         "description",
         "footer",
-        "closeButton",
+        "close",
       ],
       base: {
         root: "relative inline-block",
-        trigger: "",
-        backdrop: "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm transition-all duration-300",
-        content: [
+        body: [
           "fixed z-50 bg-default p-6 shadow-xl border-default transition-all duration-300 outline-none",
+          "backdrop:bg-scrim/60 backdrop:backdrop-blur-sm",
           "data-[state=open]:animate-in data-[state=closed]:animate-out",
         ],
         handle: "mx-auto h-1.5 w-[100px] rounded-full bg-muted mb-4",
@@ -6370,34 +6706,30 @@ export const componentMeta: ComponentMetaMap = {
         title: "text-lg font-semibold leading-none tracking-tight text-highlighted",
         description: "text-sm text-muted leading-relaxed",
         footer: "flex flex-col gap-2 mt-6",
-        closeButton: [
+        close: [
           "absolute right-4 top-4 rounded-sm opacity-70 transition-opacity hover:opacity-100",
-          "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none",
+          "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:pointer-events-none",
         ],
       },
       variants: {
-        direction: {
+        side: {
           top: {
-            content:
-              "inset-x-0 top-0 border-b rounded-b-xl data-[state=open]:slide-in-from-top data-[state=closed]:slide-out-to-top",
+            body: "inset-x-0 top-0 border-b rounded-b-xl data-[state=open]:slide-in-from-top data-[state=closed]:slide-out-to-top",
           },
           bottom: {
-            content:
-              "inset-x-0 bottom-0 border-t rounded-t-xl data-[state=open]:slide-in-from-bottom data-[state=closed]:slide-out-to-bottom",
+            body: "inset-x-0 bottom-0 border-t rounded-t-xl data-[state=open]:slide-in-from-bottom data-[state=closed]:slide-out-to-bottom",
           },
           left: {
-            content:
-              "inset-y-0 left-0 h-full w-3/4 max-w-sm border-r rounded-r-xl data-[state=open]:slide-in-from-left data-[state=closed]:slide-out-to-left",
+            body: "inset-y-0 left-0 h-full w-3/4 max-w-sm border-r rounded-r-xl data-[state=open]:slide-in-from-left data-[state=closed]:slide-out-to-left",
           },
           right: {
-            content:
-              "inset-y-0 right-0 h-full w-3/4 max-w-sm border-l rounded-l-xl data-[state=open]:slide-in-from-right data-[state=closed]:slide-out-to-right",
+            body: "inset-y-0 right-0 h-full w-3/4 max-w-sm border-l rounded-l-xl data-[state=open]:slide-in-from-right data-[state=closed]:slide-out-to-right",
           },
         },
       },
       compoundVariants: [],
       defaultVariants: {
-        direction: "bottom",
+        side: "bottom",
       },
     },
   },
@@ -6425,21 +6757,14 @@ export const componentMeta: ComponentMetaMap = {
         description: "Trigger button icon name.",
       },
       {
-        name: "color",
-        type: "ThemeColor | undefined",
-        required: false,
-        description: "Intent color of the trigger.",
-        default: '"neutral"',
-      },
-      {
-        name: "arrow",
+        name: "hasArrow",
         type: "boolean | undefined",
         required: false,
         description: "Display an arrow alongside the menu.",
         default: "false",
       },
       {
-        name: "content",
+        name: "body",
         type: "DropdownMenuContentOptions | undefined",
         required: false,
         description: "Content options like align and sideOffset.",
@@ -6465,6 +6790,24 @@ export const componentMeta: ComponentMetaMap = {
         default: "false",
       },
       {
+        name: "aria-label",
+        type: "string | undefined",
+        required: false,
+        description: "Accessible name of the trigger button.",
+      },
+      {
+        name: "aria-labelledby",
+        type: "string | undefined",
+        required: false,
+        description: "Id of the element that labels the trigger button.",
+      },
+      {
+        name: "aria-describedby",
+        type: "string | undefined",
+        required: false,
+        description: "Id of the element that describes the trigger button.",
+      },
+      {
         name: "onOpenChange",
         type: "((open: boolean) => void) | undefined",
         required: false,
@@ -6475,12 +6818,13 @@ export const componentMeta: ComponentMetaMap = {
       {
         name: "default",
         bindings: {},
-        description: "Trigger content. Takes precedence over `label` and `icon`.",
+        description:
+          "Trigger content. Used when `triggerSlot` is not set; takes precedence over `label` and `icon`.",
       },
       {
         name: "trigger",
         bindings: {},
-        description: "Trigger element. Always rendered, so it is plain JSX.",
+        description: "Trigger content. Takes precedence over `children`, `label`, and `icon`.",
       },
     ],
     emits: [],
@@ -6488,7 +6832,8 @@ export const componentMeta: ComponentMetaMap = {
       slots: [
         "root",
         "trigger",
-        "content",
+        "triggerIcon",
+        "body",
         "viewport",
         "group",
         "item",
@@ -6497,6 +6842,8 @@ export const componentMeta: ComponentMetaMap = {
         "itemLabel",
         "itemTrailing",
         "itemTrailingKbds",
+        "itemIndicator",
+        "itemIndicatorIcon",
         "shortcut",
         "separator",
         "label",
@@ -6505,18 +6852,21 @@ export const componentMeta: ComponentMetaMap = {
       base: {
         root: "relative inline-block text-left",
         trigger:
-          "inline-flex justify-center items-center w-full rounded-md border border-default bg-default font-medium shadow-sm hover:bg-muted focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed",
-        content:
-          "fixed z-[99999] mt-1 top-[var(--rl-dd-top,0px)] left-[var(--rl-dd-left,auto)] right-[var(--rl-dd-right,auto)] min-w-32 rounded-md border border-default bg-elevated p-1 text-highlighted shadow-md ring-1 ring-black/5 focus:outline-none flex flex-col gap-0.5",
+          "inline-flex justify-center items-center w-full rounded-md border border-default bg-default font-medium shadow-sm hover:bg-muted focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed data-[icon-only]:aspect-square data-[icon-only]:shrink-0 data-[icon-only]:!px-1.5 data-[icon-only]:!py-1.5",
+        triggerIcon: "shrink-0",
+        body: "fixed z-[99999] mt-1 top-[var(--rl-dd-top,0px)] left-[var(--rl-dd-left,auto)] right-[var(--rl-dd-right,auto)] min-w-32 rounded-md border border-default bg-elevated p-1 text-highlighted shadow-md ring-1 ring-scrim/5 focus:outline-none flex flex-col gap-0.5",
         viewport: "flex flex-col gap-0.5",
         group: "p-0.5 isolate flex flex-col gap-0.5",
-        item: "group relative flex w-full items-center gap-2 rounded-md hover:bg-accented hover:text-highlighted cursor-pointer disabled:pointer-events-none disabled:opacity-50 select-none transition-colors",
+        item: "group relative flex w-full items-center gap-2 rounded-md hover:bg-accented hover:text-highlighted cursor-pointer disabled:pointer-events-none disabled:opacity-50 select-none transition-colors data-[color]:text-[var(--rl-text)] data-[color]:hover:bg-[var(--rl-bg)]/10",
         itemLeadingIcon: "shrink-0 size-4 text-muted group-hover:text-highlighted",
         itemLeadingAvatar: "shrink-0 size-4 rounded-full object-cover",
         itemLabel: "truncate flex-1 text-left",
         itemTrailing: "ms-auto inline-flex gap-1.5 items-center text-xs text-muted",
         itemTrailingKbds:
           "hidden lg:inline-flex items-center gap-0.5 text-[10px] font-mono opacity-70 bg-muted px-1 rounded border border-default",
+        itemIndicator:
+          "shrink-0 size-4 flex items-center justify-center border border-default rounded bg-default",
+        itemIndicatorIcon: "text-primary",
         shortcut: "ml-auto text-xs tracking-widest text-muted",
         separator: "-mx-1 my-1 h-px border-t border-default",
         label: "px-2 py-1.5 text-xs font-semibold tracking-wider text-muted uppercase",
@@ -6549,7 +6899,6 @@ export const componentMeta: ComponentMetaMap = {
       },
       compoundVariants: [],
       defaultVariants: {
-        color: "primary",
         size: "md",
       },
     },
@@ -6563,9 +6912,7 @@ export const componentMeta: ComponentMetaMap = {
     emits: [],
     theme: {
       slots: ["root"],
-      base: {
-        root: "",
-      },
+      base: {},
       variants: {},
       compoundVariants: [],
       defaultVariants: {},
@@ -6595,7 +6942,7 @@ export const componentMeta: ComponentMetaMap = {
         type: "string",
         required: false,
         description: "Icon shown while `loading` is true.",
-        default: '"i-lucide-loader-circle"',
+        default: '"loader-circle"',
       },
       {
         name: "title",
@@ -6658,11 +7005,24 @@ export const componentMeta: ComponentMetaMap = {
     ],
     emits: [],
     theme: {
-      slots: ["root", "header", "avatar", "title", "description", "body", "actions", "footer"],
+      slots: [
+        "root",
+        "header",
+        "leading",
+        "avatar",
+        "icon",
+        "title",
+        "description",
+        "body",
+        "actions",
+        "footer",
+      ],
       base: {
         root: "relative flex flex-col items-center justify-center gap-4 rounded-lg p-4 sm:p-6 lg:p-8 min-w-0 text-center",
         header: "flex flex-col items-center gap-2 max-w-sm text-center",
+        leading: "shrink-0 mb-2 flex items-center justify-center",
         avatar: "shrink-0 mb-2 flex items-center justify-center",
+        icon: "size-full",
         title: "text-highlighted font-medium text-pretty",
         description: "text-muted text-balance text-center text-sm",
         body: "flex flex-col items-center gap-4 max-w-sm w-full",
@@ -6727,7 +7087,7 @@ export const componentMeta: ComponentMetaMap = {
         },
         loading: {
           true: {
-            avatar: "[&>[data-slot=icon]]:animate-spin [&>i]:animate-spin",
+            icon: "animate-spin",
           },
         },
       },
@@ -6794,7 +7154,7 @@ export const componentMeta: ComponentMetaMap = {
         default: 'a single "Go home" link to `/` (localized automatically); pass `[]` for none.',
       },
       {
-        name: "showDetails",
+        name: "hasDetails",
         type: "boolean",
         required: false,
         description: "Show the error message and stack.",
@@ -6827,12 +7187,14 @@ export const componentMeta: ComponentMetaMap = {
         "dot",
         "badgeLabel",
         "icon",
+        "iconGlyph",
         "header",
         "title",
         "description",
         "body",
         "details",
         "actions",
+        "action",
         "footer",
       ],
       base: {
@@ -6843,6 +7205,7 @@ export const componentMeta: ComponentMetaMap = {
         dot: "inline-flex rounded-full size-2 bg-[var(--rl-bg)]",
         badgeLabel: "text-xs font-mono font-bold tracking-wide uppercase text-highlighted/90",
         icon: "size-16 rounded-2xl border flex items-center justify-center shadow-sm border-[var(--rl-border)]/30 bg-[var(--rl-bg)]/10 text-[var(--rl-text)]",
+        iconGlyph: "size-8",
         header: "flex flex-col gap-2 max-w-md",
         title: "text-2xl sm:text-3xl font-extrabold tracking-tight text-highlighted",
         description: "text-sm text-muted leading-relaxed",
@@ -6850,15 +7213,13 @@ export const componentMeta: ComponentMetaMap = {
         details:
           "w-full text-left rounded-2xl border border-default/80 bg-muted/20 p-4 text-xs [&_pre]:mt-2 [&_pre]:overflow-auto [&_pre]:max-h-64 [&_pre]:font-mono [&_pre]:whitespace-pre-wrap [&_summary]:cursor-pointer [&_summary]:font-semibold",
         actions: "flex flex-col sm:flex-row items-center gap-3 w-full mt-1",
+        action: "w-full justify-center py-2.5 font-semibold",
         footer: "w-full text-xs text-muted",
       },
       variants: {
         fullscreen: {
           true: {
             root: "min-h-[calc(100vh-8rem)] p-4 sm:p-6 lg:p-8",
-          },
-          false: {
-            root: "",
           },
         },
       },
@@ -6935,9 +7296,7 @@ export const componentMeta: ComponentMetaMap = {
     emits: [],
     theme: {
       slots: ["root"],
-      base: {
-        root: "",
-      },
+      base: {},
       variants: {},
       compoundVariants: [],
       defaultVariants: {},
@@ -6964,7 +7323,7 @@ export const componentMeta: ComponentMetaMap = {
     theme: {
       slots: ["root", "leading", "trailing"],
       base: {
-        root: "relative flex items-stretch w-full rounded-md border border-default bg-default shadow-sm focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 overflow-hidden",
+        root: "relative flex items-stretch w-full rounded-md border border-default bg-default shadow-sm focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2 overflow-hidden",
         leading: "flex items-center bg-muted text-muted border-e border-default",
         trailing: "flex items-center bg-muted text-muted border-s border-default",
       },
@@ -7007,9 +7366,7 @@ export const componentMeta: ComponentMetaMap = {
     emits: [],
     theme: {
       slots: ["root"],
-      base: {
-        root: "",
-      },
+      base: {},
       variants: {},
       compoundVariants: [],
       defaultVariants: {},
@@ -7071,14 +7428,27 @@ export const componentMeta: ComponentMetaMap = {
     ],
     emits: [],
     theme: {
-      slots: ["root", "input", "content", "icon", "title", "description"],
+      slots: [
+        "root",
+        "input",
+        "content",
+        "icon",
+        "title",
+        "description",
+        "accepted",
+        "acceptedValue",
+        "filelist",
+      ],
       base: {
-        root: "flex flex-col items-center justify-center w-full min-h-[150px] border-2 border-dashed border-default rounded-lg bg-default/50 hover:bg-muted/30 transition-colors cursor-pointer select-none focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
+        root: "flex flex-col items-center justify-center w-full min-h-[150px] border-2 border-dashed border-default rounded-lg bg-default/50 hover:bg-muted/30 transition-colors cursor-pointer select-none focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2",
         input: "absolute opacity-0 size-0 pointer-events-none",
         content: "flex flex-col items-center justify-center p-6 text-center gap-1.5",
         icon: "size-8 text-muted",
         title: "text-sm font-semibold text-highlighted",
         description: "text-xs text-muted",
+        accepted: "mt-1 text-[10px] text-muted/70",
+        acceptedValue: "font-mono",
+        filelist: "mt-3 text-xs text-muted empty:hidden",
       },
       variants: {
         disabled: {
@@ -7086,10 +7456,16 @@ export const componentMeta: ComponentMetaMap = {
             root: "opacity-50 cursor-not-allowed pointer-events-none",
           },
         },
+        dragging: {
+          true: {
+            root: "border-primary bg-primary/5",
+          },
+        },
       },
       compoundVariants: [],
       defaultVariants: {
         disabled: false,
+        dragging: false,
       },
     },
   },
@@ -7102,9 +7478,7 @@ export const componentMeta: ComponentMetaMap = {
     emits: [],
     theme: {
       slots: ["root"],
-      base: {
-        root: "",
-      },
+      base: {},
       variants: {},
       compoundVariants: [],
       defaultVariants: {},
@@ -7253,22 +7627,39 @@ export const componentMeta: ComponentMetaMap = {
       {
         name: "help",
         bindings: {},
-        description: "Content shown below the error message.",
+        description:
+          "Contextual content below the control and error message. Rendered in the `help` slot.",
       },
       {
         name: "hint",
         bindings: {},
-        description: "Content shown at the right of the label row.",
+        description:
+          "Inline annotation at the right of the label row. Rendered in the `hint` slot.",
       },
     ],
     emits: [],
     theme: {
-      slots: ["root", "label", "description", "error"],
+      slots: [
+        "root",
+        "header",
+        "label",
+        "required",
+        "description",
+        "control",
+        "error",
+        "help",
+        "hint",
+      ],
       base: {
         root: "flex flex-col gap-1.5 w-full",
+        header: "flex items-center justify-between gap-2",
+        hint: "text-xs text-muted",
         label: "font-medium text-highlighted",
+        required: "ml-0.5 text-error",
         description: "text-muted leading-normal",
-        error: "font-medium text-error-500 leading-normal",
+        control: "relative w-full",
+        error: "font-medium text-error leading-normal",
+        help: "mt-1",
       },
       variants: {
         size: {
@@ -7314,9 +7705,7 @@ export const componentMeta: ComponentMetaMap = {
     emits: [],
     theme: {
       slots: ["root"],
-      base: {
-        root: "",
-      },
+      base: {},
       variants: {},
       compoundVariants: [],
       defaultVariants: {},
@@ -7343,8 +7732,8 @@ export const componentMeta: ComponentMetaMap = {
         name: "highlightColor",
         type: "string | undefined",
         required: false,
-        description: "Fallback highlight color for directly highlighted buttons.",
-        default: "'var(--rl-primary-500)'",
+        description: "Fill color for directly highlighted buttons.",
+        default: '"currentColor" (the active button\'s theme color, primary)',
       },
       {
         name: "backgroundColor",
@@ -7361,26 +7750,39 @@ export const componentMeta: ComponentMetaMap = {
         "root",
         "container",
         "svg",
+        "gradientTop",
+        "gradientBottom",
+        "body",
+        "panel",
         "button",
         "buttonActive",
         "shape",
         "label",
+        "labelActive",
         "legend",
         "legendItem",
         "legendDot",
+        "legendLabel",
       ],
       base: {
         root: "flex flex-col items-center w-full max-w-full my-6 p-12 box-border rounded-[1.5rem] border border-default [container-type:inline-size]",
         container: "w-full max-w-[27.5rem]",
         svg: "w-full h-auto",
-        button: "",
-        buttonActive: "",
+        gradientTop: "text-elevated",
+        gradientBottom: "text-default",
+        body: "stroke-default",
+        panel: "text-default stroke-default",
+        button: "text-elevated stroke-default stroke-1",
+        buttonActive: "text-primary stroke-on-scrim/20 stroke-[1.5]",
         shape: "transition-all duration-200",
-        label: "text-[10px] font-sans font-extrabold leading-none pointer-events-none",
+        label: "text-[10px] font-sans font-extrabold leading-none pointer-events-none text-muted",
+        labelActive:
+          "text-[10px] font-sans font-extrabold leading-none pointer-events-none text-on-scrim",
         legend: "flex flex-wrap justify-center gap-x-6 gap-y-3 mt-10 w-full",
         legendItem:
           "flex items-center gap-2 m-0 p-0 h-[10px] text-[10px] text-muted uppercase tracking-[0.1em] font-bold leading-[10px]",
         legendDot: "flex-shrink-0 block",
+        legendLabel: "inline-block h-[10px] leading-[10px] m-0 p-0",
       },
       variants: {},
       compoundVariants: [],
@@ -7451,9 +7853,6 @@ export const componentMeta: ComponentMetaMap = {
         stagger: {
           true: {
             root: "pb-20 [&>:nth-child(2n)]:translate-y-20",
-          },
-          false: {
-            root: "",
           },
         },
       },
@@ -7553,15 +7952,12 @@ export const componentMeta: ComponentMetaMap = {
         },
         sticky: {
           true: {
-            root: "sticky top-0 inset-x-0 z-50 transition-[top,transform] duration-300 ease-in-out data-[collapsed=true]:-translate-y-full",
-          },
-          false: {
-            root: "",
+            root: "sticky top-0 inset-x-0 z-50 transition-[top,transform] duration-300 ease-in-out data-[collapsed]:-translate-y-full",
           },
         },
         fixed: {
           true: {
-            root: "fixed top-0 left-0 right-0 z-50 transition-[top,transform,opacity] duration-300 ease-in-out data-[collapsed=true]:-translate-y-full",
+            root: "fixed top-0 left-0 right-0 z-50 transition-[top,transform,opacity] duration-300 ease-in-out data-[collapsed]:-translate-y-full",
           },
         },
       },
@@ -7585,10 +7981,10 @@ export const componentMeta: ComponentMetaMap = {
         description: "Label of a default trigger. Rendered only when `triggerSlot` is not set.",
       },
       {
-        name: "placement",
+        name: "side",
         type: '"top" | "bottom" | "left" | "right" | undefined',
         required: false,
-        description: "Placement of the card relative to the trigger.",
+        description: "Edge of the trigger the card attaches to.",
         default: '"bottom"',
       },
       {
@@ -7610,7 +8006,7 @@ export const componentMeta: ComponentMetaMap = {
         name: "onOpenChange",
         type: "((open: boolean) => void) | undefined",
         required: false,
-        description: "Called whenever the open state changes through hover or focus.",
+        description: "Called whenever the open state changes through hover, focus, or Escape.",
       },
     ],
     slots: [
@@ -7622,40 +8018,40 @@ export const componentMeta: ComponentMetaMap = {
       {
         name: "trigger",
         bindings: {},
-        description: "Trigger element. Always rendered, so it is plain JSX.",
+        description: "Trigger element. Replaces `triggerLabel`.",
       },
     ],
     emits: [],
     theme: {
-      slots: ["root", "trigger", "content"],
+      slots: ["root", "trigger", "label", "body"],
       base: {
         root: "relative inline-block",
-        trigger: "",
-        content: [
+        label: "cursor-help underline decoration-dotted",
+        body: [
           "absolute z-50 w-80 rounded-lg border border-default bg-elevated p-4 text-highlighted shadow-md outline-none",
           "transition-all duration-200 invisible opacity-0 scale-95 origin-center pointer-events-none",
           "data-[state=open]:visible data-[state=open]:opacity-100 data-[state=open]:scale-100 data-[state=open]:pointer-events-auto",
         ],
       },
       variants: {
-        placement: {
+        side: {
           top: {
-            content: "bottom-full left-1/2 -translate-x-1/2 mb-2",
+            body: "bottom-full left-1/2 -translate-x-1/2 mb-2",
           },
           bottom: {
-            content: "top-full left-1/2 -translate-x-1/2 mt-2",
+            body: "top-full left-1/2 -translate-x-1/2 mt-2",
           },
           left: {
-            content: "right-full top-1/2 -translate-y-1/2 mr-2",
+            body: "right-full top-1/2 -translate-y-1/2 mr-2",
           },
           right: {
-            content: "left-full top-1/2 -translate-y-1/2 ml-2",
+            body: "left-full top-1/2 -translate-y-1/2 ml-2",
           },
         },
       },
       compoundVariants: [],
       defaultVariants: {
-        placement: "bottom",
+        side: "bottom",
       },
     },
   },
@@ -7904,12 +8300,33 @@ export const componentMeta: ComponentMetaMap = {
         "figure",
         "caption",
         "trigger",
+        "staticTrigger",
         "triggerImage",
+        "colorMode",
+        "fallback",
+        "fallbackIcon",
+        "fallbackLabel",
         "dialog",
+        "dialogBody",
+        "preview",
+        "previewPicture",
+        "previewColorMode",
         "image",
+        "divider",
         "fileInfo",
+        "infoList",
+        "infoRow",
+        "infoIcon",
+        "infoLabel",
+        "infoValue",
+        "infoSource",
+        "infoAlt",
+        "infoAltEmpty",
         "download",
-        "closeButton",
+        "downloadIcon",
+        "closeForm",
+        "close",
+        "closeIcon",
       ],
       base: {
         root: "relative inline-block group/image overflow-hidden rounded-lg",
@@ -7917,15 +8334,39 @@ export const componentMeta: ComponentMetaMap = {
         caption: "mt-2 text-xs text-muted text-center italic",
         trigger:
           "cursor-pointer overflow-hidden rounded-[inherit] block hover:scale-[1.02] active:scale-95 transition-transform duration-300",
+        staticTrigger: "overflow-hidden rounded-[inherit] block",
         triggerImage: "max-w-full h-auto object-cover rounded-[inherit]",
+        colorMode:
+          "rl-image-color-mode relative flex h-full w-full items-center justify-center overflow-hidden rounded-[inherit] [&>img]:size-full",
+        fallback:
+          "flex w-full h-full min-h-40 items-center justify-center gap-2 rounded-lg bg-elevated text-muted",
+        fallbackIcon: "size-8",
+        fallbackLabel: "text-sm",
         dialog:
-          "backdrop:bg-black/60 max-w-[98vw] sm:max-w-[95vw] w-fit max-h-[90vh] rounded-xl p-0 overflow-hidden border-0 m-auto",
+          "backdrop:bg-scrim/60 max-w-[98vw] sm:max-w-[95vw] w-fit max-h-[90vh] rounded-xl p-0 overflow-hidden border-0 m-auto",
+        dialogBody: "flex flex-col bg-default text-highlighted max-h-[90vh]",
+        preview: "flex-1 min-h-0 flex items-center justify-center p-4 overflow-hidden",
+        previewPicture: "max-w-full max-h-[65vh] flex items-center justify-center overflow-hidden",
+        previewColorMode:
+          "rl-image-color-mode max-w-full max-h-[65vh] relative flex items-center justify-center overflow-hidden",
         image: "object-contain max-w-full max-h-[65vh] rounded-lg",
+        divider: "border-default mx-4 mb-3 shrink-0",
         fileInfo: "flex items-center justify-between gap-xl px-4 pb-4 shrink-0",
+        infoList: "flex flex-col gap-xs text-sm",
+        infoRow: "flex flex-row gap-xs items-center",
+        infoIcon: "size-4 shrink-0 text-muted",
+        infoLabel: "text-muted",
+        infoValue: "text-dimmed",
+        infoSource: "text-dimmed truncate max-w-[40vw]",
+        infoAlt: "text-dimmed truncate max-w-[30vw]",
+        infoAltEmpty: "text-dimmed truncate max-w-[30vw] italic opacity-50",
         download:
-          "inline-flex items-center justify-center rounded-md font-medium transition-colors outline-none h-9 px-4 py-2 text-sm gap-2 text-primary-500 hover:bg-primary-500/10 active:bg-primary-500/10",
-        closeButton:
+          "inline-flex items-center justify-center rounded-md font-medium transition-colors outline-none h-9 px-4 py-2 text-sm gap-2 text-primary hover:bg-primary/10 active:bg-primary/10",
+        downloadIcon: "size-4 shrink-0",
+        closeForm: "absolute top-2 right-2",
+        close:
           "inline-flex items-center justify-center size-8 rounded-full bg-default/80 hover:bg-accented text-muted hover:text-highlighted transition-colors",
+        closeIcon: "size-4",
       },
       variants: {
         fit: {
@@ -7958,10 +8399,27 @@ export const componentMeta: ComponentMetaMap = {
             image: "object-cover",
           },
         },
+        colorLayer: {
+          light: {
+            triggerImage: "rl-img-light",
+            image: "rl-img-light",
+          },
+          dark: {
+            triggerImage: "rl-img-dark hidden",
+            image: "rl-img-dark hidden",
+          },
+        },
+        modalZoom: {
+          on: {
+            image: "max-w-none max-h-none",
+          },
+        },
       },
       compoundVariants: [],
       defaultVariants: {
         fit: "cover",
+        colorLayer: "none",
+        modalZoom: "off",
       },
     },
   },
@@ -8101,7 +8559,7 @@ export const componentMeta: ComponentMetaMap = {
     theme: {
       slots: ["root", "input", "leading", "trailing"],
       base: {
-        root: "relative flex items-center w-full rounded-md border border-default bg-default shadow-sm focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
+        root: "relative flex items-center w-full rounded-md border border-default bg-default shadow-sm focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2",
         input:
           "w-full bg-transparent outline-none placeholder:text-muted disabled:cursor-not-allowed disabled:opacity-50",
         leading: "absolute flex items-center justify-center text-muted",
@@ -8152,13 +8610,12 @@ export const componentMeta: ComponentMetaMap = {
         },
         invalid: {
           true: {
-            root: "border-error-500 focus-within:ring-error-500/50",
+            root: "border-error focus-within:ring-error/50",
           },
         },
       },
       compoundVariants: [],
       defaultVariants: {
-        variant: "outline",
         size: "md",
         hasLeading: false,
         hasTrailing: false,
@@ -8171,6 +8628,13 @@ export const componentMeta: ComponentMetaMap = {
     solidComponent: "RLInputDate.tsx",
     frameworks: ["solid"],
     props: [
+      {
+        name: "size",
+        type: 'InferThemeProps<typeof RLInputTheme>["size"]',
+        required: false,
+        description: "Size of the input, matching `RLInput`.",
+        default: '"md"',
+      },
       {
         name: "value",
         type: "string",
@@ -8242,6 +8706,27 @@ export const componentMeta: ComponentMetaMap = {
         default: "undefined",
       },
       {
+        name: "aria-label",
+        type: "string | undefined",
+        required: false,
+        description: "Accessible label applied to the input.",
+        default: "undefined",
+      },
+      {
+        name: "aria-labelledby",
+        type: "string | undefined",
+        required: false,
+        description: "Element ID that labels the input.",
+        default: "undefined",
+      },
+      {
+        name: "aria-describedby",
+        type: "string | undefined",
+        required: false,
+        description: "Element ID that describes the input.",
+        default: "undefined",
+      },
+      {
         name: "onInput",
         type: "(e: InputEvent & { currentTarget: HTMLInputElement }) => void",
         required: false,
@@ -8288,15 +8773,10 @@ export const componentMeta: ComponentMetaMap = {
     emits: [],
     theme: {
       slots: ["root", "input"],
-      base: {
-        root: "",
-        input: "",
-      },
+      base: {},
       variants: {},
       compoundVariants: [],
-      defaultVariants: {
-        size: "md",
-      },
+      defaultVariants: {},
     },
   },
   "input-menu": {
@@ -8313,7 +8793,7 @@ export const componentMeta: ComponentMetaMap = {
       },
       {
         name: "value",
-        type: "string",
+        type: "string | undefined",
         required: false,
         description: "Controlled value. Omit to let the component manage its own value.",
         default: "undefined",
@@ -8360,20 +8840,56 @@ export const componentMeta: ComponentMetaMap = {
         description: "Visible label rendered above the trigger.",
         default: "undefined",
       },
+      {
+        name: "aria-label",
+        type: "string | undefined",
+        required: false,
+        description: "Accessible label applied to the trigger button.",
+        default: "undefined",
+      },
+      {
+        name: "aria-labelledby",
+        type: "string | undefined",
+        required: false,
+        description: "Element ID that labels the trigger button.",
+        default: "undefined",
+      },
+      {
+        name: "aria-describedby",
+        type: "string | undefined",
+        required: false,
+        description: "Element ID that describes the trigger button.",
+        default: "undefined",
+      },
     ],
     slots: [],
     emits: [],
     theme: {
-      slots: ["root", "label", "trigger", "input", "content", "item", "itemText", "itemIcon"],
+      slots: [
+        "root",
+        "label",
+        "wrapper",
+        "trigger",
+        "triggerIcon",
+        "input",
+        "content",
+        "items",
+        "item",
+        "itemText",
+        "itemIcon",
+      ],
       base: {
         root: "relative w-full flex flex-col gap-1.5",
         label: "text-sm font-medium text-highlighted",
+        wrapper: "relative w-full",
         trigger:
-          "flex w-full items-center justify-between rounded-md border border-default bg-default shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+          "flex w-full items-center justify-between rounded-md border border-default bg-default shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+        triggerIcon: "opacity-50",
         input:
-          "flex w-full rounded-md border border-default bg-transparent shadow-sm transition-all placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
+          "flex w-full rounded-md border border-default bg-transparent shadow-sm transition-all placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-primary disabled:cursor-not-allowed disabled:opacity-50",
         content:
           "absolute z-50 min-w-[8rem] overflow-hidden rounded-md border bg-elevated p-1 text-highlighted shadow-md transition-all w-full mt-1 max-h-60 overflow-y-auto",
+        items: "py-1",
         item: "relative flex w-full cursor-default select-none items-center rounded-sm outline-none hover:bg-accented hover:text-highlighted data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
         itemText: "truncate",
         itemIcon: "ml-auto size-4",
@@ -8418,6 +8934,13 @@ export const componentMeta: ComponentMetaMap = {
     solidComponent: "RLInputNumber.tsx",
     frameworks: ["solid"],
     props: [
+      {
+        name: "size",
+        type: 'InferThemeProps<typeof RLInputTheme>["size"]',
+        required: false,
+        description: "Size of the input, matching `RLInput`.",
+        default: '"md"',
+      },
       {
         name: "value",
         type: "number | undefined",
@@ -8489,6 +9012,27 @@ export const componentMeta: ComponentMetaMap = {
         default: "false",
       },
       {
+        name: "aria-label",
+        type: "string | undefined",
+        required: false,
+        description: "Accessible label applied to the input.",
+        default: "undefined",
+      },
+      {
+        name: "aria-labelledby",
+        type: "string | undefined",
+        required: false,
+        description: "Element ID that labels the input.",
+        default: "undefined",
+      },
+      {
+        name: "aria-describedby",
+        type: "string | undefined",
+        required: false,
+        description: "Element ID that describes the input.",
+        default: "undefined",
+      },
+      {
         name: "onValueChange",
         type: "(value: number) => void",
         required: false,
@@ -8527,11 +9071,12 @@ export const componentMeta: ComponentMetaMap = {
     slots: [],
     emits: [],
     theme: {
-      slots: ["root", "input", "increment", "decrement"],
+      slots: ["root", "wrapper", "input", "stepper", "increment", "decrement"],
       base: {
-        root: "",
+        wrapper: "relative w-full",
         input:
           "pr-11 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
+        stepper: "absolute right-1 top-1/2 flex -translate-y-1/2 flex-col",
         increment:
           "flex size-6 items-center justify-center rounded-sm text-muted hover:bg-muted/60 hover:text-highlighted disabled:cursor-not-allowed disabled:opacity-50",
         decrement:
@@ -8539,9 +9084,7 @@ export const componentMeta: ComponentMetaMap = {
       },
       variants: {},
       compoundVariants: [],
-      defaultVariants: {
-        size: "md",
-      },
+      defaultVariants: {},
     },
   },
   "input-pin": {
@@ -8549,6 +9092,13 @@ export const componentMeta: ComponentMetaMap = {
     solidComponent: "RLInputPin.tsx",
     frameworks: ["solid"],
     props: [
+      {
+        name: "size",
+        type: 'InferThemeProps<typeof RLInputTheme>["size"]',
+        required: false,
+        description: "Size of each digit cell, matching `RLInput`.",
+        default: '"md"',
+      },
       {
         name: "length",
         type: "number",
@@ -8606,6 +9156,28 @@ export const componentMeta: ComponentMetaMap = {
         default: '"numeric"',
       },
       {
+        name: "aria-label",
+        type: "string | undefined",
+        required: false,
+        description:
+          'Accessible label for the group of cells. Falls back to the localized "One-time code" label.',
+        default: "undefined",
+      },
+      {
+        name: "aria-labelledby",
+        type: "string | undefined",
+        required: false,
+        description: "Element ID that labels the group of cells.",
+        default: "undefined",
+      },
+      {
+        name: "aria-describedby",
+        type: "string | undefined",
+        required: false,
+        description: "Element ID that describes the group of cells.",
+        default: "undefined",
+      },
+      {
         name: "onInput",
         type: "(e: InputEvent & { currentTarget: HTMLInputElement }) => void",
         required: false,
@@ -8632,16 +9204,13 @@ export const componentMeta: ComponentMetaMap = {
     theme: {
       slots: ["root", "group", "cell", "input"],
       base: {
-        root: "",
         group: "flex items-center gap-2",
         cell: "w-12 h-12 flex items-center justify-center rounded-md",
         input: "w-full text-center",
       },
       variants: {},
       compoundVariants: [],
-      defaultVariants: {
-        size: "md",
-      },
+      defaultVariants: {},
     },
   },
   "input-rating": {
@@ -8766,7 +9335,7 @@ export const componentMeta: ComponentMetaMap = {
           "transition-all duration-150",
         ],
         indicator:
-          "absolute inset-y-0 left-0 overflow-hidden outline-none pointer-events-none flex items-center justify-start text-[var(--rl-bg)]",
+          "absolute inset-y-0 left-0 w-[var(--rl-progress)] overflow-hidden outline-none pointer-events-none flex items-center justify-start text-[var(--rl-bg)]",
         icon: "block w-[var(--item-size)] h-[var(--item-size)] max-w-none shrink-0",
         emptyIcon:
           "absolute inset-0 overflow-hidden pointer-events-none flex items-center justify-start text-muted",
@@ -8855,7 +9424,7 @@ export const componentMeta: ComponentMetaMap = {
         default: "4",
       },
       {
-        name: "showInput",
+        name: "hasInput",
         type: "boolean",
         required: false,
         description: "Renders a text input for adding tags.",
@@ -8901,7 +9470,7 @@ export const componentMeta: ComponentMetaMap = {
           "inline-flex items-center justify-center px-2 py-0.5",
           "rounded-full text-xs font-semibold",
           "bg-muted text-muted",
-          "ring-1 ring-border/40",
+          "ring-1 ring-accented/40",
           "whitespace-nowrap select-none cursor-default",
         ],
         input: [
@@ -8914,7 +9483,7 @@ export const componentMeta: ComponentMetaMap = {
         {
           color: "neutral",
           class: {
-            tag: "bg-elevated text-highlighted ring-border/60",
+            tag: "bg-elevated text-highlighted ring-accented/60",
           },
         },
       ],
@@ -8928,6 +9497,13 @@ export const componentMeta: ComponentMetaMap = {
     solidComponent: "RLInputTime.tsx",
     frameworks: ["solid"],
     props: [
+      {
+        name: "size",
+        type: 'RLInputProps["size"]',
+        required: false,
+        description: "Control size, shared with `RLInput`.",
+        default: '"md"',
+      },
       {
         name: "value",
         type: "string",
@@ -9046,14 +9622,12 @@ export const componentMeta: ComponentMetaMap = {
     theme: {
       slots: ["root", "input"],
       base: {
-        root: "",
-        input: "",
+        root: "w-full",
+        input: "tabular-nums",
       },
       variants: {},
       compoundVariants: [],
-      defaultVariants: {
-        size: "md",
-      },
+      defaultVariants: {},
     },
   },
   kbd: {
@@ -9197,7 +9771,7 @@ export const componentMeta: ComponentMetaMap = {
         type: "string | undefined",
         required: false,
         description: "Fill color applied to highlighted keys.",
-        default: '"var(--rl-primary-500)"',
+        default: "primary theme fill",
       },
       {
         name: "backgroundColor",
@@ -9210,14 +9784,43 @@ export const componentMeta: ComponentMetaMap = {
     slots: [],
     emits: [],
     theme: {
-      slots: ["root", "container", "svg", "keyGroup", "keyLabel", "legend"],
+      slots: [
+        "root",
+        "container",
+        "svg",
+        "keyGroup",
+        "keyShadow",
+        "keyCapFill",
+        "keyCapFillActive",
+        "keyCapStroke",
+        "keyCapStrokeActive",
+        "keyLabelIdle",
+        "keyLabelActive",
+        "legend",
+        "legendItem",
+        "legendMarker",
+        "legendSwatch",
+        "legendLabel",
+      ],
       base: {
         root: "flex flex-col items-center p-4 rounded-xl w-full max-w-full my-4 box-border",
         container: "w-full flex justify-center",
         svg: "w-full h-auto max-w-[56.25rem]",
-        keyGroup: "",
-        keyLabel: "font-mono text-[10px] font-semibold pointer-events-none user-select-none",
+        keyShadow: "fill-default",
+        keyCapFill: "fill-elevated",
+        keyCapFillActive: "fill-primary",
+        keyCapStroke: "stroke-default",
+        keyCapStrokeActive: "stroke-on-scrim/40",
+        keyLabelIdle:
+          "font-mono text-[10px] font-semibold pointer-events-none user-select-none fill-highlighted",
+        keyLabelActive:
+          "font-mono text-[10px] font-semibold pointer-events-none user-select-none fill-on-scrim",
         legend: "flex flex-wrap justify-center gap-x-6 gap-y-3 mt-6 w-full",
+        legendItem:
+          "flex items-center gap-2 m-0 p-0 text-[10px] text-muted uppercase tracking-[0.05em] font-medium whitespace-nowrap leading-none",
+        legendMarker: "shrink-0 block",
+        legendSwatch: "fill-primary",
+        legendLabel: "m-0 p-0 leading-none inline-block",
       },
       variants: {},
       compoundVariants: [],
@@ -9233,9 +9836,7 @@ export const componentMeta: ComponentMetaMap = {
     emits: [],
     theme: {
       slots: ["root"],
-      base: {
-        root: "",
-      },
+      base: {},
       variants: {},
       compoundVariants: [],
       defaultVariants: {},
@@ -9310,147 +9911,170 @@ export const componentMeta: ComponentMetaMap = {
         type: "number",
         required: false,
         description: "Number of columns at the md breakpoint.",
-        default: "4",
+        default: "8",
       },
       {
         name: "lgCols",
         type: "number",
         required: false,
         description: "Number of columns at the lg breakpoint.",
-        default: "4",
+        default: "12",
       },
       {
         name: "xlCols",
         type: "number",
         required: false,
         description: "Number of columns at the xl breakpoint.",
-        default: "4",
+        default: "12",
       },
       {
         name: "smBreakpoint",
         type: "number",
         required: false,
-        description: "",
+        description: "Minimum viewport width in pixels for the sm breakpoint.",
+        default: "640",
       },
       {
         name: "mdBreakpoint",
         type: "number",
         required: false,
-        description: "",
+        description: "Minimum viewport width in pixels for the md breakpoint.",
+        default: "768",
       },
       {
         name: "lgBreakpoint",
         type: "number",
         required: false,
-        description: "",
+        description: "Minimum viewport width in pixels for the lg breakpoint.",
+        default: "1024",
       },
       {
         name: "xlBreakpoint",
         type: "number",
         required: false,
-        description: "",
+        description: "Minimum viewport width in pixels for the xl breakpoint.",
+        default: "1280",
       },
       {
         name: "gutter",
         type: "number | number[]",
         required: false,
-        description: "",
+        description:
+          "Gutter between columns in rem, one value per breakpoint or a single value for all.",
+        default: "[0.75, 1, 1.5, 2, 2]",
       },
       {
         name: "margin",
         type: "number | number[]",
         required: false,
-        description: "",
+        description: "Outer margin in rem, one value per breakpoint or a single value for all.",
+        default: "[0.75, 1, 1.5, 2, 2]",
       },
       {
         name: "gridColor",
         type: "string",
         required: false,
-        description: "",
+        description: "Color of the main column guides.",
+        default: '"var(--rl-error-500)"',
       },
       {
         name: "gridOpacity",
         type: "number",
         required: false,
-        description: "",
+        description: "Opacity of the main column guide background.",
+        default: "0.1",
       },
       {
         name: "maxWidth",
         type: "string",
         required: false,
-        description: "",
+        description: "Maximum width of the main container in px, or a value containing `vw`.",
+        default: '"1440px"',
       },
       {
         name: "innerMaxWidth",
         type: "string",
         required: false,
-        description: "",
+        description:
+          "Maximum width of the inner (content) region in px, or a value containing `vw`.",
+        default: '"768px"',
       },
       {
         name: "innerGridColor",
         type: "string",
         required: false,
-        description: "",
+        description: "Color of the columns that fall inside the inner region.",
+        default: '"var(--rl-success-500)"',
       },
       {
         name: "innerGridOpacity",
         type: "number",
         required: false,
-        description: "",
+        description: "Opacity of the inner column background.",
+        default: "0.1",
       },
       {
         name: "showInnerBackground",
         type: "boolean",
         required: false,
-        description: "",
+        description: "Whether the inner column background is painted.",
+        default: "true",
       },
       {
         name: "showBackground",
         type: "boolean",
         required: false,
-        description: "",
+        description: "Whether the main column background is painted.",
+        default: "true",
       },
       {
         name: "showFullWidth",
         type: "boolean",
         required: false,
-        description: "",
+        description: "Whether full-width columns are drawn outside the main container.",
+        default: "true",
       },
       {
         name: "fullWidthGridColor",
         type: "string",
         required: false,
-        description: "",
+        description: "Color of the full-width columns drawn outside the main container.",
+        default: '"var(--rl-info-500)"',
       },
       {
         name: "fullWidthGridOpacity",
         type: "number",
         required: false,
-        description: "",
+        description: "Opacity of the full-width column background.",
+        default: "0.05",
       },
       {
         name: "showFullWidthBackground",
         type: "boolean",
         required: false,
-        description: "",
+        description: "Whether the full-width column background is painted.",
+        default: "true",
       },
       {
         name: "zIndex",
         type: "number",
         required: false,
-        description: "",
+        description: "Stacking order of the overlay.",
+        default: "1000",
       },
       {
         name: "shortcut",
         type: "string",
         required: false,
-        description: "",
+        description: "Keyboard shortcut that toggles the overlay.",
+        default: '"meta_shift_g"',
       },
       {
         name: "devOnly",
         type: "boolean",
         required: false,
-        description: "",
+        description: "Render only in development builds.",
+        default: "true",
       },
     ],
     slots: [],
@@ -9466,24 +10090,22 @@ export const componentMeta: ComponentMetaMap = {
         "indicator",
         "indicatorBreakpoint",
         "indicatorDivider",
-        "indicatorWidth",
         "indicatorColumns",
       ],
       base: {
         root: "contents",
-        overlay: "fixed top-0 left-0 w-full h-full pointer-events-none hidden",
+        overlay: "fixed top-0 left-0 w-full h-full pointer-events-none z-[var(--rl-grid-z-index)]",
         container: "relative w-full h-full",
         columns:
           "mx-auto w-full max-w-[1440px] px-xs sm:px-md md:px-xl lg:px-xl gap-xs sm:gap-md md:gap-xl lg:gap-xl h-full box-border grid grid-cols-[repeat(var(--rl-grid-cols),1fr)]",
         column:
-          "grid-column h-full box-border [border-inline:var(--rl-col-border)] [background-color:var(--rl-col-bg)]",
+          "h-full box-border [border-inline:var(--rl-col-border)] [background-color:var(--rl-col-bg)]",
         outerColumn:
-          "rl-outer-column absolute top-0 h-full box-border left-[var(--rl-col-left,0px)] w-[var(--rl-col-width,0px)] [border-inline:var(--rl-col-border)] [background-color:var(--rl-col-bg)]",
+          "absolute top-0 h-full box-border left-[var(--rl-col-left,0px)] w-[var(--rl-col-width,0px)] [border-inline:var(--rl-col-border)] [background-color:var(--rl-col-bg)]",
         indicator:
-          "fixed bottom-5 right-5 bg-black/85 text-white px-3 py-1.5 rounded-md font-mono text-[11px] font-bold pointer-events-none border border-white/15 shadow-lg tracking-wider flex items-center gap-2",
+          "fixed bottom-5 right-5 bg-scrim/85 text-on-scrim px-3 py-1.5 rounded-md font-mono text-[11px] font-bold pointer-events-none border border-on-scrim/15 shadow-lg tracking-wider flex items-center gap-2",
         indicatorBreakpoint: "text-info",
         indicatorDivider: "opacity-[0.35]",
-        indicatorWidth: "",
         indicatorColumns: "text-error",
       },
       variants: {},
@@ -9570,6 +10192,14 @@ export const componentMeta: ComponentMetaMap = {
         default: "undefined",
       },
       {
+        name: "noRel",
+        type: "boolean | undefined",
+        required: false,
+        description:
+          "Suppress the `rel` attribute entirely, including the default external-link value.",
+        default: "false",
+      },
+      {
         name: "current",
         type: '"page" | "step" | "location" | "date" | "time" | "true" | "false" | undefined',
         required: false,
@@ -9583,6 +10213,22 @@ export const componentMeta: ComponentMetaMap = {
         description:
           'Screen reader accessibility label. When omitted on external links, "(opens in a new tab)" is appended automatically.',
         default: "undefined",
+      },
+      {
+        name: "active",
+        type: "boolean | undefined",
+        required: false,
+        description:
+          "Marks the link as the current location. Applies active styling and `aria-current`.",
+        default: "false",
+      },
+      {
+        name: "disabled",
+        type: "boolean | undefined",
+        required: false,
+        description:
+          "Disables the link. Removes `href` and applies disabled styling and `aria-disabled`.",
+        default: "false",
       },
     ],
     slots: [
@@ -9603,7 +10249,6 @@ export const componentMeta: ComponentMetaMap = {
       slots: ["root", "label", "leadingIcon", "trailingIcon", "externalHint"],
       base: {
         root: "outline-primary/25 focus-visible:outline-3 rounded-md inline-flex items-center gap-1 leading-none transition-colors",
-        label: "",
         leadingIcon: "-translate-y-[1.5px]",
         trailingIcon: "-translate-y-[1.5px]",
         externalHint: "sr-only",
@@ -9688,13 +10333,14 @@ export const componentMeta: ComponentMetaMap = {
     slots: [],
     emits: [],
     theme: {
-      slots: ["root", "title", "list", "item", "link"],
+      slots: ["root", "title", "heading", "titleLink", "list", "item", "link"],
       base: {
         root: "flex flex-col gap-4",
         title: "font-bold text-sm uppercase tracking-wider text-dimmed",
+        heading: "flex items-center gap-1.5",
+        titleLink: "hover:underline flex items-center gap-1.5",
         list: "flex flex-col gap-2",
-        item: "",
-        link: "text-sm text-muted hover:text-highlighted transition-colors",
+        link: "w-full !justify-start text-sm text-muted hover:text-highlighted transition-colors",
       },
       variants: {},
       compoundVariants: [],
@@ -9710,9 +10356,7 @@ export const componentMeta: ComponentMetaMap = {
     emits: [],
     theme: {
       slots: ["root"],
-      base: {
-        root: "",
-      },
+      base: {},
       variants: {},
       compoundVariants: [],
       defaultVariants: {},
@@ -9756,15 +10400,29 @@ export const componentMeta: ComponentMetaMap = {
         name: "leadingIcon",
         type: "string",
         required: false,
-        description: "Icon shown in the trigger.",
-        default: '"i-lucide-globe"',
+        description: "Icon name shown in the trigger.",
+        default: '"globe"',
+      },
+      {
+        name: "size",
+        type: 'RLSelectProps["size"]',
+        required: false,
+        description: "Size scale, forwarded to the select.",
+        default: '"md"',
+      },
+      {
+        name: "variant",
+        type: 'RLSelectProps["variant"]',
+        required: false,
+        description: "Visual style, forwarded to the select. `icon` mode defaults to `ghost`.",
+        default: '"solid"',
       },
     ],
     slots: [
       {
         name: "leading",
         bindings: {},
-        description: "Content rendered before the select.",
+        description: "Custom leading content, rendered in place of `leadingIcon` when present.",
       },
       {
         name: "default",
@@ -9778,42 +10436,11 @@ export const componentMeta: ComponentMetaMap = {
       base: {
         root: "inline-flex flex-col gap-1.5",
         wrapper: "relative inline-block",
-        select: "",
       },
-      variants: {
-        variant: {
-          solid: {
-            select: "",
-          },
-          outline: {
-            select: "",
-          },
-          ghost: {
-            select: "",
-          },
-        },
-        size: {
-          xs: {
-            select: "",
-          },
-          sm: {
-            select: "",
-          },
-          md: {
-            select: "",
-          },
-          lg: {
-            select: "",
-          },
-          xl: {
-            select: "",
-          },
-        },
-      },
+      variants: {},
       compoundVariants: [],
       defaultVariants: {
-        variant: "solid",
-        size: "md",
+        color: "primary",
       },
     },
   },
@@ -9835,12 +10462,14 @@ export const componentMeta: ComponentMetaMap = {
         required: false,
         description:
           "Logo asset key within the set (e.g. `color`, `black`, `white`). When omitted, the light and dark assets switch automatically.",
+        default: "undefined",
       },
       {
         name: "src",
         type: "string",
         required: false,
         description: "Image URL that overrides the configured logo set.",
+        default: "undefined",
       },
       {
         name: "alt",
@@ -9853,16 +10482,20 @@ export const componentMeta: ComponentMetaMap = {
         name: "href",
         type: "string",
         required: false,
-        description: "Link target of the root element.",
+        description: "Link target of the root element. Localized by the link.",
         default: '"/"',
       },
     ],
     slots: [],
     emits: [],
     theme: {
-      slots: ["root"],
+      slots: ["root", "image", "lightImage", "darkImage", "icon"],
       base: {
         root: "flex items-center justify-center transition-opacity hover:opacity-80 shrink-0 select-none overflow-hidden",
+        image: "size-full block object-contain shrink-0",
+        lightImage: "size-full block object-contain shrink-0 [[data-theme=dark]_&]:hidden",
+        darkImage: "size-full hidden object-contain shrink-0 [[data-theme=dark]_&]:block",
+        icon: "size-full block shrink-0",
       },
       variants: {},
       compoundVariants: [],
@@ -9892,11 +10525,19 @@ export const componentMeta: ComponentMetaMap = {
     frameworks: ["solid"],
     props: [
       {
-        name: "direction",
-        type: '"left" | "right" | "up" | "down"',
+        name: "orientation",
+        type: '"horizontal" | "vertical"',
         required: false,
-        description: "Direction of marquee motion.",
-        default: '"left"',
+        description: "Axis of marquee motion. `horizontal` scrolls along x, `vertical` along y.",
+        default: '"horizontal"',
+      },
+      {
+        name: "reverse",
+        type: "boolean",
+        required: false,
+        description:
+          "Reverses the motion direction: right-to-left for horizontal, bottom-to-top for vertical.",
+        default: "false",
       },
       {
         name: "speed",
@@ -9910,7 +10551,7 @@ export const componentMeta: ComponentMetaMap = {
         name: "pauseOnHover",
         type: "boolean",
         required: false,
-        description: "Whether to pause scroll animation on mouse hover.",
+        description: "Whether to pause scroll animation while the marquee is hovered.",
         default: "true",
       },
       {
@@ -9937,34 +10578,55 @@ export const componentMeta: ComponentMetaMap = {
           "flex shrink-0 gap-4 items-center animate-marquee [animation-duration:var(--rl-marquee-speed,40s)]",
       },
       variants: {
-        direction: {
-          left: {
-            track: "flex-row animate-marquee-left",
+        orientation: {
+          horizontal: {
+            root: "flex-row",
+            track: "flex-row",
           },
-          right: {
-            track: "flex-row animate-marquee-right",
-          },
-          up: {
+          vertical: {
             root: "flex-col h-80",
-            track: "flex-col animate-marquee-up",
-          },
-          down: {
-            root: "flex-col h-80",
-            track: "flex-col animate-marquee-down",
+            track: "flex-col",
           },
         },
         pauseOnHover: {
           true: {
             track: "group-hover:[animation-play-state:paused]",
           },
-          false: {
-            track: "",
-          },
         },
       },
-      compoundVariants: [],
+      compoundVariants: [
+        {
+          orientation: "horizontal",
+          reverse: false,
+          class: {
+            track: "animate-marquee-left",
+          },
+        },
+        {
+          orientation: "horizontal",
+          reverse: true,
+          class: {
+            track: "animate-marquee-right",
+          },
+        },
+        {
+          orientation: "vertical",
+          reverse: false,
+          class: {
+            track: "animate-marquee-up",
+          },
+        },
+        {
+          orientation: "vertical",
+          reverse: true,
+          class: {
+            track: "animate-marquee-down",
+          },
+        },
+      ],
       defaultVariants: {
-        direction: "left",
+        orientation: "horizontal",
+        reverse: false,
         pauseOnHover: true,
       },
     },
@@ -9978,9 +10640,7 @@ export const componentMeta: ComponentMetaMap = {
     emits: [],
     theme: {
       slots: ["root"],
-      base: {
-        root: "",
-      },
+      base: {},
       variants: {},
       compoundVariants: [],
       defaultVariants: {},
@@ -9995,218 +10655,198 @@ export const componentMeta: ComponentMetaMap = {
         name: "title",
         type: "string | undefined",
         required: false,
-        description: "Title text displayed in the modal header. Use `titleSlot` for JSX.",
+        description:
+          "Heading rendered in the default header. Ignored when `titleSlot` or `headerSlot` is set.",
       },
       {
         name: "description",
         type: "string | undefined",
         required: false,
-        description: "Description text displayed below the title. Use `descriptionSlot` for JSX.",
+        description:
+          "Description rendered under the title. Ignored when `descriptionSlot` or `headerSlot` is set.",
       },
       {
         name: "open",
         type: "boolean | undefined",
         required: false,
-        description: "Controlled open state.",
+        description: "Controlled open state. Pair with `onOpenChange`.",
       },
       {
         name: "defaultOpen",
         type: "boolean | undefined",
         required: false,
         description: "Initial open state when uncontrolled.",
-        default: "false",
       },
       {
         name: "size",
         type: "ModalSize | undefined",
         required: false,
-        description: "Modal width preset.",
-        default: '"md"',
+        description: "Width of the dialog content.",
       },
       {
-        name: "overlay",
+        name: "backdrop",
         type: "boolean | undefined",
         required: false,
-        description: "Render an overlay / backdrop behind the modal.",
-        default: "true",
+        description:
+          "Renders a scrim behind the dialog. Disable it for a fully transparent overlay.",
       },
       {
         name: "scrollable",
         type: "boolean | undefined",
         required: false,
-        description:
-          "Enables scrollable overlay mode where content scrolls within the overlay container.",
-        default: "false",
+        description: "Lets the overlay scroll so tall dialogs stay reachable.",
       },
       {
         name: "transition",
         type: "boolean | undefined",
         required: false,
-        description: "Animate the modal when opening or closing.",
-        default: "true",
+        description: "Animates the overlay and content when opening and closing.",
       },
       {
         name: "fullscreen",
         type: "boolean | undefined",
         required: false,
-        description: "Take up the full screen.",
-        default: "false",
+        description: "Stretches the dialog to fill the viewport.",
       },
       {
         name: "modal",
         type: "boolean | undefined",
         required: false,
         description:
-          "The modality of the dialog. When true, interaction with outside elements is blocked. When false, the overlay is disabled and outside content remains interactive.",
-        default: "true",
+          "When true, the dialog blocks interaction with the page and is announced as modal. When false, the overlay ignores pointer events so outside content stays interactive.",
       },
       {
         name: "portal",
         type: "boolean | HTMLElement | undefined",
         required: false,
         description:
-          "Render in a portal attached to `document.body` or the given element. Set to false to render inline.",
-        default: "true",
+          "Renders the dialog into a portal. Pass an element to choose the mount target.",
       },
       {
         name: "dismissible",
         type: "boolean | undefined",
         required: false,
-        description:
-          "Whether the modal can be dismissed by the close button, Escape, or clicking the backdrop. Dismissal calls `onOpenChange(false)`.",
-        default: "true",
-      },
-      {
-        name: "closeIcon",
-        type: "string | undefined",
-        required: false,
-        description: "Icon name displayed in the header close button.",
-        default: '"x"',
+        description: "Allows Escape, the close control, and outside clicks to close the dialog.",
       },
       {
         name: "lockScroll",
         type: "boolean | undefined",
         required: false,
-        description: "Prevents body scrolling while open.",
-        default: "true",
+        description: "Locks document scrolling while the modal is open.",
       },
       {
         name: "unmountOnHide",
         type: "boolean | undefined",
         required: false,
-        description: "Keep content mounted in the DOM while hidden.",
-        default: "true",
+        description: "Removes the dialog from the DOM while closed instead of hiding it.",
       },
       {
         name: "triggerLabel",
         type: "string | undefined",
         required: false,
-        description:
-          "Label of a default trigger button. Rendered only when `triggerSlot` is not set.",
+        description: "Label for the default trigger button. Ignored when `triggerSlot` is set.",
       },
       {
         name: "role",
         type: '"dialog" | "alertdialog" | undefined',
         required: false,
-        description: "WAI-ARIA role of the dialog element.",
-        default: '"dialog"',
+        description: "ARIA role of the dialog element.",
       },
       {
         name: "aria-label",
         type: "string | undefined",
         required: false,
-        description: "Accessible label of the dialog.",
+        description: "",
       },
       {
         name: "aria-labelledby",
         type: "string | undefined",
         required: false,
-        description:
-          "Element id that labels the dialog. Defaults to the title id when a title is shown.",
+        description: "",
       },
       {
         name: "aria-describedby",
         type: "string | undefined",
         required: false,
-        description:
-          "Element id that describes the dialog. Defaults to the description id when a description is shown.",
+        description: "",
       },
       {
         name: "onOpenChange",
         type: "((open: boolean) => void) | undefined",
         required: false,
-        description: "Called whenever the open state changes. Dismissal calls it with `false`.",
+        description: "Called whenever the open state changes.",
       },
       {
         name: "onEnter",
         type: "(() => void) | undefined",
         required: false,
-        description: "Called when the modal opens.",
+        description: "Called when the enter transition starts.",
       },
       {
         name: "onAfterEnter",
         type: "(() => void) | undefined",
         required: false,
-        description: "Called after the modal has opened.",
+        description: "Called when the enter transition ends.",
       },
       {
         name: "onLeave",
         type: "(() => void) | undefined",
         required: false,
-        description: "Called when the modal closes.",
+        description: "Called when the leave transition starts.",
       },
       {
         name: "onAfterLeave",
         type: "(() => void) | undefined",
         required: false,
-        description: "Called after the modal has closed.",
+        description: "Called when the leave transition ends.",
       },
     ],
     slots: [
       {
         name: "default",
         bindings: {},
-        description: "Body content. Takes precedence over `children`.",
+        description: "Body content. Used when `bodySlot` is not set.",
       },
       {
         name: "trigger",
         bindings: {},
-        description: "Trigger element. Always rendered, so it is plain JSX.",
+        description: "Replaces the default trigger button.",
       },
       {
         name: "header",
         bindings: {},
-        description: "Header override. Replaces the default title, description, and close header.",
+        description: "Replaces the whole header.",
       },
       {
         name: "title",
         bindings: {},
-        description: "Title content. Takes precedence over the `title` string.",
+        description: "Replaces the title.",
       },
       {
         name: "description",
         bindings: {},
-        description: "Description content. Takes precedence over the `description` string.",
+        description: "Replaces the description.",
       },
       {
         name: "actions",
         bindings: {},
-        description: "Actions rendered in the header.",
+        description:
+          "Content rendered on the trailing side of the header, before the close control.",
       },
       {
         name: "close",
         bindings: {},
-        description: "Custom close control. Replaces the default close button.",
+        description: "Replaces the default close control.",
       },
       {
         name: "body",
         bindings: {},
-        description: "Body content. Takes precedence over `children`.",
+        description: "Replaces the body content. Takes precedence over `children`.",
       },
       {
         name: "footer",
         bindings: {},
-        description: "Footer content.",
+        description: "Footer content rendered below the body.",
       },
     ],
     emits: [],
@@ -10216,34 +10856,29 @@ export const componentMeta: ComponentMetaMap = {
         "triggerWrapper",
         "trigger",
         "overlay",
-        "backdrop",
         "content",
         "header",
-        "wrapper",
+        "heading",
         "body",
         "footer",
         "title",
         "description",
         "close",
-        "closeButton",
         "actions",
       ],
       base: {
         root: "relative inline-block",
         triggerWrapper: "inline-flex cursor-pointer",
-        trigger: "",
-        overlay: "fixed inset-0 z-50",
-        backdrop: "",
+        overlay: "fixed inset-0 z-50 data-[state=closed]:hidden!",
         content: "bg-default flex flex-col focus:outline-none z-50 pointer-events-auto",
         header:
           "flex items-center gap-1.5 p-4 sm:px-6 min-h-14 relative border-b border-default/30",
-        wrapper: "",
+        heading: "flex flex-col gap-1 min-w-0 flex-1",
         body: "flex-1 p-4 sm:p-6",
         footer: "flex items-center gap-1.5 p-4 sm:px-6 border-t border-default/30",
         title: "text-highlighted font-semibold text-base",
         description: "mt-1 text-muted text-sm leading-relaxed",
         close: "absolute top-4 right-4 end-4",
-        closeButton: "",
         actions: "flex items-center gap-1.5 ml-auto",
       },
       variants: {
@@ -10264,17 +10899,14 @@ export const componentMeta: ComponentMetaMap = {
             content: "w-[calc(100vw-2rem)] max-w-lg rounded-lg shadow-lg ring ring-default",
           },
         },
-        overlay: {
+        backdrop: {
           true: {
-            overlay: "bg-elevated/75 backdrop-blur-sm",
-          },
-          false: {
-            overlay: "bg-transparent",
+            overlay: "bg-scrim/60 backdrop-blur-sm",
           },
         },
         modal: {
           false: {
-            overlay: "pointer-events-none bg-transparent",
+            overlay: "pointer-events-none",
           },
         },
         scrollable: {
@@ -10310,7 +10942,7 @@ export const componentMeta: ComponentMetaMap = {
       defaultVariants: {
         transition: true,
         fullscreen: false,
-        overlay: true,
+        backdrop: true,
         scrollable: false,
         modal: true,
         size: "md",
@@ -10355,10 +10987,13 @@ export const componentMeta: ComponentMetaMap = {
         "list",
         "item",
         "link",
+        "itemIcon",
         "trigger",
+        "chevron",
         "content",
         "viewport",
         "viewportWrapper",
+        "viewportItem",
         "panel",
         "group",
         "groupTitle",
@@ -10372,12 +11007,16 @@ export const componentMeta: ComponentMetaMap = {
         root: "relative z-10 flex",
         list: "flex flex-1 list-none",
         item: "relative",
-        link: "text-highlighted inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50",
+        link: "text-highlighted inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium transition-colors hover:text-[var(--rl-bg)] focus-visible:text-[var(--rl-bg)] aria-[current]:text-[var(--rl-bg)] data-[state=open]:text-[var(--rl-bg)] focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50",
+        itemIcon: "size-4",
         trigger: "cursor-pointer select-none bg-transparent",
-        content: "w-full ps-4",
-        viewportWrapper: "fixed inset-x-0 top-[var(--rl-header-height,4rem)] z-40 overflow-hidden",
+        chevron: "size-3.5 transition-transform duration-200 data-[state=open]:rotate-180",
+        content: "w-full ps-4 data-[state=closed]:hidden",
+        viewportWrapper:
+          "fixed inset-x-0 top-[var(--rl-header-height,4rem)] z-40 overflow-hidden data-[state=closed]:hidden",
         viewport:
           "w-full border-b border-default bg-default text-highlighted shadow-xl data-[state=open]:animate-in data-[state=open]:slide-in-from-top-4 data-[state=open]:fade-in-0 duration-200",
+        viewportItem: "w-full data-[state=closed]:hidden",
         panel:
           "mx-auto flex w-full max-w-90rem flex-col gap-4 p-4 sm:flex-row sm:gap-10 sm:px-xl sm:py-lg",
         group: "flex min-w-40 flex-col gap-1",
@@ -10390,14 +11029,6 @@ export const componentMeta: ComponentMetaMap = {
         childDescription: "mt-1 text-xs text-muted line-clamp-2",
       },
       variants: {
-        accent: {
-          primary: {
-            link: "hover:text-primary focus-visible:text-primary aria-[current]:text-primary data-[state=open]:text-primary",
-          },
-          secondary: {
-            link: "hover:text-secondary-400 focus-visible:text-secondary-400 aria-[current]:text-secondary-400 data-[state=open]:text-secondary-400",
-          },
-        },
         orientation: {
           horizontal: {
             root: "items-center",
@@ -10415,7 +11046,7 @@ export const componentMeta: ComponentMetaMap = {
       },
       compoundVariants: [],
       defaultVariants: {
-        accent: "primary",
+        color: "primary",
         orientation: "horizontal",
       },
     },
@@ -10483,8 +11114,9 @@ export const componentMeta: ComponentMetaMap = {
       base: {
         root: "w-full overflow-hidden rounded-xl border border-default bg-elevated/60",
         list: "flex flex-wrap items-center gap-1 border-b border-default bg-elevated/80 px-2 pt-2",
-        trigger: "px-3 py-1.5 text-sm font-semibold rounded-t-lg transition-colors",
-        content: "",
+        trigger:
+          "px-3 py-1.5 text-sm font-semibold rounded-t-lg transition-colors text-muted hover:text-highlighted data-[state=active]:border data-[state=active]:border-b-transparent data-[state=active]:border-default data-[state=active]:bg-default data-[state=active]:text-highlighted",
+        content: "relative",
         codeBlock:
           "overflow-x-auto bg-muted px-4 py-3 pr-16 text-sm font-mono leading-6 text-highlighted whitespace-pre",
         copyButton: "absolute right-2 top-2",
@@ -10519,43 +11151,42 @@ export const componentMeta: ComponentMetaMap = {
       base: {
         root: "flex flex-col lg:grid lg:grid-cols-10 lg:gap-10",
         leading: "lg:col-span-2",
-        center: "",
         trailing: "lg:col-span-2 order-first lg:order-last",
       },
       variants: {},
       compoundVariants: [
         {
-          leading: true,
-          trailing: true,
+          hasLeading: true,
+          hasTrailing: true,
           class: {
             center: "lg:col-span-6",
           },
         },
         {
-          leading: true,
-          trailing: false,
+          hasLeading: true,
+          hasTrailing: false,
           class: {
             center: "lg:col-span-8",
           },
         },
         {
-          leading: false,
-          trailing: true,
+          hasLeading: false,
+          hasTrailing: true,
           class: {
             center: "lg:col-span-8",
           },
         },
         {
-          leading: false,
-          trailing: false,
+          hasLeading: false,
+          hasTrailing: false,
           class: {
             center: "lg:col-span-10",
           },
         },
       ],
       defaultVariants: {
-        leading: false,
-        trailing: false,
+        hasLeading: false,
+        hasTrailing: false,
       },
     },
   },
@@ -10568,9 +11199,7 @@ export const componentMeta: ComponentMetaMap = {
     emits: [],
     theme: {
       slots: ["root"],
-      base: {
-        root: "",
-      },
+      base: {},
       variants: {},
       compoundVariants: [],
       defaultVariants: {},
@@ -10585,9 +11214,7 @@ export const componentMeta: ComponentMetaMap = {
     emits: [],
     theme: {
       slots: ["root"],
-      base: {
-        root: "",
-      },
+      base: {},
       variants: {},
       compoundVariants: [],
       defaultVariants: {},
@@ -10602,9 +11229,7 @@ export const componentMeta: ComponentMetaMap = {
     emits: [],
     theme: {
       slots: ["root"],
-      base: {
-        root: "",
-      },
+      base: {},
       variants: {},
       compoundVariants: [],
       defaultVariants: {},
@@ -10619,120 +11244,118 @@ export const componentMeta: ComponentMetaMap = {
         name: "layout",
         type: '"default" | "hero" | "cta"',
         required: false,
-        description: "The layout of the section.",
-        default: '"default"',
+        description: 'Section layout. @default "default"',
       },
       {
         name: "ctaVariant",
         type: '"solid" | "outline" | "soft" | "subtle" | "ghost"',
         required: false,
-        description: "The variant of the section when it's a CTA.",
-        default: '"solid"',
+        description: 'Surface treatment used when `layout` is `"cta"`. @default "solid"',
       },
       {
         name: "headline",
         type: "string",
         required: false,
-        description: "The headline displayed above the title.",
+        description: "Eyebrow text rendered above the title.",
       },
       {
         name: "icon",
         type: "string",
         required: false,
-        description: "The icon displayed above the title.",
+        description: "Icon name rendered in the leading slot position.",
       },
       {
         name: "title",
         type: "string",
         required: false,
-        description:
-          "The section's title, displayed as a <h1> for the hero layout or <h2> otherwise.",
+        description: "Section title. Rendered as an `h1` in the hero layout and an `h2` otherwise.",
       },
       {
         name: "description",
         type: "string",
         required: false,
-        description: "The section's description, displayed under the title.",
+        description: "Section description rendered below the title.",
       },
       {
         name: "links",
         type: "RLButtonProps[]",
         required: false,
-        description: "Display a list of buttons under the description.",
+        description: "Links rendered in the footer.",
       },
       {
         name: "orientation",
         type: '"vertical" | "horizontal"',
         required: false,
-        description: "The orientation of the section.",
-        default: '"vertical"',
+        description: 'Arrangement of the header and body. @default "vertical"',
       },
       {
         name: "reverse",
         type: "boolean",
         required: false,
-        description: "Reverse the order of the default slot.",
-        default: "false",
+        description:
+          "Places the wrapper after the body on the default and cta layouts, and before it on hero.",
       },
       {
         name: "contentVisibility",
-        type: '"auto" | "visible"',
+        type: '"auto"',
         required: false,
-        description: "Set content-visibility for offscreen render painting optimization.",
+        description: "Skips rendering of offscreen content with `content-visibility: auto`.",
       },
       {
         name: "containIntrinsicSize",
         type: "string",
         required: false,
-        description: "Dynamic intrinsic size fallback for content-visibility layout stability.",
+        description:
+          'Intrinsic size used while offscreen content is skipped, such as `"auto 500px"`.',
       },
       {
         name: "style",
         type: "never",
         required: false,
-        description: "The root element owns its styling; `style` is not accepted.",
+        description: "",
       },
     ],
     slots: [
       {
         name: "background",
         bindings: {},
-        description: "",
+        description: "Replaces the background layer.",
       },
       {
         name: "header",
         bindings: {},
-        description: "",
+        description:
+          "Replaces the whole header block, including the default leading, title, and description.",
       },
       {
         name: "leading",
         bindings: {},
-        description: "",
+        description: "Replaces the leading icon.",
       },
       {
         name: "title",
         bindings: {},
-        description: "",
+        description: "Replaces the title text.",
       },
       {
         name: "description",
         bindings: {},
-        description: "",
+        description: "Replaces the description text.",
       },
       {
         name: "body",
         bindings: {},
-        description: "",
+        description: "Content rendered between the header and the footer.",
       },
       {
         name: "footer",
         bindings: {},
-        description: "",
+        description: "Replaces the footer, including `links` and `actionSlot`.",
       },
       {
         name: "action",
         bindings: {},
-        description: "",
+        description: "Content rendered after `links` in the footer.",
       },
     ],
     emits: [],
@@ -10751,21 +11374,17 @@ export const componentMeta: ComponentMetaMap = {
         "body",
         "footer",
         "links",
+        "action",
       ],
       base: {
         root: "relative",
         background: "absolute inset-0 -z-1 overflow-hidden",
         container:
           "mx-auto w-full max-w-[1440px] px-xs sm:px-md md:px-xl lg:px-xl flex flex-col lg:grid",
-        wrapper: "",
-        header: "",
         leading: "flex items-center mb-6",
         leadingIcon: "size-10 shrink-0 text-primary",
-        headline: "",
         title: "text-pretty tracking-tight font-bold",
         description: "text-muted",
-        body: "",
-        footer: "",
         links: "flex flex-wrap",
       },
       variants: {
@@ -10804,6 +11423,7 @@ export const componentMeta: ComponentMetaMap = {
         ctaVariant: {
           solid: {
             root: "bg-inverted text-inverted",
+            title: "text-inverted",
             description: "text-dimmed",
           },
           outline: {
@@ -10828,7 +11448,6 @@ export const componentMeta: ComponentMetaMap = {
             description: "text-pretty",
           },
           vertical: {
-            container: "",
             headline: "justify-center",
             leading: "justify-center",
             title: "text-center",
@@ -10836,12 +11455,17 @@ export const componentMeta: ComponentMetaMap = {
             links: "justify-center",
           },
         },
-        headline: {
+        contentVisibility: {
+          auto: {
+            root: "[content-visibility:auto] [contain-intrinsic-size:var(--rl-contain-intrinsic-size,auto_500px)]",
+          },
+        },
+        hasHeadline: {
           true: {
             headline: "font-semibold text-primary flex items-center gap-1.5",
           },
         },
-        title: {
+        hasTitle: {
           true: {
             description: "mt-6",
           },
@@ -10872,7 +11496,7 @@ export const componentMeta: ComponentMetaMap = {
         {
           layout: "default",
           orientation: "vertical",
-          title: true,
+          hasTitle: true,
           class: {
             body: "mt-16",
           },
@@ -10880,7 +11504,7 @@ export const componentMeta: ComponentMetaMap = {
         {
           layout: "default",
           orientation: "vertical",
-          description: true,
+          hasDescription: true,
           class: {
             body: "mt-16",
           },
@@ -10888,41 +11512,9 @@ export const componentMeta: ComponentMetaMap = {
         {
           layout: "default",
           orientation: "vertical",
-          body: true,
+          hasBody: true,
           class: {
             footer: "mt-16",
-          },
-        },
-        {
-          layout: "cta",
-          ctaVariant: "outline",
-          class: {
-            root: "bg-default ring ring-default",
-          },
-        },
-        {
-          layout: "cta",
-          ctaVariant: "solid",
-          class: {
-            root: "bg-inverted text-inverted",
-            title: "text-inverted",
-            description: "text-dimmed",
-          },
-        },
-        {
-          layout: "cta",
-          ctaVariant: "soft",
-          class: {
-            root: "bg-elevated/50",
-            description: "text-toned",
-          },
-        },
-        {
-          layout: "cta",
-          ctaVariant: "subtle",
-          class: {
-            root: "bg-elevated/50 ring ring-default",
-            description: "text-toned",
           },
         },
       ],
@@ -10958,7 +11550,7 @@ export const componentMeta: ComponentMetaMap = {
         default: "1",
       },
       {
-        name: "onPageChange",
+        name: "onValueChange",
         type: "((page: number) => void) | undefined",
         required: false,
         description: "Called with the next page number when the user selects a page.",
@@ -10971,10 +11563,9 @@ export const componentMeta: ComponentMetaMap = {
       base: {
         root: "mx-auto flex w-full justify-center",
         list: "flex flex-row items-center gap-1",
-        item: "",
         link: [
           "inline-flex items-center justify-center rounded-md text-sm font-medium transition-all size-9 cursor-pointer border border-default bg-default hover:bg-muted text-highlighted decoration-none",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:pointer-events-none disabled:opacity-50",
         ],
         ellipsis: "flex size-9 items-center justify-center text-muted",
       },
@@ -10982,9 +11573,6 @@ export const componentMeta: ComponentMetaMap = {
         active: {
           true: {
             link: "border-primary bg-primary text-inverted hover:bg-primary/95",
-          },
-          false: {
-            link: "",
           },
         },
       },
@@ -11003,9 +11591,7 @@ export const componentMeta: ComponentMetaMap = {
     emits: [],
     theme: {
       slots: ["root"],
-      base: {
-        root: "",
-      },
+      base: {},
       variants: {},
       compoundVariants: [],
       defaultVariants: {},
@@ -11020,9 +11606,7 @@ export const componentMeta: ComponentMetaMap = {
     emits: [],
     theme: {
       slots: ["root"],
-      base: {
-        root: "",
-      },
+      base: {},
       variants: {},
       compoundVariants: [],
       defaultVariants: {},
@@ -11051,20 +11635,6 @@ export const componentMeta: ComponentMetaMap = {
     solidComponent: "RLPopover.tsx",
     frameworks: ["solid"],
     props: [
-      {
-        name: "size",
-        type: '"xs" | "sm" | "md" | "lg" | undefined',
-        required: false,
-        description: "Popover padding preset.",
-        default: '"md"',
-      },
-      {
-        name: "placement",
-        type: '"top" | "top-start" | "top-end" | "bottom" | "bottom-start" | "bottom-end" | "left" | "right" | undefined',
-        required: false,
-        description: "Placement of the popover relative to the trigger.",
-        default: '"bottom"',
-      },
       {
         name: "mode",
         type: '"click" | "hover" | "both" | undefined',
@@ -11108,7 +11678,7 @@ export const componentMeta: ComponentMetaMap = {
       {
         name: "trigger",
         bindings: {},
-        description: "Trigger element. Always rendered, so it is plain JSX.",
+        description: "Trigger element. Replaces the default trigger button.",
       },
     ],
     emits: [],
@@ -11240,32 +11810,32 @@ export const componentMeta: ComponentMetaMap = {
       {
         name: "image",
         bindings: {},
-        description: "",
+        description: "Replaces the image block. Takes precedence over `image`.",
       },
       {
         name: "title",
         bindings: {},
-        description: "",
+        description: "Replaces the title. Takes precedence over `title`.",
       },
       {
         name: "description",
         bindings: {},
-        description: "",
+        description: "Replaces the description. Takes precedence over `description`.",
       },
       {
         name: "badge",
         bindings: {},
-        description: "",
+        description: "Replaces the badge. Takes precedence over `badge` and `badgeColor`.",
       },
       {
         name: "date",
         bindings: {},
-        description: "",
+        description: "Replaces the formatted date. Takes precedence over `date`.",
       },
       {
         name: "footer",
         bindings: {},
-        description: "",
+        description: "Content rendered in the footer below the post body.",
       },
     ],
     emits: [],
@@ -11274,7 +11844,7 @@ export const componentMeta: ComponentMetaMap = {
         "root",
         "imageWrapper",
         "image",
-        "content",
+        "body",
         "title",
         "description",
         "badge",
@@ -11285,9 +11855,10 @@ export const componentMeta: ComponentMetaMap = {
         root: "group relative flex overflow-hidden transition-all duration-300",
         imageWrapper: "relative overflow-hidden aspect-video",
         image: "absolute inset-0 w-full h-full object-cover transition-transform duration-500",
-        content: "flex-1 p-4",
+        body: "flex-1 p-4",
         title: "font-bold text-xl line-clamp-2 text-highlighted",
         description: "text-muted text-sm mt-1 line-clamp-3",
+        badge: "mt-2",
         date: "text-xs text-dimmed mt-2",
         footer: "p-4 border-t border-default",
       },
@@ -11328,9 +11899,7 @@ export const componentMeta: ComponentMetaMap = {
     emits: [],
     theme: {
       slots: ["root"],
-      base: {
-        root: "",
-      },
+      base: {},
       variants: {},
       compoundVariants: [],
       defaultVariants: {},
@@ -11345,9 +11914,7 @@ export const componentMeta: ComponentMetaMap = {
     emits: [],
     theme: {
       slots: ["root"],
-      base: {
-        root: "",
-      },
+      base: {},
       variants: {},
       compoundVariants: [],
       defaultVariants: {},
@@ -11362,14 +11929,15 @@ export const componentMeta: ComponentMetaMap = {
         name: "value",
         type: "number | undefined",
         required: false,
-        description: "Current value, between 0 and `max`.",
+        description: "Current value, clamped into `[0, max]`.",
         default: "0",
       },
       {
         name: "max",
         type: "number | undefined",
         required: false,
-        description: "Upper bound of the progress range.",
+        description:
+          "Upper bound of the progress range. Non-finite or non-positive values fall back to 100.",
         default: "100",
       },
     ],
@@ -11379,7 +11947,8 @@ export const componentMeta: ComponentMetaMap = {
       slots: ["root", "indicator"],
       base: {
         root: "relative w-full overflow-hidden rounded-full bg-muted shadow-inner",
-        indicator: "h-full rounded-full transition-all duration-300 ease-in-out bg-[var(--rl-bg)]",
+        indicator:
+          "h-full w-[var(--rl-progress)] rounded-full transition-all duration-300 ease-in-out bg-[var(--rl-bg)]",
       },
       variants: {
         size: {
@@ -11416,9 +11985,7 @@ export const componentMeta: ComponentMetaMap = {
     emits: [],
     theme: {
       slots: ["root"],
-      base: {
-        root: "",
-      },
+      base: {},
       variants: {},
       compoundVariants: [],
       defaultVariants: {},
@@ -11433,9 +12000,7 @@ export const componentMeta: ComponentMetaMap = {
     emits: [],
     theme: {
       slots: ["root"],
-      base: {
-        root: "",
-      },
+      base: {},
       variants: {},
       compoundVariants: [],
       defaultVariants: {},
@@ -11478,17 +12043,109 @@ export const componentMeta: ComponentMetaMap = {
     name: "RadioGroup",
     solidComponent: "RLRadioGroup.tsx",
     frameworks: ["solid"],
-    props: [],
+    props: [
+      {
+        name: "items",
+        type: "RLRadioGroupItem[]",
+        required: false,
+        description: "Options to render, in order.",
+        default: "[]",
+      },
+      {
+        name: "value",
+        type: "string | null | undefined",
+        required: false,
+        description:
+          "Controlled selected value. `null` means nothing is selected. Omit for uncontrolled use.",
+        default: "undefined",
+      },
+      {
+        name: "defaultValue",
+        type: "string | null | undefined",
+        required: false,
+        description: "Initially selected value when uncontrolled.",
+        default: "null",
+      },
+      {
+        name: "onValueChange",
+        type: "(value: string | null) => void",
+        required: false,
+        description: "Called with the newly selected value.",
+      },
+      {
+        name: "orientation",
+        type: '"horizontal" | "vertical"',
+        required: false,
+        description: "Layout axis of the options.",
+        default: '"vertical"',
+      },
+      {
+        name: "disabled",
+        type: "boolean",
+        required: false,
+        description: "Disables every option in the group.",
+        default: "false",
+      },
+      {
+        name: "name",
+        type: "string | undefined",
+        required: false,
+        description: "Form field name shared by every option. Defaults to a generated unique name.",
+        default: "undefined",
+      },
+      {
+        name: "aria-label",
+        type: "string",
+        required: false,
+        description: "Accessible name of the group.",
+        default: "undefined",
+      },
+      {
+        name: "aria-labelledby",
+        type: "string",
+        required: false,
+        description: "Id of the element labelling the group.",
+        default: "undefined",
+      },
+      {
+        name: "aria-describedby",
+        type: "string",
+        required: false,
+        description: "Id of the element describing the group.",
+        default: "undefined",
+      },
+    ],
     slots: [],
     emits: [],
     theme: {
-      slots: ["root"],
+      slots: ["root", "item", "input", "control", "indicator", "body", "label", "description"],
       base: {
-        root: "",
+        root: "flex",
+        item: "group relative flex items-start gap-2 cursor-pointer select-none data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50",
+        input: "peer sr-only",
+        control:
+          "relative mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-full border border-default bg-default shadow transition-colors peer-hover:border-[var(--rl-border)] peer-focus-visible:ring-2 peer-focus-visible:ring-[var(--rl-ring)]/50",
+        indicator:
+          "block size-2 rounded-full bg-[var(--rl-bg)] scale-0 transition-transform group-data-[state=checked]:scale-100",
+        body: "flex flex-col gap-0.5",
+        label: "text-sm font-medium leading-none",
+        description: "text-sm text-muted",
       },
-      variants: {},
+      variants: {
+        orientation: {
+          horizontal: {
+            root: "flex-row flex-wrap gap-4",
+          },
+          vertical: {
+            root: "flex-col gap-3",
+          },
+        },
+      },
       compoundVariants: [],
-      defaultVariants: {},
+      defaultVariants: {
+        orientation: "vertical",
+        color: "primary",
+      },
     },
   },
   rating: {
@@ -11500,9 +12157,7 @@ export const componentMeta: ComponentMetaMap = {
     emits: [],
     theme: {
       slots: ["root"],
-      base: {
-        root: "",
-      },
+      base: {},
       variants: {},
       compoundVariants: [],
       defaultVariants: {},
@@ -11534,11 +12189,9 @@ export const componentMeta: ComponentMetaMap = {
     theme: {
       slots: ["root", "announcer", "progressBar", "progressIndicator"],
       base: {
-        root: "",
         announcer: "sr-only",
-        progressBar:
-          "fixed top-0 inset-x-0 z-50 pointer-events-none overflow-hidden bg-transparent",
-        progressIndicator: "h-full w-full origin-left-right animate-pulse bg-[var(--rl-bg)]",
+        progressBar: "fixed top-0 inset-x-0 z-50 pointer-events-none overflow-hidden",
+        progressIndicator: "h-full w-full animate-pulse bg-[var(--rl-bg)]",
       },
       variants: {
         size: {
@@ -11575,7 +12228,7 @@ export const componentMeta: ComponentMetaMap = {
         name: "orientation",
         type: '"vertical" | "horizontal" | "both"',
         required: false,
-        description: "Orientation of the scrollbar.",
+        description: "Which scrollbars are rendered. `both` renders vertical and horizontal bars.",
         default: '"vertical"',
       },
       {
@@ -11589,7 +12242,7 @@ export const componentMeta: ComponentMetaMap = {
         name: "height",
         type: "string | number",
         required: false,
-        description: "Height override if needed.",
+        description: "Fixed height of the root. Numbers are treated as pixels.",
         default: "undefined",
       },
     ],
@@ -11602,26 +12255,29 @@ export const componentMeta: ComponentMetaMap = {
         viewport:
           "h-full w-full rounded-[inherit] overflow-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden",
         scrollbar:
-          "absolute flex user-select-none touch-action-none p-0.5 bg-transparent transition-colors duration-150 ease-out hover:bg-muted/10",
+          "absolute flex select-none touch-none p-0.5 bg-transparent transition-[opacity,colors] duration-150 ease-out hover:bg-muted/10 data-[orientation=vertical]:right-0 data-[orientation=vertical]:top-0 data-[orientation=vertical]:bottom-0 data-[orientation=vertical]:w-2.5 data-[orientation=vertical]:flex-col data-[orientation=horizontal]:bottom-0 data-[orientation=horizontal]:left-0 data-[orientation=horizontal]:right-0 data-[orientation=horizontal]:h-2.5 data-[orientation=horizontal]:flex-row",
         thumb:
           "relative flex-1 rounded-full bg-muted border border-default/50 transition-colors hover:bg-accented",
       },
       variants: {
-        orientation: {
-          vertical: {
-            scrollbar: "right-0 top-0 bottom-0 w-2.5 flex-col",
+        visible: {
+          true: {
+            scrollbar: "opacity-100",
           },
-          horizontal: {
-            scrollbar: "bottom-0 left-0 right-0 h-2.5 flex-row",
+          false: {
+            scrollbar: "opacity-0",
           },
-          both: {
-            scrollbar: "",
+        },
+        sized: {
+          true: {
+            root: "h-[var(--rl-scroll-area-height)]",
           },
         },
       },
       compoundVariants: [],
       defaultVariants: {
-        orientation: "vertical",
+        visible: false,
+        sized: false,
       },
     },
   },
@@ -11631,62 +12287,47 @@ export const componentMeta: ComponentMetaMap = {
     frameworks: ["solid"],
     props: [
       {
-        name: "color",
-        type: "ThemeColor | undefined",
+        name: "threshold",
+        type: "number | undefined",
         required: false,
-        description: "The color scheme applied to the scroll-to-top button.",
-        default: '"primary"',
+        description: "The scroll distance in pixels after which the button becomes visible.",
+        default: "200",
       },
       {
         name: "progressWidth",
         type: "number | undefined",
         required: false,
-        description: "The width of the progress indicator line in pixels.",
+        description: "The width of the progress ring in pixels.",
         default: "6",
       },
       {
-        name: "threshold",
-        type: "number | undefined",
-        required: false,
-        description: "The scroll threshold in pixels before showing the button.",
-        default: "200",
-      },
-      {
-        name: "showProgress",
+        name: "hasProgress",
         type: "boolean | undefined",
         required: false,
-        description: "Whether to show the scroll progress indicator.",
+        description: "Whether to render the scroll progress ring.",
         default: "true",
       },
     ],
     slots: [],
     emits: [],
     theme: {
-      slots: [
-        "root",
-        "button",
-        "progressBase",
-        "track",
-        "progress",
-        "svg",
-        "iconContainer",
-        "icon",
-      ],
+      slots: ["root", "button", "progressBase", "track", "progress", "iconContainer", "icon"],
       base: {
-        root: "fixed bottom-6 right-6 z-50",
-        button: "size-14 lg:size-12 p-0 rounded-full bg-black/85",
-        progressBase: "progress-circle-base size-full",
+        root: "fixed bottom-6 right-6 z-50 invisible opacity-0 pointer-events-none transition-[opacity,visibility] duration-300 data-[state=visible]:visible data-[state=visible]:opacity-100 data-[state=visible]:pointer-events-auto",
+        button: "size-14 lg:size-12 p-0 rounded-full bg-scrim/85 text-on-scrim",
+        progressBase: "relative size-full",
         track:
-          "absolute inset-0 rounded-full border-solid border-[length:var(--rl-stt-border)] border-[color:var(--rl-stt-track)] bg-black",
+          "absolute inset-0 rounded-full border-solid border-[length:var(--rl-stt-border)] border-[color:color-mix(in_oklab,var(--rl-border)_30%,transparent)] bg-scrim",
         progress:
-          "absolute inset-0 rounded-full bg-[image:var(--rl-stt-gauge)] [-webkit-mask:var(--rl-stt-mask)] [mask:var(--rl-stt-mask)]",
-        svg: "size-full",
+          "absolute inset-0 rounded-full text-[var(--rl-border)] bg-[image:var(--rl-stt-gauge)] [-webkit-mask:radial-gradient(circle_closest-side,transparent_calc(100%_-_var(--rl-stt-border)),currentColor_calc(100%_-_var(--rl-stt-border)))] [mask:radial-gradient(circle_closest-side,transparent_calc(100%_-_var(--rl-stt-border)),currentColor_calc(100%_-_var(--rl-stt-border)))]",
         iconContainer: "absolute inset-0 flex items-center justify-center text-center",
-        icon: "size-6 text-white",
+        icon: "size-6",
       },
       variants: {},
       compoundVariants: [],
-      defaultVariants: {},
+      defaultVariants: {
+        color: "primary",
+      },
     },
   },
   search: {
@@ -11741,24 +12382,23 @@ export const componentMeta: ComponentMetaMap = {
       {
         name: "trigger",
         bindings: {},
-        description: "Replaces the default trigger button.",
-      },
-      {
-        name: "default",
-        bindings: {},
-        description: "",
+        description:
+          "Replaces the default trigger button. Falls back to `children`, then the search icon button.",
       },
     ],
     emits: [],
     theme: {
       slots: [
         "root",
+        "trigger",
         "modal",
         "dialog",
         "header",
         "headerIcon",
-        "close",
-        "closeIcon",
+        "inputRoot",
+        "input",
+        "inputActions",
+        "loadingIcon",
         "results",
         "resultItem",
         "resultHeader",
@@ -11767,18 +12407,23 @@ export const componentMeta: ComponentMetaMap = {
         "resultSnippet",
         "empty",
         "footer",
+        "footerKeys",
       ],
       base: {
         root: "relative inline-block",
+        trigger: "cursor-pointer",
         modal:
-          "fixed inset-0 z-[1000] flex items-start justify-center pt-[10vh] px-4 bg-black/60 backdrop-blur-sm",
+          "fixed inset-0 z-[1000] flex items-start justify-center pt-[10vh] px-4 bg-scrim/60 backdrop-blur-sm",
         dialog:
           "bg-elevated border border-default rounded-xl w-full max-w-xl shadow-2xl overflow-hidden flex flex-col text-default",
         header: "flex items-center border-b border-default px-5 py-4 gap-3",
         headerIcon: "text-muted size-4 shrink-0",
-        close:
-          "text-muted hover:text-highlighted transition-colors bg-transparent border-0 cursor-pointer p-1 rounded flex items-center justify-center shrink-0",
-        closeIcon: "size-4",
+        inputRoot:
+          "relative flex items-center w-full !bg-transparent !border-none !shadow-none !p-0 !ring-0",
+        input:
+          "w-full bg-transparent px-3 py-1 text-sm outline-none text-highlighted placeholder:text-muted",
+        inputActions: "flex items-center gap-2",
+        loadingIcon: "size-4 animate-spin text-muted",
         results: "max-h-[380px] overflow-y-auto p-2 empty:hidden flex flex-col gap-1",
         resultItem:
           "flex flex-col gap-1 p-3 hover:bg-accented rounded-lg transition-colors border border-transparent hover:border-default text-left decoration-none",
@@ -11790,6 +12435,7 @@ export const componentMeta: ComponentMetaMap = {
         empty: "p-6 text-center text-muted text-sm block",
         footer:
           "bg-muted/50 border-t border-default px-5 py-3 flex items-center justify-between text-xs text-muted",
+        footerKeys: "flex items-center gap-1",
       },
       variants: {},
       compoundVariants: [],
@@ -11879,7 +12525,7 @@ export const componentMeta: ComponentMetaMap = {
       },
       {
         name: "items",
-        type: "SelectItem[] | string[] | undefined",
+        type: "(SelectItem | string)[] | undefined",
         required: false,
         description: "Option items. Strings or objects with label/value.",
       },
@@ -11912,12 +12558,12 @@ export const componentMeta: ComponentMetaMap = {
       {
         name: "leading",
         bindings: {},
-        description: "Custom leading slot content.",
+        description: "Custom leading content, rendered in place of `leadingIcon` when present.",
       },
     ],
     emits: [],
     theme: {
-      slots: ["root", "select", "trigger", "leading", "label"],
+      slots: ["root", "select", "trigger", "leading", "icon", "label", "option"],
       base: {
         root: "relative inline-flex items-center",
         select:
@@ -11925,6 +12571,8 @@ export const componentMeta: ComponentMetaMap = {
         trigger: "flex items-center gap-2 w-full min-w-0 cursor-pointer",
         label: "truncate",
         leading: "flex items-center text-current shrink-0 pointer-events-none",
+        icon: "shrink-0",
+        option: "bg-default text-highlighted",
       },
       variants: {
         variant: {
@@ -11968,22 +12616,27 @@ export const componentMeta: ComponentMetaMap = {
           xs: {
             select: "text-xs",
             label: "text-xs",
+            icon: "size-3.5",
           },
           sm: {
             select: "text-xs",
             label: "text-xs",
+            icon: "size-4",
           },
           md: {
             select: "text-sm",
             label: "text-sm",
+            icon: "size-4",
           },
           lg: {
             select: "text-sm",
             label: "text-sm",
+            icon: "size-5",
           },
           xl: {
             select: "text-base",
             label: "text-base",
+            icon: "size-6",
           },
         },
       },
@@ -11993,7 +12646,7 @@ export const componentMeta: ComponentMetaMap = {
           variant: "solid",
           class: {
             select:
-              "border-default bg-default text-highlighted hover:bg-accented/50 hover:border-accented focus-within:ring-2 focus-within:ring-ring",
+              "border-default bg-default text-highlighted hover:bg-accented/50 hover:border-accented focus-within:ring-2 focus-within:ring-default",
           },
         },
         {
@@ -12001,7 +12654,7 @@ export const componentMeta: ComponentMetaMap = {
           layout: "icon",
           class: {
             select:
-              "border-default bg-default text-highlighted hover:bg-accented/50 hover:border-accented focus-within:ring-2 focus-within:ring-ring",
+              "border-default bg-default text-highlighted hover:bg-accented/50 hover:border-accented focus-within:ring-2 focus-within:ring-default",
           },
         },
         {
@@ -12131,14 +12784,13 @@ export const componentMeta: ComponentMetaMap = {
     ],
     emits: [],
     theme: {
-      slots: ["root", "border", "container", "icon", "avatar", "avatarSize", "label"],
+      slots: ["root", "border", "container", "icon", "avatar", "label"],
       base: {
         root: "flex items-center align-center text-center",
         border: "border-[var(--rl-border)]",
         container: "font-medium text-default flex",
         icon: "shrink-0 size-5",
         avatar: "shrink-0",
-        avatarSize: "xs",
         label: "text-sm",
       },
       variants: {
@@ -12151,7 +12803,34 @@ export const componentMeta: ComponentMetaMap = {
           vertical: {
             root: "h-full flex-col",
             border: "h-full",
-            container: "",
+          },
+        },
+        size: {
+          xs: {
+            label: "text-xs",
+          },
+          sm: {
+            label: "text-xs",
+          },
+          md: {
+            label: "text-sm",
+          },
+          lg: {
+            label: "text-base",
+          },
+          xl: {
+            label: "text-lg",
+          },
+        },
+        position: {
+          start: {
+            container: "order-first",
+          },
+          center: {
+            container: "order-none",
+          },
+          end: {
+            container: "order-last",
           },
         },
         type: {
@@ -12291,6 +12970,7 @@ export const componentMeta: ComponentMetaMap = {
         size: "md",
         type: "solid",
         orientation: "horizontal",
+        position: "center",
       },
     },
   },
@@ -12303,9 +12983,7 @@ export const componentMeta: ComponentMetaMap = {
     emits: [],
     theme: {
       slots: ["root"],
-      base: {
-        root: "",
-      },
+      base: {},
       variants: {},
       compoundVariants: [],
       defaultVariants: {},
@@ -12374,9 +13052,10 @@ export const componentMeta: ComponentMetaMap = {
         "keys",
         "empty",
         "footer",
+        "footerHint",
       ],
       base: {
-        root: "fixed inset-0 z-[1000] flex items-start justify-center pt-[10vh] px-4 bg-black/60 backdrop-blur-sm",
+        root: "fixed inset-0 z-[1000] flex items-start justify-center pt-[10vh] px-4 bg-scrim/60 backdrop-blur-sm",
         dialog:
           "bg-elevated border border-default rounded-xl w-full max-w-xl shadow-2xl overflow-hidden flex flex-col text-default",
         header: "flex items-center justify-between border-b border-default px-5 py-4",
@@ -12385,7 +13064,7 @@ export const componentMeta: ComponentMetaMap = {
           "text-muted hover:text-highlighted transition-colors bg-transparent border-0 cursor-pointer p-1 rounded flex items-center justify-center",
         body: "max-h-[380px] overflow-y-auto p-5 flex flex-col gap-6",
         categorySection: "flex flex-col gap-2",
-        categoryTitle: "text-xs font-bold uppercase tracking-wider text-primary-500 m-0",
+        categoryTitle: "text-xs font-bold uppercase tracking-wider text-primary m-0",
         grid: "flex flex-col gap-3",
         row: "flex items-center justify-between gap-4 pb-2 border-b border-default/40",
         info: "flex flex-col gap-0.5",
@@ -12395,6 +13074,7 @@ export const componentMeta: ComponentMetaMap = {
         empty: "text-sm text-muted text-center py-4",
         footer:
           "bg-muted/50 border-t border-default px-5 py-3 flex items-center justify-end text-xs text-muted",
+        footerHint: "flex items-center gap-1",
       },
       variants: {},
       compoundVariants: [],
@@ -12446,10 +13126,16 @@ export const componentMeta: ComponentMetaMap = {
         "itemText",
         "itemSummary",
         "itemChevron",
+        "itemDetails",
+        "itemChildren",
         "subItemLink",
         "subItemIcon",
+        "subItemChildren",
         "logoWrapper",
+        "logoIcon",
+        "logoText",
         "toggleButton",
+        "toggleIcon",
       ],
       base: {
         root: "flex flex-col h-full w-64 bg-default border-r border-default shadow-sm transition-all duration-300",
@@ -12459,21 +13145,26 @@ export const componentMeta: ComponentMetaMap = {
         footer: "p-4 border-t border-default flex items-center justify-between",
         item: "relative",
         itemLink:
-          "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-muted hover:bg-muted hover:text-highlighted transition-colors cursor-pointer",
+          "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-muted hover:bg-muted hover:text-highlighted data-[active]:bg-muted data-[active]:text-highlighted transition-colors cursor-pointer",
         itemIcon: "size-4 text-current",
-        itemBadge:
-          "ml-auto flex size-5 items-center justify-center rounded-full bg-primary/10 text-primary text-[10px] font-bold",
+        itemBadge: "ml-auto select-none",
         itemsContainer: "flex flex-col gap-0.5",
         itemText: "truncate flex-1",
         itemSummary:
-          "list-none cursor-pointer flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-muted hover:bg-muted hover:text-highlighted transition-colors",
+          "list-none cursor-pointer flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-muted hover:bg-muted hover:text-highlighted data-[active]:bg-muted data-[active]:text-highlighted transition-colors",
         itemChevron: "size-3 ml-auto transition-transform group-open/details:rotate-90",
+        itemDetails: "group/details",
+        itemChildren: "mt-0.5 ml-4 flex flex-col gap-0.5",
         subItemLink:
-          "flex items-center gap-1.5 w-full px-2 py-1 rounded-md text-muted hover:text-highlighted hover:bg-muted transition-colors text-xs",
+          "flex items-center gap-1.5 w-full px-2 py-1 rounded-md text-muted hover:text-highlighted hover:bg-muted data-[active]:bg-muted data-[active]:text-highlighted transition-colors text-xs",
         subItemIcon: "size-3.5 shrink-0",
+        subItemChildren: "mt-0.5 ml-3 flex flex-col gap-0.5",
         logoWrapper: "flex items-center gap-2",
+        logoIcon: "size-5 text-primary",
+        logoText: "truncate",
         toggleButton:
           "fixed top-4 left-4 z-50 flex size-9 items-center justify-center rounded-md bg-default border border-default shadow-sm hover:bg-muted transition-colors",
+        toggleIcon: "size-4",
       },
       variants: {
         side: {
@@ -12486,10 +13177,10 @@ export const componentMeta: ComponentMetaMap = {
         },
         collapsible: {
           icon: {
-            root: "w-16 [&_[data-slot=item-text]]:hidden [&_[data-slot=item-badge]]:hidden [&_[data-slot=sidebar-logo]]:hidden",
+            root: "w-16 [&_[data-slot=item-text]]:hidden [&_[data-slot=item-badge]]:hidden [&_[data-slot=logo-wrapper]]:hidden",
           },
           offcanvas: {
-            root: "-translate-x-full",
+            root: "-translate-x-full data-[open]:translate-x-0",
           },
         },
         layout: {
@@ -12542,7 +13233,7 @@ export const componentMeta: ComponentMetaMap = {
         shimmer:
           "absolute bg-elevated overflow-hidden left-[var(--rl-skel-x,0px)] top-[var(--rl-skel-y,0px)] w-[var(--rl-skel-w,0px)] h-[var(--rl-skel-h,0px)] rounded-[var(--rl-skel-r,var(--rl-skel-r-default,0.375rem))]",
         highlight:
-          "absolute inset-0 -translate-x-full animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-foreground/5 to-transparent",
+          "absolute inset-0 -translate-x-full animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-inverted/5 to-transparent",
       },
       variants: {
         shape: {
@@ -12573,7 +13264,7 @@ export const componentMeta: ComponentMetaMap = {
     props: [
       {
         name: "side",
-        type: '"top" | "right" | "bottom" | "left" | undefined',
+        type: "SlideoverSide | undefined",
         required: false,
         description: "Edge the sheet slides in from.",
         default: '"left"',
@@ -12644,60 +13335,63 @@ export const componentMeta: ComponentMetaMap = {
       {
         name: "default",
         bindings: {},
-        description: "Body content. Function-only: invoked while the sheet is mounted.",
+        description: "Body content of the sheet.",
       },
       {
         name: "trigger",
         bindings: {},
-        description: "Trigger element. Always rendered, so it is plain JSX.",
+        description: "Trigger element. Replaces the default trigger button.",
       },
       {
         name: "title",
         bindings: {},
-        description:
-          "Title content. Takes precedence over the `title` string. Function-only: invoked while the sheet is mounted.",
+        description: "Title content. Takes precedence over the `title` string.",
       },
       {
         name: "description",
         bindings: {},
-        description:
-          "Description content. Takes precedence over the `description` string. Function-only: invoked while the sheet is mounted.",
+        description: "Description content. Takes precedence over the `description` string.",
       },
       {
         name: "footer",
         bindings: {},
-        description: "Footer content. Function-only: invoked while the sheet is mounted.",
+        description: "Footer content rendered below the body.",
       },
     ],
     emits: [],
     theme: {
       slots: [
         "root",
+        "triggerWrapper",
         "trigger",
         "backdrop",
         "content",
         "header",
         "title",
         "description",
+        "body",
         "footer",
-        "closeButton",
+        "close",
+        "closeIcon",
       ],
       base: {
         root: "relative inline-block",
-        trigger: "",
-        backdrop: "fixed inset-0 z-[1000] bg-black/60 backdrop-blur-sm transition-all duration-300",
+        triggerWrapper: "inline-flex cursor-pointer",
+        backdrop: "fixed inset-0 z-[1000] bg-scrim/60 backdrop-blur-sm transition-all duration-300",
         content: [
           "fixed z-[1001] bg-elevated text-highlighted p-6 shadow-2xl transition-all duration-300 outline-none overflow-y-auto max-h-screen",
-          "data-[state=open]:animate-in data-[state=closed]:animate-out",
+          "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:hidden!",
         ],
         header: "flex flex-col gap-1.5 mb-4",
         title: "text-lg font-semibold leading-none tracking-tight text-highlighted",
         description: "text-sm text-muted leading-relaxed",
+        body: "flex flex-col flex-1 gap-2 overflow-y-auto",
         footer: "flex flex-col sm:flex-row sm:justify-end gap-2 mt-6",
-        closeButton: [
+        close: [
           "absolute right-4 top-4 rounded-md p-1 opacity-70 transition-opacity hover:opacity-100 text-muted hover:text-highlighted",
-          "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none",
+          "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:pointer-events-none",
         ],
+        closeIcon: "size-4",
       },
       variants: {
         side: {
@@ -12778,22 +13472,75 @@ export const componentMeta: ComponentMetaMap = {
         description: "Form field name for the underlying range input.",
         default: "undefined",
       },
+      {
+        name: "orientation",
+        type: '"horizontal" | "vertical"',
+        required: false,
+        description: "Axis the slider runs along.",
+        default: '"horizontal"',
+      },
+      {
+        name: "disabled",
+        type: "boolean",
+        required: false,
+        description: "Disables the slider.",
+        default: "false",
+      },
+      {
+        name: "aria-label",
+        type: "string",
+        required: false,
+        description: "Accessible name of the range input.",
+        default: "undefined",
+      },
+      {
+        name: "aria-labelledby",
+        type: "string",
+        required: false,
+        description: "Id of the element labelling the range input.",
+        default: "undefined",
+      },
+      {
+        name: "aria-describedby",
+        type: "string",
+        required: false,
+        description: "Id of the element describing the range input.",
+        default: "undefined",
+      },
     ],
     slots: [],
     emits: [],
     theme: {
       slots: ["root", "input", "track", "range", "thumb"],
       base: {
-        root: "relative flex w-full touch-none select-none items-center",
-        input: "absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10",
-        track: "relative h-1.5 w-full grow overflow-hidden rounded-full bg-muted",
-        range: "absolute h-full bg-[var(--rl-bg)]",
+        root: "relative flex touch-none select-none items-center data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+        input:
+          "peer absolute inset-0 z-10 h-full w-full cursor-pointer appearance-none opacity-0 disabled:cursor-not-allowed",
+        track: "relative overflow-hidden rounded-full bg-muted",
+        range: "absolute bg-[var(--rl-bg)]",
         thumb:
-          "block size-4.5 rounded-full border border-default bg-default shadow transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--rl-ring)]/50 hover:border-[var(--rl-border)] disabled:pointer-events-none disabled:opacity-50 cursor-pointer",
+          "pointer-events-none absolute block size-4.5 rounded-full border border-default bg-default shadow transition-all peer-hover:border-[var(--rl-border)] peer-focus-visible:ring-2 peer-focus-visible:ring-[var(--rl-ring)]/50",
       },
-      variants: {},
+      variants: {
+        orientation: {
+          horizontal: {
+            root: "h-5 w-full",
+            track: "h-1.5 w-full",
+            range: "left-0 top-0 h-full w-[var(--rl-slider-percent)]",
+            thumb: "left-[var(--rl-slider-percent)] top-1/2 -translate-x-1/2 -translate-y-1/2",
+          },
+          vertical: {
+            root: "h-full w-5 flex-col",
+            input: "[writing-mode:vertical-lr] [direction:rtl]",
+            track: "h-full w-1.5",
+            range: "bottom-0 left-0 w-full h-[var(--rl-slider-percent)]",
+            thumb: "bottom-[var(--rl-slider-percent)] left-1/2 translate-y-1/2 -translate-x-1/2",
+          },
+        },
+      },
       compoundVariants: [],
       defaultVariants: {
+        orientation: "horizontal",
         color: "primary",
       },
     },
@@ -12807,9 +13554,7 @@ export const componentMeta: ComponentMetaMap = {
     emits: [],
     theme: {
       slots: ["root"],
-      base: {
-        root: "",
-      },
+      base: {},
       variants: {},
       compoundVariants: [],
       defaultVariants: {},
@@ -12848,6 +13593,7 @@ export const componentMeta: ComponentMetaMap = {
       },
       compoundVariants: [],
       defaultVariants: {
+        color: "primary",
         size: "md",
       },
     },
@@ -12948,7 +13694,7 @@ export const componentMeta: ComponentMetaMap = {
     ],
     slots: [
       {
-        name: "handle",
+        name: "handleControl",
         bindings: {},
         description:
           "Custom handle grip content, or a render function receiving `{ collapsed, dragging, active, index, orientation }`.",
@@ -12956,7 +13702,7 @@ export const componentMeta: ComponentMetaMap = {
     ],
     emits: [],
     theme: {
-      slots: ["root", "panel", "handle", "handleControl", "intersection"],
+      slots: ["root", "panel", "handle", "handleControl", "handleIcon", "intersection"],
       base: {
         root: "flex w-full h-full overflow-hidden relative select-none",
         panel:
@@ -12965,12 +13711,14 @@ export const componentMeta: ComponentMetaMap = {
           "group/handle relative shrink-0 flex items-center justify-center bg-muted hover:bg-primary/50 data-[active]:bg-primary/60 data-[dragging]:bg-primary transition-colors select-none touch-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 z-10",
         handleControl:
           "flex items-center justify-center rounded-sm text-muted/70 group-hover/handle:text-highlighted data-[active]:text-highlighted data-[dragging]:text-primary transition-colors z-10",
+        handleIcon: "size-3.5 text-muted/60",
         intersection:
-          "absolute z-20 opacity-0 hover:opacity-100 data-[cross]:opacity-100 transition-opacity",
+          "absolute z-20 hidden pointer-events-none opacity-0 hover:opacity-100 data-[cross]:opacity-100 data-[intersecting]:block data-[intersecting]:pointer-events-auto transition-opacity",
       },
       variants: {
         orientation: {
           horizontal: {
+            panel: "[flex-basis:var(--rl-panel-size)] [width:var(--rl-panel-size)]",
             root: "flex-row",
             handle: "w-1.5 h-full cursor-col-resize border-x border-default/40",
             handleControl: "w-3.5 h-7 -mx-1",
@@ -12978,6 +13726,7 @@ export const componentMeta: ComponentMetaMap = {
               "left-1/2 -translate-x-1/2 w-4 h-4 cursor-move data-[resizable-handle-start-target]:top-0 data-[resizable-handle-end-target]:bottom-0",
           },
           vertical: {
+            panel: "[flex-basis:var(--rl-panel-size)] [height:var(--rl-panel-size)]",
             root: "flex-col",
             handle: "h-1.5 w-full cursor-row-resize border-y border-default/40",
             handleControl: "h-3.5 w-7 -my-1",
@@ -13010,9 +13759,7 @@ export const componentMeta: ComponentMetaMap = {
     emits: [],
     theme: {
       slots: ["root"],
-      base: {
-        root: "",
-      },
+      base: {},
       variants: {},
       compoundVariants: [],
       defaultVariants: {},
@@ -13101,7 +13848,8 @@ export const componentMeta: ComponentMetaMap = {
         "wrapper",
         "title",
         "description",
-        "content",
+        "body",
+        "panel",
       ],
       base: {
         root: "flex gap-4 w-full",
@@ -13113,12 +13861,13 @@ export const componentMeta: ComponentMetaMap = {
         indicator: "flex items-center justify-center size-full text-current",
         icon: "shrink-0 size-4 text-current transition-colors",
         separator:
-          "flex-1 h-0.5 mx-2 self-start mt-4 transition-colors rounded-full group-data-[state=completed]:bg-[var(--rl-bg)]",
+          "flex-1 h-0.5 mx-2 self-start mt-4 transition-colors rounded-full bg-muted data-[state=completed]:bg-primary",
         wrapper: "mt-2 text-center",
         title:
           "text-xs font-semibold group-data-[state=active]:font-bold group-data-[state=active]:text-[var(--rl-text)] group-data-[state=completed]:text-[var(--rl-text)] text-muted transition-colors",
         description: "text-dimmed text-wrap text-xs",
-        content: "size-full",
+        body: "size-full",
+        panel: "w-full",
       },
       variants: {
         orientation: {
@@ -13274,9 +14023,10 @@ export const componentMeta: ComponentMetaMap = {
     slots: [],
     emits: [],
     theme: {
-      slots: ["root"],
+      slots: ["root", "list"],
       base: {
         root: "w-full",
+        list: "rl-steps-list",
       },
       variants: {},
       compoundVariants: [],
@@ -13345,14 +14095,14 @@ export const componentMeta: ComponentMetaMap = {
     props: [
       {
         name: "prev",
-        type: "SurroundItem | null",
+        type: "SurroundItem | null | undefined",
         required: false,
         description: "The previous item. Omit or pass `null` to hide the previous link.",
         default: "undefined",
       },
       {
         name: "next",
-        type: "SurroundItem | null",
+        type: "SurroundItem | null | undefined",
         required: false,
         description: "The next item. Omit or pass `null` to hide the next link.",
         default: "undefined",
@@ -13361,14 +14111,13 @@ export const componentMeta: ComponentMetaMap = {
     slots: [],
     emits: [],
     theme: {
-      slots: ["root", "link", "label", "labelPrev", "labelNext", "title"],
+      slots: ["root", "link", "label", "icon", "title"],
       base: {
         root: "mt-12 pt-6 border-t border-default flex justify-between gap-4",
         link: "flex flex-col gap-1 group no-underline max-w-[45%]",
         label:
           "text-xs text-muted font-medium flex items-center gap-1 group-hover:text-primary transition-colors",
-        labelPrev: "flex items-center gap-1",
-        labelNext: "flex items-center justify-end gap-1",
+        icon: "size-3",
         title:
           "text-sm font-semibold text-highlighted group-hover:text-primary transition-colors truncate",
       },
@@ -13379,6 +14128,7 @@ export const componentMeta: ComponentMetaMap = {
           },
           next: {
             link: "text-right",
+            label: "justify-end",
           },
         },
       },
@@ -13406,7 +14156,7 @@ export const componentMeta: ComponentMetaMap = {
         default: "false",
       },
       {
-        name: "onCheckedChange",
+        name: "onValueChange",
         type: "(checked: boolean) => void",
         required: false,
         description: "Called with the next state when the user toggles the switch.",
@@ -13454,12 +14204,12 @@ export const componentMeta: ComponentMetaMap = {
         root: "inline-flex items-center gap-2 cursor-pointer select-none",
         input: "absolute opacity-0 size-0 pointer-events-none peer",
         track: [
-          "inline-flex shrink-0 items-center rounded-full border-2 border-transparent bg-muted transition-all focus-within:ring-2 focus-within:ring-[var(--rl-ring)]/50 focus-within:ring-offset-2",
+          "inline-flex shrink-0 items-center rounded-full border-2 border-transparent bg-muted transition-all peer-focus-visible:ring-2 peer-focus-visible:ring-[var(--rl-ring)]/50 peer-focus-visible:ring-offset-2",
           "peer-checked:bg-[var(--rl-bg)]",
           "peer-disabled:cursor-not-allowed peer-disabled:opacity-50",
         ],
         thumb:
-          "pointer-events-none block rounded-full bg-default shadow-lg ring-0 transition-transform duration-200 translate-x-0",
+          "pointer-events-none block rounded-full bg-default shadow-lg ring-0 transition-transform duration-200",
         label: "text-highlighted leading-none",
       },
       variants: {
@@ -13499,29 +14249,7 @@ export const componentMeta: ComponentMetaMap = {
           },
         },
       },
-      compoundVariants: [
-        {
-          size: "sm",
-          checked: true,
-          class: {
-            thumb: "translate-x-3",
-          },
-        },
-        {
-          size: "md",
-          checked: true,
-          class: {
-            thumb: "translate-x-4",
-          },
-        },
-        {
-          size: "lg",
-          checked: true,
-          class: {
-            thumb: "translate-x-5",
-          },
-        },
-      ],
+      compoundVariants: [],
       defaultVariants: {
         color: "primary",
         size: "md",
@@ -13547,7 +14275,6 @@ export const componentMeta: ComponentMetaMap = {
         "tr",
         "th",
         "td",
-        "separator",
         "empty",
         "loading",
         "trGroup",
@@ -13557,6 +14284,34 @@ export const componentMeta: ComponentMetaMap = {
         "toolbar",
         "resizer",
         "dragHandle",
+        "col",
+        "pinnedCell",
+        "padRow",
+        "search",
+        "reorderCell",
+        "reorderIcon",
+        "actionsCell",
+        "actionsTrigger",
+        "actionsIcon",
+        "toolbarActions",
+        "scroller",
+        "virtualScroller",
+        "headerContent",
+        "headerText",
+        "sortButton",
+        "sortIcon",
+        "sortIconActive",
+        "dragHandleIcon",
+        "loadingContent",
+        "loadingIcon",
+        "emptyContent",
+        "emptyIcon",
+        "emptyText",
+        "groupHeader",
+        "groupIcon",
+        "groupLabel",
+        "groupValue",
+        "groupCount",
       ],
       base: {
         root: "relative block w-full overflow-hidden rounded-lg border border-default shadow-sm outline-primary/25 focus-visible:outline-3",
@@ -13566,24 +14321,53 @@ export const componentMeta: ComponentMetaMap = {
           "flex items-center gap-3 px-3.5 py-3 border-b border-default bg-muted/20 overflow-x-auto",
         thead:
           "relative bg-muted/50 border-b border-default text-xs uppercase font-semibold text-muted",
-        tbody:
-          "divide-y divide-default/60 [&>tr]:data-[selectable=true]:hover:bg-muted/30 [&>tr]:data-[selectable=true]:cursor-pointer",
+        tbody: "divide-y divide-default/60",
         tfoot: "relative bg-muted/30 border-t border-default font-medium text-xs text-muted",
-        tr: "relative transition-colors data-[selected=true]:bg-primary/10 data-[expanded=true]:bg-muted/40 data-[drop-position=top]:after:absolute data-[drop-position=top]:after:inset-x-0 data-[drop-position=top]:after:top-0 data-[drop-position=top]:after:h-0.5 data-[drop-position=top]:after:bg-primary data-[drop-position=top]:after:z-30 data-[drop-position=bottom]:after:absolute data-[drop-position=bottom]:after:inset-x-0 data-[drop-position=bottom]:after:bottom-0 data-[drop-position=bottom]:after:h-0.5 data-[drop-position=bottom]:after:bg-primary data-[drop-position=bottom]:after:z-30",
+        tr: "relative transition-colors aria-selected:bg-primary/10 aria-expanded:bg-muted/40 data-[drop-position=top]:after:absolute data-[drop-position=top]:after:inset-x-0 data-[drop-position=top]:after:top-0 data-[drop-position=top]:after:h-0.5 data-[drop-position=top]:after:bg-primary data-[drop-position=top]:after:z-30 data-[drop-position=bottom]:after:absolute data-[drop-position=bottom]:after:inset-x-0 data-[drop-position=bottom]:after:bottom-0 data-[drop-position=bottom]:after:h-0.5 data-[drop-position=bottom]:after:bg-primary data-[drop-position=bottom]:after:z-30",
         th: "relative group/th w-[var(--rl-col-width,auto)] min-w-[var(--rl-col-min-width,0)] max-w-[var(--rl-col-max-width,none)] px-4 py-3.5 text-xs font-semibold text-muted text-left uppercase tracking-wider border-b border-default [&:has([role=checkbox])]:pe-0 data-[drop-position=left]:after:absolute data-[drop-position=left]:after:inset-y-0 data-[drop-position=left]:after:start-0 data-[drop-position=left]:after:w-0.5 data-[drop-position=left]:after:bg-primary data-[drop-position=left]:after:z-30 data-[drop-position=right]:after:absolute data-[drop-position=right]:after:inset-y-0 data-[drop-position=right]:after:end-0 data-[drop-position=right]:after:w-0.5 data-[drop-position=right]:after:bg-primary data-[drop-position=right]:after:z-30",
         td: "p-4 text-sm text-highlighted align-middle whitespace-nowrap border-b border-default/40 [&:has([role=checkbox])]:pe-0 w-[var(--rl-col-width,auto)] min-w-[var(--rl-col-min-width,0)] max-w-[var(--rl-col-max-width,none)]",
-        separator: "absolute z-10 start-0 w-full h-px bg-accented",
         empty: "py-8 text-center text-sm text-muted",
         loading: "py-8 text-center text-sm text-muted",
         trGroup: "bg-muted/40",
         tdGroup:
-          "px-4 py-2 text-xs font-bold uppercase tracking-wider text-highlighted border-b border-default",
+          "pe-4 ps-[var(--rl-depth-pad,1rem)] py-2 text-xs font-bold uppercase tracking-wider text-highlighted border-b border-default",
         trExpanded: "bg-muted/20 border-b border-default",
         tdExpanded: "p-4 border-b border-default",
         resizer:
           "absolute top-0 end-0 h-full w-1.5 cursor-col-resize select-none touch-none hover:bg-primary/50 transition-colors opacity-0 group-hover/th:opacity-60",
         dragHandle:
           "inline-flex items-center justify-center cursor-grab active:cursor-grabbing text-muted/50 hover:text-highlighted touch-none select-none p-1 rounded hover:bg-muted/40 transition-colors",
+        col: "[width:var(--rl-col-width,auto)] [min-width:var(--rl-col-min-width,auto)] [max-width:var(--rl-col-max-width,none)]",
+        pinnedCell:
+          "sticky z-10 bg-default left-[var(--rl-pin-left,auto)] right-[var(--rl-pin-right,auto)]",
+        padRow: "h-[var(--rl-pad,0px)] p-0 border-0",
+        search: "max-w-xs min-w-[10ch] w-full",
+        reorderCell: "flex items-center justify-center",
+        reorderIcon: "size-4",
+        actionsCell: "flex items-center justify-end",
+        actionsTrigger:
+          "aspect-square !px-1.5 !py-1.5 inline-flex items-center justify-center shrink-0",
+        actionsIcon: "size-4",
+        toolbarActions: "ml-auto flex items-center gap-2 shrink-0",
+        scroller: "overflow-x-auto w-full relative",
+        virtualScroller: "overflow-x-auto w-full relative max-h-[400px] overflow-y-auto",
+        headerContent: "flex items-center gap-1.5",
+        headerText: "flex-1 min-w-0",
+        sortButton:
+          "inline-flex items-center gap-1.5 hover:text-highlighted focus:outline-none transition-colors cursor-pointer group -mx-1 px-1 py-0.5 rounded",
+        sortIcon: "size-3.5 transition-all shrink-0 opacity-40 group-hover:opacity-100",
+        sortIconActive: "size-3.5 transition-all shrink-0 text-primary",
+        dragHandleIcon: "size-3.5 opacity-40 hover:opacity-100",
+        loadingContent: "flex items-center justify-center gap-2 text-muted py-4",
+        loadingIcon: "size-5 animate-spin text-primary",
+        emptyContent: "flex flex-col items-center justify-center py-6 gap-2 text-muted",
+        emptyIcon: "size-8 opacity-40",
+        emptyText: "text-sm font-medium",
+        groupHeader: "flex items-center gap-2",
+        groupIcon: "size-3.5 text-primary opacity-70",
+        groupLabel: "text-xs uppercase text-muted font-medium",
+        groupValue: "text-highlighted",
+        groupCount: "ml-auto text-muted font-normal normal-case",
       },
       variants: {
         pinned: {
@@ -13604,7 +14388,7 @@ export const componentMeta: ComponentMetaMap = {
             tfoot: "sticky bottom-0 inset-x-0 bg-default z-10",
           },
         },
-        loading: {
+        loadingBar: {
           true: {
             thead:
               "after:absolute after:bottom-0 after:start-0 after:z-10 after:h-0.5 after:w-full motion-reduce:after:w-full motion-reduce:after:animate-pulse",
@@ -13637,77 +14421,77 @@ export const componentMeta: ComponentMetaMap = {
       },
       compoundVariants: [
         {
-          loading: true,
+          loadingBar: true,
           loadingColor: "primary",
           class: {
             thead: "after:bg-primary",
           },
         },
         {
-          loading: true,
+          loadingBar: true,
           loadingColor: "secondary",
           class: {
             thead: "after:bg-secondary",
           },
         },
         {
-          loading: true,
+          loadingBar: true,
           loadingColor: "success",
           class: {
             thead: "after:bg-success",
           },
         },
         {
-          loading: true,
+          loadingBar: true,
           loadingColor: "info",
           class: {
             thead: "after:bg-info",
           },
         },
         {
-          loading: true,
+          loadingBar: true,
           loadingColor: "warning",
           class: {
             thead: "after:bg-warning",
           },
         },
         {
-          loading: true,
+          loadingBar: true,
           loadingColor: "error",
           class: {
-            thead: "after:bg-destructive",
+            thead: "after:bg-error",
           },
         },
         {
-          loading: true,
+          loadingBar: true,
           loadingColor: "neutral",
           class: {
             thead: "after:bg-muted",
           },
         },
         {
-          loading: true,
+          loadingBar: true,
           loadingAnimation: "carousel",
           class: {
             thead: "motion-safe:after:animate-[carousel_2s_linear_infinite]",
           },
         },
         {
-          loading: true,
+          loadingBar: true,
           loadingAnimation: "carousel-inverse",
           class: {
             thead: "motion-safe:after:animate-[carousel-inverse_2s_linear_infinite]",
           },
         },
         {
-          loading: true,
+          loadingBar: true,
           loadingAnimation: "swing",
           class: {
             thead: "motion-safe:after:animate-[swing_2s_ease-in-out_infinite]",
           },
         },
         {
-          loading: true,
+          loadingBar: true,
           loadingAnimation: "elastic",
           class: {
             thead: "motion-safe:after:animate-[elastic_2s_ease-in-out_infinite]",
@@ -13742,13 +14526,6 @@ export const componentMeta: ComponentMetaMap = {
         default: "undefined",
       },
       {
-        name: "containerSelector",
-        type: "string | undefined",
-        required: false,
-        description: "CSS selector for the container element whose headings should be tracked.",
-        default: '".markdown-content"',
-      },
-      {
         name: "collapsible",
         type: "boolean | undefined",
         required: false,
@@ -13763,73 +14540,44 @@ export const componentMeta: ComponentMetaMap = {
       slots: [
         "root",
         "container",
-        "top",
-        "bottom",
-        "trigger",
         "title",
-        "trailing",
-        "trailingIcon",
-        "content",
         "list",
-        "listWithChildren",
         "item",
-        "itemWithChildren",
         "link",
-        "linkActive",
         "linkText",
-        "indicator",
-        "indicatorLine",
-        "indicatorActive",
+        "trigger",
+        "triggerLabel",
+        "triggerIcon",
+        "trailingIcon",
+        "body",
+        "bodyList",
+        "bodyItem",
+        "bodyLink",
       ],
       base: {
         root: "sticky top-(--rl-header-height) z-10 bg-default/75 lg:bg-[initial] backdrop-blur -mx-4 px-4 sm:px-6 sm:-mx-6 lg:ms-0 xl:mx-0 overflow-y-auto overflow-x-hidden max-h-[calc(100vh-var(--rl-header-height))]",
         container:
           "pt-4 sm:pt-6 pb-2.5 sm:pb-4.5 lg:py-8 border-b border-dashed border-default lg:border-0 flex flex-col",
-        top: "",
-        bottom: "hidden lg:flex lg:flex-col gap-6",
-        trigger:
-          "group text-sm font-semibold flex-1 flex items-center gap-1.5 py-1.5 -mt-1.5 focus-visible:outline-primary",
         title: "truncate",
-        trailing: "ms-auto inline-flex gap-1.5 items-center",
-        trailingIcon:
-          "size-5 transform transition-transform duration-200 shrink-0 group-data-[state=open]:rotate-180 lg:hidden",
-        content:
-          "relative data-[state=open]:animate-fade-in data-[state=closed]:animate-fade-out overflow-hidden focus:outline-none",
-        list: "min-w-0",
-        listWithChildren: "ms-3",
-        item: "min-w-0",
-        itemWithChildren: "",
-        link: "group relative text-sm flex items-center focus-visible:outline-primary py-1",
-        linkActive: "text-[var(--rl-primary-500)] font-semibold",
+        list: "min-w-0 mt-2xl flex flex-col gap-xs",
+        item: "min-w-0 ps-9 data-[depth=2]:ps-xs data-[depth=3]:ps-6",
+        link: "group relative text-sm flex items-center focus-visible:outline-primary py-1 aria-[current=location]:text-primary aria-[current=location]:font-semibold",
         linkText: "truncate",
-        indicator: "",
-        indicatorLine: "",
-        indicatorActive: "",
+        trigger:
+          "group flex items-center justify-between gap-3 px-4 h-10 text-sm font-medium text-highlighted cursor-pointer select-none hover:bg-muted/40 transition-colors list-none",
+        triggerLabel: "flex items-center gap-2",
+        triggerIcon: "size-4 text-primary shrink-0",
+        trailingIcon:
+          "size-4 text-muted shrink-0 transition-transform duration-200 group-data-[state=open]:rotate-180",
+        body: "px-4 pt-3 max-h-[40vh] overflow-y-auto border-t border-default/50 bg-default",
+        bodyList: "flex flex-col gap-0.5 pb-8",
+        bodyItem: "data-[depth=3]:ps-4",
+        bodyLink:
+          "block py-1.5 text-sm text-muted transition-colors hover:text-primary no-underline data-[depth=2]:text-highlighted data-[depth=2]:font-medium",
       },
-      variants: {
-        interactive: {
-          true: {
-            root: "hover:shadow-md hover:-translate-y-0.5 cursor-pointer hover:border-primary/30",
-          },
-          false: {
-            root: "",
-          },
-        },
-        overlay: {
-          true: {
-            root: "relative aspect-square",
-            content: "absolute inset-0 z-10",
-          },
-          false: {
-            root: "",
-          },
-        },
-      },
+      variants: {},
       compoundVariants: [],
-      defaultVariants: {
-        interactive: false,
-        overlay: false,
-      },
+      defaultVariants: {},
     },
   },
   tabs: {
@@ -13846,42 +14594,58 @@ export const componentMeta: ComponentMetaMap = {
         "indicator",
         "trigger",
         "leadingIcon",
-        "leadingAvatar",
         "label",
         "trailingBadge",
-        "content",
+        "body",
+        "overflow",
+        "overflowTrigger",
+        "overflowLabel",
+        "overflowMenu",
+        "overflowItem",
+        "overflowIcon",
+        "overflowCheck",
+        "panel",
       ],
       base: {
         root: "flex gap-2 w-full",
         list: "relative flex p-1 group items-center min-w-0",
         indicator:
-          "absolute transition-[translate,width,height,top,left] duration-200 ease-out pointer-events-none",
+          "absolute start-0 top-0 pointer-events-none transition-[translate,width,height] duration-200 ease-out translate-x-[var(--rl-indicator-x,0px)] translate-y-[var(--rl-indicator-y,0px)] w-[var(--rl-indicator-w,0px)] h-[var(--rl-indicator-h,0px)]",
         trigger:
           "group relative inline-flex items-center justify-center min-w-0 whitespace-nowrap font-medium transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-75 focus-visible:outline-none data-[state=inactive]:text-muted hover:data-[state=inactive]:text-highlighted",
         leadingIcon: "shrink-0",
-        leadingAvatar: "shrink-0",
         label: "truncate",
         trailingBadge: "shrink-0",
-        content: "w-full focus-visible:outline-none",
+        body: "w-full focus-visible:outline-none",
+        overflow: "relative inline-flex items-center ml-auto",
+        overflowTrigger: "gap-1",
+        overflowLabel: "truncate",
+        overflowMenu:
+          "absolute right-0 top-full mt-1 z-50 rounded-lg border border-default bg-default p-1 shadow-lg backdrop-blur-sm min-w-40 flex flex-col gap-0.5",
+        overflowItem:
+          "w-full text-left px-3 py-1.5 text-sm rounded-md transition-colors flex items-center justify-between hover:bg-muted focus-visible:outline-none cursor-pointer data-[state=active]:bg-muted/80 data-[state=active]:font-medium",
+        overflowIcon: "size-3.5 opacity-70",
+        overflowCheck: "size-4",
+        panel: "flex-1",
       },
       variants: {
         variant: {
           solid: {
             list: "bg-muted/60 rounded-lg p-1",
             trigger: "grow rounded-md data-[state=active]:text-highlighted z-10",
-            indicator: "bg-default rounded-md shadow-xs top-1 bottom-1 h-[calc(100%-8px)]",
+            indicator: "bg-default rounded-md shadow-xs",
           },
           link: {
             list: "bg-transparent border-b border-default p-0 gap-2 -mb-px",
             trigger: "rounded-md data-[state=active]:text-primary pb-2 pt-1 px-3 z-10",
-            indicator: "bg-primary rounded-full -bottom-px h-0.5 left-0",
+            indicator:
+              "bg-transparent after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:bg-primary after:rounded-full",
           },
         },
         orientation: {
           horizontal: {
             root: "flex-col",
             list: "w-full",
-            indicator: "",
             trigger: "justify-center",
           },
           vertical: {
@@ -14044,7 +14808,7 @@ export const componentMeta: ComponentMetaMap = {
     theme: {
       slots: ["root", "textarea"],
       base: {
-        root: "relative flex items-center w-full rounded-md border border-default bg-default shadow-sm focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
+        root: "relative flex items-center w-full rounded-md border border-default bg-default shadow-sm focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2",
         textarea:
           "w-full bg-transparent outline-none placeholder:text-muted disabled:cursor-not-allowed disabled:opacity-50",
       },
@@ -14068,7 +14832,12 @@ export const componentMeta: ComponentMetaMap = {
         },
         invalid: {
           true: {
-            root: "border-error-500 focus-within:ring-error-500/50",
+            root: "border-error focus-within:ring-error/50",
+          },
+        },
+        autoGrow: {
+          true: {
+            textarea: "[field-sizing:content] min-h-0",
           },
         },
       },
@@ -14076,6 +14845,7 @@ export const componentMeta: ComponentMetaMap = {
       defaultVariants: {
         size: "md",
         invalid: false,
+        autoGrow: false,
       },
     },
   },
@@ -14086,17 +14856,30 @@ export const componentMeta: ComponentMetaMap = {
     props: [
       {
         name: "mode",
-        type: '"select" | "icon"',
+        type: '"select" | "icon" | undefined',
         required: false,
         description: "Display mode. `icon` renders a compact icon-only trigger.",
         default: '"select"',
       },
       {
+        name: "color",
+        type: "ThemeColor | undefined",
+        required: false,
+        description: "Color of the trigger.",
+        default: '"primary"',
+      },
+      {
+        name: "size",
+        type: '"xs" | "sm" | "md" | "lg" | "xl" | undefined',
+        required: false,
+        description: "Size of the trigger.",
+        default: '"md"',
+      },
+      {
         name: "onValueChange",
-        type: "(theme: ThemePreference) => void",
+        type: "((theme: ThemePreference) => void) | undefined",
         required: false,
         description: "Called with the new preference after it is applied.",
-        default: "undefined",
       },
     ],
     slots: [
@@ -14108,35 +14891,14 @@ export const componentMeta: ComponentMetaMap = {
     ],
     emits: [],
     theme: {
-      slots: ["root", "wrapper", "select"],
+      slots: ["root", "wrapper"],
       base: {
         root: "inline-flex flex-col gap-1.5",
         wrapper: "relative inline-block",
-        select: "",
       },
-      variants: {
-        size: {
-          xs: {
-            select: "",
-          },
-          sm: {
-            select: "",
-          },
-          md: {
-            select: "",
-          },
-          lg: {
-            select: "",
-          },
-          xl: {
-            select: "",
-          },
-        },
-      },
+      variants: {},
       compoundVariants: [],
-      defaultVariants: {
-        size: "md",
-      },
+      defaultVariants: {},
     },
   },
   timeline: {
@@ -14218,6 +14980,8 @@ export const componentMeta: ComponentMetaMap = {
         "item",
         "container",
         "indicator",
+        "indicatorIcon",
+        "indicatorFallback",
         "separator",
         "wrapper",
         "date",
@@ -14229,7 +14993,11 @@ export const componentMeta: ComponentMetaMap = {
         item: "group relative flex flex-1 gap-3",
         container: "relative flex items-center gap-1.5",
         indicator:
-          "group-data-[state=completed]:text-inverted group-data-[state=active]:text-inverted text-highlighted",
+          "flex shrink-0 text-highlighted group-data-[state=completed]:text-inverted group-data-[state=active]:text-inverted",
+        indicatorIcon:
+          "text-highlighted group-data-[state=completed]:text-inverted group-data-[state=active]:text-inverted",
+        indicatorFallback:
+          "text-highlighted group-data-[state=completed]:text-inverted group-data-[state=active]:text-inverted",
         separator: "flex-1 rounded-full bg-elevated",
         wrapper: "w-full",
         date: "text-dimmed text-xs/5",
@@ -14339,7 +15107,6 @@ export const componentMeta: ComponentMetaMap = {
       ],
       defaultVariants: {
         size: "md",
-        color: "primary",
         orientation: "vertical",
       },
     },
@@ -14354,7 +15121,7 @@ export const componentMeta: ComponentMetaMap = {
         type: "ThemeColor | undefined",
         required: false,
         description: "Intent color. Drives the icon and styling.",
-        default: '"neutral"',
+        default: '"primary"',
       },
       {
         name: "title",
@@ -14367,12 +15134,6 @@ export const componentMeta: ComponentMetaMap = {
         type: "string | undefined",
         required: false,
         description: "Description or message. Use `descriptionSlot` for JSX.",
-      },
-      {
-        name: "actionLabel",
-        type: "string | undefined",
-        required: false,
-        description: "Action button label. Rendered only when `actionsSlot` is not set.",
       },
       {
         name: "duration",
@@ -14400,7 +15161,7 @@ export const componentMeta: ComponentMetaMap = {
       {
         name: "default",
         bindings: {},
-        description: "Toast body content.",
+        description: "Toast body content, rendered below the title and description.",
       },
       {
         name: "title",
@@ -14415,20 +15176,21 @@ export const componentMeta: ComponentMetaMap = {
       {
         name: "actions",
         bindings: {},
-        description: "Action content. Replaces the default action button.",
+        description: "Action content, rendered below the body.",
       },
     ],
     emits: [],
     theme: {
-      slots: ["root", "title", "description", "action", "close"],
+      slots: ["root", "icon", "body", "title", "description", "actions", "close"],
       base: {
-        root: "group pointer-events-auto relative flex w-full items-start justify-between space-x-4 overflow-hidden rounded-md border p-6 pr-8 shadow-lg transition-all border-default bg-default text-highlighted",
+        root: "group pointer-events-auto relative flex w-full items-start justify-between space-x-4 overflow-hidden rounded-md border p-6 pr-8 shadow-lg transition-all border-default bg-default text-highlighted data-[state=closed]:pointer-events-none data-[state=closed]:translate-y-2 data-[state=closed]:opacity-0",
+        icon: "size-4 shrink-0 mt-0.5",
+        body: "flex min-w-0 flex-1 flex-col gap-0.5",
         title: "text-sm font-semibold",
         description: "text-xs opacity-90",
-        action:
-          "inline-flex h-8 shrink-0 items-center justify-center rounded-md border bg-transparent px-3 text-xs font-medium ring-offset-background transition-colors hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 group-[.error]:border-muted/40 group-[.error]:hover:border-error-500/30 group-[.error]:hover:bg-error-500 group-[.error]:hover:text-inverted group-[.error]:focus:ring-error-500",
+        actions: "mt-3 flex items-center justify-end gap-2",
         close:
-          "absolute right-2 top-2 rounded-md p-1 text-highlighted/50 opacity-0 transition-opacity hover:text-highlighted focus:opacity-100 focus:outline-none focus:ring-2 group-hover:opacity-100",
+          "absolute right-2 top-2 opacity-0 transition-opacity group-hover:opacity-100 focus:opacity-100",
       },
       variants: {},
       compoundVariants: [
@@ -14515,10 +15277,10 @@ export const componentMeta: ComponentMetaMap = {
     frameworks: ["solid"],
     props: [
       {
-        name: "content",
+        name: "body",
         type: "string | undefined",
         required: false,
-        description: "Plain text shown inside the tooltip. Use `bodySlot` for JSX.",
+        description: "Plain text shown inside the tooltip. Used when `bodySlot` is not set.",
       },
       {
         name: "placement",
@@ -14558,20 +15320,20 @@ export const componentMeta: ComponentMetaMap = {
       {
         name: "body",
         bindings: {},
-        description: "Tooltip body content. Takes precedence over the `content` string.",
+        description: "Tooltip body JSX. Takes precedence over the `body` string.",
       },
     ],
     emits: [],
     theme: {
-      slots: ["root", "trigger", "content"],
+      slots: ["root", "trigger", "content", "body"],
       base: {
         root: "relative inline-block",
-        trigger: "",
         content: [
-          "absolute z-50 overflow-hidden rounded-md bg-inverted px-3 py-1.5 text-xs text-inverted shadow-md animate-in fade-in-0 zoom-in-95",
+          "absolute z-50 overflow-hidden rounded-md bg-inverted shadow-md animate-in fade-in-0 zoom-in-95",
           "transition-all duration-150 invisible opacity-0 scale-95 origin-center pointer-events-none",
           "data-[state=open]:visible data-[state=open]:opacity-100 data-[state=open]:scale-100",
         ],
+        body: "px-3 py-1.5 text-xs text-inverted",
       },
       variants: {
         placement: {
@@ -14604,9 +15366,7 @@ export const componentMeta: ComponentMetaMap = {
     emits: [],
     theme: {
       slots: ["root"],
-      base: {
-        root: "",
-      },
+      base: {},
       variants: {},
       compoundVariants: [],
       defaultVariants: {},
@@ -14622,83 +15382,94 @@ export const componentMeta: ComponentMetaMap = {
         type: "TreeItem[] | undefined",
         required: false,
         description: "The nodes to render.",
+        default: "[]",
       },
       {
-        name: "selected",
+        name: "value",
         type: "string | null | undefined",
         required: false,
         description:
-          "Selected node id (controlled). `null` or `undefined` with no `onSelect` means none.",
+          "Id of the selected node (controlled). `null` or `undefined` means no node is selected.",
+        default: "undefined",
       },
       {
-        name: "onSelect",
-        type: "((item: TreeItem) => void) | undefined",
+        name: "onValueChange",
+        type: "((id: string) => void) | undefined",
         required: false,
-        description: "Called when a row is clicked.",
+        description:
+          "Called with the id of a node when its row is clicked. Disabled nodes do not fire it.",
+        default: "undefined",
       },
       {
         name: "expanded",
         type: "string[] | undefined",
         required: false,
         description: "Expanded node ids (controlled). Leave undefined to let the tree manage it.",
+        default: "undefined",
       },
       {
         name: "defaultExpanded",
         type: "string[] | undefined",
         required: false,
         description: "Expanded node ids on first render when uncontrolled.",
+        default: "[]",
       },
       {
         name: "onExpandedChange",
         type: "((ids: string[]) => void) | undefined",
         required: false,
         description: "Called with the new expanded ids when a node opens or closes.",
+        default: "undefined",
       },
       {
         name: "itemAttrs",
         type: "((item: TreeItem, depth: number) => Record<string, unknown>) | undefined",
         required: false,
         description:
-          "Extra attributes for a row (drag-and-drop handlers, data attributes, and so on).",
+          "Extra attributes for a row, such as drag-and-drop handlers or data attributes.",
+        default: "undefined",
       },
       {
         name: "itemClass",
         type: "((item: TreeItem, depth: number) => string | undefined) | undefined",
         required: false,
         description: "Extra class names for a row.",
+        default: "undefined",
       },
       {
         name: "class",
         type: "string | undefined",
         required: false,
-        description: "",
+        description: "Additional class names applied to the root element.",
+        default: "undefined",
       },
     ],
     slots: [
       {
         name: "item",
         bindings: {},
-        description: "Replaces the default row content (icon and label).",
+        description:
+          "Replaces the default row content (icon and label). Receives the node and its depth.",
       },
       {
         name: "default",
         bindings: {},
-        description: "",
+        description: "Content rendered after the items.",
       },
     ],
     emits: [],
     theme: {
-      slots: ["root", "item", "row", "toggle", "label", "icon", "children", "itemSlot"],
+      slots: ["root", "item", "row", "toggle", "label", "icon", "text", "children"],
       base: {
         root: "flex flex-col gap-0.5 text-sm",
         item: "flex flex-col",
-        row: "flex items-center gap-1 rounded-md pl-[var(--rl-tree-indent,4px)] pr-2 py-1 text-highlighted hover:bg-elevated data-[selected=true]:bg-primary/10 data-[selected=true]:text-primary data-[disabled=true]:opacity-50",
+        row: "group flex items-center gap-1 rounded-md pl-[var(--rl-tree-indent,4px)] pr-2 py-1 text-highlighted hover:bg-elevated aria-selected:bg-primary/10 aria-selected:text-primary data-[disabled]:opacity-50",
         toggle:
           "flex size-5 shrink-0 cursor-pointer items-center justify-center rounded text-muted hover:text-highlighted disabled:cursor-default disabled:opacity-0",
-        label: "flex min-w-0 flex-1 cursor-pointer items-center gap-1.5 truncate text-left",
-        icon: "shrink-0 text-muted data-[selected=true]:text-primary",
+        label: "flex min-w-0 flex-1 cursor-pointer items-center gap-1.5 text-left",
+        icon: "shrink-0 text-muted group-aria-selected:text-primary",
+        text: "min-w-0 truncate",
         children: "flex flex-col gap-0.5",
-        itemSlot: "",
       },
       variants: {},
       compoundVariants: [],
@@ -14714,9 +15485,7 @@ export const componentMeta: ComponentMetaMap = {
     emits: [],
     theme: {
       slots: ["root"],
-      base: {
-        root: "",
-      },
+      base: {},
       variants: {},
       compoundVariants: [],
       defaultVariants: {},
@@ -14772,9 +15541,9 @@ export const componentMeta: ComponentMetaMap = {
       slots: ["root", "trigger", "image", "icon", "iframe", "transcript"],
       base: {
         root: "relative aspect-video h-full w-full cursor-pointer overflow-hidden",
-        trigger: "group absolute inset-0 aspect-video h-full w-full overflow-hidden",
+        trigger: "group absolute inset-0 aspect-video h-full w-full overflow-hidden p-0",
         image: "h-full w-full object-cover",
-        icon: "absolute inset-0 m-auto h-24 w-24 text-white opacity-75 transition-opacity group-hover:opacity-100",
+        icon: "absolute inset-0 m-auto h-24 w-24 text-on-scrim opacity-75 transition-opacity group-hover:opacity-100",
         iframe: "w-full h-full absolute inset-0 border-0",
         transcript: "mt-2 text-sm text-muted",
       },
@@ -14792,9 +15561,7 @@ export const componentMeta: ComponentMetaMap = {
     emits: [],
     theme: {
       slots: ["root"],
-      base: {
-        root: "",
-      },
+      base: {},
       variants: {},
       compoundVariants: [],
       defaultVariants: {},
@@ -14809,9 +15576,7 @@ export const componentMeta: ComponentMetaMap = {
     emits: [],
     theme: {
       slots: ["root"],
-      base: {
-        root: "",
-      },
+      base: {},
       variants: {},
       compoundVariants: [],
       defaultVariants: {},

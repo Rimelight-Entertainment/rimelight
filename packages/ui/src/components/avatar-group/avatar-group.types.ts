@@ -19,5 +19,5 @@ export type RLAvatarGroupProps = InferThemeProps<typeof RLAvatarGroupTheme> & {
    * Maximum number of avatars to display. The remainder is shown as a `+X` counter.
    * When omitted, every avatar is displayed.
    */
-  max?: number;
+  max?: number | undefined;
 };

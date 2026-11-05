@@ -6,6 +6,8 @@ export const RLTimelineTheme = defineTheme("timeline", {
     "item",
     "container",
     "indicator",
+    "indicatorIcon",
+    "indicatorFallback",
     "separator",
     "wrapper",
     "date",
@@ -17,7 +19,11 @@ export const RLTimelineTheme = defineTheme("timeline", {
     item: "group relative flex flex-1 gap-3",
     container: "relative flex items-center gap-1.5",
     indicator:
-      "group-data-[state=completed]:text-inverted group-data-[state=active]:text-inverted text-highlighted",
+      "flex shrink-0 text-highlighted group-data-[state=completed]:text-inverted group-data-[state=active]:text-inverted",
+    indicatorIcon:
+      "text-highlighted group-data-[state=completed]:text-inverted group-data-[state=active]:text-inverted",
+    indicatorFallback:
+      "text-highlighted group-data-[state=completed]:text-inverted group-data-[state=active]:text-inverted",
     separator: "flex-1 rounded-full bg-elevated",
     wrapper: "w-full",
     date: "text-dimmed text-xs/5",
@@ -36,18 +42,6 @@ export const RLTimelineTheme = defineTheme("timeline", {
         container: "flex-col",
         separator: "w-0.5",
       },
-    },
-    color: "auto",
-    size: {
-      xs: {},
-      sm: {},
-      md: {},
-      lg: {},
-      xl: {},
-    },
-    reverse: {
-      true: {},
-      false: {},
     },
   },
   compoundVariants: [
@@ -139,7 +133,6 @@ export const RLTimelineTheme = defineTheme("timeline", {
   ],
   defaultVariants: {
     size: "md",
-    color: "primary",
     orientation: "vertical",
   },
 });

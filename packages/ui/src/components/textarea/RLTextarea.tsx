@@ -42,7 +42,8 @@ export const RLTextarea: Component<RLTextareaProps> = (props) => {
         disabled={props.disabled}
         readonly={props.readonly}
         required={props.required}
-        class={`${classes().textarea}${props.autoGrow ? " [field-sizing:content] min-h-0" : ""}`}
+        aria-invalid={props.invalid ? "true" : undefined}
+        class={classes().textarea}
         data-slot="textarea"
         onInput={(event) => {
           setValue(event.currentTarget.value);

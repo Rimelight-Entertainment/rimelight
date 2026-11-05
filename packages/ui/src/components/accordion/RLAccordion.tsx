@@ -1,9 +1,9 @@
 import type { AccordionItem, AccordionValue, RLAccordionProps } from "./accordion.types";
 import { RLAccordionTheme } from "./accordion.theme";
-import { For, Show, untrack, type Component } from "solid-js";
+import { createMemo, For, Show, untrack, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 import { createControllable } from "../../controllable";
-import type { SlotRenderer } from "../../types";
+import { renderSlot } from "../../slot";
 
 const OMIT_KEYS = [
   "items",
@@ -17,10 +17,6 @@ const OMIT_KEYS = [
   "disabled",
   "unmountOnHide",
   "name",
-  "trailingIconSlot",
-  "leadingSlot",
-  "trailingSlot",
-  "bodySlot",
 ] as const;
 
 const normalizeSingle = (value: AccordionValue): string | undefined =>
@@ -29,20 +25,20 @@ const normalizeSingle = (value: AccordionValue): string | undefined =>
 const normalizeMultiple = (value: AccordionValue): string[] =>
   value === undefined ? [] : Array.isArray(value) ? [...value] : [value];
 
-const renderSlot = <Ctx,>(renderer: SlotRenderer<Ctx> | undefined, ctx: Ctx) =>
-  typeof renderer === "function" ? renderer(ctx) : renderer;
-
 export const RLAccordion: Component<RLAccordionProps> = (props) => {
   const { Tag, classes, rest, slots, children, theme, ui } = RLAccordionTheme.setup(props, {
     omit: OMIT_KEYS,
-    slots: ["trailingIconSlot", "leadingSlot", "trailingSlot", "bodySlot"] as const,
+    slots: ["leadingSlot", "trailingSlot", "bodySlot"] as const,
   });
   const SummaryRoot = RLAccordionTheme.tag(props, "details");
+  const summaryUi = () => ({ ...ui(), root: [ui()?.root, classes().item] });
+  const summaryClasses = createMemo(() => RLAccordionTheme(props, { ui: summaryUi() }));
 
   const isMultiple = () => props.type === "multiple";
-  const collapsible = () => props.collapsible !== false;
-  const unmountOnHide = () => props.unmountOnHide !== false;
-  const defaultTrailingIcon = () => props.trailingIcon ?? "chevron-down";
+  const summaryItem = createMemo((): AccordionItem => ({
+    label: props.summary,
+    disabled: props.disabled,
+  }));
 
   const [current, setValue] = createControllable<AccordionValue>(
     () => props.value,
@@ -63,11 +59,9 @@ export const RLAccordion: Component<RLAccordionProps> = (props) => {
       return;
     }
     const cur = untrack(openSingle);
-    if (cur === val && !collapsible()) return;
+    if (cur === val && props.collapsible === false) return;
     setValue(cur === val ? undefined : val);
   };
-
-  const itemVal = (item: AccordionItem, index: number): string => item.value ?? String(index);
 
   const renderLeading = (item: AccordionItem, index: number) => {
     const custom = renderSlot(slots.leadingSlot(), { item, index });
@@ -83,14 +77,7 @@ export const RLAccordion: Component<RLAccordionProps> = (props) => {
   const renderTrailing = (item: AccordionItem, index: number) => {
     const custom = renderSlot(slots.trailingSlot(), { item, index });
     if (custom !== undefined && custom !== null) return custom;
-    if (slots.trailingIconSlot()) {
-      return (
-        <span class={classes().trailingIcon} data-slot="trailing-icon">
-          {slots.trailingIconSlot()}
-        </span>
-      );
-    }
-    const iconName = item.trailingIcon ?? defaultTrailingIcon();
+    const iconName = item.trailingIcon ?? props.trailingIcon ?? "chevron-down";
     if (!iconName) return null;
     return (
       <span class={classes().trailingIcon} data-slot="trailing-icon">
@@ -99,70 +86,18 @@ export const RLAccordion: Component<RLAccordionProps> = (props) => {
     );
   };
 
-  const renderContent = (item: AccordionItem, index: number, open: boolean) => {
-    const ctx = { item, index };
-    const body = renderSlot(slots.bodySlot(), ctx) ?? item.content;
-    return (
-      <div class={classes().content} data-slot="content" data-state={open ? "open" : "closed"}>
-        <div class={classes().body} data-slot="body">
-          {body}
-        </div>
-      </div>
-    );
-  };
-
-  const rows = () => (
-    <For each={props.items}>
-      {(item, index) => {
-        const val = () => itemVal(item, index());
-        const disabled = () => props.disabled === true || item.disabled === true;
-        const itemTheme = () =>
-          RLAccordionTheme({
-            disabled: disabled(),
-            ui: item.ui || item.class ? { ...ui(), ...item.ui } : ui(),
-          });
-        const open = () => isOpen(val());
-        return (
-          <details
-            class={`${itemTheme().item} ${(item.class as string | undefined) ?? ""}`}
-            data-slot="item"
-            data-value={val()}
-            data-state={open() ? "open" : "closed"}
-            name={props.name}
-            open={open()}
-          >
-            <summary
-              class={itemTheme().trigger}
-              data-slot="trigger"
-              aria-disabled={disabled() ? "true" : undefined}
-              onClick={(event) => {
-                event.preventDefault();
-                if (disabled()) return;
-                toggleValue(val());
-              }}
-            >
-              {renderLeading(item, index())}
-              <span class={itemTheme().label} data-slot="label">
-                {item.label}
-              </span>
-              {renderTrailing(item, index())}
-            </summary>
-
-            {!unmountOnHide() || open() ? renderContent(item, index(), open()) : null}
-          </details>
-        );
-      }}
-    </For>
+  const renderBody = (item: AccordionItem, index: number, open: boolean) => (
+    <div class={classes().body} data-slot="body" data-state={open ? "open" : "closed"}>
+      {renderSlot(slots.bodySlot(), { item, index }) ?? item.content}
+    </div>
   );
-
-  const rootValue = () => (isMultiple() ? openMultiple().join(" ") : (openSingle() ?? undefined));
 
   return (
     <Show
       when={props.items !== undefined}
       fallback={
         <SummaryRoot
-          class={`${classes().root} ${classes().item}`}
+          class={summaryClasses().root}
           data-slot="root"
           data-theme={theme()}
           name={props.name}
@@ -179,17 +114,11 @@ export const RLAccordion: Component<RLAccordionProps> = (props) => {
             <span class={classes().label} data-slot="label">
               {props.summary}
             </span>
-            <Show when={defaultTrailingIcon()}>
-              <span class={classes().trailingIcon} data-slot="trailing-icon">
-                {slots.trailingIconSlot() ?? <RLIcon name={defaultTrailingIcon()} size="md" />}
-              </span>
-            </Show>
+            {renderTrailing(summaryItem(), 0)}
           </summary>
 
-          <div class={classes().content} data-slot="content">
-            <div class={classes().body} data-slot="body">
-              {children()}
-            </div>
+          <div class={classes().body} data-slot="body">
+            {children()}
           </div>
         </SummaryRoot>
       }
@@ -198,10 +127,58 @@ export const RLAccordion: Component<RLAccordionProps> = (props) => {
         class={classes().root}
         data-slot="root"
         data-theme={theme()}
-        data-value={rootValue()}
+        data-value={isMultiple() ? openMultiple().join(" ") : (openSingle() ?? undefined)}
         {...rest}
       >
-        {rows()}
+        <For each={props.items}>
+          {(item, index) => {
+            const val = () => item.value ?? String(index());
+            const disabled = () => props.disabled === true || item.disabled === true;
+            const open = () => isOpen(val());
+            const itemUi = createMemo(() => {
+              const base = item.ui ? { ...ui(), ...item.ui } : ui();
+              if (!item.class) return base;
+              return { ...base, item: [base?.item, item.class] };
+            });
+            const itemClasses = createMemo(() =>
+              RLAccordionTheme({
+                disabled: disabled(),
+                ui: itemUi(),
+              }),
+            );
+            return (
+              <details
+                class={itemClasses().item}
+                data-slot="item"
+                data-value={val()}
+                data-state={open() ? "open" : "closed"}
+                name={props.name}
+                open={open()}
+              >
+                <summary
+                  class={itemClasses().trigger}
+                  data-slot="trigger"
+                  aria-disabled={disabled() ? "true" : undefined}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    if (disabled()) return;
+                    toggleValue(val());
+                  }}
+                >
+                  {renderLeading(item, index())}
+                  <span class={itemClasses().label} data-slot="label">
+                    {item.label}
+                  </span>
+                  {renderTrailing(item, index())}
+                </summary>
+
+                <Show when={props.unmountOnHide === false || open()}>
+                  {renderBody(item, index(), open())}
+                </Show>
+              </details>
+            );
+          }}
+        </For>
       </Tag>
     </Show>
   );

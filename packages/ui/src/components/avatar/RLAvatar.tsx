@@ -6,6 +6,7 @@ import { RLAvatarTheme } from "./avatar.theme";
 import { RLIcon } from "../icon/RLIcon";
 import { RLChip } from "../chip/RLChip";
 import type { RLChipProps } from "../chip/chip.types";
+import { renderSlot } from "../../slot";
 
 /**
  * Extract 1-2 initials from alt text, e.g. "Benjamin Canac" -> "BC", "John" -> "J"
@@ -13,9 +14,11 @@ import type { RLChipProps } from "../chip/chip.types";
 function getInitials(alt?: string): string | undefined {
   if (!alt) return undefined;
   const parts = alt.trim().split(/\s+/).filter(Boolean);
-  if (parts.length === 0) return undefined;
-  if (parts.length === 1) return parts[0]!.slice(0, 2).toUpperCase();
-  return (parts[0]![0]! + parts[parts.length - 1]![0]!).toUpperCase();
+  const first = parts[0];
+  if (first === undefined) return undefined;
+  if (parts.length === 1) return first.slice(0, 2).toUpperCase();
+  const last = parts[parts.length - 1] ?? first;
+  return (first.charAt(0) + last.charAt(0)).toUpperCase();
 }
 
 const OMIT_KEYS = [
@@ -28,6 +31,7 @@ const OMIT_KEYS = [
   "chip",
   "badge",
   "badgeColor",
+  "position",
   "loading",
   "referrerpolicy",
   "crossorigin",
@@ -50,80 +54,62 @@ export const RLAvatar: Component<RLAvatarProps> = (props) => {
   const [imageError, setImageError] = createSignal(false);
 
   const hasImage = () => Boolean(props.src && !imageError());
+  const fallbackText = () => props.text || getInitials(props.alt);
 
-  const renderIcon = () => {
-    const customIcon = slots.iconSlot();
-    if (customIcon !== undefined && customIcon !== null) return customIcon;
-    if (!props.icon) return null;
-    return <RLIcon name={props.icon} class={classes().icon} data-slot="icon" aria-hidden="true" />;
-  };
+  const renderIcon = () => (
+    <Show
+      when={slots.iconSlot()}
+      fallback={
+        <Show when={props.icon}>
+          {(icon) => (
+            <RLIcon name={icon()} class={classes().icon} data-slot="icon" aria-hidden="true" />
+          )}
+        </Show>
+      }
+    >
+      {renderSlot(slots.iconSlot())}
+    </Show>
+  );
 
-  const renderFallback = () => {
-    const customSlot = slots.fallbackSlot();
-    if (customSlot !== undefined && customSlot !== null) {
-      return (
-        <span class={classes().fallback} data-slot="fallback">
-          {customSlot}
-        </span>
-      );
-    }
+  const renderFallback = () => (
+    <span class={classes().fallback} data-slot="fallback">
+      <Show
+        when={slots.fallbackSlot()}
+        fallback={
+          <Show
+            when={slots.iconSlot() || props.icon}
+            fallback={
+              <Show
+                when={fallbackText()}
+                fallback={
+                  <RLIcon name="user" class={classes().icon} data-slot="icon" aria-hidden="true" />
+                }
+              >
+                {fallbackText()}
+              </Show>
+            }
+          >
+            {renderIcon()}
+          </Show>
+        }
+      >
+        {renderSlot(slots.fallbackSlot())}
+      </Show>
+    </span>
+  );
 
-    const iconContent = renderIcon();
-    if (iconContent) {
-      return (
-        <span class={classes().fallback} data-slot="fallback">
-          {iconContent}
-        </span>
-      );
-    }
-
-    const textVal = props.text || getInitials(props.alt);
-    if (textVal) {
-      return (
-        <span class={classes().fallback} data-slot="fallback">
-          {textVal}
-        </span>
-      );
-    }
-
-    return (
-      <span class={classes().fallback} data-slot="fallback">
-        <RLIcon name="user" class={classes().icon} data-slot="icon" aria-hidden="true" />
-      </span>
-    );
-  };
-
-  const avatarContent = () => {
-    const customChildren = children();
-    if (customChildren) return customChildren;
-    if (hasImage()) {
-      return (
-        <img
-          src={props.src}
-          alt={props.alt ?? ""}
-          class={classes().image}
-          data-slot="image"
-          loading={props.loading}
-          referrerpolicy={props.referrerpolicy || undefined}
-          crossorigin={props.crossorigin || undefined}
-          decoding={props.decoding}
-          height={props.height}
-          width={props.width}
-          sizes={props.sizes}
-          srcset={props.srcset}
-          usemap={props.usemap}
-          onError={() => setImageError(true)}
-          {...props.imgProps}
-        />
-      );
-    }
-    return renderFallback();
-  };
+  const renderBadge = () => (
+    <span class={classes().badge} data-slot="badge">
+      <Show when={slots.badgeSlot()} fallback={props.badge}>
+        {renderSlot(slots.badgeSlot())}
+      </Show>
+    </span>
+  );
 
   const chipConfig = createMemo(() => {
     const chipProp = props.chip;
-    const badgeProp = props.badge || slots.badgeSlot();
-    if (!chipProp && !badgeProp) return null;
+    const hasBadge = Boolean(props.badge || slots.badgeSlot());
+    if (!chipProp && !hasBadge) return null;
 
     const config: Partial<RLChipProps> = {};
 
@@ -133,15 +119,11 @@ export const RLAvatar: Component<RLAvatarProps> = (props) => {
       config.inset = true;
     }
 
-    if (badgeProp) {
-      config.position = props.badgePosition ?? config.position ?? "bottom-right";
+    if (hasBadge) {
+      config.position = props.position ?? config.position ?? "bottom-right";
       config.inset = config.inset ?? true;
       if (props.badgeColor) config.color = props.badgeColor;
-      const badgeSlot = slots.badgeSlot();
-      if (badgeSlot) config.textSlot = badgeSlot;
-      else if (typeof props.badge === "string" || typeof props.badge === "number") {
-        config.text = props.badge;
-      }
+      config.labelSlot = renderBadge;
     }
 
     return config;
@@ -157,37 +139,50 @@ export const RLAvatar: Component<RLAvatarProps> = (props) => {
     </Show>
   );
 
+  const Root = (rootArgs: { theme: RLAvatarProps["theme"] }) => (
+    <Chipped>
+      <Tag
+        data-slot="root"
+        data-theme={rootArgs.theme}
+        class={classes().root}
+        aria-label={props.title || props.alt}
+        role={props.title || (!hasImage() && props.alt) ? "img" : undefined}
+        {...rest}
+      >
+        <Show
+          when={children()}
+          fallback={
+            <Show when={hasImage()} fallback={renderFallback()}>
+              <img
+                src={props.src}
+                alt={props.alt ?? ""}
+                class={classes().image}
+                data-slot="image"
+                loading={props.loading}
+                referrerpolicy={props.referrerpolicy || undefined}
+                crossorigin={props.crossorigin || undefined}
+                decoding={props.decoding}
+                height={props.height}
+                width={props.width}
+                sizes={props.sizes}
+                srcset={props.srcset}
+                usemap={props.usemap}
+                onError={() => setImageError(true)}
+                {...props.imgProps}
+              />
+            </Show>
+          }
+        >
+          {children()}
+        </Show>
+      </Tag>
+    </Chipped>
+  );
+
   return (
-    <Show
-      when={props.title || props.subtitle}
-      fallback={
-        <Chipped>
-          <Tag
-            data-slot="root"
-            data-theme={theme()}
-            class={classes().root}
-            aria-label={props.title || props.alt}
-            role={props.title || (!hasImage() && props.alt) ? "img" : undefined}
-            {...rest}
-          >
-            {avatarContent()}
-          </Tag>
-        </Chipped>
-      }
-    >
+    <Show when={props.title || props.subtitle} fallback={<Root theme={theme()} />}>
       <div class={classes().wrapper} data-slot="wrapper">
-        <Chipped>
-          <Tag
-            data-slot="root"
-            data-theme={theme()}
-            class={classes().root}
-            aria-label={props.title || props.alt}
-            role={props.title || (!hasImage() && props.alt) ? "img" : undefined}
-            {...rest}
-          >
-            {avatarContent()}
-          </Tag>
-        </Chipped>
+        <Root theme={theme()} />
         <div class={classes().text} data-slot="text">
           <Show when={props.title}>
             <span class={classes().title} data-slot="title">

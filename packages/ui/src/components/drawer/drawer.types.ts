@@ -1,9 +1,9 @@
 import type { JSX } from "@solidjs/web";
 import type { InferThemeProps } from "../../resolver";
-import type { OverlaySlot } from "../../slot";
+import type { SlotRenderer } from "../../types";
 import type { RLDrawerTheme } from "./drawer.theme";
 
-export type RLDrawerProps = Omit<InferThemeProps<typeof RLDrawerTheme>, "direction"> & {
+export type RLDrawerProps = Omit<InferThemeProps<typeof RLDrawerTheme>, "side"> & {
   /**
    * Controlled open state.
    */
@@ -15,11 +15,11 @@ export type RLDrawerProps = Omit<InferThemeProps<typeof RLDrawerTheme>, "directi
    */
   defaultOpen?: boolean | undefined;
   /**
-   * Edge the drawer anchors to.
+   * Edge of the viewport the drawer attaches to.
    *
    * @default "bottom"
    */
-  direction?: "bottom" | "top" | "left" | "right" | undefined;
+  side?: "bottom" | "top" | "left" | "right" | undefined;
   /**
    * Main title text. Use `titleSlot` for JSX.
    */
@@ -49,21 +49,21 @@ export type RLDrawerProps = Omit<InferThemeProps<typeof RLDrawerTheme>, "directi
    */
   children?: JSX.Element | undefined;
   /**
-   * Trigger element. Always rendered, so it is plain JSX.
+   * Trigger content. Rendered inside a clickable wrapper that opens the drawer.
    */
-  triggerSlot?: JSX.Element | undefined;
+  triggerSlot?: SlotRenderer;
   /**
-   * Title content. Takes precedence over the `title` string. Function-only: invoked inside the open dialog.
+   * Title content. Takes precedence over the `title` string. Rendered only while open.
    */
-  titleSlot?: OverlaySlot | undefined;
+  titleSlot?: SlotRenderer;
   /**
-   * Description content. Takes precedence over the `description` string. Function-only: invoked inside the open dialog.
+   * Description content. Takes precedence over the `description` string. Rendered only while open.
    */
-  descriptionSlot?: OverlaySlot | undefined;
+  descriptionSlot?: SlotRenderer;
   /**
-   * Footer content. Function-only: invoked inside the open dialog.
+   * Footer content. Rendered only while open.
    */
-  footerSlot?: OverlaySlot | undefined;
+  footerSlot?: SlotRenderer;
   /**
    * Called whenever the open state changes.
    */

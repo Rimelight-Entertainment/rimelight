@@ -3,8 +3,7 @@ import { defineTheme } from "../../resolver";
 export const RLChatPaletteTheme = defineTheme("chat-palette", {
   slots: ["root"],
   base: {
-    root: "",
+    root: "flex flex-wrap gap-sm",
   },
   variants: {},
-  defaultVariants: {},
 });

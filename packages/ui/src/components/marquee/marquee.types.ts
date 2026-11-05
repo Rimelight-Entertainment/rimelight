@@ -3,14 +3,20 @@ import type { RLMarqueeTheme } from "./marquee.theme";
 
 export type RLMarqueeProps = Omit<
   InferThemeProps<typeof RLMarqueeTheme>,
-  "direction" | "pauseOnHover"
+  "orientation" | "pauseOnHover"
 > & {
   /**
-   * Direction of marquee motion.
+   * Axis of marquee motion. `horizontal` scrolls along x, `vertical` along y.
    *
-   * @default "left"
+   * @default "horizontal"
    */
-  direction?: "left" | "right" | "up" | "down";
+  orientation?: "horizontal" | "vertical";
+  /**
+   * Reverses the motion direction: right-to-left for horizontal, bottom-to-top for vertical.
+   *
+   * @default false
+   */
+  reverse?: boolean;
   /**
    * Speed of animation in seconds (duration of scroll cycle). Omit to use the theme duration (40s).
    *
@@ -18,7 +24,7 @@ export type RLMarqueeProps = Omit<
    */
   speed?: number;
   /**
-   * Whether to pause scroll animation on mouse hover.
+   * Whether to pause scroll animation while the marquee is hovered.
    *
    * @default true
    */

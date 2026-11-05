@@ -107,7 +107,7 @@ export const ImageSandbox = (): JSX.Element => {
             value={caption()}
             placeholder={t("app.text.optional-caption")}
             onInput={(e) => setCaption(e.currentTarget.value)}
-            class="w-40 rounded border border-default bg-elevated/40 px-2 py-0.5 text-xs text-highlighted placeholder:text-muted focus:outline-none focus:ring-1 focus:ring-primary-500"
+            class="w-40 rounded border border-default bg-elevated/40 px-2 py-0.5 text-xs text-highlighted placeholder:text-muted focus:outline-none focus:ring-1 focus:ring-primary"
           />
         </label>
       </div>
@@ -176,6 +176,24 @@ export const imageAudit: ComponentAuditDefinition = {
             caption="Sunrise over the northern ridge — 2026 expedition."
             figure
             class="w-full"
+          />
+        </div>
+      ),
+    },
+    {
+      id: "caption-slot",
+      get title() {
+        return "Custom Caption Element";
+      },
+      description:
+        "The captionSlot node renders below the media and accepts custom caption markup.",
+      render: () => (
+        <div class="w-full max-w-md">
+          <RLImage
+            src={SAMPLE.square}
+            alt={"Square still"}
+            class="w-full"
+            captionSlot={<p class="mt-2 text-center text-xs text-muted">Custom caption node</p>}
           />
         </div>
       ),
@@ -284,7 +302,7 @@ export const imageAudit: ComponentAuditDefinition = {
             triggerSlot={
               <div class="relative cursor-zoom-in overflow-hidden rounded-xl border border-default">
                 <img src={SAMPLE.portrait} alt={"Portrait"} class="w-full" />
-                <span class="absolute bottom-2 right-2 rounded-full bg-black/60 px-3 py-1 text-[10px] font-mono text-white">
+                <span class="absolute bottom-2 right-2 rounded-full bg-scrim/60 px-3 py-1 text-[10px] font-mono text-on-scrim">
                   click to expand
                 </span>
               </div>

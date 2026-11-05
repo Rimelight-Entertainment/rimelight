@@ -1,21 +1,12 @@
-import type { RLKeyboardProps, HighlightGroup } from "./keyboard.types";
-import { RLKeyboardTheme } from "./keyboard.theme";
 import { createMemo, For, Show, type Component } from "solid-js";
-
-interface Key {
-  label?: string;
-  width: number;
-  height?: number;
-  code?: string;
-  type?: "spacer" | "key";
-}
-
-interface RenderKey extends Key {
-  x: number;
-  y: number;
-  w: number;
-  h: number;
-}
+import type {
+  HighlightGroup,
+  Key,
+  KeyHighlight,
+  RenderKey,
+  RLKeyboardProps,
+} from "./keyboard.types";
+import { RLKeyboardTheme } from "./keyboard.theme";
 
 const mainRows: Key[][] = [
   [
@@ -196,7 +187,7 @@ export const RLKeyboard: Component<RLKeyboardProps> = (props) => {
   const keySize = (): number => props.keySize ?? 40;
   const layout = (): "full" | "60" => props.layout ?? "full";
   const os = (): "windows" | "mac" => props.os ?? "windows";
-  const highlightColor = (): string => props.highlightColor || "var(--rl-primary-500)";
+  const highlightColor = (): string | undefined => props.highlightColor || undefined;
   const backgroundColor = (): string => props.backgroundColor || "transparent";
   const highlightedKeys = (): string[] => props.highlightedKeys ?? [];
   const groups = (): HighlightGroup[] => props.groups ?? [];
@@ -229,7 +220,7 @@ export const RLKeyboard: Component<RLKeyboardProps> = (props) => {
     return label;
   };
 
-  const getKeyHighlight = (key: Key): { active: boolean; color: string | undefined } => {
+  const getKeyHighlight = (key: Key): KeyHighlight => {
     const code = key.code || key.label || "";
     const label = key.label || "";
     const macLabel = getKeyLabel(key) || "";
@@ -344,7 +335,9 @@ export const RLKeyboard: Component<RLKeyboardProps> = (props) => {
     ...numpadRenderKeys(),
   ]);
 
-  const { Tag, classes, rest, theme } = RLKeyboardTheme.setup(props, { omit: OMIT_KEYS });
+  const { Tag, classes, rest, children, theme } = RLKeyboardTheme.setup(props, {
+    omit: OMIT_KEYS,
+  });
 
   return (
     <Tag class={classes().root} data-slot="root" data-theme={theme()} {...rest}>
@@ -368,41 +361,59 @@ export const RLKeyboard: Component<RLKeyboardProps> = (props) => {
           <For each={allKeys()}>
             {(key) => {
               const highlight = getKeyHighlight(key);
-              const color = highlight.active ? highlight.color || highlightColor() : "#2a2a3e";
               const label = getKeyLabel(key);
+              const fillClass = highlight.color
+                ? undefined
+                : highlight.active
+                  ? classes().keyCapFillActive
+                  : classes().keyCapFill;
+              const strokeClass = highlight.active
+                ? classes().keyCapStrokeActive
+                : classes().keyCapStroke;
+              const labelClass = highlight.active
+                ? classes().keyLabelActive
+                : classes().keyLabelIdle;
 
               return (
-                <g class={`${classes().keyGroup} ${highlight.active ? "highlighted" : ""}`}>
+                <g class={classes().keyGroup} data-highlighted={highlight.active ? "" : undefined}>
                   <rect
+                    class={classes().keyShadow}
                     x={key.x}
                     y={key.y + 1}
                     width={key.w}
                     height={key.h}
                     rx="4"
-                    fill="#1a1a2e"
                   />
                   <rect
+                    class={fillClass}
                     x={key.x}
                     y={key.y}
                     width={key.w}
                     height={key.h}
                     rx="4"
-                    fill={color}
-                    stroke={highlight.active ? "#ffffff66" : "#3a3a4e"}
+                    fill={highlight.color}
+                  />
+                  <rect
+                    class={strokeClass}
+                    x={key.x}
+                    y={key.y}
+                    width={key.w}
+                    height={key.h}
+                    rx="4"
+                    fill="none"
                     stroke-width="1"
                   />
-                  {label ? (
+                  <Show when={label}>
                     <text
                       x={key.x + key.w / 2}
                       y={key.y + key.h / 2}
                       text-anchor="middle"
                       dominant-baseline="central"
-                      class={classes().keyLabel}
-                      fill={highlight.active ? "#fff" : "#e0e0e0"}
+                      class={labelClass}
                     >
                       {label}
                     </text>
-                  ) : null}
+                  </Show>
                 </g>
               );
             }}
@@ -414,16 +425,23 @@ export const RLKeyboard: Component<RLKeyboardProps> = (props) => {
         <div class={classes().legend}>
           <For each={groups().filter((group) => group.label)}>
             {(group) => (
-              <div class="flex items-center gap-2 m-0 p-0 text-[10px] text-[#a0a0b0] uppercase tracking-[0.05em] font-medium whitespace-nowrap leading-none">
-                <svg width="8" height="8" class="flex-shrink-0 block">
-                  <rect width="8" height="8" rx="2" fill={group.color || "#6366f1"} />
+              <div class={classes().legendItem}>
+                <svg width="8" height="8" class={classes().legendMarker}>
+                  <rect
+                    width="8"
+                    height="8"
+                    rx="2"
+                    fill={group.color}
+                    class={group.color ? undefined : classes().legendSwatch}
+                  />
                 </svg>
-                <span class="m-0 p-0 leading-none inline-block">{group.label}</span>
+                <span class={classes().legendLabel}>{group.label}</span>
               </div>
             )}
           </For>
         </div>
       </Show>
+      {children()}
     </Tag>
   );
 };

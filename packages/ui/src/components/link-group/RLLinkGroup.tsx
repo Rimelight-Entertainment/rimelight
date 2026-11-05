@@ -18,35 +18,24 @@ export const RLLinkGroup: Component<RLLinkGroupProps> = (props) => {
     return Array.isArray(props.links) ? props.links : [props.links];
   });
 
+  const headingContent = (label: string) => (
+    <span class={classes().heading}>
+      <Show when={props.leadingIcon}>{(icon) => <RLIcon name={icon()} size="sm" />}</Show>
+      <span>{label}</span>
+      <Show when={props.trailingIcon}>{(icon) => <RLIcon name={icon()} size="sm" />}</Show>
+    </span>
+  );
+
   return (
     <Tag class={classes().root} data-slot="root" data-theme={theme()} {...rest}>
       <Show when={props.label}>
         {(label) => (
           <h4 class={classes().title} data-slot="title">
-            <Show
-              when={props.href}
-              fallback={
-                <span class="flex items-center gap-1.5">
-                  <Show when={props.leadingIcon}>
-                    {(icon) => <RLIcon name={icon()} size="sm" />}
-                  </Show>
-                  <span>{label()}</span>
-                  <Show when={props.trailingIcon}>
-                    {(icon) => <RLIcon name={icon()} size="sm" />}
-                  </Show>
-                </span>
-              }
-            >
+            <Show when={props.href} fallback={headingContent(label())}>
               {(href) => (
-                <a href={href()} class="hover:underline flex items-center gap-1.5">
-                  <Show when={props.leadingIcon}>
-                    {(icon) => <RLIcon name={icon()} size="sm" />}
-                  </Show>
-                  <span>{label()}</span>
-                  <Show when={props.trailingIcon}>
-                    {(icon) => <RLIcon name={icon()} size="sm" />}
-                  </Show>
-                </a>
+                <RLLink href={href()} class={classes().titleLink} data-slot="title-link">
+                  {headingContent(label())}
+                </RLLink>
               )}
             </Show>
           </h4>
@@ -58,11 +47,7 @@ export const RLLinkGroup: Component<RLLinkGroupProps> = (props) => {
           <For each={normalizedLinks()}>
             {(link) => (
               <li class={classes().item} data-slot="item">
-                <RLLink
-                  class={`${classes().link} w-full !justify-start`}
-                  data-slot="link"
-                  {...link}
-                />
+                <RLLink class={classes().link} data-slot="link" {...link} />
               </li>
             )}
           </For>

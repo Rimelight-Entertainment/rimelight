@@ -1,21 +1,14 @@
 import type { RLImageProps, ImageMetadata } from "./image.types";
 import { RLImageTheme } from "./image.theme";
-import { createEffect, createSignal, type Component } from "solid-js";
+import { createEffect, createSignal, Show, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 import { uiT } from "../../locale";
 import { createControllable } from "../../controllable";
+import { RLButton } from "../button/RLButton";
+import { renderSlot } from "../../slot";
 
 const urlOf = (v?: string | ImageMetadata): string | undefined =>
-  typeof v === "string" ? v : (v as ImageMetadata | undefined)?.src;
-
-const widthOf = (v?: string | ImageMetadata): string | number | undefined =>
-  v && typeof v !== "string" ? (v as ImageMetadata).width : undefined;
-
-const heightOf = (v?: string | ImageMetadata): string | number | undefined =>
-  v && typeof v !== "string" ? (v as ImageMetadata).height : undefined;
-
-const formatOf = (v?: string | ImageMetadata): string | undefined =>
-  v && typeof v !== "string" ? (v as ImageMetadata).format : undefined;
+  typeof v === "string" ? v : v?.src;
 
 const OMIT_KEYS = [
   "src",
@@ -45,8 +38,6 @@ const OMIT_KEYS = [
   "metaAlt",
   "metaDownload",
   "onOpenChange",
-  "triggerSlot",
-  "captionSlot",
 ] as const;
 
 export const RLImage: Component<RLImageProps> = (props) => {
@@ -55,32 +46,39 @@ export const RLImage: Component<RLImageProps> = (props) => {
     slots: ["captionSlot", "triggerSlot"] as const,
   });
 
-  const isInteractive = () => props.lightbox ?? true;
-  const isFigure = () => props.figure ?? Boolean(props.caption);
   const isResponsive = () => Boolean(props.mobileSrc && props.desktopSrc);
-  const effectiveLight = () =>
-    props.lightSrc || (!props.darkSrc ? props.src : props.src || props.lightSrc);
-  const effectiveDark = () => props.darkSrc;
+  const effectiveLight = () => props.lightSrc || props.src;
   const hasColorMode = () =>
     !isResponsive() &&
-    Boolean(effectiveLight() && effectiveDark() && effectiveLight() !== effectiveDark());
+    Boolean(effectiveLight() && props.darkSrc && effectiveLight() !== props.darkSrc);
   const breakpointVal = () => props.breakpoint ?? 768;
-  const activeSrc = () => (isResponsive() ? props.desktopSrc : effectiveLight() || props.src);
+  const activeSrc = () => (isResponsive() ? props.desktopSrc : effectiveLight());
+  const activeMeta = (): ImageMetadata | undefined => {
+    const src = activeSrc();
+    return typeof src === "string" ? undefined : src;
+  };
 
   const activeUrl = () => urlOf(activeSrc());
-  const lightUrl = () => (effectiveLight() ? (urlOf(effectiveLight()) ?? "") : "");
-  const darkUrl = () => (effectiveDark() ? (urlOf(effectiveDark()) ?? "") : "");
+  const lightUrl = () => urlOf(effectiveLight()) ?? "";
+  const darkUrl = () => urlOf(props.darkSrc) ?? "";
 
-  const imgWidth = () => props.width ?? widthOf(activeSrc());
-  const imgHeight = () => props.height ?? heightOf(activeSrc());
-  const imgFormat = () => formatOf(activeSrc()) ?? props.metadata?.format;
+  const imgWidth = () => props.width ?? activeMeta()?.width;
+  const imgHeight = () => props.height ?? activeMeta()?.height;
+  const imgWidthAttr = () => {
+    const width = imgWidth();
+    return width === undefined ? undefined : String(width);
+  };
+  const imgHeightAttr = () => {
+    const height = imgHeight();
+    return height === undefined ? undefined : String(height);
+  };
   const fileName = () => {
     const url = activeUrl();
     const rawName = url ? url.split("/").pop() || "image" : "image";
     return rawName.split("?")[0] ?? "";
   };
   const fileExtension = () => {
-    const fmt = imgFormat();
+    const fmt = activeMeta()?.format ?? props.metadata?.format;
     if (fmt) return fmt.toUpperCase();
     const fn = fileName();
     return fn.includes(".") ? (fn.split(".").pop()?.toUpperCase() ?? "IMG") : "IMG";
@@ -90,8 +88,6 @@ export const RLImage: Component<RLImageProps> = (props) => {
   const loading = () => props.loading ?? "lazy";
   const decoding = () => props.decoding ?? "async";
 
-  // Always set `src` so server HTML includes it. Native `loading="lazy"` already defers the fetch.
-  const show = () => true;
   const [status, setStatus] = createSignal<"loading" | "ok" | "error">("loading");
   const [open, setOpen] = createControllable(
     () => props.open,
@@ -99,10 +95,22 @@ export const RLImage: Component<RLImageProps> = (props) => {
     (next) => props.onOpenChange?.(next),
   );
   const [zoom, setZoom] = createSignal(false);
-  const [metaSizeTxt, setMetaSizeTxt] = createSignal<string>(() =>
+  const [metaSizeTxt, setMetaSizeTxt] = createSignal(
     props.metadata?.size !== undefined ? `${props.metadata.size} bytes` : uiT("image.fetching"),
   );
-  const [metaFormatTxt, setMetaFormatTxt] = createSignal<string>(() => fileExtension());
+  const [metaFormatTxt, setMetaFormatTxt] = createSignal(fileExtension());
+
+  const triggerLightClasses = RLImageTheme.use(props, () => ({ colorLayer: "light" }));
+  const triggerDarkClasses = RLImageTheme.use(props, () => ({ colorLayer: "dark" }));
+  const modalClasses = RLImageTheme.use(props, () => ({ modalZoom: zoom() ? "on" : "off" }));
+  const modalLightClasses = RLImageTheme.use(props, () => ({
+    modalZoom: zoom() ? "on" : "off",
+    colorLayer: "light",
+  }));
+  const modalDarkClasses = RLImageTheme.use(props, () => ({
+    modalZoom: zoom() ? "on" : "off",
+    colorLayer: "dark",
+  }));
 
   let dialogRef: HTMLDialogElement | undefined;
   let fetched = false;
@@ -121,8 +129,6 @@ export const RLImage: Component<RLImageProps> = (props) => {
     if (isDark && darkUrl()) return darkUrl();
     return lightUrl() || activeUrl() || "";
   };
-
-  const openDialog = () => setOpen(true);
 
   const handleDownload = async () => {
     const url = activeModalSrc();
@@ -145,15 +151,15 @@ export const RLImage: Component<RLImageProps> = (props) => {
 
   createEffect(
     () => ({ isOpen: open(), src: activeModalSrc() }),
-    ({ isOpen, src }) => {
+    (state) => {
       const dialog = dialogRef;
       if (!dialog) return;
-      if (isOpen) {
+      if (state.isOpen) {
         if (!dialog.open) dialog.showModal();
         if (!fetched) {
           fetched = true;
-          if (src) {
-            fetch(src)
+          if (state.src) {
+            fetch(state.src)
               .then((r) => r.blob())
               .then((blob) => {
                 setMetaSizeTxt(`${(blob.size / 1024).toFixed(2)} KB`);
@@ -170,9 +176,9 @@ export const RLImage: Component<RLImageProps> = (props) => {
   );
 
   const fallbackBox = () => (
-    <div class="flex w-full h-full min-h-40 items-center justify-center gap-2 rounded-lg bg-elevated text-muted">
-      <RLIcon name="image" class="size-8" aria-hidden="true" />
-      <span class="text-sm">{uiT("image.unavailable")}</span>
+    <div class={classes().fallback} data-slot="fallback">
+      <RLIcon name="image" class={classes().fallbackIcon} aria-hidden="true" />
+      <span class={classes().fallbackLabel}>{uiT("image.unavailable")}</span>
     </div>
   );
 
@@ -182,20 +188,15 @@ export const RLImage: Component<RLImageProps> = (props) => {
     if (isResponsive()) {
       return (
         <picture>
-          <source
-            media={`(max-width: ${breakpointVal() - 1}px)`}
-            srcset={show() ? urlOf(props.mobileSrc) : undefined}
-          />
-          <source
-            media={`(min-width: ${breakpointVal()}px)`}
-            srcset={show() ? urlOf(props.desktopSrc) : undefined}
-          />
+          <source media={`(max-width: ${breakpointVal() - 1}px)`} srcset={urlOf(props.mobileSrc)} />
+          <source media={`(min-width: ${breakpointVal()}px)`} srcset={urlOf(props.desktopSrc)} />
           <img
-            src={show() ? urlOf(props.desktopSrc) : undefined}
+            src={urlOf(props.desktopSrc)}
             alt={alt()}
             loading={loading()}
             decoding={decoding()}
             class={classes().triggerImage}
+            data-slot="trigger-image"
             onError={handleError}
             onLoad={handleLoad}
           />
@@ -205,22 +206,24 @@ export const RLImage: Component<RLImageProps> = (props) => {
 
     if (hasColorMode()) {
       return (
-        <div class="rl-image-color-mode w-full h-full relative overflow-hidden rounded-[inherit] flex items-center justify-center">
+        <div class={classes().colorMode} data-slot="color-mode">
           <img
-            src={show() ? lightUrl() : undefined}
+            src={lightUrl()}
             alt={alt()}
             loading={loading()}
             decoding={decoding()}
-            class={`${classes().triggerImage} rl-img-light w-full h-full object-cover rounded-[inherit]`}
+            class={triggerLightClasses().triggerImage}
+            data-slot="trigger-image"
             onError={handleError}
             onLoad={handleLoad}
           />
           <img
-            src={show() ? darkUrl() : undefined}
+            src={darkUrl()}
             alt={alt()}
             loading={loading()}
             decoding={decoding()}
-            class={`${classes().triggerImage} rl-img-dark w-full h-full object-cover rounded-[inherit] hidden`}
+            class={triggerDarkClasses().triggerImage}
+            data-slot="trigger-image"
           />
         </div>
       );
@@ -228,209 +231,206 @@ export const RLImage: Component<RLImageProps> = (props) => {
 
     return (
       <img
-        src={show() ? activeUrl() : undefined}
+        src={activeUrl()}
         alt={alt()}
         loading={loading()}
         decoding={decoding()}
-        width={imgWidth() !== undefined ? String(imgWidth()) : undefined}
-        height={imgHeight() !== undefined ? String(imgHeight()) : undefined}
+        width={imgWidthAttr()}
+        height={imgHeightAttr()}
         sizes={props.sizes}
         class={classes().triggerImage}
+        data-slot="trigger-image"
         onError={handleError}
         onLoad={handleLoad}
       />
     );
   };
 
-  const renderTrigger = () =>
-    slots.triggerSlot() ? (
-      slots.triggerSlot()
-    ) : isInteractive() ? (
-      <button type="button" class={classes().trigger} data-image-trigger onClick={openDialog}>
-        {triggerImage()}
-      </button>
-    ) : (
-      <div class="overflow-hidden rounded-[inherit] block">{triggerImage()}</div>
-    );
+  const renderTrigger = () => (
+    <Show
+      when={slots.triggerSlot()}
+      fallback={
+        <Show
+          when={props.lightbox ?? true}
+          fallback={
+            <div class={classes().staticTrigger} data-slot="static-trigger">
+              {triggerImage()}
+            </div>
+          }
+        >
+          <RLButton
+            type="button"
+            variant="ghost"
+            color="neutral"
+            class={classes().trigger}
+            data-slot="trigger"
+            onClick={() => setOpen(true)}
+          >
+            {triggerImage()}
+          </RLButton>
+        </Show>
+      }
+    >
+      {renderSlot(slots.triggerSlot())}
+    </Show>
+  );
+
+  const previewContent = () => {
+    if (status() === "error") return fallbackBox();
+
+    if (isResponsive()) {
+      return (
+        <picture class={classes().previewPicture}>
+          <source media={`(max-width: ${breakpointVal() - 1}px)`} srcset={urlOf(props.mobileSrc)} />
+          <source media={`(min-width: ${breakpointVal()}px)`} srcset={urlOf(props.desktopSrc)} />
+          <img
+            src={urlOf(props.desktopSrc)}
+            alt={alt()}
+            class={modalClasses().image}
+            data-slot="image"
+          />
+        </picture>
+      );
+    }
+
+    if (hasColorMode()) {
+      return (
+        <div class={classes().previewColorMode}>
+          <img src={lightUrl()} alt={alt()} class={modalLightClasses().image} data-slot="image" />
+          <img src={darkUrl()} alt={alt()} class={modalDarkClasses().image} data-slot="image" />
+        </div>
+      );
+    }
+
+    return <img src={activeUrl()} alt={alt()} class={modalClasses().image} data-slot="image" />;
+  };
 
   return (
-    <Tag class={classes().root} data-slot="root" data-theme={theme()} {...rest}>
-      {isFigure() ? (
+    <Tag class={classes().root} data-theme={theme()} {...rest} data-slot="root">
+      <Show
+        when={props.figure ?? Boolean(props.caption)}
+        fallback={
+          <>
+            {renderTrigger()}
+            <Show when={props.caption}>
+              {(caption) => (
+                <p class={classes().caption} data-slot="caption">
+                  {caption()}
+                </p>
+              )}
+            </Show>
+            {renderSlot(slots.captionSlot())}
+          </>
+        }
+      >
         <figure class={classes().figure} data-slot="figure">
           {renderTrigger()}
-          {props.caption && (
-            <figcaption class={classes().caption} data-slot="caption">
-              {props.caption}
-            </figcaption>
-          )}
-          {slots.captionSlot()}
+          <Show when={props.caption}>
+            {(caption) => (
+              <figcaption class={classes().caption} data-slot="caption">
+                {caption()}
+              </figcaption>
+            )}
+          </Show>
+          {renderSlot(slots.captionSlot())}
         </figure>
-      ) : (
-        <>
-          {renderTrigger()}
-          {props.caption && (
-            <p class={classes().caption} data-slot="caption">
-              {props.caption}
-            </p>
-          )}
-          {slots.captionSlot()}
-        </>
-      )}
+      </Show>
 
-      {isInteractive() && (
+      <Show when={props.lightbox ?? true}>
         <dialog
           ref={(el) => (dialogRef = el)}
           class={classes().dialog}
-          data-image-dialog
+          data-slot="dialog"
           onClose={() => setOpen(false)}
           onClick={(e) => {
             if (e.target === e.currentTarget) setOpen(false);
           }}
         >
-          <div class="flex flex-col bg-default text-highlighted max-h-[90vh]">
-            <div
-              class="flex-1 min-h-0 flex items-center justify-center p-4 overflow-hidden"
-              onClick={() => setZoom(!zoom())}
-            >
-              {status() === "error" ? (
-                fallbackBox()
-              ) : isResponsive() ? (
-                <picture class="max-w-full max-h-[65vh] flex items-center justify-center overflow-hidden">
-                  <source
-                    media={`(max-width: ${breakpointVal() - 1}px)`}
-                    srcset={show() ? urlOf(props.mobileSrc) : undefined}
-                  />
-                  <source
-                    media={`(min-width: ${breakpointVal()}px)`}
-                    srcset={show() ? urlOf(props.desktopSrc) : undefined}
-                  />
-                  <img
-                    src={show() ? urlOf(props.desktopSrc) : undefined}
-                    alt={alt()}
-                    class={`${classes().image}${zoom() ? " max-w-none max-h-none" : ""}`}
-                    data-modal-img
-                  />
-                </picture>
-              ) : hasColorMode() ? (
-                <div class="rl-image-color-mode max-w-full max-h-[65vh] relative flex items-center justify-center overflow-hidden">
-                  <img
-                    src={show() ? lightUrl() : undefined}
-                    alt={alt()}
-                    class={`${classes().image} rl-img-light${zoom() ? " max-w-none max-h-none" : ""}`}
-                    data-modal-img
-                    data-light-src={lightUrl()}
-                    data-dark-src={darkUrl()}
-                  />
-                  <img
-                    src={show() ? darkUrl() : undefined}
-                    alt={alt()}
-                    class={`${classes().image} rl-img-dark hidden${zoom() ? " max-w-none max-h-none" : ""}`}
-                    data-modal-img-dark
-                  />
-                </div>
-              ) : (
-                <img
-                  src={show() ? activeUrl() : undefined}
-                  alt={alt()}
-                  class={`${classes().image}${zoom() ? " max-w-none max-h-none" : ""}`}
-                  data-modal-img
-                />
-              )}
+          <div class={classes().dialogBody}>
+            <div class={classes().preview} onClick={() => setZoom(!zoom())}>
+              {previewContent()}
             </div>
 
-            <hr class="border-default mx-4 mb-3 shrink-0" />
+            <hr class={classes().divider} />
 
-            <div class={classes().fileInfo}>
-              <div class="flex flex-col gap-xs text-sm">
-                {props.metaSource !== false && (
-                  <div class="flex flex-row gap-xs items-center">
-                    <RLIcon name="image" class="size-4 shrink-0 text-muted" aria-hidden="true" />
-                    <span class="text-muted">{uiT("image.source")}</span>
-                    <span class="text-dimmed truncate max-w-[40vw]">{fileName()}</span>
+            <div class={classes().fileInfo} data-slot="file-info">
+              <div class={classes().infoList}>
+                <Show when={props.metaSource !== false}>
+                  <div class={classes().infoRow}>
+                    <RLIcon name="image" class={classes().infoIcon} aria-hidden="true" />
+                    <span class={classes().infoLabel}>{uiT("image.source")}</span>
+                    <span class={classes().infoSource}>{fileName()}</span>
                   </div>
-                )}
-                {props.metaFormat !== false && (
-                  <div class="flex flex-row gap-xs items-center">
+                </Show>
+                <Show when={props.metaFormat !== false}>
+                  <div class={classes().infoRow}>
                     <RLIcon
                       name="file-question-mark"
-                      class="size-4 shrink-0 text-muted"
+                      class={classes().infoIcon}
                       aria-hidden="true"
                     />
-                    <span class="text-muted">{uiT("image.format")}</span>
-                    <span class="text-dimmed" data-metadata-format>
-                      {metaFormatTxt()}
-                    </span>
+                    <span class={classes().infoLabel}>{uiT("image.format")}</span>
+                    <span class={classes().infoValue}>{metaFormatTxt()}</span>
                   </div>
-                )}
-                {props.metaDimensions !== false && (
-                  <div class="flex flex-row gap-xs items-center">
-                    <RLIcon
-                      name="image-upscale"
-                      class="size-4 shrink-0 text-muted"
-                      aria-hidden="true"
-                    />
-                    <span class="text-muted">{uiT("image.dimensions")}</span>
-                    <span class="text-dimmed">
+                </Show>
+                <Show when={props.metaDimensions !== false}>
+                  <div class={classes().infoRow}>
+                    <RLIcon name="image-upscale" class={classes().infoIcon} aria-hidden="true" />
+                    <span class={classes().infoLabel}>{uiT("image.dimensions")}</span>
+                    <span class={classes().infoValue}>
                       {imgWidth() || "?"} x {imgHeight() || "?"}
                     </span>
                   </div>
-                )}
-                {props.metaSize !== false && (
-                  <div class="flex flex-row gap-xs items-center">
-                    <RLIcon
-                      name="hard-drive"
-                      class="size-4 shrink-0 text-muted"
-                      aria-hidden="true"
-                    />
-                    <span class="text-muted">{uiT("image.size")}</span>
-                    <span class="text-dimmed" data-metadata-size>
-                      {metaSizeTxt()}
-                    </span>
+                </Show>
+                <Show when={props.metaSize !== false}>
+                  <div class={classes().infoRow}>
+                    <RLIcon name="hard-drive" class={classes().infoIcon} aria-hidden="true" />
+                    <span class={classes().infoLabel}>{uiT("image.size")}</span>
+                    <span class={classes().infoValue}>{metaSizeTxt()}</span>
                   </div>
-                )}
-                {props.metaAlt !== false && (
-                  <div class="flex flex-row gap-xs items-center">
-                    <RLIcon
-                      name="align-left"
-                      class="size-4 shrink-0 text-muted"
-                      aria-hidden="true"
-                    />
-                    <span class="text-muted">{uiT("image.alt")}</span>
-                    <span
-                      class={`text-dimmed truncate max-w-[30vw]${alt() ? "" : " italic opacity-50"}`}
-                    >
+                </Show>
+                <Show when={props.metaAlt !== false}>
+                  <div class={classes().infoRow}>
+                    <RLIcon name="align-left" class={classes().infoIcon} aria-hidden="true" />
+                    <span class={classes().infoLabel}>{uiT("image.alt")}</span>
+                    <span class={alt() ? classes().infoAlt : classes().infoAltEmpty}>
                       {alt() || uiT("image.none")}
                     </span>
                   </div>
-                )}
+                </Show>
               </div>
 
-              {props.metaDownload !== false && (
-                <button
+              <Show when={props.metaDownload !== false}>
+                <RLButton
                   type="button"
+                  variant="ghost"
+                  color="neutral"
                   class={classes().download}
-                  data-image-download
+                  data-slot="download"
                   onClick={handleDownload}
                 >
-                  <RLIcon name="download" class="size-4 shrink-0" aria-hidden="true" />
+                  <RLIcon name="download" class={classes().downloadIcon} aria-hidden="true" />
                   {uiT("image.download")}
-                </button>
-              )}
+                </RLButton>
+              </Show>
             </div>
 
-            <form method="dialog" class="absolute top-2 right-2">
-              <button
+            <form method="dialog" class={classes().closeForm}>
+              <RLButton
                 type="submit"
-                class={classes().closeButton}
+                variant="ghost"
+                color="neutral"
+                class={classes().close}
+                data-slot="close"
                 aria-label={uiT("actions.close")}
                 onClick={() => setOpen(false)}
               >
-                <RLIcon name="x" class="size-4" aria-hidden="true" />
-              </button>
+                <RLIcon name="x" class={classes().closeIcon} aria-hidden="true" />
+              </RLButton>
             </form>
           </div>
         </dialog>
-      )}
+      </Show>
     </Tag>
   );
 };

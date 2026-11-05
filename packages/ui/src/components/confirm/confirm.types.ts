@@ -1,14 +1,10 @@
 import type { JSX } from "@solidjs/web";
 import type { InferThemeProps } from "../../resolver";
-import type { ThemeColor } from "../../types";
-import type { OverlaySlot } from "../../slot";
+import type { SlotRenderer, ThemeColor } from "../../types";
 import type { ModalSize } from "../modal/modal.types";
 import type { RLConfirmTheme } from "./confirm.theme";
 
-export type RLConfirmProps = Omit<
-  InferThemeProps<typeof RLConfirmTheme>,
-  "color" | "aria-label" | "aria-labelledby" | "aria-describedby"
-> & {
+export type RLConfirmProps = Omit<InferThemeProps<typeof RLConfirmTheme>, "color"> & {
   /**
    * Accessible label for the dialog. Forwarded to the modal.
    */
@@ -101,21 +97,21 @@ export type RLConfirmProps = Omit<
    */
   children?: JSX.Element | undefined;
   /**
-   * Trigger element. Always rendered, so it is plain JSX.
+   * Trigger content. Replaces the default trigger button built from `triggerLabel`.
    */
-  triggerSlot?: JSX.Element | undefined;
+  triggerSlot?: SlotRenderer | undefined;
   /**
    * Title content. Takes precedence over the `title` string.
    */
-  titleSlot?: OverlaySlot | undefined;
+  titleSlot?: SlotRenderer | undefined;
   /**
    * Description content. Takes precedence over the `description` string.
    */
-  descriptionSlot?: OverlaySlot | undefined;
+  descriptionSlot?: SlotRenderer | undefined;
   /**
    * Footer content. Replaces the default Cancel/Confirm row.
    */
-  footerSlot?: OverlaySlot | undefined;
+  footerSlot?: SlotRenderer | undefined;
   /**
    * Called whenever the open state changes.
    */

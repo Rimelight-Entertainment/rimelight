@@ -16,7 +16,19 @@ export const RLSlider: Component<RLSliderProps> = (props) => {
   );
 
   const { Tag, classes, rest, theme } = RLSliderTheme.setup(props, {
-    omit: ["value", "defaultValue", "onValueChange", "min", "max", "step", "name"] as const,
+    omit: [
+      "value",
+      "defaultValue",
+      "onValueChange",
+      "min",
+      "max",
+      "step",
+      "name",
+      "disabled",
+      "aria-label",
+      "aria-labelledby",
+      "aria-describedby",
+    ] as const,
   });
 
   const percentage = createMemo(() => {
@@ -32,16 +44,17 @@ export const RLSlider: Component<RLSliderProps> = (props) => {
   };
 
   return (
-    <Tag data-slot="root" data-theme={theme()} class={classes().root} {...rest}>
+    <Tag
+      data-slot="root"
+      data-theme={theme()}
+      data-orientation={props.orientation ?? "horizontal"}
+      data-disabled={props.disabled ? "" : undefined}
+      class={classes().root}
+      style={{ "--rl-slider-percent": `${percentage()}%` }}
+      {...rest}
+    >
       <div class={classes().track} data-slot="track">
-        <svg class="h-full w-full overflow-visible pointer-events-none">
-          <rect
-            class={`${classes().range} h-full`}
-            width={`${percentage()}%`}
-            fill="currentColor"
-            rx="2"
-          />
-        </svg>
+        <div class={classes().range} data-slot="range" />
       </div>
 
       <input
@@ -51,21 +64,16 @@ export const RLSlider: Component<RLSliderProps> = (props) => {
         step={step()}
         value={value()}
         name={props.name}
+        disabled={props.disabled}
+        aria-label={props["aria-label"]}
+        aria-labelledby={props["aria-labelledby"]}
+        aria-describedby={props["aria-describedby"]}
         class={classes().input}
         data-slot="input"
         onInput={handleInput}
       />
 
-      <svg class="absolute inset-0 h-full w-full overflow-visible pointer-events-none">
-        <circle
-          cx={`${percentage()}%`}
-          cy="50%"
-          r="8"
-          class={`${classes().thumb} pointer-events-auto border-none`}
-          data-slot="thumb"
-          fill="currentColor"
-        />
-      </svg>
+      <div class={classes().thumb} data-slot="thumb" aria-hidden="true" />
     </Tag>
   );
 };

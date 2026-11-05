@@ -17,7 +17,7 @@ export type RLDashboardSearchButtonProps = InferThemeProps<typeof RLDashboardSea
    * Keyboard shortcut hints. A `"meta"` key renders as ⌘.
    * @default [{ value: "meta" }, { value: "k" }]
    */
-  kbds?: Array<string | { value: string; variant?: string }>;
+  kbds?: Array<string | { value: string }>;
   /**
    * Replaces the default keyboard shortcut hints.
    */

@@ -2,13 +2,12 @@ import { createSignal, For } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import { RLCompare } from "@rimelight/ui/components/compare/RLCompare.tsx";
 import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx";
-import { AUDIT_COLORS, type ComponentAuditDefinition } from "./types";
+import type { ComponentAuditDefinition } from "./types";
 import { t } from "@rimelight/i18n";
 
 const SIZES = ["xs", "sm", "md", "lg", "xl"] as const;
 const VARIANTS = ["solid", "outline", "subtle", "ghost"] as const;
 const ORIENTATIONS = ["horizontal", "vertical"] as const;
-const COLORS = AUDIT_COLORS;
 
 const IMG_BEFORE =
   "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80";
@@ -19,7 +18,6 @@ export const CompareSandbox = (): JSX.Element => {
   const [orientation, setOrientation] = createSignal<(typeof ORIENTATIONS)[number]>("horizontal");
   const [size, setSize] = createSignal<(typeof SIZES)[number]>("md");
   const [variant, setVariant] = createSignal<(typeof VARIANTS)[number]>("solid");
-  const [color, setColor] = createSignal<string>("primary");
   const [value, setValue] = createSignal(50);
   const [showLabels, setShowLabels] = createSignal(true);
   const [hover, setHover] = createSignal(false);
@@ -84,25 +82,6 @@ export const CompareSandbox = (): JSX.Element => {
                 }`}
               >
                 {v}
-              </button>
-            )}
-          </For>
-        </div>
-
-        <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="text-muted mr-1">{t("app.text.color")}</span>
-          <For each={COLORS}>
-            {(c) => (
-              <button
-                type="button"
-                onClick={() => setColor(c)}
-                class={`px-2 py-0.5 rounded text-xs font-mono transition-colors ${
-                  color() === c
-                    ? "bg-primary text-inverted font-bold"
-                    : "bg-elevated text-muted hover:text-highlighted border border-default"
-                }`}
-              >
-                {c}
               </button>
             )}
           </For>
@@ -193,12 +172,11 @@ export const CompareSandbox = (): JSX.Element => {
           orientation={orientation()}
           size={size()}
           variant={variant()}
-          color={color()}
           hover={hover()}
           autoplay={autoplay()}
           disabled={disabled()}
-          showHandle={showHandle()}
-          showDivider={showDivider()}
+          hasHandle={showHandle()}
+          hasDivider={showDivider()}
           showLabels={showLabels()}
           beforeLabelSlot="Before (Day)"
           afterLabelSlot="After (Sunset)"
@@ -301,7 +279,6 @@ export const compareAudit: ComponentAuditDefinition = {
                 <span class="text-xs font-mono text-muted">variant: {v}</span>
                 <RLCompare
                   variant={v}
-                  color="primary"
                   beforeSrc={IMG_BEFORE}
                   afterSrc={IMG_AFTER}
                   beforeLabelSlot="Before"
@@ -315,24 +292,34 @@ export const compareAudit: ComponentAuditDefinition = {
       ),
     },
     {
-      id: "rich-jsx-content-comparison",
-      get title() {
-        return t("app.text.rich-jsx-content-comparison");
-      },
-      get description() {
-        return t("app.text.compares-arbitrary-dom-jsx-components-such-as-li");
-      },
+      id: "default-children",
+      title: "Default Children",
+      description:
+        "Children fill the layers by position: the first child is the before layer and the second child is the after layer.",
+      render: () => (
+        <RLCompare class="w-full max-w-xl aspect-video">
+          <img src={IMG_BEFORE} alt="Original" class="w-full h-full object-cover" />
+          <img src={IMG_AFTER} alt="Retouched" class="w-full h-full object-cover" />
+        </RLCompare>
+      ),
+    },
+    {
+      id: "before-slot",
+      title: "Before Slot",
+      description:
+        "A custom before layer replaces the before image. The after layer still uses the image shorthand.",
       render: () => (
         <RLCompare
           defaultValue={45}
-          leadingSlot={
-            <div class="w-full h-full bg-slate-950 text-slate-100 p-6 flex flex-col justify-between">
+          afterSrc={IMG_AFTER}
+          beforeLayerSlot={
+            <div class="w-full h-full bg-scrim text-on-scrim p-6 flex flex-col justify-between">
               <div>
                 <span class="text-xs font-mono uppercase tracking-wider text-primary">
                   Dark Mode Theme
                 </span>
                 <h4 class="text-lg font-bold mt-1">{"Modern Analytics Dashboard"}</h4>
-                <p class="text-xs text-slate-400 mt-2">
+                <p class="text-xs text-on-scrim/70 mt-2">
                   Optimized for low-light environments with high contrast data accents.
                 </p>
               </div>
@@ -342,14 +329,29 @@ export const compareAudit: ComponentAuditDefinition = {
               </div>
             </div>
           }
-          trailingSlot={
-            <div class="w-full h-full bg-slate-50 text-slate-900 p-6 flex flex-col justify-between">
+          beforeLabelSlot="Dark Theme"
+          afterLabelSlot="Light Theme"
+          class="w-full max-w-xl h-64 border border-default shadow-md"
+        />
+      ),
+    },
+    {
+      id: "after-slot",
+      title: "After Slot",
+      description:
+        "A custom after layer replaces the after image. The before layer still uses the image shorthand.",
+      render: () => (
+        <RLCompare
+          defaultValue={55}
+          beforeSrc={IMG_BEFORE}
+          afterLayerSlot={
+            <div class="w-full h-full bg-default text-highlighted p-6 flex flex-col justify-between">
               <div>
-                <span class="text-xs font-mono uppercase tracking-wider text-sky-600">
+                <span class="text-xs font-mono uppercase tracking-wider text-info">
                   Light Mode Theme
                 </span>
                 <h4 class="text-lg font-bold mt-1">{"Modern Analytics Dashboard"}</h4>
-                <p class="text-xs text-slate-600 mt-2">
+                <p class="text-xs text-muted mt-2">
                   Clean, crisp daylight rendering with balanced neutral typography.
                 </p>
               </div>
@@ -359,9 +361,35 @@ export const compareAudit: ComponentAuditDefinition = {
               </div>
             </div>
           }
-          beforeLabelSlot="Dark Theme"
-          afterLabelSlot="Light Theme"
           class="w-full max-w-xl h-64 border border-default shadow-md"
+        />
+      ),
+    },
+    {
+      id: "before-label-slot",
+      title: "Before Label Slot",
+      description: "A JSX element replaces the before label text.",
+      render: () => (
+        <RLCompare
+          beforeSrc={IMG_BEFORE}
+          afterSrc={IMG_AFTER}
+          beforeLabelSlot={<RLBadge label="Original" color="primary" variant="solid" />}
+          afterLabelSlot="Retouched"
+          class="w-full max-w-xl aspect-video"
+        />
+      ),
+    },
+    {
+      id: "after-label-slot",
+      title: "After Label Slot",
+      description: "A JSX element replaces the after label text.",
+      render: () => (
+        <RLCompare
+          beforeSrc={IMG_BEFORE}
+          afterSrc={IMG_AFTER}
+          beforeLabelSlot="Original"
+          afterLabelSlot={<RLBadge label="Retouched" color="success" variant="solid" />}
+          class="w-full max-w-xl aspect-video"
         />
       ),
     },
@@ -417,7 +445,7 @@ export const compareAudit: ComponentAuditDefinition = {
           beforeSrc={IMG_BEFORE}
           afterSrc={IMG_AFTER}
           handleSlot={({ value }) => (
-            <div class="px-2 py-1 bg-primary text-inverted text-xs font-mono font-bold rounded-full shadow-lg border border-white/20 whitespace-nowrap">
+            <div class="px-2 py-1 bg-primary text-inverted text-xs font-mono font-bold rounded-full shadow-lg border border-on-scrim/20 whitespace-nowrap">
               {Math.round(value)}%
             </div>
           )}
@@ -451,7 +479,7 @@ export const compareAudit: ComponentAuditDefinition = {
       criterion: "API and slot pattern parity",
       status: "pass",
       notes:
-        "Full support for value, defaultValue, min, max, step, orientation, leadingSlot/trailingSlot, beforeSrc/afterSrc, label slots, custom handles, hover, autoplay, disabled, sizes, variants, and colors.",
+        "Full support for value, defaultValue, min, max, step, orientation, beforeLayerSlot/afterLayerSlot, beforeSrc/afterSrc, before/after label slots, handleSlot, label positions, hover, autoplay, disabled, and sizes and variants.",
     },
     {
       criterion: "Full WAI-ARIA compliance",
@@ -463,7 +491,7 @@ export const compareAudit: ComponentAuditDefinition = {
       criterion: "Theme token resolution",
       status: "pass",
       notes:
-        "Theme classes live solely in compare.theme.ts; dynamic clipping and positioning use CSS transforms and clip-path.",
+        "Theme classes live solely in compare.theme.ts; dynamic clipping and positioning use CSS variables with transforms and clip-path.",
     },
     {
       criterion: "No innerHTML / dangerouslySetInnerHTML",

@@ -4,6 +4,18 @@ import type { RLPackageManagersTheme } from "./package-managers.theme";
 export type Manager = "npm" | "pnpm" | "yarn" | "deno" | "bun" | "vp";
 export type CommandType = "add" | "create" | "dlx" | "exec" | "install" | "remove" | "run";
 
+/** Command templates for one manager. `dev` is the flag used by `add` with `dev`. */
+export type ManagerCommands = Partial<Record<CommandType, string>> & { dev: string };
+
+/** Options that shape the rendered command line. */
+export interface CommandOptions {
+  pkg?: string | undefined;
+  dev?: boolean | undefined;
+  args?: string | undefined;
+  comment?: string | undefined;
+  prefix?: string | undefined;
+}
+
 /**
  * Package manager tabs props. `@status stable`.
  */

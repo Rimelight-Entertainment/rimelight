@@ -1,4 +1,4 @@
-import type { RLButtonProps } from "./button.types";
+import type { RLButtonProps, ButtonSlotPresence } from "./button.types";
 import type { RLAvatarProps } from "../avatar/avatar.types";
 import { RLButtonTheme } from "./button.theme";
 import { createMemo, createSignal, Show, type Component } from "solid-js";
@@ -9,17 +9,16 @@ import {
   runClickHandlers,
   toClickHandlers,
 } from "./button.helpers";
-import { resolveLinkAttrs } from "../link/helpers";
+import { resolveLinkAttrs } from "../link/link.helpers";
 import { uiT } from "../../locale";
 import { RLIcon } from "../icon/RLIcon";
 import { RLAvatar } from "../avatar/RLAvatar";
-
-type SlotPresence = { leadingSlot: () => unknown; trailingSlot: () => unknown };
 
 const OMIT_KEYS = [
   "label",
   "icon",
   "avatar",
+  "active",
   "leading",
   "leadingIcon",
   "trailing",
@@ -67,8 +66,8 @@ export const RLButton: Component<RLButtonProps> = (props) => {
 
   const isLoading = () => Boolean(props.loading || autoLoading());
   const isDisabled = () => Boolean(props.disabled || isLoading());
-  const isLink = () => Boolean(props.href);
   const iconSize = () => (props.size ? ICON_SIZE[props.size] : undefined);
+  const isLink = () => Boolean(props.href);
 
   const linkAttrs = createMemo(
     () =>
@@ -93,7 +92,9 @@ export const RLButton: Component<RLButtonProps> = (props) => {
   const showExternalHint = () =>
     isLink() && linkAttrs().target === "_blank" && !props["aria-label"];
 
-  const isTrailingPosition = (s: SlotPresence) =>
+  const isIconOnly = (): boolean => !props.label && children() === undefined;
+
+  const isTrailingPosition = (s: ButtonSlotPresence) =>
     Boolean(
       s.trailingSlot() ||
       props.trailingIcon ||
@@ -102,7 +103,7 @@ export const RLButton: Component<RLButtonProps> = (props) => {
       (isLoading() && trailingFlag() === true && leadingFlag() !== true),
     );
 
-  const isLeadingPosition = (s: SlotPresence) =>
+  const isLeadingPosition = (s: ButtonSlotPresence) =>
     Boolean(
       s.leadingSlot() ||
       props.leadingIcon ||
@@ -112,37 +113,49 @@ export const RLButton: Component<RLButtonProps> = (props) => {
       leadingFlag() === true,
     );
 
-  const isIconOnlyChildren = (childrenAccessor: () => unknown): boolean =>
-    !props.label && childrenAccessor() === undefined;
+  const buttonVariants = (s: ButtonSlotPresence, childrenAccessor: () => unknown) => ({
+    variant: props.active && props.activeVariant ? props.activeVariant : props.variant,
+    color: props.active && props.activeColor ? props.activeColor : props.color,
+    size: props.size,
+    justify: props.justify,
+    block: props.block,
+    shape: props.shape ?? (!props.label && childrenAccessor() === undefined ? "square" : undefined),
+    fieldGroup: props.fieldGroup,
+    leading: isLeadingPosition(s),
+    trailing: isTrailingPosition(s),
+    loading: isLoading(),
+  });
 
-  const { Tag, classes, rest, slots, children, theme, tagProp } = RLButtonTheme.setup(props, {
+  const { Tag, classes, rest, slots, children, theme, tagProp, ui } = RLButtonTheme.setup(props, {
     as: "button",
     omit: OMIT_KEYS,
     slots: ["leadingSlot", "trailingSlot"] as const,
-    variants: (s, childrenAccessor) => ({
-      variant: props.active && props.activeVariant ? props.activeVariant : props.variant,
-      color: props.active && props.activeColor ? props.activeColor : props.color,
-      size: props.size,
-      justify: props.justify,
-      block: props.block,
-      square: props.square || isIconOnlyChildren(childrenAccessor),
-      fieldGroup: props.fieldGroup,
-      rounded: props.rounded,
-      leading: isLeadingPosition(s),
-      trailing: isTrailingPosition(s),
-      loading: isLoading(),
-      active: props.active,
-    }),
+    variants: buttonVariants,
   });
 
-  const isIconOnly = (): boolean => isIconOnlyChildren(children);
+  const LinkTag = RLButtonTheme.tag({}, "a");
+
   const isNativeTag = () =>
     tagProp() === undefined || tagProp() === "button" || tagProp() === "input";
 
-  const rootClass = () =>
-    [classes().root, props.active ? props.activeClass : props.inactiveClass]
-      .filter(Boolean)
-      .join(" ");
+  const rootUi = () => ({
+    ...ui(),
+    root: [ui()?.root, props.active ? props.activeClass : props.inactiveClass],
+  });
+
+  const rootClass = createMemo(
+    () =>
+      RLButtonTheme(props, {
+        ...buttonVariants(slots, children),
+        ui: rootUi(),
+      }).root,
+  );
+
+  const avatarProps = (): RLAvatarProps => {
+    const avatar = props.avatar;
+    if (typeof avatar === "string") return { src: avatar, size: "xs" };
+    return { ...avatar, size: avatar?.size ?? "xs" };
+  };
 
   const leadingIconName = () => {
     if (isLoading() && !isTrailingPosition(slots)) {
@@ -220,14 +233,7 @@ export const RLButton: Component<RLButtonProps> = (props) => {
         </Show>
         <Show when={!leadingIconName() && props.avatar && !isLoading()}>
           <span class={classes().leadingAvatar} data-slot="leading-avatar">
-            <RLAvatar
-              {...(typeof props.avatar === "string" ? { src: props.avatar } : props.avatar)}
-              size={
-                (typeof props.avatar === "object" && props.avatar?.size) ||
-                (classes().leadingAvatarSize as RLAvatarProps["size"])
-              }
-              class={classes().leadingAvatar}
-            />
+            <RLAvatar {...avatarProps()} class={classes().leadingAvatar} />
           </span>
         </Show>
       </Show>
@@ -285,8 +291,8 @@ export const RLButton: Component<RLButtonProps> = (props) => {
           class={rootClass()}
           data-slot="root"
           data-theme={theme()}
-          data-loading={isLoading() ? "true" : undefined}
-          data-loading-auto={props.loadingAuto ? "true" : undefined}
+          data-loading={isLoading() ? "" : undefined}
+          data-loading-auto={props.loadingAuto ? "" : undefined}
           aria-busy={isLoading() ? "true" : undefined}
           onClick={handleClick}
           onKeyDown={handleKeyDown}
@@ -297,7 +303,7 @@ export const RLButton: Component<RLButtonProps> = (props) => {
         </Tag>
       }
     >
-      <a
+      <LinkTag
         href={linkAttrs().href}
         target={linkAttrs().target}
         rel={linkAttrs().rel}
@@ -307,8 +313,8 @@ export const RLButton: Component<RLButtonProps> = (props) => {
         class={rootClass()}
         data-slot="root"
         data-theme={theme()}
-        data-loading={isLoading() ? "true" : undefined}
-        data-loading-auto={props.loadingAuto ? "true" : undefined}
+        data-loading={isLoading() ? "" : undefined}
+        data-loading-auto={props.loadingAuto ? "" : undefined}
         aria-busy={isLoading() ? "true" : undefined}
         onClick={handleClick}
         ref={props.ref}
@@ -316,7 +322,7 @@ export const RLButton: Component<RLButtonProps> = (props) => {
       >
         {buttonContent()}
         {externalHint()}
-      </a>
+      </LinkTag>
     </Show>
   );
 };

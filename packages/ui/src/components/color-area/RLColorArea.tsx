@@ -1,9 +1,8 @@
-import type { Component } from "solid-js";
-import type { RLColorAreaProps } from "./color-area.types";
-import { RLColorAreaTheme } from "./color-area.theme";
-import { createMemo, createSignal, Show } from "solid-js";
+import { createMemo, createSignal, Show, type Component } from "solid-js";
+
 import { uiT } from "../../locale";
 import { createControllable } from "../../controllable";
+import { DEFAULT_COLOR_AREA_HEX } from "../../constants/color";
 import {
   clamp,
   getChannelRange,
@@ -14,6 +13,13 @@ import {
   rgbToHsb,
   rgbToHsl,
 } from "../color-picker/color";
+import { areaBackground } from "./color-area.helpers";
+import { RLColorAreaTheme } from "./color-area.theme";
+import type {
+  RLColorAreaChannel,
+  RLColorAreaChannelState,
+  RLColorAreaProps,
+} from "./color-area.types";
 
 const OMIT_KEYS = [
   "colorSpace",
@@ -25,21 +31,12 @@ const OMIT_KEYS = [
   "xName",
   "yChannel",
   "yName",
+  "aria-label",
+  "aria-labelledby",
+  "aria-describedby",
   "onValueChange",
   "onValueChangeEnd",
 ] as const;
-
-type Channel = NonNullable<RLColorAreaProps["xChannel"]>;
-
-interface ChannelState {
-  hue: number;
-  sat: number;
-  light: number;
-  bright: number;
-  red: number;
-  green: number;
-  blue: number;
-}
 
 export const RLColorArea: Component<RLColorAreaProps> = (props) => {
   const { Tag, classes, rest, children, theme } = RLColorAreaTheme.setup(props, {
@@ -47,18 +44,18 @@ export const RLColorArea: Component<RLColorAreaProps> = (props) => {
   });
 
   const colorSpace = () => props.colorSpace ?? "hsl";
-  const xChannel = (): Channel => props.xChannel ?? "saturation";
-  const yChannel = (): Channel => props.yChannel ?? "lightness";
+  const xChannel = (): RLColorAreaChannel => props.xChannel ?? "saturation";
+  const yChannel = (): RLColorAreaChannel => props.yChannel ?? "lightness";
 
   const [value, setValue] = createControllable(
     () => props.value,
-    props.defaultValue ?? "#ff0000",
+    props.defaultValue ?? DEFAULT_COLOR_AREA_HEX,
     (next) => props.onValueChange?.(next),
   );
   const [isDragging, setIsDragging] = createSignal(false);
   let areaRef: HTMLDivElement | undefined;
 
-  const syncChannelsFromValue = (hex: string, currentHue = 0): ChannelState => {
+  const syncChannelsFromValue = (hex: string, currentHue = 0): RLColorAreaChannelState => {
     const rgb = hexToRgb(hex);
     const hsl = rgbToHsl(rgb[0], rgb[1], rgb[2]);
     const hsb = rgbToHsb(rgb[0], rgb[1], rgb[2]);
@@ -75,11 +72,11 @@ export const RLColorArea: Component<RLColorAreaProps> = (props) => {
     };
   };
 
-  const [state, setState] = createSignal<ChannelState>((prev) =>
+  const [state, setState] = createSignal<RLColorAreaChannelState>((prev) =>
     syncChannelsFromValue(value(), prev?.hue ?? 0),
   );
 
-  const channelValue = (ch: Channel, s: ChannelState): number => {
+  const channelValue = (ch: RLColorAreaChannel, s: RLColorAreaChannelState): number => {
     switch (ch) {
       case "hue":
         return s.hue;
@@ -100,43 +97,19 @@ export const RLColorArea: Component<RLColorAreaProps> = (props) => {
     }
   };
 
-  const pctX = createMemo(() => {
-    const ch = xChannel();
-    const range = getChannelRange(ch);
-    const s = state();
-    return ((channelValue(ch, s) - range.min) / (range.max - range.min)) * 100;
-  });
-
-  const pctY = createMemo(() => {
-    const ch = yChannel();
-    const range = getChannelRange(ch);
-    const s = state();
-    return 100 - ((channelValue(ch, s) - range.min) / (range.max - range.min)) * 100;
-  });
-
   const xVal = createMemo(() => channelValue(xChannel(), state()));
   const yVal = createMemo(() => channelValue(yChannel(), state()));
 
-  const areaStyle = createMemo(() => {
-    const hueVal = state().hue;
-    const cs = colorSpace();
-    const xCh = xChannel();
-    const yCh = yChannel();
-    let background: string;
-    if (cs === "hsl" && xCh === "saturation" && yCh === "lightness") {
-      background =
-        "linear-gradient(to top, #000 0%, transparent 50%, #fff 100%), linear-gradient(to right, #808080 0%, transparent 100%), hsl(" +
-        hueVal +
-        ", 100%, 50%)";
-    } else if (cs === "hsb" && xCh === "saturation" && yCh === "brightness") {
-      background =
-        "linear-gradient(to top, #000 0%, transparent 100%), linear-gradient(to right, #fff 0%, transparent 100%), hsl(" +
-        hueVal +
-        ", 100%, 50%)";
-    } else {
-      background = `hsl(${hueVal}, 100%, 50%)`;
-    }
-    return { "--rl-area-bg": background };
+  const thumbStyle = createMemo(() => {
+    const xRange = getChannelRange(xChannel());
+    const yRange = getChannelRange(yChannel());
+    const pctX = ((xVal() - xRange.min) / (xRange.max - xRange.min)) * 100;
+    const pctY = 100 - ((yVal() - yRange.min) / (yRange.max - yRange.min)) * 100;
+    return {
+      "--rl-thumb-x": `${pctX}%`,
+      "--rl-thumb-y": `${pctY}%`,
+      "--rl-thumb-bg": value(),
+    };
   });
 
   const applyChannelValues = (newX: number, newY: number) => {
@@ -214,7 +187,9 @@ export const RLColorArea: Component<RLColorAreaProps> = (props) => {
     setIsDragging(true);
     try {
       (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
-    } catch {}
+    } catch {
+      // Pointer capture is optional; dragging still works without it.
+    }
     applyPointer(e.clientX, e.clientY);
   };
 
@@ -228,14 +203,15 @@ export const RLColorArea: Component<RLColorAreaProps> = (props) => {
     setIsDragging(false);
     try {
       (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
-    } catch {}
+    } catch {
+      // Pointer capture may already be released by the browser.
+    }
     props.onValueChangeEnd?.(value());
   };
 
   const handleKeyDown = (e: KeyboardEvent) => {
     if (props.disabled) return;
-    const isShift = e.shiftKey;
-    const stepSize = isShift ? 10 : 1;
+    const stepSize = e.shiftKey ? 10 : 1;
     const xRange = getChannelRange(xChannel());
     const yRange = getChannelRange(yChannel());
     let posX = xVal();
@@ -277,14 +253,16 @@ export const RLColorArea: Component<RLColorAreaProps> = (props) => {
       data-value={value()}
       data-x-channel={xChannel()}
       data-y-channel={yChannel()}
-      data-disabled={props.disabled ? "true" : "false"}
+      data-disabled={props.disabled ? "" : undefined}
       {...rest}
     >
       <div
         ref={(el) => (areaRef = el)}
         class={classes().area}
         data-slot="area"
-        style={areaStyle()}
+        style={{
+          "--rl-area-bg": areaBackground(state().hue, colorSpace(), xChannel(), yChannel()),
+        }}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
@@ -294,12 +272,15 @@ export const RLColorArea: Component<RLColorAreaProps> = (props) => {
           class={classes().thumb}
           data-slot="thumb"
           role="slider"
-          aria-label={uiT("color-area.thumb")}
-          tabindex={0}
+          aria-label={props["aria-label"] ?? uiT("color-area.thumb")}
+          aria-labelledby={props["aria-labelledby"]}
+          aria-describedby={props["aria-describedby"]}
+          aria-disabled={props.disabled ? "true" : undefined}
+          tabindex={props.disabled ? -1 : 0}
           style={{
-            "--rl-thumb-x": `${pctX()}%`,
-            "--rl-thumb-y": `${pctY()}%`,
-            "--rl-thumb-bg": value(),
+            "--rl-thumb-x": thumbStyle()["--rl-thumb-x"],
+            "--rl-thumb-y": thumbStyle()["--rl-thumb-y"],
+            "--rl-thumb-bg": thumbStyle()["--rl-thumb-bg"],
           }}
           onKeyDown={handleKeyDown}
         />

@@ -5,49 +5,44 @@ export const RLPageTheme = defineTheme("page", {
   base: {
     root: "flex flex-col lg:grid lg:grid-cols-10 lg:gap-10",
     leading: "lg:col-span-2",
-    center: "",
     trailing: "lg:col-span-2 order-first lg:order-last",
   },
   variants: {
-    leading: {
-      true: {},
-    },
-    trailing: {
-      true: {},
-    },
+    hasLeading: {},
+    hasTrailing: {},
   },
   compoundVariants: [
     {
-      leading: true,
-      trailing: true,
+      hasLeading: true,
+      hasTrailing: true,
       class: {
         center: "lg:col-span-6",
       },
     },
     {
-      leading: true,
-      trailing: false,
+      hasLeading: true,
+      hasTrailing: false,
       class: {
         center: "lg:col-span-8",
       },
     },
     {
-      leading: false,
-      trailing: true,
+      hasLeading: false,
+      hasTrailing: true,
       class: {
         center: "lg:col-span-8",
       },
     },
     {
-      leading: false,
-      trailing: false,
+      hasLeading: false,
+      hasTrailing: false,
       class: {
         center: "lg:col-span-10",
       },
     },
   ],
   defaultVariants: {
-    leading: false,
-    trailing: false,
+    hasLeading: false,
+    hasTrailing: false,
   },
 });

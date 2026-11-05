@@ -245,7 +245,7 @@ export const DocsPage: Component<{ path?: string | undefined }> = (props) => {
                 fallback={
                   <RLTableOfContents
                     headings={headings()}
-                    tableOfContents={{ minHeadingLevel: 2, maxHeadingLevel: 3 } as any}
+                    tableOfContents={{ minHeadingLevel: 2, maxHeadingLevel: 3 }}
                   />
                 }
               >
@@ -345,7 +345,7 @@ export const DocsPage: Component<{ path?: string | undefined }> = (props) => {
             <div class="sticky top-[calc(var(--rl-header-height,64px)+2rem)] hidden max-h-[calc(100vh-var(--rl-header-height,64px)-4rem)] w-[240px] shrink-0 overflow-y-auto pl-4 xl:block">
               <RLTableOfContents
                 headings={headings()}
-                tableOfContents={{ minHeadingLevel: 2, maxHeadingLevel: 3 } as any}
+                tableOfContents={{ minHeadingLevel: 2, maxHeadingLevel: 3 }}
               />
             </div>
           </Show>

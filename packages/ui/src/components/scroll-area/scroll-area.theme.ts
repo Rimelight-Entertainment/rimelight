@@ -7,18 +7,21 @@ export const RLScrollAreaTheme = defineTheme("scroll-area", {
     viewport:
       "h-full w-full rounded-[inherit] overflow-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden",
     scrollbar:
-      "absolute flex user-select-none touch-action-none p-0.5 bg-transparent transition-colors duration-150 ease-out hover:bg-muted/10",
+      "absolute flex select-none touch-none p-0.5 bg-transparent transition-[opacity,colors] duration-150 ease-out hover:bg-muted/10 data-[orientation=vertical]:right-0 data-[orientation=vertical]:top-0 data-[orientation=vertical]:bottom-0 data-[orientation=vertical]:w-2.5 data-[orientation=vertical]:flex-col data-[orientation=horizontal]:bottom-0 data-[orientation=horizontal]:left-0 data-[orientation=horizontal]:right-0 data-[orientation=horizontal]:h-2.5 data-[orientation=horizontal]:flex-row",
     thumb:
       "relative flex-1 rounded-full bg-muted border border-default/50 transition-colors hover:bg-accented",
   },
   variants: {
-    orientation: {
-      vertical: { scrollbar: "right-0 top-0 bottom-0 w-2.5 flex-col" },
-      horizontal: { scrollbar: "bottom-0 left-0 right-0 h-2.5 flex-row" },
-      both: { scrollbar: "" },
+    visible: {
+      true: { scrollbar: "opacity-100" },
+      false: { scrollbar: "opacity-0" },
+    },
+    sized: {
+      true: { root: "h-[var(--rl-scroll-area-height)]" },
     },
   },
   defaultVariants: {
-    orientation: "vertical",
+    visible: false,
+    sized: false,
   },
 });

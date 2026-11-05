@@ -22,7 +22,7 @@ export const RLDashboardSidebarToggle: Component<RLDashboardSidebarToggleProps> 
       aria-label={uiT("sidebar.toggle")}
       {...rest}
     >
-      <RLIcon name={props.icon || "menu"} class="size-5" />
+      <RLIcon name={props.icon || "menu"} class={classes().icon} />
       {children()}
     </Tag>
   );

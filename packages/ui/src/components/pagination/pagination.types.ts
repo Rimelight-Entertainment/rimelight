@@ -19,5 +19,5 @@ export type RLPaginationProps = InferThemeProps<typeof RLPaginationTheme> & {
   /**
    * Called with the next page number when the user selects a page.
    */
-  onPageChange?: ((page: number) => void) | undefined;
+  onValueChange?: ((page: number) => void) | undefined;
 };

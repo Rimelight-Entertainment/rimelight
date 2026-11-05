@@ -1,4 +1,4 @@
-import type { JSX } from "@solidjs/web";
+import type { SlotRenderer } from "../../types";
 import type { InferThemeProps } from "../../resolver";
 import type { RLInputTheme } from "./input.theme";
 
@@ -73,12 +73,12 @@ export type RLInputProps = Omit<
    * Content rendered before the input. Replaces `leadingIcon` when present.
    * @default undefined
    */
-  leadingSlot?: JSX.Element;
+  leadingSlot?: SlotRenderer;
   /**
    * Content rendered after the input. Replaces `trailingIcon` when present.
    * @default undefined
    */
-  trailingSlot?: JSX.Element;
+  trailingSlot?: SlotRenderer;
   /**
    * Native input event handlers and ref.
    */

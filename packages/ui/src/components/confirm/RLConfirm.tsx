@@ -1,8 +1,9 @@
+import { Show, type Component } from "solid-js";
 import type { RLConfirmProps } from "./confirm.types";
 import { RLConfirmTheme } from "./confirm.theme";
-import type { Component } from "solid-js";
 import { createControllable } from "../../controllable";
 import { uiT } from "../../locale";
+import { renderSlot } from "../../slot";
 import { RLModal } from "../modal/RLModal";
 import { RLButton } from "../button/RLButton";
 
@@ -39,6 +40,9 @@ export const RLConfirm: Component<RLConfirmProps> = (props) => {
     props.onOpenChange,
   );
 
+  const cancelText = () => props.cancelLabel ?? uiT("confirm.cancel");
+  const actionText = () => props.actionLabel ?? uiT("confirm.confirm");
+
   const handleCancel = () => {
     setOpen(false);
     props.onCancel?.();
@@ -49,36 +53,46 @@ export const RLConfirm: Component<RLConfirmProps> = (props) => {
     props.onConfirm?.();
   };
 
+  const handleOpenChange = (next: boolean) => {
+    if (next) {
+      setOpen(true);
+      return;
+    }
+    handleCancel();
+  };
+
+  const renderActions = () => (
+    <div class={classes().actions} data-slot="actions">
+      <RLButton
+        class={classes().cancelButton}
+        data-slot="cancel-button"
+        variant="outline"
+        color="neutral"
+        type="button"
+        onClick={handleCancel}
+      >
+        {cancelText()}
+      </RLButton>
+      <RLButton
+        class={classes().actionButton}
+        data-slot="action-button"
+        color={props.color}
+        variant="solid"
+        type="button"
+        onClick={handleConfirm}
+      >
+        {actionText()}
+      </RLButton>
+    </div>
+  );
+
   // Invoked by Modal only while the dialog is rendered. A custom footer replaces the default
   // action row.
-  const renderFooter = () => {
-    const custom = slots.footerSlot();
-    if (custom) return custom();
-    return (
-      <div class="flex items-center justify-between w-full" data-slot="confirm-actions">
-        <RLButton
-          class={classes().cancelButton}
-          data-slot="cancel"
-          variant="outline"
-          color="neutral"
-          type="button"
-          onClick={handleCancel}
-        >
-          {props.cancelLabel ?? uiT("confirm.cancel")}
-        </RLButton>
-        <RLButton
-          class={classes().actionButton}
-          data-slot="action"
-          color={props.color}
-          variant="solid"
-          type="button"
-          onClick={handleConfirm}
-        >
-          {props.actionLabel ?? uiT("confirm.confirm")}
-        </RLButton>
-      </div>
-    );
-  };
+  const renderFooter = () => (
+    <Show when={slots.footerSlot()} fallback={renderActions()}>
+      {renderSlot(slots.footerSlot())}
+    </Show>
+  );
 
   return (
     <RLModal
@@ -101,7 +115,7 @@ export const RLConfirm: Component<RLConfirmProps> = (props) => {
       footerSlot={renderFooter}
       class={classes().root}
       ui={ui()}
-      onOpenChange={(next) => (next ? setOpen(true) : handleCancel())}
+      onOpenChange={handleOpenChange}
       {...rest}
     >
       {children()}

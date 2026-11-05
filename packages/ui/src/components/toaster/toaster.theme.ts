@@ -6,6 +6,4 @@ export const RLToasterTheme = defineTheme("toaster", {
     root: "fixed bottom-5 right-5 z-[200] flex flex-col gap-2 max-w-sm w-full pointer-events-none",
   },
   variants: {},
-  compoundVariants: [],
-  defaultVariants: {},
 });

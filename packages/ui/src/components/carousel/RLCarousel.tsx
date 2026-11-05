@@ -1,20 +1,18 @@
 import type { JSX } from "@solidjs/web";
-import type { RLCarouselProps, CarouselSlide } from "./carousel.types";
+import type {
+  CarouselAutoplayOptions,
+  CarouselAutoScrollOptions,
+  CarouselItemContext,
+  CarouselSlide,
+  CarouselStateClassesOptions,
+  RLCarouselProps,
+} from "./carousel.types";
 import { RLCarouselTheme } from "./carousel.theme";
-import { RLButtonTheme } from "../button/button.theme";
-import {
-  children,
-  createEffect,
-  createMemo,
-  createSignal,
-  For,
-  onSettled,
-  Show,
-  type Component,
-} from "solid-js";
-import { RLIcon } from "../icon/RLIcon";
+import { RLButton } from "../button/RLButton";
+import { RLImage } from "../image/RLImage";
+import { children, createEffect, createMemo, createSignal, For, onSettled, Show } from "solid-js";
 import { uiT } from "../../locale";
-import { cx } from "../../resolver";
+import { renderSlot } from "../../slot";
 
 const OMIT_KEYS = [
   "items",
@@ -23,28 +21,19 @@ const OMIT_KEYS = [
   "next",
   "nextIcon",
   "arrows",
-  "dots",
+  "hasDots",
   "autoplay",
   "autoScroll",
-  "autoHeight",
   "stateClasses",
   "fade",
   "wheelGestures",
-  "align",
-  "containScroll",
   "slidesToScroll",
-  "dragFree",
   "dragThreshold",
-  "inViewThreshold",
   "loop",
-  "skipSnaps",
   "duration",
   "startIndex",
   "watchDrag",
-  "watchResize",
-  "watchSlides",
   "watchFocus",
-  "breakpoints",
   "onSelect",
   "aria-label",
   "ref",
@@ -65,7 +54,7 @@ function parseBasisPercent(customClass?: string): number {
   return 100;
 }
 
-export const RLCarousel: Component<RLCarouselProps> = (props) => {
+export const RLCarousel = <T = unknown,>(props: RLCarouselProps<T>) => {
   const [index, setIndex] = createSignal(props.startIndex ?? 0);
   const [isHovered, setIsHovered] = createSignal(false);
 
@@ -74,46 +63,46 @@ export const RLCarousel: Component<RLCarouselProps> = (props) => {
   const isVertical = () => orientation() === "vertical";
   const isLoop = () => Boolean(props.loop);
   const isFade = () => Boolean(props.fade);
-
-  const resolvedItems = createMemo(() => {
-    if (props.items && Array.isArray(props.items)) return props.items;
-    return [];
-  });
+  const duration = () => props.duration ?? 500;
+  const resolvedItems = (): T[] => props.items ?? [];
 
   const {
     Tag,
     classes,
     rest,
-    ui,
     theme,
+    slots,
     children: childNodes,
   } = RLCarouselTheme.setup(props, {
     omit: OMIT_KEYS,
+    slots: ["prevSlot", "nextSlot"] as const,
     variants: () => ({
       orientation: orientation(),
       controls: controlsPlacement(),
-      active: false,
+      fade: isFade(),
     }),
   });
+  const triggerImageUi = () => ({ triggerImage: classes().image });
+  const prevUi = () => ({ ...props.prev?.ui, root: classes().prev });
+  const nextUi = () => ({ ...props.next?.ui, root: classes().next });
 
-  const resolvedChildren = children(() =>
-    typeof childNodes() === "function" ? null : childNodes(),
-  );
+  const slideChildren = () => childNodes() as RLCarouselProps<T>["children"];
 
-  const slideCount = createMemo(() => {
-    const items = resolvedItems();
-    if (items.length > 0) return items.length;
-    if (typeof childNodes() === "function") return 0;
-    const ch = resolvedChildren.toArray();
-    return ch.length;
+  const resolvedChildren = children(() => {
+    const nodes = slideChildren();
+    return typeof nodes === "function" ? null : nodes;
   });
 
-  const itemOverrideClass = (): string => {
-    const override = ui()?.item;
-    if (typeof override === "function") return override(classes().item);
-    return cx(override);
-  };
-  const basisPercent = createMemo(() => parseBasisPercent(itemOverrideClass()));
+  const slideCount = createMemo(() => {
+    if (resolvedItems().length > 0) return resolvedItems().length;
+    if (typeof slideChildren() === "function") return 0;
+    return resolvedChildren.toArray().length;
+  });
+
+  const slideIndexes = createMemo(() => Array.from({ length: slideCount() }, (_, i) => i));
+
+  const basisPercent = createMemo(() => parseBasisPercent(classes().item));
+  const hasCustomBasis = createMemo(() => /(?:^|\s)basis-(?!full(?:\s|$))/.test(classes().item));
 
   let viewportRef: HTMLDivElement | undefined;
   let containerRef: HTMLDivElement | undefined;
@@ -124,21 +113,10 @@ export const RLCarousel: Component<RLCarouselProps> = (props) => {
   let autoplayTimer: ReturnType<typeof setInterval> | undefined;
   let wheelThrottleTimer: ReturnType<typeof setTimeout> | undefined;
 
-  const dotActiveClasses = RLCarouselTheme.use(props, () => ({
-    orientation: orientation(),
-    controls: controlsPlacement(),
-    active: true,
-  }));
-
-  const dots = createMemo(() => Array.from({ length: slideCount() }, (_, i) => i));
-
+  const isSnapped = (i: number) => index() === i;
   const canScrollPrev = () => isLoop() || index() > 0;
   const canScrollNext = () => isLoop() || index() < slideCount() - 1;
-
-  const scrollStep = () => {
-    if (typeof props.slidesToScroll === "number") return props.slidesToScroll;
-    return 1;
-  };
+  const scrollStep = () => props.slidesToScroll ?? 1;
 
   const scrollTo = (n: number) => {
     const count = slideCount();
@@ -160,30 +138,6 @@ export const RLCarousel: Component<RLCarouselProps> = (props) => {
   const next = () => scrollTo(index() + scrollStep());
   const prev = () => scrollTo(index() - scrollStep());
 
-  const prevButtonClass = () => {
-    const custom = props.prev;
-    if (!custom) return classes().prev;
-    const btnCls = RLButtonTheme({
-      variant: custom["variant"] || "link",
-      color: custom["color"],
-      size: custom["size"] || "md",
-      class: custom["class"],
-    }).root;
-    return `${classes().prev} ${btnCls}`.trim();
-  };
-
-  const nextButtonClass = () => {
-    const custom = props.next;
-    if (!custom) return classes().next;
-    const btnCls = RLButtonTheme({
-      variant: custom["variant"] || "link",
-      color: custom["color"],
-      size: custom["size"] || "md",
-      class: custom["class"],
-    }).root;
-    return `${classes().next} ${btnCls}`.trim();
-  };
-
   const stopAutoplay = () => {
     if (autoplayTimer) {
       clearInterval(autoplayTimer);
@@ -200,12 +154,14 @@ export const RLCarousel: Component<RLCarouselProps> = (props) => {
       count: slideCount(),
       step: scrollStep(),
     }),
-    ({ autoplay, autoScroll, hovered, loop, count, step }) => {
+    (state) => {
+      const { autoplay, autoScroll, hovered, loop, count, step } = state;
       stopAutoplay();
       if ((!autoplay && !autoScroll) || hovered || count <= 1) return;
 
-      const autoplayOpt = typeof autoplay === "object" ? autoplay : {};
-      const autoScrollOpt = typeof autoScroll === "object" ? autoScroll : {};
+      const autoplayOpt: CarouselAutoplayOptions = typeof autoplay === "object" ? autoplay : {};
+      const autoScrollOpt: CarouselAutoScrollOptions =
+        typeof autoScroll === "object" ? autoScroll : {};
 
       if (autoplayOpt.stopOnMouseEnter !== false && hovered) return;
 
@@ -243,9 +199,16 @@ export const RLCarousel: Component<RLCarouselProps> = (props) => {
     }
     return () => {
       stopAutoplay();
-      if (wheelThrottleTimer) clearTimeout(wheelThrottleTimer);
+      clearTimeout(wheelThrottleTimer);
     };
   });
+
+  const translateFor = (offsetPercent: number) =>
+    isVertical()
+      ? `translate3d(0px, ${offsetPercent}%, 0px)`
+      : `translate3d(${offsetPercent}%, 0px, 0px)`;
+
+  const transformTransition = () => `transform ${duration()}ms cubic-bezier(0.16, 1, 0.3, 1)`;
 
   const handlePointerDown = (e: PointerEvent) => {
     if (props.watchDrag === false) return;
@@ -297,16 +260,10 @@ export const RLCarousel: Component<RLCarouselProps> = (props) => {
       e.preventDefault();
       const dimension = isVertical() ? viewportRef.clientHeight : viewportRef.clientWidth;
       const delta = isVertical() ? deltaY : deltaX;
-      const basis = basisPercent();
       const dragPercent = (delta / (dimension || 1)) * 100;
 
       containerRef.style.transition = "none";
-      const totalOffset = -index() * basis + dragPercent;
-      if (isVertical()) {
-        containerRef.style.transform = `translate3d(0px, ${totalOffset}%, 0px)`;
-      } else {
-        containerRef.style.transform = `translate3d(${totalOffset}%, 0px, 0px)`;
-      }
+      containerRef.style.transform = translateFor(-index() * basisPercent() + dragPercent);
     }
   };
 
@@ -332,14 +289,8 @@ export const RLCarousel: Component<RLCarouselProps> = (props) => {
       }
 
       if (containerRef && !isFade()) {
-        const duration = props.duration ?? 500;
-        containerRef.style.transition = `transform ${duration}ms cubic-bezier(0.16, 1, 0.3, 1)`;
-        const finalOffset = -index() * basisPercent();
-        if (isVertical()) {
-          containerRef.style.transform = `translate3d(0px, ${finalOffset}%, 0px)`;
-        } else {
-          containerRef.style.transform = `translate3d(${finalOffset}%, 0px, 0px)`;
-        }
+        containerRef.style.transition = transformTransition();
+        containerRef.style.transform = translateFor(-index() * basisPercent());
       }
     }
 
@@ -394,110 +345,81 @@ export const RLCarousel: Component<RLCarouselProps> = (props) => {
     }
   };
 
-  const renderSingleSlideContent = (item: unknown, i: number) => {
-    if (typeof childNodes() === "function") {
-      const renderFn = childNodes() as unknown as (
-        ctx: { item: unknown; index: number },
-        index: () => number,
-      ) => JSX.Element;
-      return renderFn({ item, index: i }, () => i);
+  const itemContent = (item: T, i: number): JSX.Element => {
+    const renderer = slideChildren();
+    if (typeof renderer === "function") {
+      const ctx: CarouselItemContext<T> = { item, index: i };
+      return renderer(ctx);
+    }
+
+    if (typeof item === "string") {
+      return <RLImage src={item} alt="" lightbox={false} ui={triggerImageUi()} />;
     }
 
     if (typeof item === "object" && item !== null) {
       const slide = item as CarouselSlide;
-      if (slide.imageSrc || slide.src) {
-        return (
-          <div class="relative w-full aspect-video select-none pointer-events-none">
-            <img
-              src={slide.imageSrc || slide.src}
-              alt={slide.alt || slide.title || ""}
-              class="w-full h-full object-cover rounded-lg pointer-events-none"
-              draggable={false}
-            />
-            <Show when={slide.title || slide.description}>
-              <div class="absolute bottom-4 left-4 right-4 p-4 rounded-lg bg-black/60 backdrop-blur-sm text-white">
-                <Show when={slide.title}>
-                  {(title) => <h4 class="text-sm font-semibold">{title()}</h4>}
-                </Show>
-                <Show when={slide.description}>
-                  {(description) => <p class="text-xs opacity-95 mt-1">{description()}</p>}
-                </Show>
-              </div>
-            </Show>
-          </div>
-        );
-      }
-    }
-
-    if (typeof item === "string") {
+      const imageSource = slide.imageSrc || slide.src;
       return (
-        <img
-          src={item}
-          alt=""
-          class="w-full h-auto object-cover rounded-lg select-none pointer-events-none"
-          draggable={false}
-        />
+        <div data-slot="media" class={classes().media}>
+          <Show when={imageSource}>
+            {(src) => (
+              <RLImage
+                src={src()}
+                alt={slide.alt || slide.title || ""}
+                lightbox={false}
+                ui={triggerImageUi()}
+              />
+            )}
+          </Show>
+          <Show when={slide.title || slide.description}>
+            <div data-slot="caption" class={classes().caption}>
+              <Show when={slide.title}>
+                {(title) => (
+                  <h4 data-slot="caption-title" class={classes().captionTitle}>
+                    {title()}
+                  </h4>
+                )}
+              </Show>
+              <Show when={slide.description}>
+                {(description) => (
+                  <p data-slot="caption-description" class={classes().captionDescription}>
+                    {description()}
+                  </p>
+                )}
+              </Show>
+            </div>
+          </Show>
+        </div>
       );
     }
 
     return String(item);
   };
 
-  const containerClasses = () => {
-    const baseContainer = classes().container;
-    if (isFade()) {
-      return "grid grid-cols-1 grid-rows-1 relative w-full items-start overflow-hidden";
-    }
-    return baseContainer;
+  const slideContent = (i: number): JSX.Element => {
+    const items = resolvedItems();
+    if (items.length > 0) return itemContent(items[i] as T, i);
+    return resolvedChildren.toArray()[i];
   };
 
   const itemClassNames = (i: number) => {
-    const isSnapped = index() === i;
-    const rawBaseItemClass = isFade() ? "col-start-1 row-start-1 w-full min-w-0" : classes().item;
-    const hasCustomBasis = /(?:^|\s)basis-/.test(itemOverrideClass());
-    const baseItemClass = hasCustomBasis
-      ? rawBaseItemClass.replace(/(?:^|\s)basis-full(?:\s|$)/g, " ")
-      : rawBaseItemClass;
+    const base = hasCustomBasis()
+      ? classes().item.replace(/(?:^|\s)basis-full(?:\s|$)/g, " ")
+      : classes().item;
+    if (!props.stateClasses || !isSnapped(i)) return base;
 
-    let itemClasses = baseItemClass;
-
-    if (props.stateClasses) {
-      const opt = typeof props.stateClasses === "object" ? props.stateClasses : {};
-      const snappedCls = opt.snapped || "is-snapped";
-      const inViewCls = opt.inView || "is-in-view";
-      if (isSnapped) {
-        itemClasses = `${itemClasses} ${snappedCls} ${inViewCls}`;
-      }
-    }
-
-    if (isFade()) {
-      const duration = props.duration ?? 500;
-      itemClasses = `${itemClasses} transition-opacity duration-${duration} ease-in-out ${
-        isSnapped ? "opacity-100 z-10 pointer-events-auto" : "opacity-0 z-0 pointer-events-none"
-      }`;
-    }
-
-    return itemClasses.trim();
-  };
-
-  const containerStyle = () => {
-    if (isFade()) return undefined;
-    const duration = props.duration ?? 500;
-    const transition = `transform ${duration}ms cubic-bezier(0.16, 1, 0.3, 1)`;
-    const offset = -index() * basisPercent();
-
-    // Runtime slide offset only; the transform/transition rules live in the theme's container slot.
-    return {
-      "--rl-carousel-transform": isVertical()
-        ? `translate3d(0px, ${offset}%, 0px)`
-        : `translate3d(${offset}%, 0px, 0px)`,
-      "--rl-carousel-transition": transition,
-    };
+    const opt: CarouselStateClassesOptions =
+      typeof props.stateClasses === "object" ? props.stateClasses : {};
+    return `${base} ${opt.snapped || "is-snapped"} ${opt.inView || "is-in-view"}`;
   };
 
   const showArrows = () =>
     Boolean(props.arrows || props.prev !== undefined || props.next !== undefined);
-  const showDots = () => Boolean(props.dots) && dots().length > 0;
+  const hasDots = () => Boolean(props.hasDots) && slideCount() > 0;
+
+  const prevLeadingIcon = () => (slots.prevSlot() ? undefined : (props.prevIcon ?? "chevron-left"));
+  const nextLeadingIcon = () =>
+    slots.nextSlot() ? undefined : (props.nextIcon ?? "chevron-right");
 
   return (
     <Tag
@@ -508,7 +430,7 @@ export const RLCarousel: Component<RLCarouselProps> = (props) => {
       data-slot="root"
       data-theme={theme()}
       class={classes().root}
-      tabIndex={0}
+      tabindex={0}
       onKeyDown={handleKeyDown}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -528,87 +450,83 @@ export const RLCarousel: Component<RLCarouselProps> = (props) => {
         <div
           ref={(el) => (containerRef = el)}
           data-slot="container"
-          class={containerClasses()}
-          style={containerStyle()}
+          class={classes().container}
+          style={{
+            "--rl-carousel-duration": isFade() ? `${duration()}ms` : undefined,
+            "--rl-carousel-transform": isFade()
+              ? undefined
+              : translateFor(-index() * basisPercent()),
+            "--rl-carousel-transition": isFade() ? undefined : transformTransition(),
+          }}
           aria-live={autoplayTimer ? "off" : "polite"}
         >
-          <Show
-            when={resolvedItems().length > 0}
-            fallback={
-              <For each={resolvedChildren.toArray()}>
-                {(child, i) => (
-                  <div
-                    data-slot="item"
-                    class={itemClassNames(i())}
-                    role="group"
-                    aria-roledescription="slide"
-                    aria-label={`${i() + 1} / ${slideCount()}`}
-                  >
-                    {child}
-                  </div>
-                )}
-              </For>
-            }
-          >
-            <For each={resolvedItems()}>
-              {(item, i) => (
-                <div
-                  data-slot="item"
-                  class={itemClassNames(i())}
-                  role="group"
-                  aria-roledescription="slide"
-                  aria-label={`${i() + 1} / ${slideCount()}`}
-                >
-                  {renderSingleSlideContent(item, i())}
-                </div>
-              )}
-            </For>
-          </Show>
+          <For each={slideIndexes()}>
+            {(i) => (
+              <div
+                data-slot="item"
+                data-state={isSnapped(i) ? "active" : "inactive"}
+                class={itemClassNames(i)}
+                role="group"
+                aria-roledescription="slide"
+                aria-label={`${i + 1} / ${slideCount()}`}
+              >
+                {slideContent(i)}
+              </div>
+            )}
+          </For>
         </div>
       </div>
 
       <Show when={showArrows()}>
-        <div data-slot="arrows" class={classes().arrows}>
-          <button
-            type="button"
-            aria-label={uiT("carousel.previous")}
-            disabled={!canScrollPrev()}
-            class={prevButtonClass()}
-            data-slot="prev"
-            onClick={prev}
-          >
-            <RLIcon name={props.prevIcon || "chevron-left"} class="size-4" />
-          </button>
-          <button
-            type="button"
-            aria-label={uiT("carousel.next")}
-            disabled={!canScrollNext()}
-            class={nextButtonClass()}
-            data-slot="next"
-            onClick={next}
-          >
-            <RLIcon name={props.nextIcon || "chevron-right"} class="size-4" />
-          </button>
-        </div>
+        <RLButton
+          {...props.prev}
+          variant={props.prev?.variant ?? "link"}
+          color={props.prev?.color ?? "neutral"}
+          size={props.prev?.size ?? "md"}
+          ui={prevUi()}
+          leadingIcon={prevLeadingIcon()}
+          data-slot="prev"
+          aria-label={props.prev?.["aria-label"] ?? uiT("carousel.previous")}
+          disabled={!canScrollPrev()}
+          onClick={prev}
+        >
+          <Show when={slots.prevSlot()}>{(node) => renderSlot(node())}</Show>
+        </RLButton>
+        <RLButton
+          {...props.next}
+          variant={props.next?.variant ?? "link"}
+          color={props.next?.color ?? "neutral"}
+          size={props.next?.size ?? "md"}
+          ui={nextUi()}
+          leadingIcon={nextLeadingIcon()}
+          data-slot="next"
+          aria-label={props.next?.["aria-label"] ?? uiT("carousel.next")}
+          disabled={!canScrollNext()}
+          onClick={next}
+        >
+          <Show when={slots.nextSlot()}>{(node) => renderSlot(node())}</Show>
+        </RLButton>
       </Show>
 
-      <Show when={showDots()}>
+      <Show when={hasDots()}>
         <div
           data-slot="dots"
           role="tablist"
           aria-label={uiT("carousel.slides")}
           class={classes().dots}
         >
-          <For each={dots()}>
+          <For each={slideIndexes()}>
             {(i) => (
-              <button
+              <RLButton
                 type="button"
+                variant="ghost"
+                color="neutral"
                 role="tab"
                 data-slot="dot"
-                data-state={index() === i ? "active" : undefined}
-                aria-selected={index() === i ? "true" : "false"}
+                data-state={isSnapped(i) ? "active" : "inactive"}
+                aria-selected={isSnapped(i) ? "true" : "false"}
                 aria-label={`${uiT("carousel.goToSlide")} ${i + 1}`}
-                class={index() === i ? dotActiveClasses().dot : classes().dot}
+                class={classes().dot}
                 onClick={() => scrollTo(i)}
               />
             )}

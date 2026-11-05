@@ -12,20 +12,21 @@ export const RLCalendarTheme = defineTheme("calendar", {
     "gridWeekDaysRow",
     "gridBody",
     "gridHead",
-    "headCell",
-    "headCellWeek",
+    "weekDay",
     "cell",
+    "day",
+    "monthCell",
+    "yearCell",
     "cellTrigger",
     "cellWeek",
     "srLabel",
     "prevYear",
-    "prevMonth",
-    "nextMonth",
+    "prev",
+    "next",
     "nextYear",
     "viewControl",
   ],
   base: {
-    root: "",
     header: "flex items-center justify-between",
     body: "flex flex-col space-y-4 pt-4 sm:flex-row sm:space-x-4 sm:space-y-0",
     heading: "flex-1 min-w-0 text-center",
@@ -34,8 +35,7 @@ export const RLCalendarTheme = defineTheme("calendar", {
     gridRow: "grid",
     gridWeekDaysRow: "mb-1 grid w-full grid-cols-7",
     gridBody: "grid",
-    headCell: "rounded-md text-[var(--rl-text)]",
-    headCellWeek: "rounded-md text-muted",
+    weekDay: "rounded-md text-[var(--rl-text)]",
     cell: "relative text-center",
     cellTrigger: [
       "m-0.5 relative flex items-center justify-center whitespace-nowrap focus-visible:outline-3 transition",
@@ -45,31 +45,25 @@ export const RLCalendarTheme = defineTheme("calendar", {
     ],
     cellWeek: "relative text-center text-muted",
     srLabel: "sr-only",
-    gridHead: "",
-    prevYear: "",
-    prevMonth: "",
-    nextMonth: "",
-    nextYear: "",
-    viewControl: "",
   },
   variants: {
     color: "auto",
     variant: {
       solid: {
         cellTrigger:
-          "[&[data-selected]]:bg-[var(--rl-bg)] [&[data-selected]]:text-inverted [&[data-today]:not([data-selected])]:text-[var(--rl-text)] [&[data-highlighted]]:bg-[var(--rl-bg)]/20 hover:[&:not([data-selected])]:bg-[var(--rl-bg)]/20",
+          "[&[aria-selected=true]]:bg-[var(--rl-bg)] [&[aria-selected=true]]:text-inverted [&[data-today]:not([aria-selected=true])]:text-[var(--rl-text)] [&[data-highlighted]]:bg-[var(--rl-bg)]/20 hover:[&:not([aria-selected=true])]:bg-[var(--rl-bg)]/20",
       },
       outline: {
         cellTrigger:
-          "[&[data-selected]]:ring [&[data-selected]]:ring-inset [&[data-selected]]:ring-[var(--rl-ring)]/50 [&[data-selected]]:text-[var(--rl-text)] [&[data-selected]]:focus-visible:ring-[var(--rl-ring)] [&[data-today]:not([data-selected])]:text-[var(--rl-text)] [&[data-highlighted]]:bg-[var(--rl-bg)]/10 hover:[&:not([data-selected])]:bg-[var(--rl-bg)]/10",
+          "[&[aria-selected=true]]:ring [&[aria-selected=true]]:ring-inset [&[aria-selected=true]]:ring-[var(--rl-ring)]/50 [&[aria-selected=true]]:text-[var(--rl-text)] [&[aria-selected=true]]:focus-visible:ring-[var(--rl-ring)] [&[data-today]:not([aria-selected=true])]:text-[var(--rl-text)] [&[data-highlighted]]:bg-[var(--rl-bg)]/10 hover:[&:not([aria-selected=true])]:bg-[var(--rl-bg)]/10",
       },
       soft: {
         cellTrigger:
-          "[&[data-selected]]:bg-[var(--rl-bg)]/10 [&[data-selected]]:text-[var(--rl-text)] [&[data-today]:not([data-selected])]:text-[var(--rl-text)] [&[data-highlighted]]:bg-[var(--rl-bg)]/20 hover:[&:not([data-selected])]:bg-[var(--rl-bg)]/20",
+          "[&[aria-selected=true]]:bg-[var(--rl-bg)]/10 [&[aria-selected=true]]:text-[var(--rl-text)] [&[data-today]:not([aria-selected=true])]:text-[var(--rl-text)] [&[data-highlighted]]:bg-[var(--rl-bg)]/20 hover:[&:not([aria-selected=true])]:bg-[var(--rl-bg)]/20",
       },
       subtle: {
         cellTrigger:
-          "[&[data-selected]]:bg-[var(--rl-bg)]/10 [&[data-selected]]:text-[var(--rl-text)] [&[data-selected]]:ring [&[data-selected]]:ring-inset [&[data-selected]]:ring-[var(--rl-ring)]/25 [&[data-selected]]:focus-visible:ring-[var(--rl-ring)] [&[data-today]:not([data-selected])]:text-[var(--rl-text)] [&[data-highlighted]]:bg-[var(--rl-bg)]/20 hover:[&:not([data-selected])]:bg-[var(--rl-bg)]/20",
+          "[&[aria-selected=true]]:bg-[var(--rl-bg)]/10 [&[aria-selected=true]]:text-[var(--rl-text)] [&[aria-selected=true]]:ring [&[aria-selected=true]]:ring-inset [&[aria-selected=true]]:ring-[var(--rl-ring)]/25 [&[aria-selected=true]]:focus-visible:ring-[var(--rl-ring)] [&[data-today]:not([aria-selected=true])]:text-[var(--rl-text)] [&[data-highlighted]]:bg-[var(--rl-bg)]/20 hover:[&:not([aria-selected=true])]:bg-[var(--rl-bg)]/20",
       },
     },
     size: {
@@ -77,35 +71,30 @@ export const RLCalendarTheme = defineTheme("calendar", {
         headingLabel: "text-xs",
         cell: "text-xs",
         cellWeek: "text-xs",
-        headCell: "text-[10px]",
-        headCellWeek: "text-[10px]",
+        weekDay: "text-[10px]",
         body: "space-y-2 pt-2",
       },
       sm: {
         headingLabel: "text-xs",
-        headCell: "text-xs",
-        headCellWeek: "text-xs",
+        weekDay: "text-xs",
         cellWeek: "text-xs",
         cell: "text-xs",
       },
       md: {
         headingLabel: "text-sm",
-        headCell: "text-xs",
-        headCellWeek: "text-xs",
+        weekDay: "text-xs",
         cellWeek: "text-xs",
         cell: "text-sm",
       },
       lg: {
         headingLabel: "text-sm",
-        headCell: "text-sm",
-        headCellWeek: "text-sm",
+        weekDay: "text-sm",
         cellWeek: "text-sm",
         cell: "text-sm",
       },
       xl: {
         headingLabel: "text-base",
-        headCell: "text-base",
-        headCellWeek: "text-base",
+        weekDay: "text-base",
         cellWeek: "text-base",
         cell: "text-base",
       },
@@ -118,9 +107,7 @@ export const RLCalendarTheme = defineTheme("calendar", {
       month: { gridRow: "grid-cols-4", cellTrigger: "rounded-md" },
       year: { gridRow: "grid-cols-4", cellTrigger: "rounded-md" },
     },
-    weekNumbers: {
-      true: {},
-    },
+    weekNumbers: {},
   },
   compoundVariants: [
     // Neutral does not map onto the color vars the same way as Nuxt's tokens,
@@ -128,7 +115,7 @@ export const RLCalendarTheme = defineTheme("calendar", {
     {
       color: "neutral",
       class: {
-        headCell: "text-highlighted",
+        weekDay: "text-highlighted",
         cellTrigger: "outline-inverted/25",
       },
     },
@@ -137,7 +124,7 @@ export const RLCalendarTheme = defineTheme("calendar", {
       variant: "solid",
       class: {
         cellTrigger:
-          "[&[data-selected]]:bg-inverted [&[data-selected]]:text-inverted [&[data-today]:not([data-selected])]:text-highlighted [&[data-highlighted]]:bg-inverted/20 hover:[&:not([data-selected])]:bg-inverted/10",
+          "[&[aria-selected=true]]:bg-inverted [&[aria-selected=true]]:text-inverted [&[data-today]:not([aria-selected=true])]:text-highlighted [&[data-highlighted]]:bg-inverted/20 hover:[&:not([aria-selected=true])]:bg-inverted/10",
       },
     },
     {
@@ -145,7 +132,7 @@ export const RLCalendarTheme = defineTheme("calendar", {
       variant: "outline",
       class: {
         cellTrigger:
-          "[&[data-selected]]:ring [&[data-selected]]:ring-inset [&[data-selected]]:ring-accented [&[data-selected]]:text-default [&[data-selected]]:bg-default [&[data-selected]]:focus-visible:ring-inverted [&[data-today]:not([data-selected])]:text-highlighted [&[data-highlighted]]:bg-inverted/10 hover:[&:not([data-selected])]:bg-inverted/10",
+          "[&[aria-selected=true]]:ring [&[aria-selected=true]]:ring-inset [&[aria-selected=true]]:ring-accented [&[aria-selected=true]]:text-default [&[aria-selected=true]]:bg-default [&[aria-selected=true]]:focus-visible:ring-inverted [&[data-today]:not([aria-selected=true])]:text-highlighted [&[data-highlighted]]:bg-inverted/10 hover:[&:not([aria-selected=true])]:bg-inverted/10",
       },
     },
     {
@@ -153,7 +140,7 @@ export const RLCalendarTheme = defineTheme("calendar", {
       variant: "soft",
       class: {
         cellTrigger:
-          "[&[data-selected]]:bg-elevated [&[data-selected]]:text-default [&[data-today]:not([data-selected])]:text-highlighted [&[data-highlighted]]:bg-inverted/20 hover:[&:not([data-selected])]:bg-inverted/10",
+          "[&[aria-selected=true]]:bg-elevated [&[aria-selected=true]]:text-default [&[data-today]:not([aria-selected=true])]:text-highlighted [&[data-highlighted]]:bg-inverted/20 hover:[&:not([aria-selected=true])]:bg-inverted/10",
       },
     },
     {
@@ -161,7 +148,7 @@ export const RLCalendarTheme = defineTheme("calendar", {
       variant: "subtle",
       class: {
         cellTrigger:
-          "[&[data-selected]]:bg-elevated [&[data-selected]]:text-default [&[data-selected]]:ring [&[data-selected]]:ring-inset [&[data-selected]]:ring-accented [&[data-selected]]:focus-visible:ring-inverted [&[data-today]:not([data-selected])]:text-highlighted [&[data-highlighted]]:bg-inverted/20 hover:[&:not([data-selected])]:bg-inverted/10",
+          "[&[aria-selected=true]]:bg-elevated [&[aria-selected=true]]:text-default [&[aria-selected=true]]:ring [&[aria-selected=true]]:ring-inset [&[aria-selected=true]]:ring-accented [&[aria-selected=true]]:focus-visible:ring-inverted [&[data-today]:not([aria-selected=true])]:text-highlighted [&[data-highlighted]]:bg-inverted/20 hover:[&:not([aria-selected=true])]:bg-inverted/10",
       },
     },
     // size x day

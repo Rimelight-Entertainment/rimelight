@@ -1,5 +1,6 @@
 import type { JSX } from "@solidjs/web";
 import type { InferThemeProps } from "../../resolver";
+import type { SlotRenderer } from "../../types";
 import type { RLCardTheme } from "./card.theme";
 
 /**
@@ -7,13 +8,13 @@ import type { RLCardTheme } from "./card.theme";
  */
 export type RLCardProps = InferThemeProps<typeof RLCardTheme> & {
   /**
-   * Title text of the card header. Use `titleSlot` for JSX.
+   * Title text of the card header. Use `titleSlot` for custom content.
    * @default undefined; the title is omitted when unset.
    */
   title?: string | undefined;
 
   /**
-   * Description text of the card header. Use `descriptionSlot` for JSX.
+   * Description text of the card header. Use `descriptionSlot` for custom content.
    * @default undefined; the description is omitted when unset.
    */
   description?: string | undefined;
@@ -70,41 +71,41 @@ export type RLCardProps = InferThemeProps<typeof RLCardTheme> & {
    * Header content. Replaces `title`, `titleSlot`, `description` and `descriptionSlot`.
    * @default undefined
    */
-  headerSlot?: JSX.Element;
+  headerSlot?: SlotRenderer;
 
   /**
    * Custom title content. Takes precedence over `title`.
    * @default undefined
    */
-  titleSlot?: JSX.Element;
+  titleSlot?: SlotRenderer;
 
   /**
    * Custom description content. Takes precedence over `description`.
    * @default undefined
    */
-  descriptionSlot?: JSX.Element;
+  descriptionSlot?: SlotRenderer;
 
   /**
    * Body content. Takes precedence over `children`.
    * @default undefined
    */
-  bodySlot?: JSX.Element;
+  bodySlot?: SlotRenderer;
 
   /**
    * Footer content.
    * @default undefined
    */
-  footerSlot?: JSX.Element;
+  footerSlot?: SlotRenderer;
 
   /**
    * Media content. Takes precedence over `mediaSrc`.
    * @default undefined
    */
-  mediaSlot?: JSX.Element;
+  mediaSlot?: SlotRenderer;
 
   /**
-   * Overlay content. Rendered in place of the header, body and footer.
+   * Overlay content. Rendered over the card in place of the header, body and footer.
    * @default undefined
    */
-  overlaySlot?: JSX.Element;
+  overlaySlot?: SlotRenderer;
 };

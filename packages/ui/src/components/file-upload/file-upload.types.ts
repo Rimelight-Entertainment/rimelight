@@ -1,5 +1,5 @@
-import type { JSX } from "@solidjs/web";
 import type { InferThemeProps } from "../../resolver";
+import type { SlotRenderer } from "../../types";
 import type { RLFileUploadTheme } from "./file-upload.theme";
 
 export type RLFileUploadProps = Omit<
@@ -38,5 +38,5 @@ export type RLFileUploadProps = Omit<
   /**
    * Replaces the default icon.
    */
-  iconSlot?: JSX.Element;
+  iconSlot?: SlotRenderer;
 };

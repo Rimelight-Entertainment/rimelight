@@ -7,6 +7,26 @@ export interface HighlightGroup {
   label?: string;
 }
 
+export interface Key {
+  label?: string;
+  width: number;
+  height?: number;
+  code?: string;
+  type?: "spacer" | "key";
+}
+
+export interface RenderKey extends Key {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
+
+export interface KeyHighlight {
+  active: boolean;
+  color: string | undefined;
+}
+
 /**
  * Renders an interactive keyboard diagram with highlighted keys.
  */
@@ -55,7 +75,7 @@ export type RLKeyboardProps = InferThemeProps<typeof RLKeyboardTheme> & {
 
   /**
    * Fill color applied to highlighted keys.
-   * @default "var(--rl-primary-500)"
+   * @default primary theme fill
    */
   highlightColor?: string | undefined;
 

@@ -3,19 +3,25 @@ import { RLDropdownMenuTheme } from "./dropdown-menu.theme";
 import { createMemo, createSignal, onSettled, For, Show, type Component } from "solid-js";
 import { Portal } from "@solidjs/web";
 import { RLIcon } from "../icon/RLIcon";
+import { RLButton } from "../button/RLButton";
+import { RLImage } from "../image/RLImage";
+import { RLLink } from "../link/RLLink";
 import { createControllable } from "../../controllable";
+import { renderSlot } from "../../slot";
 
 const OMIT_KEYS = [
   "items",
   "label",
   "icon",
-  "color",
-  "arrow",
-  "content",
+  "hasArrow",
+  "body",
   "disabled",
   "open",
   "defaultOpen",
   "onOpenChange",
+  "aria-label",
+  "aria-labelledby",
+  "aria-describedby",
 ] as const;
 
 export const RLDropdownMenu: Component<RLDropdownMenuProps> = (props) => {
@@ -38,12 +44,12 @@ export const RLDropdownMenu: Component<RLDropdownMenuProps> = (props) => {
   });
   let menuContainer: HTMLDivElement | undefined;
   let menuContentRef: HTMLDivElement | undefined;
-  let triggerBtn: HTMLButtonElement | undefined;
+  let triggerBtn: HTMLElement | undefined;
 
   const updatePosition = () => {
     if (!triggerBtn) return;
     const rect = triggerBtn.getBoundingClientRect();
-    const align = props.content?.align || "start";
+    const align = props.body?.align || "start";
     const top = rect.bottom + 4;
     if (align === "end") {
       const right = Math.max(0, window.innerWidth - rect.right);
@@ -90,7 +96,8 @@ export const RLDropdownMenu: Component<RLDropdownMenuProps> = (props) => {
     return [props.items as DropdownMenuItem[]];
   });
 
-  const triggerElement = () => slots.triggerSlot() || children();
+  const itemClass = (item: DropdownMenuItem) =>
+    item.color ? `${classes().item} rl-color-${item.color}` : classes().item;
 
   return (
     <Tag
@@ -102,45 +109,52 @@ export const RLDropdownMenu: Component<RLDropdownMenuProps> = (props) => {
       class={classes().root}
       {...rest}
     >
-      <button
+      <RLButton
         ref={(el) => {
           triggerBtn = el;
         }}
         type="button"
+        variant="outline"
+        color="neutral"
         disabled={props.disabled}
-        onClick={(e) => {
+        aria-haspopup="menu"
+        aria-expanded={isOpen() ? "true" : "false"}
+        aria-label={props["aria-label"]}
+        aria-labelledby={props["aria-labelledby"]}
+        aria-describedby={props["aria-describedby"]}
+        onClick={(e: MouseEvent) => {
           e.stopPropagation();
           const next = !isOpen();
           if (next) updatePosition();
           setOpen(next);
         }}
-        class={`${classes().trigger} ${!props.label && !triggerElement() ? "aspect-square !px-1.5 !py-1.5 inline-flex items-center justify-center shrink-0" : ""}`}
+        class={classes().trigger}
         data-slot="trigger"
+        data-icon-only={
+          !props.label && slots.triggerSlot() === undefined && children() === undefined
+            ? ""
+            : undefined
+        }
       >
         <Show
-          when={triggerElement()}
+          when={slots.triggerSlot() !== undefined || children() !== undefined}
           fallback={
-            <Show
-              when={props.icon}
-              fallback={
-                <Show
-                  when={props.label}
-                  fallback={<span class="i-lucide-ellipsis-vertical size-4" />}
-                >
-                  <span>{props.label}</span>
-                </Show>
-              }
-            >
-              <RLIcon name={props.icon!} size="sm" class="shrink-0" />
-              <Show when={props.label}>
-                <span>{props.label}</span>
+            <>
+              <Show when={props.icon}>
+                {(icon) => <RLIcon name={icon()} size="sm" class={classes().triggerIcon} />}
               </Show>
-            </Show>
+              <Show when={props.label}>{(label) => <span>{label()}</span>}</Show>
+              <Show when={!props.icon && !props.label}>
+                <RLIcon name="ellipsis-vertical" size="sm" class={classes().triggerIcon} />
+              </Show>
+            </>
           }
         >
-          {triggerElement()}
+          <Show when={slots.triggerSlot()} fallback={children()}>
+            {(trigger) => renderSlot(trigger())}
+          </Show>
         </Show>
-      </button>
+      </RLButton>
 
       <Show when={isOpen()}>
         <Portal>
@@ -148,16 +162,16 @@ export const RLDropdownMenu: Component<RLDropdownMenuProps> = (props) => {
             ref={(el) => {
               menuContentRef = el;
             }}
-            class={classes().content}
+            class={classes().body}
             style={{
               "--rl-dd-top": `${coords().top}px`,
               "--rl-dd-left": coords().left !== undefined ? `${coords().left}px` : undefined,
               "--rl-dd-right": coords().right !== undefined ? `${coords().right}px` : undefined,
             }}
-            data-slot="content"
+            data-slot="body"
             role="menu"
           >
-            <Show when={props.arrow}>
+            <Show when={props.hasArrow}>
               <div class={classes().arrow} />
             </Show>
             <div class={classes().viewport}>
@@ -176,17 +190,13 @@ export const RLDropdownMenu: Component<RLDropdownMenuProps> = (props) => {
                           return <div class={classes().label}>{item.label}</div>;
                         }
 
-                        const itemColor = () =>
-                          item.color
-                            ? `rl-color-${item.color} text-[var(--rl-text)] hover:bg-[var(--rl-bg)]/10`
-                            : "";
-
                         const renderLeadingContent = () => {
                           if (item.avatar) {
                             return (
-                              <img
+                              <RLImage
                                 src={item.avatar.src}
                                 alt={item.avatar.alt || item.label || ""}
+                                lightbox={false}
                                 class={classes().itemLeadingAvatar}
                               />
                             );
@@ -221,11 +231,13 @@ export const RLDropdownMenu: Component<RLDropdownMenuProps> = (props) => {
 
                         if (item.href) {
                           return (
-                            <a
+                            <RLLink
                               href={item.href}
                               target={item.target}
-                              class={`${classes().item} ${itemColor()}`}
+                              localize={false}
+                              class={itemClass(item)}
                               data-slot="item"
+                              data-color={item.color}
                               role="menuitem"
                               onClick={(e) => {
                                 setOpen(false);
@@ -235,46 +247,56 @@ export const RLDropdownMenu: Component<RLDropdownMenuProps> = (props) => {
                               {renderLeadingContent()}
                               <span class={classes().itemLabel}>{item.label}</span>
                               {renderTrailingContent()}
-                            </a>
+                            </RLLink>
                           );
                         }
 
                         if (item.type === "checkbox") {
                           const isChecked = () => !!item.checked;
                           return (
-                            <button
+                            <RLButton
                               type="button"
+                              variant="ghost"
+                              color="neutral"
                               disabled={item.disabled}
-                              class={`${classes().item} ${itemColor()}`}
+                              class={itemClass(item)}
                               data-slot="item"
+                              data-color={item.color}
                               role="menuitemcheckbox"
                               aria-checked={isChecked() ? "true" : "false"}
-                              onClick={(e) => {
+                              onClick={(e: MouseEvent) => {
                                 const next = !isChecked();
                                 item.onCheckedChange?.(next);
                                 item.onSelect?.(e);
                               }}
                             >
-                              <span class="shrink-0 size-4 flex items-center justify-center border border-default rounded bg-default">
+                              <span class={classes().itemIndicator}>
                                 <Show when={isChecked()}>
-                                  <RLIcon name="check" size="xs" class="text-primary" />
+                                  <RLIcon
+                                    name="check"
+                                    size="xs"
+                                    class={classes().itemIndicatorIcon}
+                                  />
                                 </Show>
                               </span>
                               {renderLeadingContent()}
                               <span class={classes().itemLabel}>{item.label}</span>
                               {renderTrailingContent()}
-                            </button>
+                            </RLButton>
                           );
                         }
 
                         return (
-                          <button
+                          <RLButton
                             type="button"
+                            variant="ghost"
+                            color="neutral"
                             disabled={item.disabled}
-                            class={`${classes().item} ${itemColor()}`}
+                            class={itemClass(item)}
                             data-slot="item"
+                            data-color={item.color}
                             role="menuitem"
-                            onClick={(e) => {
+                            onClick={(e: MouseEvent) => {
                               setOpen(false);
                               item.onSelect?.(e);
                             }}
@@ -282,7 +304,7 @@ export const RLDropdownMenu: Component<RLDropdownMenuProps> = (props) => {
                             {renderLeadingContent()}
                             <span class={classes().itemLabel}>{item.label}</span>
                             {renderTrailingContent()}
-                          </button>
+                          </RLButton>
                         );
                       }}
                     </For>

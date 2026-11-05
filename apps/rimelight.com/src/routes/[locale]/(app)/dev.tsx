@@ -1,5 +1,5 @@
 import { type RouteSectionProps } from "@solidjs/router";
-import { t, getLocaleUrl } from "@rimelight/i18n";
+import { t } from "@rimelight/i18n";
 import { RLContainer } from "@rimelight/ui/components/container/RLContainer.tsx";
 import { RLHeader } from "@rimelight/ui/components/header/RLHeader.tsx";
 import { RLLogo } from "@rimelight/ui/components/logo/RLLogo.tsx";
@@ -12,16 +12,16 @@ export default function DevRouteLayout(props: RouteSectionProps) {
         fixed={true}
         class="bg-primary-400"
         leadingSlot={
-          <a href={getLocaleUrl("/dev")} class="flex flex-row items-center gap-sm min-w-0">
+          <div class="flex flex-row items-center gap-sm min-w-0">
             <RLLogo
-              as="span"
+              href="/dev"
               variant="logomark"
               mode="color"
               class="h-8 w-auto"
               alt={t("page.dev.layout.brand")}
             />
             <span class="truncate font-bold text-highlighted">{t("page.dev.layout.brand")}</span>
-          </a>
+          </div>
         }
       />
       <RLContainer class="py-xl">{props.children}</RLContainer>

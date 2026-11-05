@@ -1,9 +1,17 @@
+import type { Accessor } from "solid-js";
 import type { ClassValue, SlotRenderer } from "../../types";
 import type { InferThemeProps, InferThemeUI } from "../../resolver";
-import type { RLBreadcrumbTheme } from "./breadcrumb.theme";
+import type { BreadcrumbClasses, RLBreadcrumbTheme } from "./breadcrumb.theme";
 import type { RLAvatarProps } from "../avatar/avatar.types";
 
 export type BreadcrumbUi = InferThemeUI<typeof RLBreadcrumbTheme>;
+
+export interface BreadcrumbItemState {
+  active: boolean;
+  disabled: boolean;
+  hasTo: boolean;
+  itemClasses: Accessor<BreadcrumbClasses>;
+}
 
 export interface BreadcrumbItem {
   /**
@@ -62,7 +70,36 @@ export interface BreadcrumbItem {
   "aria-label"?: string | undefined;
 }
 
-export type RLBreadcrumbProps<T extends object = BreadcrumbItem> = InferThemeProps<
+/** Context passed to `itemSlot`, `itemLeadingSlot`, `itemLabelSlot` and `itemTrailingSlot`. */
+export interface BreadcrumbItemSlotContext<T extends BreadcrumbItem = BreadcrumbItem> {
+  item: T;
+  index: number;
+  active: boolean;
+}
+
+/** Context passed to `separatorSlot`. Both fields are absent for the overflow separator. */
+export interface BreadcrumbSeparatorSlotContext<T extends BreadcrumbItem = BreadcrumbItem> {
+  item?: T | undefined;
+  index?: number | undefined;
+}
+
+export interface BreadcrumbVisibleItem<T extends BreadcrumbItem = BreadcrumbItem> {
+  kind: "item";
+  item: T;
+  originalIndex: number;
+  isLast: boolean;
+}
+
+export interface BreadcrumbOverflowEntry {
+  kind: "overflow";
+  hiddenCount: number;
+}
+
+export type BreadcrumbVisibleEntry<T extends BreadcrumbItem = BreadcrumbItem> =
+  | BreadcrumbVisibleItem<T>
+  | BreadcrumbOverflowEntry;
+
+export type RLBreadcrumbProps<T extends BreadcrumbItem = BreadcrumbItem> = InferThemeProps<
   typeof RLBreadcrumbTheme
 > & {
   /**
@@ -85,25 +122,25 @@ export type RLBreadcrumbProps<T extends object = BreadcrumbItem> = InferThemePro
    */
   maxVisible?: number | undefined;
   /**
-   * Custom renderer for a whole item.
+   * Custom renderer for a whole item. Replaces the link content.
    */
-  itemSlot?: SlotRenderer<{ item: T; index: number; active: boolean }>;
+  itemSlot?: SlotRenderer<BreadcrumbItemSlotContext<T>>;
   /**
-   * Custom content rendered before an item's label.
+   * Custom content rendered before an item's label. Replaces the leading icon and avatar.
    */
-  itemLeadingSlot?: SlotRenderer<{ item: T; index: number; active: boolean }>;
+  itemLeadingSlot?: SlotRenderer<BreadcrumbItemSlotContext<T>>;
   /**
    * Custom content replacing an item's label.
    */
-  itemLabelSlot?: SlotRenderer<{ item: T; index: number; active: boolean }>;
+  itemLabelSlot?: SlotRenderer<BreadcrumbItemSlotContext<T>>;
   /**
    * Custom content rendered after an item's label.
    */
-  itemTrailingSlot?: SlotRenderer<{ item: T; index: number; active: boolean }>;
+  itemTrailingSlot?: SlotRenderer<BreadcrumbItemSlotContext<T>>;
   /**
-   * Separator element, or a render function receiving `{ item, index }`.
+   * Separator element, or a render function receiving `{ item, index }`. Replaces the separator icon.
    */
-  separatorSlot?: SlotRenderer<{ item?: T | undefined; index?: number | undefined }>;
+  separatorSlot?: SlotRenderer<BreadcrumbSeparatorSlotContext<T>>;
   /**
    * Extra attributes for each item's <li> (drag and drop handlers, data attributes, and so on).
    */

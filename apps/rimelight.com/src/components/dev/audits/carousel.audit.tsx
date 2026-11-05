@@ -166,7 +166,7 @@ export const CarouselSandbox = (): JSX.Element => {
         <RLCarousel
           items={activeItems()}
           arrows={arrows()}
-          dots={dots()}
+          hasDots={dots()}
           controls={controls()}
           loop={loop()}
           autoplay={autoplay() ? { delay: 2500 } : false}
@@ -282,7 +282,7 @@ export const carouselAudit: ComponentAuditDefinition = {
       },
       render: () => (
         <div class="max-w-xs mx-auto">
-          <RLCarousel items={SAMPLE_ITEMS.slice(0, 4)} arrows dots>
+          <RLCarousel items={SAMPLE_ITEMS.slice(0, 4)} arrows hasDots>
             {({ item }: { item: unknown }) => (
               <img
                 src={slideSrc(item)}
@@ -306,11 +306,84 @@ export const carouselAudit: ComponentAuditDefinition = {
       },
       render: () => (
         <div class="max-w-xs mx-auto">
-          <RLCarousel items={SAMPLE_ITEMS.slice(0, 4)} arrows dots controls="inside">
+          <RLCarousel items={SAMPLE_ITEMS.slice(0, 4)} arrows hasDots controls="inside">
             {({ item }: { item: unknown }) => (
               <img
                 src={slideSrc(item)}
                 alt={"Inside Controls Item"}
+                width="320"
+                height="320"
+                class="rounded-xl object-cover w-full aspect-square border border-default shadow-sm"
+              />
+            )}
+          </RLCarousel>
+        </div>
+      ),
+    },
+    {
+      id: "default-children",
+      title: "Default slot children",
+      description: "Static children render as slides when no items prop is given.",
+      render: () => (
+        <div class="max-w-xs mx-auto">
+          <RLCarousel arrows hasDots>
+            <img
+              src={slideSrc(SAMPLE_ITEMS[0])}
+              alt="Slide one"
+              width="320"
+              height="320"
+              class="rounded-xl object-cover w-full aspect-square border border-default shadow-sm"
+            />
+            <img
+              src={slideSrc(SAMPLE_ITEMS[1])}
+              alt="Slide two"
+              width="320"
+              height="320"
+              class="rounded-xl object-cover w-full aspect-square border border-default shadow-sm"
+            />
+          </RLCarousel>
+        </div>
+      ),
+    },
+    {
+      id: "prev-slot",
+      title: "Previous arrow slot",
+      description: "The prevSlot render function replaces the previous arrow icon.",
+      render: () => (
+        <div class="max-w-xs mx-auto">
+          <RLCarousel
+            items={SAMPLE_ITEMS.slice(0, 4)}
+            arrows
+            prevSlot={() => <span class="text-sm font-semibold">Back</span>}
+          >
+            {({ item }: { item: unknown }) => (
+              <img
+                src={slideSrc(item)}
+                alt={"Item"}
+                width="320"
+                height="320"
+                class="rounded-xl object-cover w-full aspect-square border border-default shadow-sm"
+              />
+            )}
+          </RLCarousel>
+        </div>
+      ),
+    },
+    {
+      id: "next-slot",
+      title: "Next arrow slot",
+      description: "The nextSlot render function replaces the next arrow icon.",
+      render: () => (
+        <div class="max-w-xs mx-auto">
+          <RLCarousel
+            items={SAMPLE_ITEMS.slice(0, 4)}
+            arrows
+            nextSlot={() => <span class="text-sm font-semibold">Forward</span>}
+          >
+            {({ item }: { item: unknown }) => (
+              <img
+                src={slideSrc(item)}
+                alt={"Item"}
                 width="320"
                 height="320"
                 class="rounded-xl object-cover w-full aspect-square border border-default shadow-sm"
@@ -332,7 +405,7 @@ export const carouselAudit: ComponentAuditDefinition = {
         <RLCarousel
           items={SAMPLE_ITEMS}
           arrows
-          dots
+          hasDots
           loop
           ui={{ item: "basis-1/3 ps-2" }}
           class="w-full max-w-lg mx-auto"
@@ -363,7 +436,7 @@ export const carouselAudit: ComponentAuditDefinition = {
             items={SAMPLE_ITEMS.slice(0, 4)}
             orientation="vertical"
             arrows
-            dots
+            hasDots
             ui={{ container: "h-[336px]" }}
           >
             {({ item }: { item: unknown }) => (
@@ -389,7 +462,7 @@ export const carouselAudit: ComponentAuditDefinition = {
       },
       render: () => (
         <div class="max-w-xs mx-auto">
-          <RLCarousel items={SAMPLE_ITEMS.slice(0, 4)} fade arrows dots>
+          <RLCarousel items={SAMPLE_ITEMS.slice(0, 4)} fade arrows hasDots>
             {({ item }: { item: unknown }) => (
               <img
                 src={slideSrc(item)}
@@ -450,7 +523,7 @@ export const carouselAudit: ComponentAuditDefinition = {
       criterion: "API and slot pattern parity",
       status: "pass",
       notes:
-        "Supports items, arrows, prev, prevIcon, next, nextIcon, dots, orientation, autoplay, autoScroll, autoHeight, stateClasses, fade, wheelGestures, align, loop, slidesToScroll, and ref handle.",
+        "Supports items, children (static or per-item function), arrows, prev, prevIcon, prevSlot, next, nextIcon, nextSlot, dots, orientation, autoplay, autoScroll, stateClasses, fade, wheelGestures, loop, slidesToScroll, and ref handle.",
     },
     {
       criterion: "Gestures, keyboard & motion",

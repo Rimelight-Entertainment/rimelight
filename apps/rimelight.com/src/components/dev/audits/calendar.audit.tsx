@@ -352,34 +352,100 @@ export const calendarAudit: ComponentAuditDefinition = {
       ),
     },
     {
-      id: "custom-slots",
-      get title() {
-        return t("app.text.custom-slots-heading-day-weekday-monthcell-yearc");
-      },
-      description:
-        "Render-prop slots replace their default content: headingSlot the heading, daySlot the day number, weekDaySlot the weekday header, monthCellSlot/yearCellSlot the picker cells.",
+      id: "heading-slot",
+      title: "Heading Slot",
+      description: "`headingSlot` replaces the heading label and the view control.",
       render: () => (
-        <div class="flex flex-wrap gap-8">
-          <RLCalendar
-            defaultPlaceholder={FEB}
-            headingSlot={<span class="text-success font-bold">{"CUSTOM HEADING"}</span>}
-            weekDaySlot={(ctx) => (
-              <span class="text-primary">{ctx.day.slice(0, 2).toUpperCase()}</span>
-            )}
-            daySlot={(ctx) => (
-              <span class={ctx.day.getDate() === 17 ? "text-error font-bold" : ""}>
-                {ctx.day.getDate()}
-              </span>
-            )}
-          />
-          <RLCalendar
-            type="month"
-            defaultPlaceholder={FEB}
-            monthCellSlot={(ctx) => (
-              <span class="text-info">{ctx.month.toLocaleString("en", { month: "long" })}</span>
-            )}
-          />
-        </div>
+        <RLCalendar
+          defaultPlaceholder={FEB}
+          headingSlot={<span class="text-success font-bold">{"CUSTOM HEADING"}</span>}
+        />
+      ),
+    },
+    {
+      id: "prev-slot",
+      title: "Previous Slot",
+      description: "`prevSlot` replaces the previous-month chevron content.",
+      render: () => (
+        <RLCalendar
+          defaultPlaceholder={FEB}
+          prevSlot={<span class="text-primary font-bold">{"PREV"}</span>}
+        />
+      ),
+    },
+    {
+      id: "next-slot",
+      title: "Next Slot",
+      description: "`nextSlot` replaces the next-month chevron content.",
+      render: () => (
+        <RLCalendar
+          defaultPlaceholder={FEB}
+          nextSlot={<span class="text-primary font-bold">{"NEXT"}</span>}
+        />
+      ),
+    },
+    {
+      id: "week-day-slot",
+      title: "Week Day Slot",
+      description: "`weekDaySlot` replaces each weekday header label.",
+      render: () => (
+        <RLCalendar
+          defaultPlaceholder={FEB}
+          weekDaySlot={(ctx) => (
+            <span class="text-primary">{ctx.day.slice(0, 2).toUpperCase()}</span>
+          )}
+        />
+      ),
+    },
+    {
+      id: "day-slot",
+      title: "Day Slot",
+      description: "`daySlot` replaces the day number and receives the day as a Date.",
+      render: () => (
+        <RLCalendar
+          defaultPlaceholder={FEB}
+          daySlot={(ctx) => (
+            <span class={ctx.day.getDate() === 17 ? "text-error font-bold" : ""}>
+              {ctx.day.getDate()}
+            </span>
+          )}
+        />
+      ),
+    },
+    {
+      id: "month-cell-slot",
+      title: "Month Cell Slot",
+      description: "`monthCellSlot` replaces each month cell in the month picker.",
+      render: () => (
+        <RLCalendar
+          type="month"
+          defaultPlaceholder={FEB}
+          monthCellSlot={(ctx) => (
+            <span class="text-info">{ctx.month.toLocaleString("en", { month: "long" })}</span>
+          )}
+        />
+      ),
+    },
+    {
+      id: "year-cell-slot",
+      title: "Year Cell Slot",
+      description: "`yearCellSlot` replaces each year cell in the year picker.",
+      render: () => (
+        <RLCalendar
+          type="year"
+          defaultPlaceholder={FEB}
+          yearCellSlot={(ctx) => <span class="text-info">{ctx.year.getFullYear()}</span>}
+        />
+      ),
+    },
+    {
+      id: "default-children",
+      title: "Default Slot (children)",
+      description: "Children render inside the root, after the header and grid body.",
+      render: () => (
+        <RLCalendar defaultPlaceholder={FEB}>
+          <span class="text-xs text-muted">{"Default slot content"}</span>
+        </RLCalendar>
       ),
     },
     {
@@ -414,19 +480,19 @@ export const calendarAudit: ComponentAuditDefinition = {
       criterion: "API parity (Calendar)",
       status: "pass",
       notes:
-        "Props: as, type, prevMonth/nextMonth/prevYear/nextYear (+ icons), viewControl, color, variant, size, range, multiple, monthControls, yearControls, defaultValue, modelValue, weekNumbers, placeholder/defaultPlaceholder, allowNonContiguousRanges, pagedNavigation, preventDeselect, maximumDays, weekStartsOn, weekdayFormat, fixedWeeks, maxValue, minValue, locale, numberOfMonths, disabled, readonly, initialFocus, isDateDisabled/isDateUnavailable/isDateHighlightable, nextPage/prevPage, disableDaysOutsideCurrentView, fixedDate, isMonthDisabled/isMonthUnavailable, isYearDisabled/isYearUnavailable, ui, class. Emits: onUpdateValue, onUpdatePlaceholder, onUpdateValidValue, onUpdateStartValue.",
+        "Props: as, type, prevIcon/nextIcon, prevSlot/nextSlot, viewControl, monthControls, yearControls, color, variant, size, range, multiple, value/defaultValue, placeholder/defaultPlaceholder, weekNumbers, allowNonContiguousRanges, pagedNavigation, preventDeselect, maximumDays, weekStartsOn, weekdayFormat, fixedWeeks, minValue, maxValue, locale, numberOfMonths, disabled, readonly, initialFocus, isDateDisabled/isDateUnavailable, isMonthDisabled/isMonthUnavailable, isYearDisabled/isYearUnavailable, nextPage/prevPage, disableDaysOutsideCurrentView, fixedDate, calendarLabel, ui, class. Emits: onValueChange, onPlaceholderChange, onValidValueChange, onStartValueChange.",
     },
     {
       criterion: "Slot pattern parity",
       status: "pass",
       notes:
-        "Theme slots: root, header, body, heading, headingLabel, grid, gridRow, gridWeekDaysRow, gridBody, headCell, headCellWeek, cell, cellTrigger, cellWeek — plus rimelight addition srLabel. Render-prop slots for heading/day/weekDay/monthCell/yearCell.",
+        "Theme slots: root, header, body, heading, headingLabel, grid, gridRow, gridWeekDaysRow, gridBody, gridHead, weekDay, cell, day, monthCell, yearCell, cellTrigger, cellWeek, srLabel, prevYear, prev, next, nextYear, viewControl. Render-prop slots: headingSlot, prevSlot, nextSlot, weekDaySlot, daySlot, monthCellSlot, yearCellSlot. Children render inside the root.",
     },
     {
       criterion: "Full WAI-ARIA compliance",
       status: "pass",
       notes:
-        "Root aria-label '<calendarLabel>, <heading>'; sr-only heading div role=heading aria-level=2; table role=application aria-readonly/aria-disabled + data-* mirrors; thead aria-hidden; td role=gridcell aria-selected/aria-disabled; day trigger role=button aria-label=<full date> aria-disabled aria-current=date; roving tabindex (0 focused, -1 in view, omitted outside/disabled); nav buttons with English aria-labels (Previous/Next month|year).",
+        "Root aria-label '<calendarLabel>, <heading>'; sr-only heading div role=heading aria-level=2; table role=application aria-readonly/aria-disabled + data-* mirrors; thead aria-hidden; td role=gridcell aria-selected/aria-disabled; day trigger role=button aria-label=<full date> aria-disabled aria-current=date; roving tabindex (0 focused, -1 in view, omitted outside/disabled); nav buttons labelled through uiT (calendar.previousMonth/nextMonth/previousYear/nextYear).",
     },
     {
       criterion: "No innerHTML / dangerouslySetInnerHTML",
@@ -448,13 +514,13 @@ export const calendarAudit: ComponentAuditDefinition = {
     {
       criterion: "No direct cx() calls in component",
       status: "pass",
-      notes: "All class composition flows through RLCalendarTheme()/mergeUi.",
+      notes: "All class composition flows through the RLCalendarTheme setup classes accessor.",
     },
     {
       criterion: "Exclusively named exports",
       status: "pass",
       notes:
-        "RLCalendar, RLCalendarTheme, helpers — all named exports (calendar.ts exports types).",
+        "RLCalendar, RLCalendarTheme, helpers: named exports only. Types live in calendar.types.ts.",
     },
     {
       criterion: "Audit page renders component bare (no wrapper)",

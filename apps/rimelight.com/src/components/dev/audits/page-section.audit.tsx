@@ -496,6 +496,119 @@ export const pageSectionAudit: ComponentAuditDefinition = {
       ),
     },
     {
+      id: "header-slot",
+      title: "Header slot",
+      description:
+        "headerSlot replaces the whole header, including the leading icon, headline, title, and description.",
+      render: () => (
+        <RLPageSection
+          orientation="vertical"
+          title="Default title"
+          headerSlot={<p class="text-muted">{"The header slot replaces the default header."}</p>}
+        />
+      ),
+    },
+    {
+      id: "background-slot",
+      title: "Background slot",
+      description: "backgroundSlot renders behind the container as an absolutely positioned layer.",
+      render: () => (
+        <RLPageSection
+          orientation="vertical"
+          title="Background slot"
+          backgroundSlot={<div class="size-full bg-elevated/50" />}
+        />
+      ),
+    },
+    {
+      id: "leading-slot",
+      title: "Leading slot",
+      description: "leadingSlot replaces the icon in the leading position.",
+      render: () => (
+        <RLPageSection
+          orientation="vertical"
+          title="Leading slot"
+          leadingSlot={
+            <span class="text-3xl" aria-hidden="true">
+              {"🌌"}
+            </span>
+          }
+        />
+      ),
+    },
+    {
+      id: "title-slot",
+      title: "Title slot",
+      description: "titleSlot replaces the title text.",
+      render: () => (
+        <RLPageSection
+          orientation="vertical"
+          title="Ignored title"
+          titleSlot={<span>{"Custom title slot"}</span>}
+        />
+      ),
+    },
+    {
+      id: "description-slot",
+      title: "Description slot",
+      description: "descriptionSlot replaces the description text.",
+      render: () => (
+        <RLPageSection
+          orientation="vertical"
+          title="Description slot"
+          description="Ignored description"
+          descriptionSlot={<span>{"Custom description slot"}</span>}
+        />
+      ),
+    },
+    {
+      id: "body-slot",
+      title: "Body slot",
+      description: "bodySlot renders between the header and the footer.",
+      render: () => (
+        <RLPageSection
+          orientation="vertical"
+          title="Body slot"
+          bodySlot={<SectionPlaceholder label="Body slot" />}
+        />
+      ),
+    },
+    {
+      id: "footer-slot",
+      title: "Footer slot",
+      description: "footerSlot replaces the footer, including links and actionSlot.",
+      render: () => (
+        <RLPageSection
+          orientation="vertical"
+          title="Footer slot"
+          footerSlot={<SectionPlaceholder label="Footer slot" />}
+        />
+      ),
+    },
+    {
+      id: "action-slot",
+      title: "Action slot",
+      description: "actionSlot renders after links in the footer.",
+      render: () => (
+        <RLPageSection
+          orientation="vertical"
+          title="Action slot"
+          links={[{ label: "Primary link", href: "/" }]}
+          actionSlot={<span>{"Action slot"}</span>}
+        />
+      ),
+    },
+    {
+      id: "default-children",
+      title: "Default slot (children)",
+      description: "Children render in the default slot after the header, body, and footer.",
+      render: () => (
+        <RLPageSection orientation="vertical" title="Default slot (children)">
+          <SectionPlaceholder label="Children" />
+        </RLPageSection>
+      ),
+    },
+    {
       id: "polymorphic-as",
       get title() {
         return t("app.text.polymorphic-as-prop");

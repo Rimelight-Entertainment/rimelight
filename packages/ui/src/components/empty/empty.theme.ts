@@ -1,11 +1,24 @@
 import { defineTheme } from "../../resolver";
 
 export const RLEmptyTheme = defineTheme("empty", {
-  slots: ["root", "header", "avatar", "title", "description", "body", "actions", "footer"],
+  slots: [
+    "root",
+    "header",
+    "leading",
+    "avatar",
+    "icon",
+    "title",
+    "description",
+    "body",
+    "actions",
+    "footer",
+  ],
   base: {
     root: "relative flex flex-col items-center justify-center gap-4 rounded-lg p-4 sm:p-6 lg:p-8 min-w-0 text-center",
     header: "flex flex-col items-center gap-2 max-w-sm text-center",
+    leading: "shrink-0 mb-2 flex items-center justify-center",
     avatar: "shrink-0 mb-2 flex items-center justify-center",
+    icon: "size-full",
     title: "text-highlighted font-medium text-pretty",
     description: "text-muted text-balance text-center text-sm",
     body: "flex flex-col items-center gap-4 max-w-sm w-full",
@@ -70,7 +83,7 @@ export const RLEmptyTheme = defineTheme("empty", {
     },
     loading: {
       true: {
-        avatar: "[&>[data-slot=icon]]:animate-spin [&>i]:animate-spin",
+        icon: "animate-spin",
       },
     },
   },

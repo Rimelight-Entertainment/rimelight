@@ -18,20 +18,29 @@ function attr(tag: string, name: string): string | undefined {
 }
 
 describe("RLConfirm", () => {
-  describe("Exports", () => {
-    it("exports RLConfirm component from index", () => {
-      expect(RLConfirm).toBeDefined();
-    });
-  });
-
-  describe("Structure & Defaults", () => {
-    it("renders trigger button when triggerLabel is provided", () => {
+  describe("Trigger", () => {
+    it("renders a trigger button from triggerLabel", () => {
       const html = render(() => <RLConfirm triggerLabel="Delete Item" />);
       expect(slotTag(html, "trigger")).not.toBe("");
       expect(html).toContain("Delete Item");
     });
 
-    it("renders confirmation dialog when open={true}", () => {
+    it("renders triggerSlot in place of the default trigger button", () => {
+      const html = render(() => (
+        <RLConfirm
+          triggerLabel="Ignored label"
+          triggerSlot={() => <span class="custom-confirm-trigger">Open dialog</span>}
+        />
+      ));
+
+      expect(html).toContain("custom-confirm-trigger");
+      expect(html).toContain("Open dialog");
+      expect(html).not.toContain("Ignored label");
+    });
+  });
+
+  describe("Dialog content", () => {
+    it("renders title, description, and children when open", () => {
       const html = render(() => (
         <RLConfirm
           open
@@ -49,11 +58,14 @@ describe("RLConfirm", () => {
       expect(html).toContain("Confirm Action");
       expect(html).toContain("Are you sure you want to proceed?");
       expect(html).toContain("Additional confirmation details.");
-      expect(html).toContain("Cancel");
-      expect(html).toContain("Confirm");
     });
 
-    it("supports custom actionLabel and cancelLabel", () => {
+    it("does not render the dialog when closed", () => {
+      const html = render(() => <RLConfirm title="Hidden" />);
+      expect(html).not.toContain("Hidden");
+    });
+
+    it("renders default cancel and action buttons with their labels", () => {
       const html = render(() => (
         <RLConfirm
           open
@@ -64,15 +76,17 @@ describe("RLConfirm", () => {
         />
       ));
 
-      expect(html).toContain("Discard");
-      expect(html).toContain("Keep Editing");
+      expect(html).toMatch(/data-slot="cancel-button"[^>]*>[\s\S]*?Keep Editing/);
+      expect(html).toMatch(/data-slot="action-button"[^>]*>[\s\S]*?Discard/);
     });
 
-    it("supports custom titleSlot and descriptionSlot", () => {
+    it("renders titleSlot and descriptionSlot in place of the string props", () => {
       const html = render(() => (
         <RLConfirm
           open
           portal={false}
+          title="Ignored title"
+          description="Ignored description"
           titleSlot={() => <h3 class="custom-confirm-title">Slot Title</h3>}
           descriptionSlot={() => <p class="custom-confirm-desc">Slot Description</p>}
         />
@@ -82,9 +96,11 @@ describe("RLConfirm", () => {
       expect(html).toContain("Slot Title");
       expect(html).toContain("custom-confirm-desc");
       expect(html).toContain("Slot Description");
+      expect(html).not.toContain("Ignored title");
+      expect(html).not.toContain("Ignored description");
     });
 
-    it("supports custom footer override", () => {
+    it("replaces the default action row with footerSlot", () => {
       const html = render(() => (
         <RLConfirm
           open
@@ -100,47 +116,53 @@ describe("RLConfirm", () => {
 
       expect(html).toContain("custom-footer-btn");
       expect(html).toContain("Understood");
-      expect(html).not.toContain("Cancel");
+      expect(slotTag(html, "cancel-button")).toBe("");
+      expect(slotTag(html, "action-button")).toBe("");
     });
   });
 
   describe("Color", () => {
     it("renders primary action button by default", () => {
       const html = render(() => <RLConfirm open portal={false} title="Save Changes" />);
-      expect(slotTag(html, "action")).toContain("rl-color-primary");
+      expect(slotTag(html, "action-button")).toContain("rl-color-primary");
     });
 
-    it("renders error color action button when color='error'", () => {
+    it("renders error action button when color='error'", () => {
       const html = render(() => (
         <RLConfirm open portal={false} color="error" title="Permanently Delete" />
       ));
-      expect(slotTag(html, "action")).toContain("rl-color-error");
+      expect(slotTag(html, "action-button")).toContain("rl-color-error");
     });
   });
 
   describe("Accessibility (WAI-ARIA)", () => {
-    it("renders role='alertdialog' on dialog content", () => {
+    it("renders role='alertdialog' and aria-modal on the dialog", () => {
       const html = render(() => <RLConfirm open portal={false} title="Alert Dialog" />);
       const content = slotTag(html, "content");
       expect(attr(content, "role")).toBe("alertdialog");
       expect(attr(content, "aria-modal")).toBe("true");
     });
 
-    it("links title and description automatically with ARIA attributes", () => {
+    it("links title and description with aria-labelledby and aria-describedby", () => {
       const html = render(() => (
         <RLConfirm open portal={false} title="Confirm Title" description="Confirm Description" />
       ));
       const content = slotTag(html, "content");
-      const title = slotTag(html, "title");
-      const desc = slotTag(html, "description");
-
-      const titleId = attr(title, "id");
-      const descId = attr(desc, "id");
+      const titleId = attr(slotTag(html, "title"), "id");
+      const descId = attr(slotTag(html, "description"), "id");
 
       expect(titleId).toBeDefined();
       expect(descId).toBeDefined();
       expect(attr(content, "aria-labelledby")).toBe(titleId);
       expect(attr(content, "aria-describedby")).toBe(descId);
+    });
+
+    it("forwards kebab-case aria-label to the dialog", () => {
+      const html = render(() => (
+        <RLConfirm open portal={false} title="Delete" aria-label="Delete confirmation" />
+      ));
+
+      expect(attr(slotTag(html, "content"), "aria-label")).toBe("Delete confirmation");
     });
   });
 
@@ -150,25 +172,21 @@ describe("RLConfirm", () => {
       expect(slotTag(html, "root")).toContain("custom-confirm-root");
     });
 
-    it("applies ui slot overrides", () => {
+    it("applies ui overrides to the dialog, title, and action buttons", () => {
       const html = render(() => (
         <RLConfirm
           open
           portal={false}
           title="Custom Styled"
           ui={{
-            content: "custom-confirm-dialog",
-            title: "custom-confirm-title-class",
             cancelButton: "custom-cancel-class",
             actionButton: "custom-action-class",
           }}
         />
       ));
 
-      expect(slotTag(html, "content")).toContain("custom-confirm-dialog");
-      expect(slotTag(html, "title")).toContain("custom-confirm-title-class");
-      expect(slotTag(html, "cancel")).toContain("custom-cancel-class");
-      expect(slotTag(html, "action")).toContain("custom-action-class");
+      expect(slotTag(html, "cancel-button")).toContain("custom-cancel-class");
+      expect(slotTag(html, "action-button")).toContain("custom-action-class");
     });
   });
 });

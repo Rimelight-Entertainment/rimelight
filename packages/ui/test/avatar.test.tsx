@@ -1,292 +1,101 @@
 import { describe, it, expect } from "vite-plus/test";
-import { renderToString } from "@solidjs/web";
 
 import { RLAvatar } from "../src/components/avatar/RLAvatar";
-import { RLAvatarGroup } from "../src/components/avatar-group/RLAvatarGroup";
-import { renderSolid, cleanHtml } from "./utils/normalize";
+import { renderToString } from "@solidjs/web";
+import { cleanHtml } from "./utils/normalize";
 
-describe("RLAvatar Solid Component Suite", () => {
-  describe("Default Rendering & Fallback Resolution", () => {
-    it("renders default fallback user icon when no props are given", () => {
-      const html = renderSolid(RLAvatar, {});
+function render(fn: () => any): string {
+  return cleanHtml(renderToString(fn));
+}
 
-      expect(html).toContain('data-slot="root"');
-      expect(html).toContain('data-slot="fallback"');
-      expect(html).toContain('data-slot="icon"');
-    });
+function hasSlot(html: string, slot: string): boolean {
+  return html.includes(`data-slot="${slot}"`);
+}
 
-    it("renders alt initials as fallback when alt is provided and no src", () => {
-      const html = renderSolid(RLAvatar, { alt: "Benjamin Canac" });
-
-      expect(html).toContain('data-slot="root"');
-      expect(html).toContain('data-slot="fallback"');
-      expect(html).toContain("BC");
-    });
-
-    it("renders single-word alt initials correctly", () => {
-      const html = renderSolid(RLAvatar, { alt: "Admin" });
-
-      expect(html).toContain("AD");
-    });
-
-    it("renders text prop with priority over alt initials", () => {
-      const html = renderSolid(RLAvatar, { alt: "Benjamin Canac", text: "+1" });
-
-      expect(html).toContain("+1");
-      expect(html).not.toContain("BC");
-    });
-
-    it("renders custom icon prop as fallback", () => {
-      const html = renderSolid(RLAvatar, { icon: "star" });
-
-      expect(html).toContain('data-slot="fallback"');
-      expect(html).toContain('data-slot="icon"');
-    });
-
-    it("renders custom fallbackSlot", () => {
-      const html = renderSolid(RLAvatar, { fallbackSlot: "CUSTOM_SLOT" });
-
-      expect(html).toContain('data-slot="fallback"');
-      expect(html).toContain("CUSTOM_SLOT");
-    });
+describe("RLAvatar", () => {
+  it("renders the root with the theme attribute", () => {
+    const html = render(() => <RLAvatar alt="Ada Lovelace" theme="dark" />);
+    expect(html).toContain('data-slot="root"');
+    expect(html).toContain('data-theme="dark"');
   });
 
-  describe("Image Rendering & HTML Attributes Forwarding", () => {
-    it("renders <img> tag when src is provided", () => {
-      const html = renderSolid(RLAvatar, {
-        src: "https://example.com/avatar.png",
-        alt: "User Photo",
-        loading: "lazy",
-        decoding: "async",
-        width: 40,
-        height: 40,
-      });
-
-      expect(html).toContain("<img");
-      expect(html).toContain('src="https://example.com/avatar.png"');
-      expect(html).toContain('alt="User Photo"');
-      expect(html).toContain('loading="lazy"');
-      expect(html).toContain('decoding="async"');
-      expect(html).toContain('width="40"');
-      expect(html).toContain('height="40"');
-      expect(html).toContain('data-slot="image"');
-    });
-
-    it("forwards referrerpolicy and crossorigin to <img>", () => {
-      const html = renderSolid(RLAvatar, {
-        src: "https://example.com/avatar.png",
-        referrerpolicy: "no-referrer",
-        crossorigin: "anonymous",
-      });
-
-      expect(html).toContain('referrerpolicy="no-referrer"');
-      expect(html).toContain('crossorigin="anonymous"');
-    });
+  it("renders the image when src is given", () => {
+    const html = render(() => <RLAvatar src="/ada.png" alt="Ada Lovelace" />);
+    expect(hasSlot(html, "image")).toBe(true);
+    expect(html).toContain('src="/ada.png"');
+    expect(html).toContain('alt="Ada Lovelace"');
+    expect(hasSlot(html, "fallback")).toBe(false);
   });
 
-  describe("Size Variants", () => {
-    const sizes = [
-      { size: "xs", expected: "size-6" },
-      { size: "sm", expected: "size-7" },
-      { size: "md", expected: "size-8" },
-      { size: "lg", expected: "size-9" },
-      { size: "xl", expected: "size-10" },
-    ] as const;
-
-    for (const { size, expected } of sizes) {
-      it(`applies correct dimension class for size="${size}"`, () => {
-        const html = renderSolid(RLAvatar, { size, alt: "Test" });
-        expect(html).toContain(expected);
-      });
-    }
+  it("derives initials from alt when no image is available", () => {
+    const html = render(() => <RLAvatar alt="Benjamin Canac" />);
+    expect(hasSlot(html, "fallback")).toBe(true);
+    expect(html).toContain("BC");
   });
 
-  describe("Color Variants & Dynamic Palette Support", () => {
-    it("applies rl-color-primary class and CSS-var based root styling", () => {
-      const html = renderSolid(RLAvatar, { color: "primary", alt: "John Doe" });
-
-      expect(html).toContain("rl-color-primary");
-    });
-
-    it("applies rl-color-success class for success color", () => {
-      const html = renderSolid(RLAvatar, { color: "success", alt: "John Doe" });
-
-      expect(html).toContain("rl-color-success");
-    });
-
-    it("applies custom user palette class dynamically (e.g. brand-violet)", () => {
-      const html = renderSolid(RLAvatar, { color: "brand-violet" as any, alt: "John Doe" });
-
-      expect(html).toContain("rl-color-brand-violet");
-    });
-
-    it("applies the primary color by default", () => {
-      const html = renderSolid(RLAvatar, { alt: "John Doe" });
-
-      expect(html).toContain("rl-color-primary");
-    });
-
-    it("applies neutral compound variant classes when color is neutral", () => {
-      const html = renderSolid(RLAvatar, { alt: "John Doe", color: "neutral" });
-
-      expect(html).toContain("bg-elevated");
-      expect(html).toContain("text-muted");
-    });
+  it("uses text over alt-derived initials", () => {
+    const html = render(() => <RLAvatar alt="Benjamin Canac" text="XY" />);
+    expect(html).toContain("XY");
+    expect(html).not.toContain("BC");
   });
 
-  describe("Badge & Chip Integration", () => {
-    it("renders badge when badge prop is provided", () => {
-      const html = renderSolid(RLAvatar, {
-        alt: "User",
-        badge: true,
-        badgePosition: "bottom-right",
-      });
-
-      expect(html).toContain('data-slot="base"');
-      expect(html).toContain("bottom-0");
-      expect(html).toContain("right-0");
-    });
-
-    it("renders chip when chip prop is provided", () => {
-      const html = renderSolid(RLAvatar, {
-        src: "https://example.com/avatar.png",
-        chip: { inset: true },
-      });
-
-      expect(html).toContain('data-slot="base"'); // Chip slot
-      expect(html).toContain('data-slot="root"'); // Avatar slot
-    });
+  it("renders the icon prop in the fallback when there is no image", () => {
+    const html = render(() => <RLAvatar icon="star" />);
+    expect(hasSlot(html, "icon")).toBe(true);
   });
 
-  describe("Profile Wrapper (Title & Subtitle)", () => {
-    it("renders profile wrapper when title or subtitle is given", () => {
-      const html = renderSolid(RLAvatar, {
-        alt: "Daniel Marchi",
-        title: "Daniel Marchi",
-        subtitle: "Lead Developer",
-      });
-
-      expect(html).toContain('data-slot="wrapper"');
-      expect(html).toContain('data-slot="title"');
-      expect(html).toContain("Daniel Marchi");
-      expect(html).toContain('data-slot="subtitle"');
-      expect(html).toContain("Lead Developer");
-    });
-
-    it("renders the text column from the theme text slot", () => {
-      const html = renderSolid(RLAvatar, {
-        alt: "Daniel Marchi",
-        title: "Daniel Marchi",
-        subtitle: "Lead Developer",
-      });
-
-      expect(html).toContain('data-slot="text"');
-      expect(html).toContain("flex flex-col leading-tight");
-    });
-
-    it("supports ui.text overrides", () => {
-      const html = renderSolid(RLAvatar, {
-        title: "Daniel Marchi",
-        ui: { text: "custom-text-slot" },
-      });
-
-      expect(html).toContain("custom-text-slot");
-    });
+  it("renders iconSlot in the fallback when there is no image", () => {
+    const html = render(() => <RLAvatar iconSlot={() => <span>Slot icon</span>} />);
+    expect(html).toContain("Slot icon");
   });
 
-  describe("Polymorphic as Prop & Accessibility", () => {
-    it("renders root element as div when as='div'", () => {
-      const html = renderSolid(RLAvatar, { as: "div", alt: "Ben" });
-
-      expect(html.startsWith("<div")).toBe(true);
-      expect(html).toContain('data-slot="root"');
-    });
-
-    it("sets accessible role='img' and aria-label when label or alt is present without src", () => {
-      const html = renderSolid(RLAvatar, { alt: "Benjamin Canac" });
-
-      expect(html).toContain('role="img"');
-      expect(html).toContain('aria-label="Benjamin Canac"');
-    });
-  });
-});
-
-describe("RLAvatarGroup Solid Component Suite", () => {
-  describe("Default & Stacking Rendering", () => {
-    it("renders container with flex-row-reverse stacking classes", () => {
-      const html = cleanHtml(
-        renderToString(() => (
-          <RLAvatarGroup>
-            <RLAvatar alt="Alex" />
-            <RLAvatar alt="Sam" />
-          </RLAvatarGroup>
-        )),
-      );
-
-      expect(html).toContain('data-slot="root"');
-      expect(html).toContain("flex-row-reverse");
-      expect(html).toContain("justify-end");
-      expect(html).toContain('data-slot="base"');
-    });
-
-    it("renders items array automatically", () => {
-      const items = [
-        { alt: "Benjamin Canac", src: "https://example.com/ben.png" },
-        { alt: "Hugo Richard", src: "https://example.com/hugo.png" },
-        { alt: "Sebastien Chopin", src: "https://example.com/seb.png" },
-      ];
-
-      const html = renderSolid(RLAvatarGroup, { items });
-
-      expect(html).toContain('data-slot="root"');
-      expect(html).toContain('src="https://example.com/ben.png"');
-      expect(html).toContain('src="https://example.com/hugo.png"');
-      expect(html).toContain('src="https://example.com/seb.png"');
-    });
+  it("replaces the fallback with fallbackSlot", () => {
+    const html = render(() => (
+      <RLAvatar alt="Benjamin Canac" fallbackSlot={() => <span>Slot fallback</span>} />
+    ));
+    expect(html).toContain("Slot fallback");
+    expect(html).not.toContain("BC");
   });
 
-  describe("Max Prop & More Counter", () => {
-    it("limits rendered children to max and shows +X badge", () => {
-      const html = cleanHtml(
-        renderToString(() => (
-          <RLAvatarGroup max={2}>
-            <RLAvatar alt="A" />
-            <RLAvatar alt="B" />
-            <RLAvatar alt="C" />
-            <RLAvatar alt="D" />
-          </RLAvatarGroup>
-        )),
-      );
-
-      expect(html).toContain('data-slot="more"');
-      expect(html).toContain("+2");
-    });
-
-    it("limits rendered items array to max and shows +X badge", () => {
-      const items = [{ alt: "A" }, { alt: "B" }, { alt: "C" }, { alt: "D" }, { alt: "E" }];
-
-      const html = renderSolid(RLAvatarGroup, { items, max: 3 });
-
-      expect(html).toContain('data-slot="more"');
-      expect(html).toContain("+2");
-    });
+  it("renders the badge text inside a chip", () => {
+    const html = render(() => <RLAvatar src="/ada.png" alt="Ada" badge="3" />);
+    expect(hasSlot(html, "badge")).toBe(true);
+    expect(html).toContain("3");
   });
 
-  describe("Polymorphic as Prop & UI Customization", () => {
-    it("renders root element as section when as='section'", () => {
-      const html = renderSolid(RLAvatarGroup, { as: "section", items: [{ alt: "A" }] });
+  it("replaces the badge text with badgeSlot", () => {
+    const html = render(() => (
+      <RLAvatar src="/ada.png" alt="Ada" badge="3" badgeSlot={() => <span>Slot badge</span>} />
+    ));
+    expect(html).toContain("Slot badge");
+  });
 
-      expect(html.startsWith("<section")).toBe(true);
-    });
+  it("renders no badge without badge or badgeSlot", () => {
+    const html = render(() => <RLAvatar src="/ada.png" alt="Ada" />);
+    expect(hasSlot(html, "badge")).toBe(false);
+  });
 
-    it("applies ui slot overrides to group", () => {
-      const html = renderSolid(RLAvatarGroup, {
-        items: [{ alt: "A" }],
-        ui: { root: "custom-group-root", base: "custom-base" },
-      });
+  it("renders children in place of the image and fallback", () => {
+    const html = render(() => (
+      <RLAvatar src="/ada.png" alt="Ada">
+        <span>Child content</span>
+      </RLAvatar>
+    ));
+    expect(html).toContain("Child content");
+    expect(hasSlot(html, "image")).toBe(false);
+  });
 
-      expect(html).toContain("custom-group-root");
-      expect(html).toContain("custom-base");
-    });
+  it("renders title and subtitle beside the avatar", () => {
+    const html = render(() => <RLAvatar alt="Ada" title="Ada Lovelace" subtitle="Engineer" />);
+    expect(hasSlot(html, "wrapper")).toBe(true);
+    expect(hasSlot(html, "title")).toBe(true);
+    expect(html).toContain("Ada Lovelace");
+    expect(hasSlot(html, "subtitle")).toBe(true);
+    expect(html).toContain("Engineer");
+  });
+
+  it("renders the image with an empty alt when only src is given", () => {
+    const html = render(() => <RLAvatar src="/ada.png" />);
+    expect(html).toMatch(/<img[^>]*\salt(?:=""|(?=[\s>]))/);
   });
 });

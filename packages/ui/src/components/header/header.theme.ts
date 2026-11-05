@@ -22,17 +22,13 @@ export const RLHeaderTheme = defineTheme("header", {
     },
     sticky: {
       true: {
-        root: "sticky top-0 inset-x-0 z-50 transition-[top,transform] duration-300 ease-in-out data-[collapsed=true]:-translate-y-full",
-      },
-      false: {
-        root: "",
+        root: "sticky top-0 inset-x-0 z-50 transition-[top,transform] duration-300 ease-in-out data-[collapsed]:-translate-y-full",
       },
     },
     fixed: {
       true: {
-        root: "fixed top-0 left-0 right-0 z-50 transition-[top,transform,opacity] duration-300 ease-in-out data-[collapsed=true]:-translate-y-full",
+        root: "fixed top-0 left-0 right-0 z-50 transition-[top,transform,opacity] duration-300 ease-in-out data-[collapsed]:-translate-y-full",
       },
-      false: {},
     },
   },
   defaultVariants: {

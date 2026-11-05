@@ -11,7 +11,7 @@ export const RLSkeletonTheme = defineTheme("skeleton", {
     shimmer:
       "absolute bg-elevated overflow-hidden left-[var(--rl-skel-x,0px)] top-[var(--rl-skel-y,0px)] w-[var(--rl-skel-w,0px)] h-[var(--rl-skel-h,0px)] rounded-[var(--rl-skel-r,var(--rl-skel-r-default,0.375rem))]",
     highlight:
-      "absolute inset-0 -translate-x-full animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-foreground/5 to-transparent",
+      "absolute inset-0 -translate-x-full animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-inverted/5 to-transparent",
   },
   variants: {
     shape: {

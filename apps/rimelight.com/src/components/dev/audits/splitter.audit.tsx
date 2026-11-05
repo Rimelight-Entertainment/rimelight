@@ -137,7 +137,7 @@ export const SplitterSandbox = (): JSX.Element => {
             {
               min: "30%",
               children: (state) => (
-                <div class="h-full p-4 flex flex-col justify-between bg-background/50">
+                <div class="h-full p-4 flex flex-col justify-between bg-default/50">
                   <div class="flex flex-col gap-1">
                     <span class="text-xs font-semibold text-highlighted uppercase tracking-wider">
                       Workspace Viewport
@@ -192,7 +192,7 @@ export const splitterAudit: ComponentAuditDefinition = {
               {
                 min: "30%",
                 children: (
-                  <div class="h-full p-4 bg-background/50 flex flex-col gap-2">
+                  <div class="h-full p-4 bg-default/50 flex flex-col gap-2">
                     <span class="font-semibold text-sm">Content</span>
                     <p class="text-xs text-muted">Adapts smoothly to remaining area.</p>
                   </div>
@@ -231,7 +231,7 @@ export const splitterAudit: ComponentAuditDefinition = {
               {
                 min: "35%",
                 children: (
-                  <div class="h-full p-4 bg-background/40 flex flex-col gap-2">
+                  <div class="h-full p-4 bg-default/40 flex flex-col gap-2">
                     <span class="text-xs font-mono font-semibold uppercase text-highlighted">
                       Viewport (min 35%)
                     </span>
@@ -302,7 +302,7 @@ export const splitterAudit: ComponentAuditDefinition = {
                 {
                   min: "40%",
                   children: (
-                    <div class="h-full p-4 bg-background/50 flex flex-col gap-2">
+                    <div class="h-full p-4 bg-default/50 flex flex-col gap-2">
                       <div class="flex items-center gap-2">
                         <span class="text-xs font-semibold">Project Overview</span>
                         <RLBadge
@@ -357,7 +357,7 @@ export const splitterAudit: ComponentAuditDefinition = {
                       <span class="font-medium text-highlighted">Sarah Lin</span>
                       <span class="text-muted text-[11px] truncate">Release candidate audit</span>
                     </div>
-                    <div class="p-2 rounded bg-background/40 flex flex-col gap-0.5">
+                    <div class="p-2 rounded bg-default/40 flex flex-col gap-0.5">
                       <span class="font-medium text-highlighted">GitHub</span>
                       <span class="text-muted text-[11px] truncate">PR #142 merged</span>
                     </div>
@@ -367,7 +367,7 @@ export const splitterAudit: ComponentAuditDefinition = {
               {
                 min: "35%",
                 children: (
-                  <div class="h-full p-4 bg-background/60 flex flex-col gap-2">
+                  <div class="h-full p-4 bg-default/60 flex flex-col gap-2">
                     <span class="font-semibold text-sm text-highlighted">
                       Moraine 0.5.0 Release Candidate
                     </span>
@@ -407,7 +407,7 @@ export const splitterAudit: ComponentAuditDefinition = {
               {
                 min: "30%",
                 children: (
-                  <div class="h-full p-3 bg-background/50 flex flex-col gap-2">
+                  <div class="h-full p-3 bg-default/50 flex flex-col gap-2">
                     <span class="text-xs font-semibold text-highlighted">
                       Results (3 rows returned)
                     </span>
@@ -458,7 +458,7 @@ export const splitterAudit: ComponentAuditDefinition = {
                       {
                         min: "30%",
                         children: (
-                          <div class="h-full p-3 bg-background/60 font-mono text-xs">
+                          <div class="h-full p-3 bg-default/60 font-mono text-xs">
                             <span class="text-muted">// Code Editor</span>
                             <div class="text-highlighted mt-1">
                               export function Workspace() &#123; ... &#125;
@@ -480,6 +480,49 @@ export const splitterAudit: ComponentAuditDefinition = {
               },
             ]}
           />
+        </div>
+      ),
+    },
+    {
+      id: "custom-handle-control",
+      title: "Custom Handle Control",
+      description:
+        "Replace the default grip with a render-function handleControlSlot that receives the live handle state.",
+      render: () => (
+        <div class="h-64 w-full border border-default/60 rounded-xl overflow-hidden bg-card/30">
+          <RLSplitter
+            defaultValue={["40%", "60%"]}
+            panels={[{ children: "Navigator" }, { children: "Editor" }]}
+            handleControlSlot={(state) => (
+              <span class="text-[10px] font-mono text-muted">
+                {state.collapsed ? "closed" : "open"}
+              </span>
+            )}
+          />
+        </div>
+      ),
+    },
+    {
+      id: "handle-icon-override",
+      title: "Handle Icon Override",
+      description:
+        "Swap the default grip for a named lucide icon, or hide it with handleIcon={false}.",
+      render: () => (
+        <div class="flex flex-col gap-3">
+          <div class="h-48 w-full border border-default/60 rounded-xl overflow-hidden bg-card/30">
+            <RLSplitter
+              defaultValue={["50%", "50%"]}
+              handleIcon="ellipsis"
+              panels={[{ children: "Left" }, { children: "Right" }]}
+            />
+          </div>
+          <div class="h-48 w-full border border-default/60 rounded-xl overflow-hidden bg-card/30">
+            <RLSplitter
+              defaultValue={["50%", "50%"]}
+              handleIcon={false}
+              panels={[{ children: "Left" }, { children: "Right" }]}
+            />
+          </div>
         </div>
       ),
     },
@@ -535,7 +578,7 @@ export const splitterAudit: ComponentAuditDefinition = {
                   {
                     min: 150,
                     children: (state) => (
-                      <div class="h-full p-4 bg-background/50 flex flex-col justify-between">
+                      <div class="h-full p-4 bg-default/50 flex flex-col justify-between">
                         <span class="text-xs font-semibold">Telemetry Output</span>
                         <span class="text-xs font-mono text-muted">{state.size}px</span>
                       </div>

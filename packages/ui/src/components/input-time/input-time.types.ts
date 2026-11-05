@@ -1,10 +1,16 @@
 import type { InferThemeProps } from "../../resolver";
+import type { RLInputProps } from "../input/input.types";
 import type { RLInputTimeTheme } from "./input-time.theme";
 
 export type RLInputTimeProps = Omit<
   InferThemeProps<typeof RLInputTimeTheme>,
   "onInput" | "onChange" | "onBlur" | "onFocus" | "onKeyDown" | "ref"
 > & {
+  /**
+   * Control size, shared with `RLInput`.
+   * @default "md"
+   */
+  size?: RLInputProps["size"];
   /**
    * Time value in `HH:mm` or `HH:mm:ss` format.
    * @default undefined

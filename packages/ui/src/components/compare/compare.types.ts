@@ -1,9 +1,9 @@
-import type { JSX } from "@solidjs/web";
 import type { InferThemeProps } from "../../resolver";
 import type { SlotRenderer } from "../../types";
 import type { RLCompareTheme } from "./compare.theme";
 
-export type CompareLabelPlacement =
+/** Corner placement for a before or after label. */
+export type CompareLabelPosition =
   | "top-left"
   | "top-right"
   | "bottom-left"
@@ -56,50 +56,50 @@ export type RLCompareProps = InferThemeProps<typeof RLCompareTheme> & {
   largeStep?: number;
 
   /**
-   * Content rendered in the leading (left/top) section.
+   * Content rendered in the before layer (the clipped top layer).
    * Can be an element or a function receiving the current position percentage.
    */
-  leadingSlot?: SlotRenderer<number>;
+  beforeLayerSlot?: SlotRenderer<number>;
 
   /**
-   * Content rendered in the trailing (right/bottom) section.
+   * Content rendered in the after layer (the base layer).
    * Can be an element or a function receiving the current position percentage.
    */
-  trailingSlot?: SlotRenderer<number>;
+  afterLayerSlot?: SlotRenderer<number>;
 
   /**
-   * Shorthand URL for the leading image.
+   * Shorthand URL for the before image, used when `beforeLayerSlot` is not provided.
    */
   beforeSrc?: string;
 
   /**
-   * Shorthand URL for the trailing image.
+   * Shorthand URL for the after image, used when `afterLayerSlot` is not provided.
    */
   afterSrc?: string;
 
   /**
-   * Alt text for the leading image when `beforeSrc` is used.
+   * Alt text for the before image when `beforeSrc` is used.
    *
    * @default "Before" (localized)
    */
   beforeAlt?: string;
 
   /**
-   * Alt text for the trailing image when `afterSrc` is used.
+   * Alt text for the after image when `afterSrc` is used.
    *
    * @default "After" (localized)
    */
   afterAlt?: string;
 
   /**
-   * Label content for the leading side.
+   * Label content for the before side.
    */
-  beforeLabelSlot?: JSX.Element | string;
+  beforeLabelSlot?: SlotRenderer;
 
   /**
-   * Label content for the trailing side.
+   * Label content for the after side.
    */
-  afterLabelSlot?: JSX.Element | string;
+  afterLabelSlot?: SlotRenderer;
 
   /**
    * Whether to display before/after labels.
@@ -108,14 +108,18 @@ export type RLCompareProps = InferThemeProps<typeof RLCompareTheme> & {
   showLabels?: boolean;
 
   /**
-   * Placement for the before side label.
+   * Corner position of the before label.
+   *
+   * @default "top-left"
    */
-  beforeLabelPlacement?: CompareLabelPlacement;
+  beforeLabelPosition?: CompareLabelPosition;
 
   /**
-   * Placement for the after side label.
+   * Corner position of the after label.
+   *
+   * @default "top-right" when horizontal, "bottom-left" when vertical
    */
-  afterLabelPlacement?: CompareLabelPlacement;
+  afterLabelPosition?: CompareLabelPosition;
 
   /**
    * Custom handle element or render function receiving orientation and value.
@@ -132,14 +136,14 @@ export type RLCompareProps = InferThemeProps<typeof RLCompareTheme> & {
    *
    * @default true
    */
-  showHandle?: boolean;
+  hasHandle?: boolean;
 
   /**
    * Whether to display the divider line.
    *
    * @default true
    */
-  showDivider?: boolean;
+  hasDivider?: boolean;
 
   /**
    * Whether moving the cursor/pointer over the container updates the divider position without needing to drag.
@@ -161,6 +165,23 @@ export type RLCompareProps = InferThemeProps<typeof RLCompareTheme> & {
    * @default 3000
    */
   autoplayDuration?: number;
+
+  /**
+   * Whether the comparison is locked. Disabled comparisons ignore pointer and keyboard input.
+   *
+   * @default false
+   */
+  disabled?: boolean;
+
+  /**
+   * Accessible name for the slider handle.
+   */
+  "aria-label"?: string;
+
+  /**
+   * Id of the element that labels the slider handle.
+   */
+  "aria-labelledby"?: string;
 
   /**
    * Callback fired when the value changes.

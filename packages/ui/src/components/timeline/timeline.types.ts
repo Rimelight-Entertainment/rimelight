@@ -30,14 +30,7 @@ export interface TimelineItem {
 }
 
 export interface TimelineSlotContext {
-  item: {
-    date?: string | undefined;
-    title?: string | undefined;
-    description?: string | undefined;
-    icon?: string | undefined;
-    avatar?: { src?: string | undefined; alt?: string | undefined } | undefined;
-    value?: string | number | undefined;
-  };
+  item: TimelineItem;
   index: number;
 }
 

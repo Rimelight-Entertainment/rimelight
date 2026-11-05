@@ -414,6 +414,65 @@ export const audioAudit: ComponentAuditDefinition = {
         />
       ),
     },
+    {
+      id: "header-slot",
+      title: "Header slot",
+      description: "headerSlot replaces the artwork, details, and actions row.",
+      render: () => (
+        <RLAudio src={SAMPLE_TRACKS()[0]?.src} headerSlot={<span>Custom header content</span>} />
+      ),
+    },
+    {
+      id: "timeline-slot",
+      title: "Timeline slot",
+      description: "timelineSlot replaces the progress bar and time display.",
+      render: () => (
+        <RLAudio
+          src={SAMPLE_TRACKS()[0]?.src}
+          timelineSlot={<span>Custom timeline content</span>}
+        />
+      ),
+    },
+    {
+      id: "controls-slot",
+      title: "Controls slot",
+      description: "controlsSlot replaces the playback controls row.",
+      render: () => (
+        <RLAudio
+          src={SAMPLE_TRACKS()[0]?.src}
+          controlsSlot={<span>Custom controls content</span>}
+        />
+      ),
+    },
+    {
+      id: "artwork-slot",
+      title: "Artwork slot",
+      description: "artworkSlot replaces the album artwork.",
+      render: () => (
+        <RLAudio src={SAMPLE_TRACKS()[0]?.src} artworkSlot={<span>Custom artwork content</span>} />
+      ),
+    },
+    {
+      id: "transcript-slot",
+      title: "Transcript slot",
+      description: "transcriptSlot replaces the transcript string inside the collapsible section.",
+      render: () => (
+        <RLAudio
+          src={SAMPLE_TRACKS()[0]?.src}
+          transcriptSlot={<span>Custom transcript content</span>}
+        />
+      ),
+    },
+    {
+      id: "default-slot",
+      title: "Default slot",
+      description: "Children render in the default slot between the playlist and the transcript.",
+      render: () => (
+        <RLAudio src={SAMPLE_TRACKS()[0]?.src} title="Default slot">
+          <span>Default slot content</span>
+        </RLAudio>
+      ),
+    },
   ],
   checklist: [
     {

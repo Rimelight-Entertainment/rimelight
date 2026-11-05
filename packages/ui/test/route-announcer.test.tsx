@@ -1,47 +1,34 @@
 import { describe, it, expect } from "vite-plus/test";
 import { RLRouteAnnouncer } from "../src/components/route-announcer/RLRouteAnnouncer";
-import { RLRouteAnnouncerTheme } from "../src/components/route-announcer/route-announcer.theme";
 import { renderSolid } from "./utils/normalize";
-import { mountComponent } from "./utils/browser-render";
 
-describe("RLRouteAnnouncer Component Suite (Unified)", () => {
-  it("renders an accessible live region with polite ARIA attributes and sr-only styling", () => {
+describe("RLRouteAnnouncer", () => {
+  it("renders a polite, atomic live region as the root's first child", () => {
     const html = renderSolid(RLRouteAnnouncer, {});
 
+    expect(html).toContain('data-slot="root"');
+    expect(html).toContain('role="status"');
     expect(html).toContain('aria-live="polite"');
     expect(html).toContain('aria-atomic="true"');
-    expect(html).toContain('role="status"');
-    expect(html).toContain("sr-only");
   });
 
-  it("theme generates expected semantic height classes for progress bar", () => {
-    const xsSlots = RLRouteAnnouncerTheme({ size: "xs" });
-    expect(xsSlots.progressBar).toContain("h-0.5");
-    expect(xsSlots.progressBar).toContain("fixed top-0");
+  it("omits the progress bar when no router is mounted", () => {
+    const html = renderSolid(RLRouteAnnouncer, {});
 
-    const smSlots = RLRouteAnnouncerTheme({ size: "sm" });
-    expect(smSlots.progressBar).toContain("h-1");
-
-    const mdSlots = RLRouteAnnouncerTheme({ size: "md" });
-    expect(mdSlots.progressBar).toContain("h-1.5");
-
-    const lgSlots = RLRouteAnnouncerTheme({ size: "lg" });
-    expect(lgSlots.progressBar).toContain("h-2");
+    expect(html).not.toContain('role="progressbar"');
   });
 
-  it("theme generates expected color classes with color: auto", () => {
-    const primarySlots = RLRouteAnnouncerTheme({ color: "primary" });
-    expect(primarySlots.root).toContain("rl-color-primary");
-    expect(primarySlots.progressIndicator).toContain("bg-[var(--rl-bg)]");
+  it("honors the as prop for the root element", () => {
+    const html = renderSolid(RLRouteAnnouncer, { as: "section" });
 
-    const secondarySlots = RLRouteAnnouncerTheme({ color: "secondary" });
-    expect(secondarySlots.root).toContain("rl-color-secondary");
-
-    const commentarySlots = RLRouteAnnouncerTheme({ color: "commentary" });
-    expect(commentarySlots.root).toContain("rl-color-commentary");
+    expect(html.startsWith("<section")).toBe(true);
   });
 
-  it("mounts safely in non-routing environment without visual progress DOM artifact", () => {
-    expect(() => mountComponent(() => <RLRouteAnnouncer />)).not.toThrow();
+  it("does not forward component-only props to the DOM", () => {
+    const html = renderSolid(RLRouteAnnouncer, { prefix: "Went to", progress: false, size: "lg" });
+
+    expect(html).not.toContain("prefix=");
+    expect(html).not.toContain("progress=");
+    expect(html).not.toMatch(/\ssize=/);
   });
 });

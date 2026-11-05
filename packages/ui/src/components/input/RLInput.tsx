@@ -3,6 +3,7 @@ import type { RLInputProps } from "./input.types";
 import { RLInputTheme } from "./input.theme";
 import { Show } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
+import { renderSlot } from "../../slot";
 
 const OMIT_KEYS = [
   "type",
@@ -34,22 +35,25 @@ export const RLInput: Component<RLInputProps> = (props) => {
 
   return (
     <Tag data-slot="root" data-theme={theme()} class={classes().root}>
-      <Show when={slots.leadingSlot()}>{slots.leadingSlot()}</Show>
-      <Show when={!slots.leadingSlot() && props.leadingIcon}>
-        <span class={classes().leading} data-slot="leading">
-          <RLIcon name={props.leadingIcon!} size="sm" aria-hidden="true" />
-        </span>
+      <Show when={slots.leadingSlot()}>{renderSlot(slots.leadingSlot())}</Show>
+      <Show when={slots.leadingSlot() ? undefined : props.leadingIcon}>
+        {(icon) => (
+          <span class={classes().leading} data-slot="leading">
+            <RLIcon name={icon()} size="sm" aria-hidden="true" />
+          </span>
+        )}
       </Show>
 
       <input
         ref={props.ref}
         type={props.type}
         name={props.name}
-        value={props.value !== undefined ? props.value : ""}
+        value={props.value ?? ""}
         placeholder={props.placeholder}
         disabled={props.disabled}
         readonly={props.readonly}
         required={props.required}
+        aria-invalid={props.invalid ? "true" : undefined}
         class={classes().input}
         data-slot="input"
         onInput={props.onInput}
@@ -60,11 +64,13 @@ export const RLInput: Component<RLInputProps> = (props) => {
         {...rest}
       />
 
-      <Show when={slots.trailingSlot()}>{slots.trailingSlot()}</Show>
-      <Show when={!slots.trailingSlot() && props.trailingIcon}>
-        <span class={classes().trailing} data-slot="trailing">
-          <RLIcon name={props.trailingIcon!} size="sm" aria-hidden="true" />
-        </span>
+      <Show when={slots.trailingSlot()}>{renderSlot(slots.trailingSlot())}</Show>
+      <Show when={slots.trailingSlot() ? undefined : props.trailingIcon}>
+        {(icon) => (
+          <span class={classes().trailing} data-slot="trailing">
+            <RLIcon name={icon()} size="sm" aria-hidden="true" />
+          </span>
+        )}
       </Show>
       {children()}
     </Tag>

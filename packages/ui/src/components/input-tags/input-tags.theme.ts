@@ -16,7 +16,7 @@ export const RLInputTagsTheme = defineTheme("input-tags", {
       "inline-flex items-center justify-center px-2 py-0.5",
       "rounded-full text-xs font-semibold",
       "bg-muted text-muted",
-      "ring-1 ring-border/40",
+      "ring-1 ring-accented/40",
       "whitespace-nowrap select-none cursor-default",
     ],
     input: ["flex-1 min-w-[6rem] bg-transparent text-sm outline-none", "placeholder:text-muted"],
@@ -28,7 +28,7 @@ export const RLInputTagsTheme = defineTheme("input-tags", {
     {
       color: "neutral",
       class: {
-        tag: "bg-elevated text-highlighted ring-border/60",
+        tag: "bg-elevated text-highlighted ring-accented/60",
       },
     },
   ],

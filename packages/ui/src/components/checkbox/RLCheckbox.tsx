@@ -2,6 +2,7 @@ import type { RLCheckboxProps } from "./checkbox.types";
 import { RLCheckboxTheme } from "./checkbox.theme";
 import { createSignal, Show, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
+import { renderSlot } from "../../slot";
 
 const OMIT_KEYS = [
   "checked",
@@ -27,7 +28,6 @@ const OMIT_KEYS = [
 ] as const;
 
 export const RLCheckbox: Component<RLCheckboxProps> = (props) => {
-  // Uncontrolled state fallback
   const [internalChecked, setInternalChecked] = createSignal<boolean | "indeterminate">(
     props.defaultChecked ?? false,
   );
@@ -51,14 +51,14 @@ export const RLCheckbox: Component<RLCheckboxProps> = (props) => {
 
   const size = () => props.size ?? "md";
   const color = () => props.color ?? "primary";
-  const indicator = () => props.indicator ?? "start";
+  const side = () => props.side ?? "start";
+  const hasIndicator = () => props.hasIndicator ?? true;
   const highlight = () => Boolean(props.highlight);
   const disabled = () => Boolean(props.disabled);
   const required = () => Boolean(props.required);
 
-  const labelIcon = () => (indicator() === "hidden" ? props.icon || "check" : undefined);
   const activeIcon = () =>
-    isIndeterminate() ? props.indeterminateIcon || "minus" : props.icon || "check";
+    isIndeterminate() ? (props.indeterminateIcon ?? "minus") : (props.icon ?? "check");
 
   const { Tag, classes, rest, id, slots, children, theme } = RLCheckboxTheme.setup(props, {
     slots: ["labelSlot", "descriptionSlot"] as const,
@@ -66,12 +66,10 @@ export const RLCheckbox: Component<RLCheckboxProps> = (props) => {
     omit: OMIT_KEYS,
     variants: () => ({
       color: color(),
-      layout: props.layout,
       size: size(),
-      indicator: indicator(),
+      side: side(),
+      hasIndicator: hasIndicator(),
       highlight: highlight(),
-      disabled: disabled(),
-      required: required(),
       checked: isChecked() || isIndeterminate(),
     }),
   });
@@ -84,37 +82,12 @@ export const RLCheckbox: Component<RLCheckboxProps> = (props) => {
       setInternalChecked(next);
     }
     props.onCheckedChange?.(next);
-    if (props.onChange) {
-      props.onChange(e);
-    }
+    props.onChange?.(e);
   };
 
   const hasLabel = () => Boolean(props.label || slots.labelSlot() || children());
   const hasDescription = () => Boolean(props.description || slots.descriptionSlot());
-  const hasWrapper = () => Boolean(labelIcon() || hasLabel() || hasDescription());
-
-  const renderLabel = () => {
-    if (slots.labelSlot()) {
-      if (typeof slots.labelSlot() === "function") {
-        return (slots.labelSlot() as any)({ label: props.label });
-      }
-      return slots.labelSlot();
-    }
-    if (children()) {
-      return children();
-    }
-    return props.label;
-  };
-
-  const renderDescription = () => {
-    if (slots.descriptionSlot()) {
-      if (typeof slots.descriptionSlot() === "function") {
-        return (slots.descriptionSlot() as any)({ description: props.description });
-      }
-      return slots.descriptionSlot();
-    }
-    return props.description;
-  };
+  const hasWrapper = () => !hasIndicator() || hasLabel() || hasDescription();
 
   return (
     <Tag
@@ -122,7 +95,7 @@ export const RLCheckbox: Component<RLCheckboxProps> = (props) => {
       data-slot="root"
       data-theme={theme()}
       data-state={checkState()}
-      data-disabled={disabled() ? "true" : undefined}
+      data-disabled={disabled() ? "" : undefined}
     >
       <div class={classes().container} data-slot="container">
         <input
@@ -130,22 +103,22 @@ export const RLCheckbox: Component<RLCheckboxProps> = (props) => {
           id={id()}
           type="checkbox"
           name={props.name}
-          value={props.value !== undefined ? props.value : "on"}
+          value={props.value ?? "on"}
           checked={isChecked()}
           disabled={disabled()}
           required={required()}
           autofocus={props.autofocus === true || props.autofocus === "true"}
           form={props.form}
           formaction={props.formaction}
-          formenctype={props.formenctype as any}
-          formmethod={props.formmethod as any}
+          formenctype={props.formenctype}
+          formmethod={props.formmethod}
           formnovalidate={props.formnovalidate === true || props.formnovalidate === "true"}
           formtarget={props.formtarget}
           aria-checked={isIndeterminate() ? "mixed" : isChecked() ? "true" : "false"}
           aria-required={required() ? "true" : undefined}
           aria-disabled={disabled() ? "true" : undefined}
           onChange={handleChange}
-          class="sr-only peer"
+          class={classes().input}
           {...rest}
         />
 
@@ -153,9 +126,9 @@ export const RLCheckbox: Component<RLCheckboxProps> = (props) => {
           class={classes().base}
           data-slot="base"
           data-state={checkState()}
-          data-disabled={disabled() ? "true" : undefined}
+          data-disabled={disabled() ? "" : undefined}
         >
-          <Show when={indicator() !== "hidden"}>
+          <Show when={hasIndicator()}>
             <span class={classes().indicator} data-slot="indicator" data-state={checkState()}>
               <RLIcon
                 name={activeIcon()}
@@ -170,9 +143,9 @@ export const RLCheckbox: Component<RLCheckboxProps> = (props) => {
 
       <Show when={hasWrapper()}>
         <div class={classes().wrapper} data-slot="wrapper">
-          <Show when={labelIcon()}>
+          <Show when={!hasIndicator()}>
             <RLIcon
-              name={labelIcon()!}
+              name={props.icon ?? "check"}
               class={classes().icon}
               data-slot="icon"
               aria-hidden="true"
@@ -180,12 +153,23 @@ export const RLCheckbox: Component<RLCheckboxProps> = (props) => {
           </Show>
           <Show when={hasLabel()}>
             <span class={classes().label} data-slot="label">
-              {renderLabel()}
+              <Show
+                when={slots.labelSlot()}
+                fallback={
+                  <Show when={children()} fallback={props.label}>
+                    {children()}
+                  </Show>
+                }
+              >
+                {renderSlot(slots.labelSlot(), { label: props.label })}
+              </Show>
             </span>
           </Show>
           <Show when={hasDescription()}>
             <p class={classes().description} data-slot="description">
-              {renderDescription()}
+              <Show when={slots.descriptionSlot()} fallback={props.description}>
+                {renderSlot(slots.descriptionSlot(), { description: props.description })}
+              </Show>
             </p>
           </Show>
         </div>

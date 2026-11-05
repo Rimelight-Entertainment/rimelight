@@ -1,21 +1,24 @@
-import type { JSX } from "@solidjs/web";
 import type { InferThemeProps } from "../../resolver";
+import type { SlotRenderer } from "../../types";
 import type { RLPageTheme } from "./page.theme";
 
 /**
- * Props for the page layout. Leading/trailing columns are internal layout variants and are not public props.
+ * Props for the page layout. Leading and trailing columns are rendered only when their slot is provided.
  */
-export type RLPageProps = Omit<InferThemeProps<typeof RLPageTheme>, "leading" | "trailing"> & {
+export type RLPageProps = Omit<
+  InferThemeProps<typeof RLPageTheme>,
+  "hasLeading" | "hasTrailing"
+> & {
   /**
    * Content rendered in the leading column. The column is only rendered when provided.
    *
    * @default undefined
    */
-  leadingSlot?: JSX.Element;
+  leadingSlot?: SlotRenderer;
   /**
    * Content rendered in the trailing column. The column is only rendered when provided.
    *
    * @default undefined
    */
-  trailingSlot?: JSX.Element;
+  trailingSlot?: SlotRenderer;
 };

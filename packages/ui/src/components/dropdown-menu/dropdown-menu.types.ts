@@ -1,6 +1,6 @@
 import type { JSX } from "@solidjs/web";
 import type { InferThemeProps } from "../../resolver";
-import type { ThemeColor } from "../../types";
+import type { SlotRenderer, ThemeColor } from "../../types";
 import type { RLDropdownMenuTheme } from "./dropdown-menu.theme";
 
 export interface DropdownMenuItem {
@@ -44,7 +44,7 @@ export interface DropdownMenuContentOptions {
   sideOffset?: number | undefined;
 }
 
-export type RLDropdownMenuProps = Omit<InferThemeProps<typeof RLDropdownMenuTheme>, "color"> & {
+export type RLDropdownMenuProps = InferThemeProps<typeof RLDropdownMenuTheme> & {
   /**
    * The menu items array (single level or grouped array).
    */
@@ -58,21 +58,15 @@ export type RLDropdownMenuProps = Omit<InferThemeProps<typeof RLDropdownMenuThem
    */
   icon?: string | undefined;
   /**
-   * Intent color of the trigger.
-   *
-   * @default "neutral"
-   */
-  color?: ThemeColor | undefined;
-  /**
    * Display an arrow alongside the menu.
    *
    * @default false
    */
-  arrow?: boolean | undefined;
+  hasArrow?: boolean | undefined;
   /**
    * Content options like align and sideOffset.
    */
-  content?: DropdownMenuContentOptions | undefined;
+  body?: DropdownMenuContentOptions | undefined;
   /**
    * Disabled state.
    *
@@ -90,13 +84,25 @@ export type RLDropdownMenuProps = Omit<InferThemeProps<typeof RLDropdownMenuThem
    */
   defaultOpen?: boolean | undefined;
   /**
-   * Trigger content. Takes precedence over `label` and `icon`.
+   * Trigger content. Used when `triggerSlot` is not set; takes precedence over `label` and `icon`.
    */
   children?: JSX.Element | undefined;
   /**
-   * Trigger element. Always rendered, so it is plain JSX.
+   * Trigger content. Takes precedence over `children`, `label`, and `icon`.
    */
-  triggerSlot?: JSX.Element | undefined;
+  triggerSlot?: SlotRenderer | undefined;
+  /**
+   * Accessible name of the trigger button.
+   */
+  "aria-label"?: string | undefined;
+  /**
+   * Id of the element that labels the trigger button.
+   */
+  "aria-labelledby"?: string | undefined;
+  /**
+   * Id of the element that describes the trigger button.
+   */
+  "aria-describedby"?: string | undefined;
   /**
    * Called whenever the open state changes.
    */

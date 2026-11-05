@@ -303,6 +303,49 @@ export const breadcrumbAudit: ComponentAuditDefinition = {
         />
       ),
     },
+    {
+      id: "item-leading-slot",
+      title: "Item leading slot",
+      description: "Replaces the leading icon and avatar of each item with custom content.",
+      render: () => (
+        <RLBreadcrumb
+          items={defaultItems()}
+          itemLeadingSlot={({ index }) => <span class="text-highlighted text-xs">{index + 1}</span>}
+        />
+      ),
+    },
+    {
+      id: "item-label-slot",
+      title: "Item label slot",
+      description: "Replaces the label text of each item with custom content.",
+      render: () => (
+        <RLBreadcrumb
+          items={defaultItems()}
+          itemLabelSlot={({ item }) => <strong class="font-bold">{item.label}</strong>}
+        />
+      ),
+    },
+    {
+      id: "item-trailing-slot",
+      title: "Item trailing slot",
+      description: "Renders custom content after the label of each item.",
+      render: () => (
+        <RLBreadcrumb
+          items={defaultItems()}
+          itemTrailingSlot={() => <span class="text-muted text-xs">●</span>}
+        />
+      ),
+    },
+    {
+      id: "default-children",
+      title: "Default children",
+      description: "Renders children as the list content when the items prop is omitted.",
+      render: () => (
+        <RLBreadcrumb>
+          <li class="inline-flex items-center text-sm text-muted">{t("app.text.breadcrumb")}</li>
+        </RLBreadcrumb>
+      ),
+    },
   ],
   checklist: [
     {

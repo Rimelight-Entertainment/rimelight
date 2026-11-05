@@ -7,5 +7,4 @@ export const RLPlaceholderTheme = defineTheme("placeholder", {
     svg: "absolute inset-0 h-full w-full stroke-primary/10",
   },
   variants: {},
-  defaultVariants: {},
 });

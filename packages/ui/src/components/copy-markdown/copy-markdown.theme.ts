@@ -6,5 +6,4 @@ export const RLCopyMarkdownTheme = defineTheme("copy-markdown", {
     root: "rl-copy-markdown",
   },
   variants: {},
-  defaultVariants: {},
 });

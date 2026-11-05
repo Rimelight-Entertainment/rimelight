@@ -8,6 +8,14 @@ export type ButtonClickHandler = (event: MouseEvent) => unknown;
 type ButtonVariants = InferThemeProps<typeof RLButtonTheme>;
 
 /**
+ * Slot accessors used to detect which icon positions have custom JSX.
+ */
+export type ButtonSlotPresence = {
+  leadingSlot: () => unknown;
+  trailingSlot: () => unknown;
+};
+
+/**
  * Button that renders as a `<button>`, or as an `<a>` when `href` is set.
  */
 export type RLButtonProps = Omit<ButtonVariants, "ref"> & {
@@ -28,6 +36,18 @@ export type RLButtonProps = Omit<ButtonVariants, "ref"> & {
    * @default undefined
    */
   activeVariant?: ButtonVariants["variant"];
+
+  /**
+   * Whether the button is in the active state. Applies `activeColor`, `activeVariant`, and `activeClass`.
+   * @default false
+   */
+  active?: boolean | undefined;
+
+  /**
+   * Shape of the button. `square` is used automatically for icon-only buttons without a label.
+   * @default "rounded"
+   */
+  shape?: ButtonVariants["shape"];
 
   /**
    * Icon name rendered on both sides. Position follows `leading` and `trailing`.
@@ -197,7 +217,7 @@ export type RLButtonProps = Omit<ButtonVariants, "ref"> & {
    * Element ID that labels this button for screen readers.
    * @default undefined
    */
-  "aria-labelledby"?: string | undefined;
+  "aria-labelledby"?: string | JSX.RemoveAttribute | undefined;
 
   /**
    * Ref callback for the rendered `button` or `a` element.

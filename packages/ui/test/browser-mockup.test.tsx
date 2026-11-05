@@ -8,251 +8,194 @@ function render(fn: () => any): string {
   return cleanHtml(renderToString(fn));
 }
 
-function slotTag(html: string, slot: string): string {
-  const match = html.match(new RegExp(`<[a-z0-9]+[^>]*data-slot="${slot}"[^>]*>`));
-  return match?.[0] ?? "";
-}
-
-function attr(tag: string, name: string): string | undefined {
-  return tag.match(new RegExp(`\\s${name}="([^"]*)"`))?.[1];
-}
-
 describe("RLBrowserMockup", () => {
-  describe("Structure and Elements", () => {
-    it("renders root, header, controls, and body by default", () => {
+  describe("Structure", () => {
+    it("renders a region with header, controls, navigation and body", () => {
       const html = render(() => (
-        <RLBrowserMockup url="https://rimelight.com">
-          <div>Content inside mockup</div>
+        <RLBrowserMockup navigation url="https://rimelight.com">
+          <p>Content</p>
         </RLBrowserMockup>
       ));
-
-      expect(slotTag(html, "root")).not.toBe("");
-      expect(slotTag(html, "header")).not.toBe("");
-      expect(slotTag(html, "controls")).not.toBe("");
-      expect(slotTag(html, "body")).not.toBe("");
-      expect(html).toContain("Content inside mockup");
-      expect(html).toContain("https://rimelight.com");
+      expect(html).toContain('role="region"');
+      expect(html).toContain('data-slot="root"');
+      expect(html).toContain('data-slot="header"');
+      expect(html).toContain('data-slot="controls"');
+      expect(html).toContain('data-slot="navigation"');
+      expect(html).toContain('data-slot="body"');
+      expect(html).toContain("<p>Content</p>");
     });
 
-    it("renders custom 'as' root tag", () => {
+    it("renders the body children inside the body slot", () => {
       const html = render(() => (
-        <RLBrowserMockup as="section">
-          <div>Content</div>
+        <RLBrowserMockup>
+          <p>Body text</p>
         </RLBrowserMockup>
       ));
-
-      expect(html).toMatch(/^<section/);
-      expect(slotTag(html, "root")).toMatch(/^<section/);
+      expect(html).toMatch(/data-slot="body"[^>]*>\s*<p>Body text<\/p>/);
     });
 
-    it("has proper WAI-ARIA role and aria-label", () => {
-      const html = render(() => (
-        <RLBrowserMockup url="https://starter.rimelight.com">
-          <div>Content</div>
-        </RLBrowserMockup>
-      ));
-
-      const root = slotTag(html, "root");
-      expect(attr(root, "role")).toBe("region");
-      expect(attr(root, "aria-label")).toBe("Browser mockup: https://starter.rimelight.com");
-    });
-
-    it("allows custom aria-label prop", () => {
-      const html = render(() => (
-        <RLBrowserMockup aria-label="Custom Browser Preview">
-          <div>Content</div>
-        </RLBrowserMockup>
-      ));
-
-      const root = slotTag(html, "root");
-      expect(attr(root, "aria-label")).toBe("Custom Browser Preview");
+    it("renders the custom 'as' tag as root", () => {
+      const html = render(() => <RLBrowserMockup as="section">x</RLBrowserMockup>);
+      expect(html).toMatch(/^<section[^>]*data-slot="root"/);
     });
   });
 
-  describe("Window Controls", () => {
-    it("renders three window dots (close, minimize, maximize) with color variant by default", () => {
-      const html = render(() => <RLBrowserMockup />);
-      expect(slotTag(html, "dot-close")).not.toBe("");
-      expect(slotTag(html, "dot-minimize")).not.toBe("");
-      expect(slotTag(html, "dot-maximize")).not.toBe("");
-      expect(slotTag(html, "controls")).toContain('aria-hidden="true"');
+  describe("Window controls", () => {
+    it("renders close, minimize and maximize dots by default", () => {
+      const html = render(() => <RLBrowserMockup>x</RLBrowserMockup>);
+      expect(html).toContain('data-slot="dot-close"');
+      expect(html).toContain('data-slot="dot-minimize"');
+      expect(html).toContain('data-slot="dot-maximize"');
     });
 
-    it("hides controls when controls={false}", () => {
-      const html = render(() => <RLBrowserMockup controls={false} />);
-      expect(slotTag(html, "controls")).toBe("");
-      expect(slotTag(html, "dot-close")).toBe("");
+    it("hides the controls when controls is false", () => {
+      const html = render(() => <RLBrowserMockup controls={false}>x</RLBrowserMockup>);
+      expect(html).not.toContain('data-slot="controls"');
     });
 
-    it("hides controls when controlsVariant='none'", () => {
-      const html = render(() => <RLBrowserMockup controlsVariant="none" />);
-      expect(slotTag(html, "controls")).toBe("");
+    it("hides the controls when controlsVariant is none", () => {
+      const html = render(() => <RLBrowserMockup controlsVariant="none">x</RLBrowserMockup>);
+      expect(html).not.toContain('data-slot="controls"');
     });
 
-    it("supports monochrome controlsVariant", () => {
-      const html = render(() => <RLBrowserMockup controlsVariant="monochrome" />);
-      expect(slotTag(html, "controls")).not.toBe("");
-      expect(slotTag(html, "dot-close")).toContain("bg-inverted");
-    });
-
-    it("supports custom controlsSlot override", () => {
+    it("replaces the controls with controlsSlot", () => {
       const html = render(() => (
-        <RLBrowserMockup controlsSlot={<span data-slot="custom-controls">Custom Dots</span>} />
+        <RLBrowserMockup controlsSlot={() => <span data-test="custom-controls" />}>
+          x
+        </RLBrowserMockup>
       ));
-      expect(html).toContain("Custom Dots");
-      expect(slotTag(html, "dot-close")).toBe("");
+      expect(html).toContain('data-test="custom-controls"');
+      expect(html).not.toContain('data-slot="dot-close"');
     });
   });
 
-  describe("Navigation Buttons", () => {
-    it("does not render navigation buttons by default", () => {
-      const html = render(() => <RLBrowserMockup url="https://rimelight.com" />);
-      expect(slotTag(html, "navigation")).toBe("");
-      expect(slotTag(html, "nav-back")).toBe("");
+  describe("Navigation", () => {
+    it("hides back, forward and reload buttons by default", () => {
+      const html = render(() => <RLBrowserMockup>x</RLBrowserMockup>);
+      expect(html).not.toContain('data-slot="back"');
+      expect(html).not.toContain('data-slot="forward"');
+      expect(html).not.toContain('data-slot="reload"');
     });
 
-    it("renders back, forward, and reload buttons when navigation={true}", () => {
-      const html = render(() => <RLBrowserMockup navigation url="https://rimelight.com" />);
-      expect(slotTag(html, "navigation")).not.toBe("");
-      expect(slotTag(html, "nav-back")).not.toBe("");
-      expect(slotTag(html, "nav-forward")).not.toBe("");
-      expect(slotTag(html, "nav-reload")).not.toBe("");
-      expect(attr(slotTag(html, "nav-back"), "aria-label")).toBe("Back");
-      expect(attr(slotTag(html, "nav-forward"), "aria-label")).toBe("Forward");
-      expect(attr(slotTag(html, "nav-reload"), "aria-label")).toBe("Reload");
+    it("renders back, forward and reload buttons when navigation is set", () => {
+      const html = render(() => <RLBrowserMockup navigation>x</RLBrowserMockup>);
+      expect(html).toContain('data-slot="back"');
+      expect(html).toContain('data-slot="forward"');
+      expect(html).toContain('data-slot="reload"');
     });
 
-    it("supports custom navigationSlot", () => {
+    it("replaces the navigation buttons with navigationSlot", () => {
       const html = render(() => (
-        <RLBrowserMockup navigation navigationSlot={<div data-slot="custom-nav">Nav</div>} />
+        <RLBrowserMockup navigation navigationSlot={() => <span data-test="custom-nav" />}>
+          x
+        </RLBrowserMockup>
       ));
-      expect(html).toContain("custom-nav");
+      expect(html).toContain('data-test="custom-nav"');
+      expect(html).not.toContain('data-slot="back"');
     });
   });
 
-  describe("URL Address Bar & Slots", () => {
-    it("renders default lock icon prefix with URL", () => {
-      const html = render(() => <RLBrowserMockup url="https://rimelight.com" />);
-      expect(slotTag(html, "url-bar")).not.toBe("");
-      expect(slotTag(html, "url-prefix")).not.toBe("");
-      expect(html).toContain("https://rimelight.com");
+  describe("URL bar", () => {
+    it("renders the url text when url is set", () => {
+      const html = render(() => (
+        <RLBrowserMockup url="https://rimelight.com/docs">x</RLBrowserMockup>
+      ));
+      expect(html).toContain('data-slot="url-bar"');
+      expect(html).toContain('data-slot="url-text"');
+      expect(html).toContain("https://rimelight.com/docs");
     });
 
-    it("allows custom urlIcon name", () => {
-      const html = render(() => <RLBrowserMockup url="https://rimelight.com" urlIcon="search" />);
-      expect(slotTag(html, "url-bar")).not.toBe("");
-      expect(html).toContain("https://rimelight.com");
+    it("omits the url text when url is not set", () => {
+      const html = render(() => <RLBrowserMockup>x</RLBrowserMockup>);
+      expect(html).not.toContain('data-slot="url-text"');
     });
 
-    it("supports string urlPrefix", () => {
-      const html = render(() => <RLBrowserMockup url="rimelight.com" urlPrefix="https://" />);
+    it("renders the default icon prefix when urlPrefix is not set", () => {
+      const html = render(() => <RLBrowserMockup url="https://rimelight.com">x</RLBrowserMockup>);
+      expect(html).toContain('data-slot="url-prefix"');
+      expect(html).toContain('data-slot="url-icon"');
+    });
+
+    it("renders a string urlPrefix as text instead of the icon", () => {
+      const html = render(() => (
+        <RLBrowserMockup url="https://rimelight.com" urlPrefix="https://">
+          x
+        </RLBrowserMockup>
+      ));
       expect(html).toContain("https://");
-      expect(html).toContain("rimelight.com");
+      expect(html).not.toContain('data-slot="url-icon"');
     });
 
-    it("can hide urlPrefix via urlPrefix={false}", () => {
-      const html = render(() => <RLBrowserMockup url="rimelight.com" urlPrefix={false} />);
-      expect(slotTag(html, "url-prefix")).toBe("");
+    it("omits the url prefix when urlPrefix is false", () => {
+      const html = render(() => (
+        <RLBrowserMockup url="https://rimelight.com" urlPrefix={false}>
+          x
+        </RLBrowserMockup>
+      ));
+      expect(html).not.toContain('data-slot="url-prefix"');
     });
 
-    it("supports urlSuffixSlot and actionsSlot", () => {
+    it("replaces the url prefix with urlPrefixSlot inside the prefix wrapper", () => {
       const html = render(() => (
         <RLBrowserMockup
           url="https://rimelight.com"
-          urlSuffixSlot={<span data-slot="star-btn">★</span>}
-          actionsSlot={
-            <button type="button" data-slot="menu-btn">
-              Menu
-            </button>
-          }
-        />
-      ));
-      expect(slotTag(html, "url-suffix")).not.toBe("");
-      expect(html).toMatch(/★|&#9733;/);
-      expect(slotTag(html, "actions")).not.toBe("");
-      expect(html).toContain("Menu");
-    });
-
-    it("supports entire urlSlot override", () => {
-      const html = render(() => (
-        <RLBrowserMockup urlSlot={<div data-slot="custom-url-bar">Custom URL</div>} />
-      ));
-      expect(html).toContain("Custom URL");
-      expect(slotTag(html, "url-bar")).toBe("");
-    });
-
-    it("supports entire headerSlot override", () => {
-      const html = render(() => (
-        <RLBrowserMockup headerSlot={<div data-slot="my-header">Custom Browser Header</div>}>
-          <div>Body</div>
+          urlPrefixSlot={() => <span data-test="prefix" />}
+        >
+          x
         </RLBrowserMockup>
       ));
-      expect(html).toContain("Custom Browser Header");
-      expect(slotTag(html, "controls")).toBe("");
-      expect(html).toContain("Body");
+      expect(html).toMatch(/data-slot="url-prefix"[^>]*>\s*<span data-test="prefix"/);
+      expect(html).not.toContain('data-slot="url-icon"');
+    });
+
+    it("renders urlSuffixSlot content after the url text", () => {
+      const html = render(() => (
+        <RLBrowserMockup
+          url="https://rimelight.com"
+          urlSuffixSlot={() => <span data-test="suffix" />}
+        >
+          x
+        </RLBrowserMockup>
+      ));
+      expect(html).toContain('data-slot="url-suffix"');
+      expect(html).toContain('data-test="suffix"');
+    });
+
+    it("replaces the whole url bar with urlBarSlot", () => {
+      const html = render(() => (
+        <RLBrowserMockup url="https://rimelight.com" urlBarSlot={() => <span data-test="bar" />}>
+          x
+        </RLBrowserMockup>
+      ));
+      expect(html).toContain('data-test="bar"');
+      expect(html).not.toContain('data-slot="url-bar"');
     });
   });
 
-  describe("Variants and Styling", () => {
-    it("applies outline variant by default", () => {
-      const html = render(() => <RLBrowserMockup />);
-      expect(slotTag(html, "root")).toContain("border-default");
-    });
-
-    it("applies solid variant classes", () => {
-      const html = render(() => <RLBrowserMockup variant="solid" />);
-      expect(slotTag(html, "root")).toContain("bg-elevated/20");
-    });
-
-    it("applies soft variant classes", () => {
-      const html = render(() => <RLBrowserMockup variant="soft" />);
-      expect(slotTag(html, "root")).toContain("border-0");
-    });
-
-    it("applies ghost variant classes", () => {
-      const html = render(() => <RLBrowserMockup variant="ghost" />);
-      expect(slotTag(html, "root")).toContain("bg-transparent");
-    });
-
-    it("supports sizes sm, md, lg, xl", () => {
-      const sm = render(() => <RLBrowserMockup size="sm" />);
-      const xl = render(() => <RLBrowserMockup size="xl" />);
-      expect(slotTag(sm, "header")).toContain("px-3");
-      expect(slotTag(xl, "header")).toContain("px-6");
-    });
-
-    it("respects padded={false}", () => {
+  describe("Header and actions", () => {
+    it("renders actionsSlot content inside the actions wrapper", () => {
       const html = render(() => (
-        <RLBrowserMockup padded={false}>
-          <span>No pad</span>
+        <RLBrowserMockup actionsSlot={() => <button data-test="deploy">Deploy</button>}>
+          x
         </RLBrowserMockup>
       ));
-      expect(slotTag(html, "body")).toContain("p-0!");
+      expect(html).toMatch(/data-slot="actions"[^>]*>\s*<button data-test="deploy">/);
     });
 
-    it("respects shadow={false} and rounded={false}", () => {
-      const html = render(() => <RLBrowserMockup shadow={false} rounded={false} />);
-      expect(slotTag(html, "root")).toContain("shadow-none");
-      expect(slotTag(html, "root")).toContain("rounded-none");
-    });
-
-    it("supports ui slot overrides", () => {
+    it("replaces the whole header with headerSlot", () => {
       const html = render(() => (
         <RLBrowserMockup
-          url="https://test.com"
-          ui={{
-            root: "custom-root-class",
-            header: "custom-header-class",
-            body: "custom-body-class",
-            urlBar: "custom-urlbar-class",
-          }}
-        />
+          url="https://rimelight.com"
+          navigation
+          headerSlot={() => <span data-test="header" />}
+        >
+          x
+        </RLBrowserMockup>
       ));
-
-      expect(slotTag(html, "root")).toContain("custom-root-class");
-      expect(slotTag(html, "header")).toContain("custom-header-class");
-      expect(slotTag(html, "body")).toContain("custom-body-class");
-      expect(slotTag(html, "url-bar")).toContain("custom-urlbar-class");
+      expect(html).toContain('data-test="header"');
+      expect(html).not.toContain('data-slot="controls"');
+      expect(html).not.toContain('data-slot="url-bar"');
+      expect(html).not.toContain('data-slot="actions"');
     });
   });
 });

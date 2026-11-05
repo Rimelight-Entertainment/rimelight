@@ -1,7 +1,9 @@
-import type { RLSelectProps, SelectItem } from "./select.types";
-import { RLSelectTheme } from "./select.theme";
-import { createMemo, createSignal, For, type Component } from "solid-js";
+import { createMemo, createSignal, For, Show, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
+import { RLButton } from "../button/RLButton";
+import { renderSlot } from "../../slot";
+import { RLSelectTheme } from "./select.theme";
+import type { RLSelectProps } from "./select.types";
 
 const OMIT_KEYS = [
   "id",
@@ -14,43 +16,32 @@ const OMIT_KEYS = [
   "multiple",
   "items",
   "leadingIcon",
+  "onChange",
   "onBlur",
   "ref",
 ] as const;
 
 export const RLSelect: Component<RLSelectProps> = (props) => {
-  /** The leading icon scales with the select, so an icon-only control matches the button scale. */
-  const leadingIconSize = () =>
-    ({ xs: "size-3.5", sm: "size-4", md: "size-4", lg: "size-5", xl: "size-6" })[
-      props.size ?? "md"
-    ];
   const { Tag, classes, rest, slots, id, children, theme } = RLSelectTheme.setup(props, {
     slots: ["leadingSlot"] as const,
     omit: OMIT_KEYS,
   });
 
-  const normalizedItems = createMemo(() => {
-    if (!props.items) return [];
-    return props.items.map((item: SelectItem | string) => {
-      if (typeof item === "string" || typeof item === "number" || typeof item === "boolean") {
-        return { label: String(item), value: String(item), disabled: false };
-      }
-      const i = item as {
-        label?: string;
-        value?: string | number;
-        disabled?: boolean;
-        icon?: string;
-        avatar?: { src?: string; alt?: string; loading?: "lazy" | "eager" };
-      };
-      return {
-        label: String(i.label ?? i.value ?? ""),
-        value: String(i.value ?? ""),
-        disabled: !!i.disabled,
-        icon: i.icon,
-        avatar: i.avatar,
-      };
-    });
-  });
+  const normalizedItems = createMemo(() =>
+    (props.items ?? []).map((item) =>
+      typeof item === "string"
+        ? { label: item, value: item, disabled: false }
+        : {
+            label: String(item.label ?? item.value ?? ""),
+            value: String(item.value ?? ""),
+            disabled: item.disabled === true,
+          },
+    ),
+  );
+
+  const leadingIconName = createMemo(() => props.leadingIcon ?? "");
+  const showPlaceholder = createMemo(() => Boolean(props.placeholder) && !props.multiple);
+  const iconLayout = createMemo(() => props.layout === "icon");
 
   const [internalValue, setInternalValue] = createSignal(props.defaultValue);
   const currentValue = createMemo(() =>
@@ -65,11 +56,8 @@ export const RLSelect: Component<RLSelectProps> = (props) => {
   // Computed per row so <For> keeps the same item objects when only the selection changes.
   const isOptionSelected = (optionValue: string) => {
     const val = currentValue();
-    return Array.isArray(val)
-      ? val.map(String).includes(optionValue)
-      : val !== undefined
-        ? String(val) === optionValue
-        : undefined;
+    if (Array.isArray(val)) return val.map(String).includes(optionValue);
+    return val === undefined ? undefined : String(val) === optionValue;
   };
 
   const handleChange = (e: Event & { currentTarget: HTMLSelectElement }) => {
@@ -88,48 +76,68 @@ export const RLSelect: Component<RLSelectProps> = (props) => {
         value={currentValueStr()}
         ref={props.ref}
         onBlur={props.onBlur}
-        class={`rl-select ${classes().select}`}
+        class={classes().select}
         data-slot="select"
-        data-variant={props.layout === "icon" ? "icon" : undefined}
+        data-variant={iconLayout() ? "icon" : undefined}
         {...rest}
         onChange={handleChange}
       >
         {/* The select button. <selectedcontent> mirrors the chosen option, so the closed control shows its label. */}
-        <button type="button" class={classes().trigger} data-slot="trigger">
-          {slots.leadingSlot() ? (
+        <RLButton type="button" class={classes().trigger} data-slot="trigger">
+          <Show
+            when={slots.leadingSlot()}
+            fallback={
+              <Show when={props.leadingIcon}>
+                <span class={classes().leading} data-slot="leading">
+                  <RLIcon
+                    name={leadingIconName()}
+                    size="sm"
+                    class={classes().icon}
+                    data-slot="icon"
+                  />
+                </span>
+              </Show>
+            }
+          >
             <span class={classes().leading} data-slot="leading">
-              {slots.leadingSlot()}
+              {renderSlot(slots.leadingSlot())}
             </span>
-          ) : props.leadingIcon ? (
-            <span class={classes().leading} data-slot="leading">
-              <RLIcon name={props.leadingIcon} size="sm" class={leadingIconSize()} />
-            </span>
-          ) : null}
-          <selectedcontent class={classes().label} />
-        </button>
+          </Show>
+          <selectedcontent class={classes().label} data-slot="label" />
+        </RLButton>
 
-        {props.placeholder && !props.multiple ? (
-          <option value="" disabled selected={!currentValue()} class="bg-default text-highlighted">
+        <Show when={showPlaceholder()}>
+          <option
+            value=""
+            disabled
+            selected={!currentValue()}
+            class={classes().option}
+            data-slot="option"
+          >
             {props.placeholder}
           </option>
-        ) : null}
+        </Show>
 
-        {children() ? (
-          children()
-        ) : (
-          <For each={normalizedItems()}>
-            {(item) => (
-              <option
-                value={item.value}
-                disabled={item.disabled}
-                selected={isOptionSelected(String(item.value))}
-                class="bg-default text-highlighted"
-              >
-                {item.label}
-              </option>
-            )}
-          </For>
-        )}
+        <Show
+          when={children()}
+          fallback={
+            <For each={normalizedItems()}>
+              {(item) => (
+                <option
+                  value={item.value}
+                  disabled={item.disabled}
+                  selected={isOptionSelected(item.value)}
+                  class={classes().option}
+                  data-slot="option"
+                >
+                  {item.label}
+                </option>
+              )}
+            </For>
+          }
+        >
+          {children()}
+        </Show>
       </select>
     </Tag>
   );

@@ -1,11 +1,11 @@
 import type { RLModalProps } from "./modal.types";
 import { RLModalTheme } from "./modal.theme";
-import { createEffect, onSettled, Show, type Component } from "solid-js";
+import { createEffect, createMemo, onSettled, Show, type Component } from "solid-js";
 import { Portal } from "@solidjs/web";
 import { createControllable } from "../../controllable";
 import { RLButton } from "../button/RLButton";
 import { uiT } from "../../locale";
-import { slot } from "../../slot";
+import { renderSlot } from "../../slot";
 
 const OMIT_KEYS = [
   "open",
@@ -14,7 +14,6 @@ const OMIT_KEYS = [
   "description",
   "portal",
   "dismissible",
-  "closeIcon",
   "lockScroll",
   "unmountOnHide",
   "triggerLabel",
@@ -55,10 +54,10 @@ export const RLModal: Component<RLModalProps> = (props) => {
 
   const isModal = () => props.modal ?? true;
   const isDismissible = () => props.dismissible ?? true;
-  const unmountOnHide = () => props.unmountOnHide ?? true;
-  const usePortal = () => props.portal !== false;
   // Resolved once, outside a reactive getter: Portal reads `mount` during the effect phase.
   const portalMount = typeof props.portal === "object" ? props.portal : undefined;
+
+  const triggerNode = createMemo(() => renderSlot(slots.triggerSlot()));
 
   let contentRef: HTMLDivElement | undefined;
 
@@ -82,8 +81,8 @@ export const RLModal: Component<RLModalProps> = (props) => {
   // Lock scroll
   createEffect(
     () => ({ open: isOpen(), lock: (props.lockScroll ?? true) && isModal() }),
-    ({ open, lock }) => {
-      document.body.style.overflow = open && lock ? "hidden" : "";
+    (state) => {
+      document.body.style.overflow = state.open && state.lock ? "hidden" : "";
       return () => {
         document.body.style.overflow = "";
       };
@@ -118,21 +117,22 @@ export const RLModal: Component<RLModalProps> = (props) => {
     };
   });
 
-  // Overlay slots are invoked here, inside the dialog render, which only runs while the
-  // modal is open. Each invocation is memoized once so repeated reads (aria ids, Show
+  // Slot nodes are memoized once per dialog render, so repeated reads (aria ids, Show
   // guards, and the markup itself) share one subtree.
   const renderModalDialog = () => {
-    const headerNode = slot(() => slots.headerSlot()?.());
-    const titleNode = slot(() => slots.titleSlot()?.() ?? props.title);
-    const descriptionNode = slot(() => slots.descriptionSlot()?.() ?? props.description);
-    const actionsNode = slot(() => slots.actionsSlot()?.());
-    const closeNode = slot(() => slots.closeSlot()?.());
-    const bodyNode = slot(() => slots.bodySlot()?.() ?? children());
-    const footerNode = slot(() => slots.footerSlot()?.());
+    const headerNode = createMemo(() => renderSlot(slots.headerSlot()));
+    const titleNode = createMemo(() => renderSlot(slots.titleSlot()) ?? props.title);
+    const descriptionNode = createMemo(
+      () => renderSlot(slots.descriptionSlot()) ?? props.description,
+    );
+    const actionsNode = createMemo(() => renderSlot(slots.actionsSlot()));
+    const closeNode = createMemo(() => renderSlot(slots.closeSlot()));
+    const bodyNode = createMemo(() => renderSlot(slots.bodySlot()) ?? children());
+    const footerNode = createMemo(() => renderSlot(slots.footerSlot()));
 
     return (
       <div
-        class={`${classes().overlay}${isOpen() || !unmountOnHide() ? "" : " hidden!"}`}
+        class={classes().overlay}
         data-slot="overlay"
         data-state={isOpen() ? "open" : "closed"}
         onClick={(e) => {
@@ -163,7 +163,7 @@ export const RLModal: Component<RLModalProps> = (props) => {
               when={headerNode()}
               fallback={
                 <div class={classes().header} data-slot="header">
-                  <div class="flex flex-col gap-1 min-w-0 flex-1">
+                  <div class={classes().heading} data-slot="heading">
                     <Show when={titleNode()}>
                       <h2 id={titleId()} class={classes().title} data-slot="title">
                         {titleNode()}
@@ -191,8 +191,8 @@ export const RLModal: Component<RLModalProps> = (props) => {
                           variant="ghost"
                           color="neutral"
                           size="sm"
-                          square
-                          leadingIcon={props.closeIcon ?? "x"}
+                          shape="square"
+                          icon="x"
                           aria-label={uiT("modal.close")}
                           data-slot="close"
                           class={classes().close}
@@ -212,12 +212,10 @@ export const RLModal: Component<RLModalProps> = (props) => {
             </Show>
           </Show>
 
-          {/* Body */}
           <div class={classes().body} data-slot="body">
             {bodyNode()}
           </div>
 
-          {/* Footer */}
           <Show when={footerNode()}>
             <div class={classes().footer} data-slot="footer">
               {footerNode()}
@@ -231,7 +229,7 @@ export const RLModal: Component<RLModalProps> = (props) => {
   return (
     <Tag data-slot="root" data-theme={theme()} class={classes().root} {...rest}>
       <Show
-        when={slots.triggerSlot()}
+        when={triggerNode()}
         fallback={
           <Show when={props.triggerLabel}>
             <RLButton
@@ -250,12 +248,12 @@ export const RLModal: Component<RLModalProps> = (props) => {
           data-slot="trigger-wrapper"
           onClick={() => setOpenState(true)}
         >
-          {slots.triggerSlot()}
+          {triggerNode()}
         </span>
       </Show>
 
-      <Show when={isOpen() || !unmountOnHide()}>
-        <Show when={usePortal()} fallback={renderModalDialog()}>
+      <Show when={isOpen() || !(props.unmountOnHide ?? true)}>
+        <Show when={props.portal !== false} fallback={renderModalDialog()}>
           <Portal {...(portalMount ? { mount: portalMount } : {})}>{renderModalDialog()}</Portal>
         </Show>
       </Show>

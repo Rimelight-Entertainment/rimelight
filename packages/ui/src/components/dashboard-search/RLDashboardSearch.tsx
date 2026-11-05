@@ -2,6 +2,7 @@ import type { RLDashboardSearchProps } from "./dashboard-search.types";
 import { RLDashboardSearchTheme } from "./dashboard-search.theme";
 import { onSettled, Show, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
+import { RLButton } from "../button/RLButton";
 import { uiT } from "../../locale";
 import { createControllable } from "../../controllable";
 
@@ -67,20 +68,19 @@ export const RLDashboardSearch: Component<RLDashboardSearchProps> = (props) => {
         <div
           data-dashboard-search
           data-slot="modal"
-          class={`${classes().modal} fixed inset-0 z-50 flex items-start justify-center sm:pt-16`}
+          class={classes().modal}
           onClick={(e) => {
             if (e.target === e.currentTarget) setOpenState(false);
           }}
         >
           <div
-            class="fixed inset-0 bg-default/80 backdrop-blur-sm"
+            data-slot="backdrop"
+            class={classes().backdrop}
             onClick={() => setOpenState(false)}
           />
-          <div
-            class={`relative w-full bg-default border border-default sm:rounded-xl shadow-2xl overflow-hidden ${classes().modal}`}
-          >
-            <div class="flex items-center gap-2 border-b border-default px-4">
-              <RLIcon name="search" class="size-5 shrink-0 text-muted" />
+          <div data-slot="dialog" class={classes().dialog}>
+            <div data-slot="header" class={classes().header}>
+              <RLIcon name="search" class={classes().icon} />
               <input
                 ref={(el) => (inputRef = el)}
                 type="text"
@@ -89,15 +89,21 @@ export const RLDashboardSearch: Component<RLDashboardSearchProps> = (props) => {
                 placeholder={uiT("search.placeholder")}
                 class={classes().input}
               />
-              <button
+              <RLButton
                 type="button"
-                class="shrink-0 size-8 flex items-center justify-center rounded-md hover:bg-muted text-muted"
+                variant="ghost"
+                color="neutral"
+                data-slot="close"
+                aria-label={uiT("search.close")}
+                class={classes().close}
                 onClick={() => setOpenState(false)}
               >
-                <RLIcon name="x" class="size-4" />
-              </button>
+                <RLIcon name="x" class={classes().closeIcon} />
+              </RLButton>
             </div>
-            <div class="p-4 text-sm text-muted text-center">{uiT("search.type-to-search")}</div>
+            <div data-slot="body" class={classes().body}>
+              {uiT("search.type-to-search")}
+            </div>
           </div>
         </div>
       </Show>

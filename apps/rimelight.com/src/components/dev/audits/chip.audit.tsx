@@ -393,7 +393,7 @@ export const chipAudit: ComponentAuditDefinition = {
     {
       criterion: "Slot pattern parity (default, content)",
       status: "pass",
-      notes: "Full JSX slot support for wrapped children and text/textSlot.",
+      notes: "Full JSX slot support for wrapped children and text/labelSlot.",
     },
     {
       criterion: "Custom user defined colors support",

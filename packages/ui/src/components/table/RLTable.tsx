@@ -18,13 +18,16 @@ import type {
   GroupedItem,
 } from "./table.types";
 import { RLTableTheme } from "./table.theme";
+import { readField } from "./table.helpers";
 import { createMemo, createSignal, For, onSettled, Show, untrack } from "solid-js";
 import { isServer, type JSX } from "@solidjs/web";
 import { RLDropdownMenuTheme } from "../dropdown-menu/dropdown-menu.theme";
 import { RLInput } from "../input/RLInput";
 import { RLDropdownMenu } from "../dropdown-menu/RLDropdownMenu";
 import { RLIcon } from "../icon/RLIcon";
+import { RLButton } from "../button/RLButton";
 import { uiT } from "../../locale";
+import { renderSlot } from "../../slot";
 export * from "./table.types";
 
 function getNestedValue(obj: AnyData, key: string): any {
@@ -33,6 +36,13 @@ function getNestedValue(obj: AnyData, key: string): any {
     return key.split(".").reduce((acc: any, k) => acc?.[k], obj);
   }
   return obj[key];
+}
+
+// Formats a cell value as text. Objects are serialized rather than rendered as "[object Object]".
+function cellText(value: unknown): string {
+  if (typeof value === "string") return value;
+  if (typeof value === "object" && value !== null) return JSON.stringify(value);
+  return String(value);
 }
 
 const OMIT_KEYS = [
@@ -97,7 +107,6 @@ const OMIT_KEYS = [
   "exportable",
   "exportFilename",
   "actions",
-  "columnSlots",
   "onApi",
   "toolbarSlot",
   "captionSlot",
@@ -250,7 +259,7 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
         const firstRow = d[0] as AnyData;
         cols = Object.keys(firstRow).map((key) => ({
           id: key,
-          accessorKey: key as any,
+          accessorKey: key,
           header: key.charAt(0).toUpperCase() + key.slice(1),
           enableSorting: true,
         }));
@@ -270,15 +279,15 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
         enableSorting: false,
         enableHiding: false,
         header: "",
-        cell: ({ row }) => (
-          <div class="flex items-center justify-center">
+        cell: (ctx) => (
+          <div class={classes().reorderCell}>
             <span
               class={classes().dragHandle}
               data-slot="drag-handle"
               draggable="true"
               onDragStart={(e) => {
-                setDraggedRowIndex(row.index);
-                e.dataTransfer?.setData("text/plain", String(row.index));
+                setDraggedRowIndex(ctx.row.index);
+                e.dataTransfer?.setData("text/plain", String(ctx.row.index));
                 if (e.dataTransfer) {
                   e.dataTransfer.effectAllowed = "move";
                 }
@@ -288,7 +297,7 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
                 setDropTargetRow(null);
               }}
             >
-              <span class="i-lucide-grip-vertical size-4" />
+              <RLIcon name="grip-vertical" class={classes().reorderIcon} />
             </span>
           </div>
         ),
@@ -343,14 +352,32 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
     const actionsFn =
       col.actions ?? col.items ?? (col.id === "actions" ? props.actions : undefined);
     if (actionsFn) {
-      return typeof actionsFn === "function" ? (actionsFn as any)(row) : actionsFn;
+      return typeof actionsFn === "function" ? actionsFn(row) : actionsFn;
     }
     return undefined;
   }
 
-  const actionsDropdownMenuTheme = createMemo(() =>
-    RLDropdownMenuTheme({ size: "xs", color: "neutral" }),
-  );
+  const actionsDropdownMenuClasses = createMemo(() => RLDropdownMenuTheme({ size: "xs" }));
+
+  const renderActionsTrigger = () => {
+    const dmClasses = actionsDropdownMenuClasses();
+    return (
+      <div class={classes().actionsCell}>
+        <div class={dmClasses.root} data-slot="root" data-dropdown-menu>
+          <RLButton
+            type="button"
+            variant="ghost"
+            color="neutral"
+            class={[dmClasses.trigger, classes().actionsTrigger].join(" ")}
+            data-slot="trigger"
+            data-dropdown-trigger
+          >
+            <RLIcon name="ellipsis-vertical" class={classes().actionsIcon} />
+          </RLButton>
+        </div>
+      </div>
+    );
+  };
 
   function renderCellContent(
     row: TableRow<T>,
@@ -361,21 +388,7 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
   ) {
     const actions = getCellActions(row, col);
     if (Array.isArray(actions) && actions.length > 0) {
-      const dmClasses = actionsDropdownMenuTheme();
-      return (
-        <div class="flex items-center justify-end">
-          <div class={dmClasses.root} data-slot="root" data-dropdown-menu>
-            <button
-              type="button"
-              class={`${dmClasses.trigger} aspect-square !px-1.5 !py-1.5 inline-flex items-center justify-center shrink-0`}
-              data-slot="trigger"
-              data-dropdown-trigger
-            >
-              <span class="i-lucide-ellipsis-vertical size-4" />
-            </button>
-          </div>
-        </div>
-      );
+      return renderActionsTrigger();
     }
     if (typeof col.cell === "function") {
       const rendered = col.cell({
@@ -388,21 +401,7 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
         table: tableApi,
       });
       if (Array.isArray(rendered) && rendered.length > 0) {
-        const dmClasses = actionsDropdownMenuTheme();
-        return (
-          <div class="flex items-center justify-end">
-            <div class={dmClasses.root} data-slot="root" data-dropdown-menu>
-              <button
-                type="button"
-                class={`${dmClasses.trigger} aspect-square !px-1.5 !py-1.5 inline-flex items-center justify-center shrink-0`}
-                data-slot="trigger"
-                data-dropdown-trigger
-              >
-                <span class="i-lucide-ellipsis-vertical size-4" />
-              </button>
-            </div>
-          </div>
-        );
+        return renderActionsTrigger();
       }
       return rendered;
     }
@@ -422,8 +421,9 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
     }
 
     for (const id of order) {
-      if (rawMap.has(id)) {
-        ordered.push(rawMap.get(id)!);
+      const col = rawMap.get(id);
+      if (col) {
+        ordered.push(col);
         rawMap.delete(id);
       }
     }
@@ -515,10 +515,11 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
 
   const buildRowTree = (rawItems: T[], parentDepth = 0): TableRow<T>[] => {
     return rawItems.map((item, idx) => {
+      const rawId = readField(item, "id");
       const rId = props.getRowId
         ? props.getRowId(item, idx)
-        : (item as any)?.id !== undefined
-          ? String((item as any).id)
+        : rawId !== undefined
+          ? cellText(rawId)
           : String(idx);
 
       let subRowsList: TableRow<T>[] | undefined = undefined;
@@ -527,8 +528,11 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
         if (children && children.length > 0) {
           subRowsList = buildRowTree(children, parentDepth + 1);
         }
-      } else if (Array.isArray((item as any)?.children) && (item as any).children.length > 0) {
-        subRowsList = buildRowTree((item as any).children, parentDepth + 1);
+      } else {
+        const children = readField(item, "children");
+        if (Array.isArray(children) && children.length > 0) {
+          subRowsList = buildRowTree(children, parentDepth + 1);
+        }
       }
 
       const rowObj: TableRow<T> = {
@@ -704,7 +708,7 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
       return rows.map((r) => ({ type: "row", row: r }));
     }
 
-    const colId = groupCols[depth]!;
+    const colId = groupCols[depth] ?? "";
     const groupMap = new Map<string, TableRow<T>[]>();
     const groupOrder: string[] = [];
 
@@ -716,12 +720,12 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
       }
       row.groupingColumnId = colId;
       row.groupingValue = val;
-      groupMap.get(val)!.push(row);
+      groupMap.get(val)?.push(row);
     }
 
     const result: GroupedItem[] = [];
     for (const val of groupOrder) {
-      const subRows = groupMap.get(val)!;
+      const subRows = groupMap.get(val) ?? [];
       const groupId = `group-${parentPath}${colId}-${val}`;
       const group: TableGroup<T> = {
         id: groupId,
@@ -1027,9 +1031,9 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
         return currentColumnVisibility()[id] !== false;
       });
 
-      const escapeCsv = (val: any): string => {
+      const escapeCsv = (val: unknown): string => {
         if (val === undefined || val === null) return "";
-        const str = String(val);
+        const str = cellText(val);
         if (str.includes(",") || str.includes('"') || str.includes("\n") || str.includes("\r")) {
           return `"${str.replace(/"/g, '""')}"`;
         }
@@ -1177,9 +1181,8 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
       "emptyContentSlot",
       "bodyTopSlot",
       "bodyBottomSlot",
-      "columnSlots",
     ] as const,
-    variants: () => ({ externalScroll: false, pinned: false }),
+    variants: () => ({ externalScroll: false, pinned: false, loadingBar: props.loading }),
   });
 
   const showToolbar = createMemo(
@@ -1208,7 +1211,7 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
     {
       id: "csv",
       label: uiT("table.exportCsv"),
-      icon: "i-lucide-file-spreadsheet",
+      icon: "file-spreadsheet",
       onSelect: () => {
         tableApi.exportToCsv({ filename: props.exportFilename ?? "export" });
       },
@@ -1216,7 +1219,7 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
     {
       id: "json",
       label: uiT("table.exportJson"),
-      icon: "i-lucide-file-json",
+      icon: "file-json",
       onSelect: () => {
         tableApi.exportToJson({ filename: props.exportFilename ?? "export" });
       },
@@ -1224,12 +1227,84 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
   ]);
 
   const hasFooters = createMemo(() =>
-    visibleColumns().some(
-      (col) =>
-        typeof col.footer === "function" ||
-        col.footer ||
-        slots.columnSlots()?.[`${String(col.id || col.accessorKey || "")}-footer`],
-    ),
+    visibleColumns().some((col) => typeof col.footer === "function" || !!col.footer),
+  );
+
+  const colWidth = (col: TableColumn<T>, colId: string) => {
+    const sizeVal = currentColumnSizing()[colId] ?? col.size;
+    return typeof sizeVal === "number" ? `${sizeVal}px` : sizeVal || undefined;
+  };
+  const colMinWidth = (col: TableColumn<T>) =>
+    col.minSize
+      ? typeof col.minSize === "number"
+        ? `${col.minSize}px`
+        : String(col.minSize)
+      : undefined;
+  const colMaxWidth = (col: TableColumn<T>) =>
+    col.maxSize
+      ? typeof col.maxSize === "number"
+        ? `${col.maxSize}px`
+        : String(col.maxSize)
+      : undefined;
+  const pinLeft = (colId: string) =>
+    colId in columnOffsets().left ? `${columnOffsets().left[colId]}px` : undefined;
+  const pinRight = (colId: string) =>
+    colId in columnOffsets().left || !(colId in columnOffsets().right)
+      ? undefined
+      : `${columnOffsets().right[colId]}px`;
+
+  const renderBodyCells = (row: TableRow<T>) => (
+    <For each={visibleColumns()}>
+      {(col) => {
+        const colId = () => String(col.id || col.accessorKey || "");
+        const cellValue = () => {
+          if (typeof col.accessorFn === "function") {
+            return col.accessorFn(row.original);
+          }
+          const key = (col.accessorKey || col.id || "") as string;
+          return key ? row.getValue(key) : undefined;
+        };
+        const pinned = () => colId() in columnOffsets().left || colId() in columnOffsets().right;
+        const metaTdClass = () =>
+          typeof col.meta?.class?.td === "function"
+            ? col.meta.class.td(row)
+            : col.meta?.class?.td || "";
+        const colSpanVal = () =>
+          typeof col.meta?.colspan?.td === "function"
+            ? col.meta.colspan.td(row)
+            : col.meta?.colspan?.td;
+        const rowSpanVal = () =>
+          typeof col.meta?.rowspan?.td === "function"
+            ? col.meta.rowspan.td(row)
+            : col.meta?.rowspan?.td;
+        const isEditing = () =>
+          currentEditingCell()?.rowId === row.id && currentEditingCell()?.columnId === colId();
+        const setEditing = (editing: boolean) => {
+          tableApi.setEditingCell(editing ? { rowId: row.id, columnId: colId() } : null);
+        };
+
+        return (
+          <td
+            class={[classes().td, pinned() ? classes().pinnedCell : "", metaTdClass()]
+              .filter(Boolean)
+              .join(" ")}
+            style={{
+              "--rl-col-width": colWidth(col, colId()),
+              "--rl-col-min-width": colMinWidth(col),
+              "--rl-col-max-width": colMaxWidth(col),
+              "--rl-pin-left": pinLeft(colId()),
+              "--rl-pin-right": pinRight(colId()),
+            }}
+            colspan={colSpanVal()}
+            rowspan={rowSpanVal()}
+            data-slot="td"
+            data-col-id={colId()}
+          >
+            {renderCellContent(row, col, cellValue, isEditing, setEditing)}
+          </td>
+        );
+      }}
+    </For>
   );
 
   return (
@@ -1240,35 +1315,33 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
             <RLInput
               type="search"
               placeholder={props.searchPlaceholder ?? uiT("table.searchPlaceholder")}
-              leadingIcon="i-lucide-search"
-              class="max-w-xs min-w-[10ch] w-full"
+              leadingIcon="search"
+              class={classes().search}
               value={currentGlobalFilter()}
-              onInput={(e: any) => updateGlobalFilter(e.target.value)}
+              onInput={(e) => updateGlobalFilter(e.currentTarget.value)}
             />
           </Show>
 
-          {slots.toolbarSlot()?.({ table: tableApi })}
+          {renderSlot(slots.toolbarSlot(), { table: tableApi })}
 
-          <div class="ml-auto flex items-center gap-2 shrink-0">
+          <div class={classes().toolbarActions}>
             <Show when={props.exportable}>
               <RLDropdownMenu
                 label={uiT("table.export")}
-                icon="i-lucide-download"
+                icon="download"
                 items={exportDropdownItems()}
-                content={{ align: "end" }}
+                body={{ align: "end" }}
                 size="sm"
-                color="neutral"
               />
             </Show>
 
             <Show when={props.showColumnsToggle}>
               <RLDropdownMenu
                 label={uiT("table.columns")}
-                icon="i-lucide-columns"
+                icon="columns"
                 items={columnDropdownItems()}
-                content={{ align: "end" }}
+                body={{ align: "end" }}
                 size="sm"
-                color="neutral"
               />
             </Show>
           </div>
@@ -1277,35 +1350,24 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
 
       <div
         ref={(el) => (containerRef = el)}
-        class={`overflow-x-auto w-full relative${isVirtual() ? " max-h-[400px] overflow-y-auto" : ""}`}
+        class={isVirtual() ? classes().virtualScroller : classes().scroller}
       >
         <table ref={(el) => (tableElementRef = el)} class={classes().base} data-slot="base">
           <colgroup>
             <For each={visibleColumns()}>
               {(col) => {
                 const colId = () => String(col.id || col.accessorKey || "");
-                const styles = () => {
-                  const sizeVal = currentColumnSizing()[colId()] ?? col.size;
-                  const list: string[] = [];
-                  if (typeof sizeVal === "number") list.push(`--rl-col-width: ${sizeVal}px;`);
-                  else if (sizeVal) list.push(`--rl-col-width: ${sizeVal};`);
-                  if (col.minSize) {
-                    list.push(
-                      `--rl-col-min-width: ${typeof col.minSize === "number" ? `${col.minSize}px` : col.minSize};`,
-                    );
-                  }
-                  if (col.maxSize) {
-                    list.push(
-                      `--rl-col-max-width: ${typeof col.maxSize === "number" ? `${col.maxSize}px` : col.maxSize};`,
-                    );
-                  }
-                  return list.join(" ") || undefined;
-                };
                 return (
                   <col
                     data-col-id={colId()}
-                    class="[width:var(--rl-col-width,auto)] [min-width:var(--rl-col-min-width,auto)] [max-width:var(--rl-col-max-width,none)]"
-                    style={styles()}
+                    class={classes().col}
+                    style={{
+                      "--rl-col-width": colWidth(col, colId()),
+                      "--rl-col-min-width": colMinWidth(col),
+                      "--rl-col-max-width": colMaxWidth(col),
+                      "--rl-pin-left": pinLeft(colId()),
+                      "--rl-pin-right": pinRight(colId()),
+                    }}
                   />
                 );
               }}
@@ -1314,7 +1376,9 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
 
           <Show when={props.caption || slots.captionSlot()}>
             <caption class={classes().caption} data-slot="caption">
-              {slots.captionSlot() ? slots.captionSlot()?.({ table: tableApi }) : props.caption}
+              <Show when={slots.captionSlot()} fallback={props.caption}>
+                {renderSlot(slots.captionSlot(), { table: tableApi })}
+              </Show>
             </caption>
           </Show>
 
@@ -1327,32 +1391,6 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
                     const colId = () => String(col.id || col.accessorKey || "");
                     const pinned = () =>
                       colId() in columnOffsets().left || colId() in columnOffsets().right;
-                    const pinStyle = () => {
-                      if (colId() in columnOffsets().left) {
-                        return `--rl-pin-left: ${columnOffsets().left[colId()]}px;`;
-                      }
-                      if (colId() in columnOffsets().right) {
-                        return `--rl-pin-right: ${columnOffsets().right[colId()]}px;`;
-                      }
-                      return "";
-                    };
-                    const sizeStyle = () => {
-                      const sizeVal = currentColumnSizing()[colId()] ?? col.size;
-                      const styles: string[] = [];
-                      if (typeof sizeVal === "number") styles.push(`--rl-col-width: ${sizeVal}px;`);
-                      else if (sizeVal) styles.push(`--rl-col-width: ${sizeVal};`);
-                      if (col.minSize) {
-                        styles.push(
-                          `--rl-col-min-width: ${typeof col.minSize === "number" ? `${col.minSize}px` : col.minSize};`,
-                        );
-                      }
-                      if (col.maxSize) {
-                        styles.push(
-                          `--rl-col-max-width: ${typeof col.maxSize === "number" ? `${col.maxSize}px` : col.maxSize};`,
-                        );
-                      }
-                      return styles.join(" ");
-                    };
                     const metaThClass = () =>
                       typeof col.meta?.class?.th === "function"
                         ? col.meta.class.th(col)
@@ -1366,13 +1404,14 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
                       colId() !== "dragHandle";
 
                     const activeSort = () => currentSorting().find((s) => s.id === colId());
-                    const sortDir = () =>
-                      activeSort() ? (activeSort()!.desc ? "desc" : "asc") : "none";
-
-                    const slotHeader = slots.columnSlots()?.[`${colId()}-header`];
+                    const sortDir = () => {
+                      const sort = activeSort();
+                      return sort ? (sort.desc ? "desc" : "asc") : "none";
+                    };
 
                     const isDropTarget = () =>
                       dropTargetCol()?.id === colId() && draggedColId() !== colId();
+
                     const dropPosition = () =>
                       isDropTarget() ? dropTargetCol()?.position : undefined;
 
@@ -1397,8 +1436,23 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
                     return (
                       <th
                         scope="col"
-                        class={`${classes().th} ${pinned() ? "sticky bg-default z-10" : ""} ${metaThClass()}`}
-                        style={`${sizeStyle()} ${pinStyle()}`}
+                        aria-sort={
+                          sortDir() === "none"
+                            ? undefined
+                            : sortDir() === "asc"
+                              ? "ascending"
+                              : "descending"
+                        }
+                        class={[classes().th, pinned() ? classes().pinnedCell : "", metaThClass()]
+                          .filter(Boolean)
+                          .join(" ")}
+                        style={{
+                          "--rl-col-width": colWidth(col, colId()),
+                          "--rl-col-min-width": colMinWidth(col),
+                          "--rl-col-max-width": colMaxWidth(col),
+                          "--rl-pin-left": pinLeft(colId()),
+                          "--rl-pin-right": pinRight(colId()),
+                        }}
                         data-col-id={colId()}
                         data-slot="th"
                         data-drop-position={dropPosition()}
@@ -1419,15 +1473,15 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
                           }
                         }}
                         onDrop={(e) => {
-                          if (!props.enableColumnReordering || !draggedColId()) return;
+                          const sourceId = draggedColId();
+                          if (!props.enableColumnReordering || !sourceId) return;
                           e.preventDefault();
-                          const sourceId = draggedColId()!;
                           const target = dropTargetCol();
                           setDraggedColId(null);
                           setDropTargetCol(null);
                           if (!target || sourceId === target.id) return;
 
-                          const cols = resolvedColumns().map((c) =>
+                          const cols = Array.from(resolvedColumns(), (c) =>
                             String(c.id || c.accessorKey || ""),
                           );
                           const fromIdx = cols.indexOf(sourceId);
@@ -1443,7 +1497,7 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
                           updateColumnOrder(newOrder);
                         }}
                       >
-                        <div class="flex items-center gap-1.5">
+                        <div class={classes().headerContent}>
                           {/* Column Drag Handle */}
                           <Show
                             when={
@@ -1470,51 +1524,35 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
                                 setDropTargetCol(null);
                               }}
                             >
-                              <span class="i-lucide-grip-vertical size-3.5 opacity-40 hover:opacity-100" />
+                              <RLIcon name="grip-vertical" class={classes().dragHandleIcon} />
                             </span>
                           </Show>
 
-                          <div class="flex-1 min-w-0">
-                            <Show
-                              when={!slotHeader}
-                              fallback={
-                                typeof slotHeader === "function"
-                                  ? slotHeader({ column: col, table: tableApi })
-                                  : slotHeader
-                              }
-                            >
-                              <Show
-                                when={canSort()}
-                                fallback={
-                                  typeof col.header === "function" ? (
-                                    col.header({ column: col, table: tableApi })
-                                  ) : (
-                                    <span>{headerLabel()}</span>
-                                  )
-                                }
+                          <div class={classes().headerText}>
+                            <Show when={canSort()} fallback={<span>{headerLabel()}</span>}>
+                              <RLButton
+                                type="button"
+                                variant="ghost"
+                                color="neutral"
+                                class={classes().sortButton}
+                                onClick={(e: MouseEvent) => toggleSort(colId(), e.shiftKey)}
                               >
-                                <button
-                                  type="button"
-                                  class="inline-flex items-center gap-1.5 hover:text-highlighted focus:outline-none transition-colors cursor-pointer group -mx-1 px-1 py-0.5 rounded"
-                                  onClick={(e) => toggleSort(colId(), e.shiftKey)}
-                                  aria-label={`Sort by ${colId()}`}
-                                >
-                                  {typeof col.header === "function" ? (
-                                    col.header({ column: col, table: tableApi })
-                                  ) : (
-                                    <span>{headerLabel()}</span>
-                                  )}
-                                  <span
-                                    class={`size-3.5 transition-all shrink-0 ${
-                                      sortDir() === "asc"
-                                        ? "i-lucide-arrow-up-narrow-wide text-primary"
-                                        : sortDir() === "desc"
-                                          ? "i-lucide-arrow-down-wide-narrow text-primary"
-                                          : "i-lucide-arrow-up-down opacity-40 group-hover:opacity-100"
-                                    }`}
-                                  />
-                                </button>
-                              </Show>
+                                <span>{headerLabel()}</span>
+                                <RLIcon
+                                  name={
+                                    sortDir() === "asc"
+                                      ? "arrow-up-narrow-wide"
+                                      : sortDir() === "desc"
+                                        ? "arrow-down-wide-narrow"
+                                        : "arrow-up-down"
+                                  }
+                                  class={
+                                    sortDir() === "none"
+                                      ? classes().sortIcon
+                                      : classes().sortIconActive
+                                  }
+                                />
+                              </RLButton>
                             </Show>
                           </div>
                         </div>
@@ -1524,7 +1562,7 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
                           <div
                             class={classes().resizer}
                             data-slot="resizer"
-                            data-resizing={resizingColId() === colId() ? "true" : undefined}
+                            data-resizing={resizingColId() === colId() ? "" : undefined}
                             onPointerDown={(e) => startResize(e, colId(), col.minSize, col.maxSize)}
                           />
                         </Show>
@@ -1538,7 +1576,7 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
 
           {/* ── tbody ── */}
           <tbody class={classes().tbody} data-slot="tbody">
-            {slots.bodyTopSlot()?.({ table: tableApi })}
+            {renderSlot(slots.bodyTopSlot(), { table: tableApi })}
 
             <Show
               when={!props.loading}
@@ -1552,16 +1590,13 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
                     <Show
                       when={slots.loadingContentSlot()}
                       fallback={
-                        <div class="flex items-center justify-center gap-2 text-muted py-4">
-                          <RLIcon
-                            name="i-lucide-loader-2"
-                            class="size-5 animate-spin text-primary"
-                          />
+                        <div class={classes().loadingContent}>
+                          <RLIcon name="loader-circle" class={classes().loadingIcon} />
                           <span>{uiT("table.loading")}</span>
                         </div>
                       }
                     >
-                      {slots.loadingContentSlot()?.({ table: tableApi })}
+                      {renderSlot(slots.loadingContentSlot(), { table: tableApi })}
                     </Show>
                   </td>
                 </tr>
@@ -1579,13 +1614,13 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
                       <Show
                         when={slots.emptyContentSlot()}
                         fallback={
-                          <div class="flex flex-col items-center justify-center py-6 gap-2 text-muted">
-                            <RLIcon name="i-lucide-inbox" class="size-8 opacity-40" />
-                            <p class="text-sm font-medium">{props.empty ?? uiT("table.empty")}</p>
+                          <div class={classes().emptyContent}>
+                            <RLIcon name="inbox" class={classes().emptyIcon} />
+                            <p class={classes().emptyText}>{props.empty ?? uiT("table.empty")}</p>
                           </div>
                         }
                       >
-                        {slots.emptyContentSlot()?.({ table: tableApi })}
+                        {renderSlot(slots.emptyContentSlot(), { table: tableApi })}
                       </Show>
                     </td>
                   </tr>
@@ -1596,8 +1631,8 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
                   <tr>
                     <td
                       colspan={Math.max(1, visibleColumns().length)}
-                      class="h-[var(--rl-pad-top,0px)] p-0 border-0"
-                      style={{ "--rl-pad-top": `${virtualizedView().padTop}px` }}
+                      class={classes().padRow}
+                      style={{ "--rl-pad": `${virtualizedView().padTop}px` }}
                     />
                   </tr>
                 </Show>
@@ -1610,26 +1645,22 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
                         <tr class={classes().trGroup} data-slot="tr-group" data-depth={depth}>
                           <td
                             colspan={Math.max(1, visibleColumns().length)}
-                            class={`${classes().tdGroup} pl-[var(--rl-depth-pad,1rem)]`}
+                            class={classes().tdGroup}
                             style={{ "--rl-depth-pad": `${depth * 1.5 + 1}rem` }}
                             data-slot="td-group"
                           >
                             <Show
                               when={slots.groupHeaderSlot()}
                               fallback={
-                                <span class="flex items-center gap-2">
-                                  <span class="i-lucide-layers size-3.5 text-primary opacity-70" />
-                                  <span class="text-xs uppercase text-muted font-medium">
-                                    {group.columnId}:
-                                  </span>
-                                  <span class="text-highlighted">{String(group.value)}</span>
-                                  <span class="ml-auto text-muted font-normal normal-case">
-                                    {group.rows.length} {group.rows.length === 1 ? "row" : "rows"}
-                                  </span>
+                                <span class={classes().groupHeader}>
+                                  <RLIcon name="layers" class={classes().groupIcon} />
+                                  <span class={classes().groupLabel}>{group.columnId}:</span>
+                                  <span class={classes().groupValue}>{String(group.value)}</span>
+                                  <span class={classes().groupCount}>{group.rows.length}</span>
                                 </span>
                               }
                             >
-                              {slots.groupHeaderSlot()?.({
+                              {renderSlot(slots.groupHeaderSlot(), {
                                 group,
                                 colSpan: visibleColumns().length,
                                 table: tableApi,
@@ -1656,11 +1687,19 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
                     return (
                       <>
                         <tr
-                          class={`${classes().tr} ${trMetaClass()} ${props.rowClass?.(row) ?? ""}`}
+                          class={[classes().tr, trMetaClass(), props.rowClass?.(row)]
+                            .filter(Boolean)
+                            .join(" ")}
                           data-slot="tr"
                           data-row-id={row.id}
-                          data-selected={row.getIsSelected() ? "true" : undefined}
-                          data-expanded={row.getIsExpanded() ? "true" : undefined}
+                          aria-selected={row.getIsSelected() ? "true" : "false"}
+                          aria-expanded={
+                            row.getCanExpand()
+                              ? row.getIsExpanded()
+                                ? "true"
+                                : "false"
+                              : undefined
+                          }
                           data-pinned={row.getIsPinned() || undefined}
                           data-drop-position={rowDropPos()}
                           draggable={props.rowDraggable?.(row) ? "true" : undefined}
@@ -1685,14 +1724,10 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
                           }}
                           onDrop={(e) => {
                             props.onRowDrop?.(e, row);
-                            if (
-                              !props.enableRowReordering ||
-                              draggedRowIndex() === null ||
-                              !props.data
-                            )
+                            const fromIdx = draggedRowIndex();
+                            if (!props.enableRowReordering || fromIdx === null || !props.data)
                               return;
                             e.preventDefault();
-                            const fromIdx = draggedRowIndex()!;
                             const target = dropTargetRow();
                             setDraggedRowIndex(null);
                             setDropTargetRow(null);
@@ -1722,104 +1757,7 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
                           onMouseLeave={(e) => props.onHover?.(e, null)}
                           onContextMenu={(e) => props.onContextmenu?.(e, row)}
                         >
-                          <For each={visibleColumns()}>
-                            {(col) => {
-                              const colId = () => String(col.id || col.accessorKey || "");
-                              const cellValue = () => {
-                                if (typeof col.accessorFn === "function") {
-                                  return col.accessorFn(row.original);
-                                }
-                                const key = (col.accessorKey || col.id || "") as string;
-                                return key ? row.getValue(key) : undefined;
-                              };
-                              const pinned = () =>
-                                colId() in columnOffsets().left || colId() in columnOffsets().right;
-
-                              const metaTdClass = () =>
-                                typeof col.meta?.class?.td === "function"
-                                  ? col.meta.class.td(row)
-                                  : col.meta?.class?.td || "";
-                              const colSpanVal = () =>
-                                typeof col.meta?.colspan?.td === "function"
-                                  ? col.meta.colspan.td(row)
-                                  : col.meta?.colspan?.td;
-                              const rowSpanVal = () =>
-                                typeof col.meta?.rowspan?.td === "function"
-                                  ? col.meta.rowspan.td(row)
-                                  : col.meta?.rowspan?.td;
-
-                              const sizeStyle = () => {
-                                const sizeVal = currentColumnSizing()[colId()] ?? col.size;
-                                const styles: string[] = [];
-                                if (typeof sizeVal === "number")
-                                  styles.push(`--rl-col-width: ${sizeVal}px;`);
-                                else if (sizeVal) styles.push(`--rl-col-width: ${sizeVal};`);
-                                if (col.minSize) {
-                                  styles.push(
-                                    `--rl-col-min-width: ${typeof col.minSize === "number" ? `${col.minSize}px` : col.minSize};`,
-                                  );
-                                }
-                                if (col.maxSize) {
-                                  styles.push(
-                                    `--rl-col-max-width: ${typeof col.maxSize === "number" ? `${col.maxSize}px` : col.maxSize};`,
-                                  );
-                                }
-                                return styles.join(" ");
-                              };
-
-                              const pinStyle = () => {
-                                if (colId() in columnOffsets().left) {
-                                  return `--rl-pin-left: ${columnOffsets().left[colId()]}px;`;
-                                }
-                                if (colId() in columnOffsets().right) {
-                                  return `--rl-pin-right: ${columnOffsets().right[colId()]}px;`;
-                                }
-                                return "";
-                              };
-
-                              const isEditing = () =>
-                                currentEditingCell()?.rowId === row.id &&
-                                currentEditingCell()?.columnId === colId();
-                              const setEditing = (editing: boolean) => {
-                                tableApi.setEditingCell(
-                                  editing ? { rowId: row.id, columnId: colId() } : null,
-                                );
-                              };
-
-                              const cellSlot = slots.columnSlots()?.[`${colId()}-cell`];
-
-                              return (
-                                <td
-                                  class={`${classes().td} ${pinned() ? "sticky bg-default z-10" : ""} ${metaTdClass()}`}
-                                  style={`${sizeStyle()} ${pinStyle()}`}
-                                  colspan={colSpanVal()}
-                                  rowspan={rowSpanVal()}
-                                  data-slot="td"
-                                  data-col-id={colId()}
-                                >
-                                  <Show
-                                    when={!cellSlot}
-                                    fallback={
-                                      typeof cellSlot === "function"
-                                        ? cellSlot({
-                                            row,
-                                            column: col,
-                                            cell: { value: cellValue() },
-                                            getValue: cellValue,
-                                            renderValue: cellValue,
-                                            isEditing,
-                                            setEditing,
-                                            table: tableApi,
-                                          })
-                                        : cellSlot
-                                    }
-                                  >
-                                    {renderCellContent(row, col, cellValue, isEditing, setEditing)}
-                                  </Show>
-                                </td>
-                              );
-                            }}
-                          </For>
+                          {renderBodyCells(row)}
                         </tr>
 
                         {/* Expanded sub-row content */}
@@ -1834,7 +1772,7 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
                               class={classes().tdExpanded}
                               data-slot="td-expanded"
                             >
-                              {slots.expandedContentSlot()?.({ row, table: tableApi })}
+                              {renderSlot(slots.expandedContentSlot(), { row, table: tableApi })}
                             </td>
                           </tr>
                         </Show>
@@ -1850,11 +1788,11 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
 
                               return (
                                 <tr
-                                  class={`${classes().tr} ${subMetaClass()}`}
+                                  class={[classes().tr, subMetaClass()].filter(Boolean).join(" ")}
                                   data-slot="tr"
                                   data-row-id={subRow.id}
                                   data-depth={subRow.depth}
-                                  data-selected={subRow.getIsSelected() ? "true" : undefined}
+                                  aria-selected={subRow.getIsSelected() ? "true" : "false"}
                                   onClick={(e) => {
                                     const target = e.target as HTMLElement;
                                     if (
@@ -1869,112 +1807,7 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
                                   onMouseLeave={(e) => props.onHover?.(e, null)}
                                   onContextMenu={(e) => props.onContextmenu?.(e, subRow)}
                                 >
-                                  <For each={visibleColumns()}>
-                                    {(col) => {
-                                      const colId = () => String(col.id || col.accessorKey || "");
-                                      const cellValue = () => {
-                                        if (typeof col.accessorFn === "function") {
-                                          return col.accessorFn(subRow.original);
-                                        }
-                                        const key = (col.accessorKey || col.id || "") as string;
-                                        return key ? subRow.getValue(key) : undefined;
-                                      };
-                                      const pinned = () =>
-                                        colId() in columnOffsets().left ||
-                                        colId() in columnOffsets().right;
-
-                                      const metaTdClass = () =>
-                                        typeof col.meta?.class?.td === "function"
-                                          ? col.meta.class.td(subRow)
-                                          : col.meta?.class?.td || "";
-                                      const colSpanVal = () =>
-                                        typeof col.meta?.colspan?.td === "function"
-                                          ? col.meta.colspan.td(subRow)
-                                          : col.meta?.colspan?.td;
-                                      const rowSpanVal = () =>
-                                        typeof col.meta?.rowspan?.td === "function"
-                                          ? col.meta.rowspan.td(subRow)
-                                          : col.meta?.rowspan?.td;
-
-                                      const sizeStyle = () => {
-                                        const sizeVal = currentColumnSizing()[colId()] ?? col.size;
-                                        const styles: string[] = [];
-                                        if (typeof sizeVal === "number")
-                                          styles.push(`--rl-col-width: ${sizeVal}px;`);
-                                        else if (sizeVal)
-                                          styles.push(`--rl-col-width: ${sizeVal};`);
-                                        if (col.minSize) {
-                                          styles.push(
-                                            `--rl-col-min-width: ${typeof col.minSize === "number" ? `${col.minSize}px` : col.minSize};`,
-                                          );
-                                        }
-                                        if (col.maxSize) {
-                                          styles.push(
-                                            `--rl-col-max-width: ${typeof col.maxSize === "number" ? `${col.maxSize}px` : col.maxSize};`,
-                                          );
-                                        }
-                                        return styles.join(" ");
-                                      };
-
-                                      const pinStyle = () => {
-                                        if (colId() in columnOffsets().left) {
-                                          return `--rl-pin-left: ${columnOffsets().left[colId()]}px;`;
-                                        }
-                                        if (colId() in columnOffsets().right) {
-                                          return `--rl-pin-right: ${columnOffsets().right[colId()]}px;`;
-                                        }
-                                        return "";
-                                      };
-
-                                      const isEditing = () =>
-                                        currentEditingCell()?.rowId === subRow.id &&
-                                        currentEditingCell()?.columnId === colId();
-                                      const setEditing = (editing: boolean) => {
-                                        tableApi.setEditingCell(
-                                          editing ? { rowId: subRow.id, columnId: colId() } : null,
-                                        );
-                                      };
-
-                                      const cellSlot = slots.columnSlots()?.[`${colId()}-cell`];
-
-                                      return (
-                                        <td
-                                          class={`${classes().td} ${pinned() ? "sticky bg-default z-10" : ""} ${metaTdClass()}`}
-                                          style={`${sizeStyle()} ${pinStyle()}`}
-                                          colspan={colSpanVal()}
-                                          rowspan={rowSpanVal()}
-                                          data-slot="td"
-                                          data-col-id={colId()}
-                                        >
-                                          <Show
-                                            when={!cellSlot}
-                                            fallback={
-                                              typeof cellSlot === "function"
-                                                ? cellSlot({
-                                                    row: subRow,
-                                                    column: col,
-                                                    cell: { value: cellValue() },
-                                                    getValue: cellValue,
-                                                    renderValue: cellValue,
-                                                    isEditing,
-                                                    setEditing,
-                                                    table: tableApi,
-                                                  })
-                                                : cellSlot
-                                            }
-                                          >
-                                            {renderCellContent(
-                                              subRow,
-                                              col,
-                                              cellValue,
-                                              isEditing,
-                                              setEditing,
-                                            )}
-                                          </Show>
-                                        </td>
-                                      );
-                                    }}
-                                  </For>
+                                  {renderBodyCells(subRow)}
                                 </tr>
                               );
                             }}
@@ -1990,15 +1823,15 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
                   <tr>
                     <td
                       colspan={Math.max(1, visibleColumns().length)}
-                      class="h-[var(--rl-pad-bottom,0px)] p-0 border-0"
-                      style={{ "--rl-pad-bottom": `${virtualizedView().padBottom}px` }}
+                      class={classes().padRow}
+                      style={{ "--rl-pad": `${virtualizedView().padBottom}px` }}
                     />
                   </tr>
                 </Show>
               </Show>
             </Show>
 
-            {slots.bodyBottomSlot()?.({ table: tableApi })}
+            {renderSlot(slots.bodyBottomSlot(), { table: tableApi })}
           </tbody>
 
           {/* ── tfoot ── */}
@@ -2007,23 +1840,9 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
               <tr class={classes().tr} data-slot="tr">
                 <For each={visibleColumns()}>
                   {(col) => {
-                    const colId = () => String(col.id || col.accessorKey || "");
-                    const footerSlot = slots.columnSlots()?.[`${colId()}-footer`];
-
                     return (
                       <td class={classes().td} data-slot="td">
-                        <Show
-                          when={!footerSlot}
-                          fallback={
-                            typeof footerSlot === "function"
-                              ? footerSlot({ column: col, table: tableApi })
-                              : footerSlot
-                          }
-                        >
-                          {typeof col.footer === "function"
-                            ? col.footer({ column: col, table: tableApi })
-                            : col.footer || ""}
-                        </Show>
+                        {renderSlot(col.footer ?? "", { column: col, table: tableApi })}
                       </td>
                     );
                   }}

@@ -8,5 +8,4 @@ export const RLDashboardToolbarTheme = defineTheme("dashboard-toolbar", {
     trailing: "flex items-center gap-1.5",
   },
   variants: {},
-  defaultVariants: {},
 });

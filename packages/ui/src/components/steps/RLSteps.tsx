@@ -7,17 +7,15 @@ const OMIT_KEYS = ["size"] as const;
 export const RLSteps: Component<RLStepsProps> = (props) => {
   const { Tag, classes, rest, children, theme } = RLStepsTheme.setup(props, { omit: OMIT_KEYS });
 
-  const size = () => props.size ?? "md";
-
   return (
     <Tag
-      class={`${classes().root} rl-steps`}
+      class={classes().root}
       data-slot="root"
       data-theme={theme()}
-      data-size={size()}
+      data-size={props.size ?? "md"}
       {...rest}
     >
-      <ol class="rl-steps-list" data-slot="list">
+      <ol class={classes().list} data-slot="list">
         {children()}
       </ol>
     </Tag>

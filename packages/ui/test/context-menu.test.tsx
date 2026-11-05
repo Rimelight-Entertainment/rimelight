@@ -18,38 +18,54 @@ function attr(tag: string, name: string): string | undefined {
 }
 
 describe("RLContextMenu", () => {
-  describe("Exports", () => {
-    it("exports RLContextMenu as a single component from index", () => {
-      expect(RLContextMenu).toBeDefined();
-    });
-  });
-
-  describe("Single Component Anatomy & Trigger", () => {
-    it("renders trigger and closed state by default", () => {
+  describe("Trigger", () => {
+    it("renders children as the trigger and is closed by default", () => {
       const html = render(() => (
         <RLContextMenu items={[{ label: "Copy" }]}>Right-click here</RLContextMenu>
       ));
 
       const trigger = slotTag(html, "trigger");
-      expect(trigger).not.toBe("");
-      expect(trigger).toContain("data-closed");
-      expect(attr(trigger, "data-state")).toBe("closed");
       expect(html).toContain("Right-click here");
-      expect(slotTag(html, "content")).toBe("");
+      expect(attr(trigger, "aria-expanded")).toBe("false");
+      expect(attr(trigger, "data-state")).toBe("closed");
+      expect(slotTag(html, "body")).toBe("");
     });
 
-    it("supports explicit trigger prop", () => {
+    it("renders triggerSlot in place of children", () => {
       const html = render(() => (
         <RLContextMenu
           triggerSlot={<span class="explicit-trigger">Custom Surface</span>}
           items={[{ label: "Copy" }]}
-        />
+        >
+          Ignored children
+        </RLContextMenu>
+      ));
+
+      expect(html).toContain("Custom Surface");
+      expect(html).not.toContain("Ignored children");
+    });
+
+    it("exposes accessible names through kebab-case aria props", () => {
+      const html = render(() => (
+        <RLContextMenu aria-label="File actions" aria-describedby="hint" items={[]}>
+          File
+        </RLContextMenu>
       ));
 
       const trigger = slotTag(html, "trigger");
-      expect(trigger).not.toBe("");
-      expect(html).toContain("explicit-trigger");
-      expect(html).toContain("Custom Surface");
+      expect(attr(trigger, "aria-label")).toBe("File actions");
+      expect(attr(trigger, "aria-describedby")).toBe("hint");
+      expect(attr(trigger, "aria-haspopup")).toBe("menu");
+    });
+
+    it("marks the trigger disabled when disabled", () => {
+      const html = render(() => (
+        <RLContextMenu disabled items={[{ label: "Copy" }]}>
+          Surface
+        </RLContextMenu>
+      ));
+
+      expect(slotTag(html, "trigger")).toContain("data-disabled");
     });
 
     it("supports polymorphic root via `as` prop", () => {
@@ -63,8 +79,8 @@ describe("RLContextMenu", () => {
     });
   });
 
-  describe("Open States & Content Anatomy", () => {
-    it("renders overlay, positioner, content, groups, and items when open", () => {
+  describe("Open state", () => {
+    it("renders overlay, positioner, body, and items with placement attributes", () => {
       const html = render(() => (
         <RLContextMenu
           open
@@ -90,31 +106,30 @@ describe("RLContextMenu", () => {
         </RLContextMenu>
       ));
 
-      const trigger = slotTag(html, "trigger");
-      const content = slotTag(html, "content");
-      expect(trigger).toContain("data-expanded");
+      const body = slotTag(html, "body");
+      expect(attr(slotTag(html, "trigger"), "aria-expanded")).toBe("true");
       expect(slotTag(html, "overlay")).not.toBe("");
       expect(slotTag(html, "positioner")).not.toBe("");
-      expect(content).not.toBe("");
-      expect(content).toContain("data-expanded");
-      expect(attr(content, "data-align")).toBe("end");
-      expect(attr(content, "data-side")).toBe("bottom");
-
-      expect(slotTag(html, "group")).not.toBe("");
-      expect(slotTag(html, "item")).not.toBe("");
-      expect(slotTag(html, "item-leading")).not.toBe("");
-      expect(slotTag(html, "item-wrapper")).not.toBe("");
-      expect(slotTag(html, "item-label")).not.toBe("");
-      expect(slotTag(html, "item-description")).not.toBe("");
-      expect(slotTag(html, "item-trailing")).not.toBe("");
-      expect(slotTag(html, "item-kbds")).not.toBe("");
-      expect(slotTag(html, "separator")).not.toBe("");
+      expect(attr(body, "data-state")).toBe("open");
+      expect(attr(body, "data-align")).toBe("end");
+      expect(attr(body, "data-side")).toBe("bottom");
 
       expect(html).toContain("Copy");
       expect(html).toContain("Copy selection to clipboard");
       expect(html).toContain("Ctrl");
       expect(html).toContain("Delete");
-      expect(html).toContain("data-danger");
+      expect(slotTag(html, "separator")).not.toBe("");
+      expect(slotTag(html, "item-kbds")).not.toBe("");
+    });
+
+    it("marks error-colored items with data-danger", () => {
+      const html = render(() => (
+        <RLContextMenu open portal={false} items={[{ label: "Delete", color: "error" }]}>
+          Surface
+        </RLContextMenu>
+      ));
+
+      expect(slotTag(html, "item")).toContain("data-danger");
     });
 
     it("renders when defaultOpen is true", () => {
@@ -124,11 +139,22 @@ describe("RLContextMenu", () => {
         </RLContextMenu>
       ));
 
-      expect(slotTag(html, "content")).not.toBe("");
+      expect(attr(slotTag(html, "body"), "data-state")).toBe("open");
       expect(html).toContain("Inspect");
     });
 
-    it("keeps content in DOM when unmountOnHide={false} and closed", () => {
+    it("unmounts the body when closed by default", () => {
+      const html = render(() => (
+        <RLContextMenu portal={false} items={[{ label: "Hidden" }]}>
+          Surface
+        </RLContextMenu>
+      ));
+
+      expect(slotTag(html, "body")).toBe("");
+      expect(html).not.toContain("Hidden");
+    });
+
+    it("keeps the body in the DOM when unmountOnHide={false} and closed", () => {
       const html = render(() => (
         <RLContextMenu
           open={false}
@@ -140,22 +166,20 @@ describe("RLContextMenu", () => {
         </RLContextMenu>
       ));
 
-      const content = slotTag(html, "content");
-      expect(content).not.toBe("");
-      expect(content).toContain("data-closed");
+      expect(attr(slotTag(html, "body"), "data-state")).toBe("closed");
       expect(html).toContain("Persisted Action");
     });
   });
 
-  describe("Item Models (Groups, Checkbox, Radio, Submenus, Disabled)", () => {
-    it("renders explicit group items with groupLabel and children/items", () => {
+  describe("Items", () => {
+    it("renders group items with a group label", () => {
       const items: ContextMenuItem[] = [
         {
           type: "group",
-          label: "Project brief.pdf",
-          children: [
-            { label: "Open preview", icon: "eye" },
-            { label: "Rename", icon: "edit-2" },
+          label: "Actions",
+          items: [
+            { label: "Copy path", icon: "copy" },
+            { label: "Rename file", icon: "edit-2" },
           ],
         },
       ];
@@ -167,40 +191,12 @@ describe("RLContextMenu", () => {
       ));
 
       expect(slotTag(html, "group-label")).not.toBe("");
-      expect(html).toContain("Project brief.pdf");
-      expect(html).toContain("Open preview");
-      expect(html).toContain("Rename");
-    });
-
-    it("renders group object with label and items", () => {
-      const html = render(() => (
-        <RLContextMenu
-          open
-          portal={false}
-          items={[
-            {
-              type: "group",
-              label: "Actions",
-              items: [
-                { label: "Copy path", icon: "i-lucide:copy" },
-                { label: "Rename file", icon: "i-lucide:edit-2" },
-                { label: "Delete", icon: "i-lucide:trash-2", color: "error" },
-              ],
-            },
-          ]}
-        >
-          File
-        </RLContextMenu>
-      ));
-
-      expect(slotTag(html, "group-label")).not.toBe("");
       expect(html).toContain("Actions");
       expect(html).toContain("Copy path");
       expect(html).toContain("Rename file");
-      expect(html).toContain("Delete");
     });
 
-    it("supports array-of-arrays item grouping with automatic separators", () => {
+    it("inserts separators between array-of-arrays groups", () => {
       const html = render(() => (
         <RLContextMenu
           open
@@ -217,28 +213,12 @@ describe("RLContextMenu", () => {
       expect(slotTag(html, "separator")).not.toBe("");
     });
 
-    it("renders checkbox and radio items with data-selected and itemIndicator", () => {
+    it("reports checked state for checkbox and radio items through aria-checked", () => {
       const items: ContextMenuItem[] = [
-        {
-          type: "checkbox",
-          label: "Pin item",
-          checked: true,
-        },
+        { type: "checkbox", label: "Pin item", checked: true },
         { type: "separator" },
-        {
-          type: "radio",
-          label: "High priority",
-          group: "priority",
-          value: "high",
-          checked: true,
-        },
-        {
-          type: "radio",
-          label: "Low priority",
-          group: "priority",
-          value: "low",
-          checked: false,
-        },
+        { type: "radio", label: "High priority", group: "priority", value: "high", checked: true },
+        { type: "radio", label: "Low priority", group: "priority", value: "low", checked: false },
       ];
 
       const html = render(() => (
@@ -249,11 +229,12 @@ describe("RLContextMenu", () => {
 
       expect(html).toContain('role="menuitemcheckbox"');
       expect(html).toContain('role="menuitemradio"');
-      expect(html).toContain("data-selected");
+      expect(html).toContain('aria-checked="true"');
+      expect(html).toContain('aria-checked="false"');
       expect(slotTag(html, "item-indicator")).not.toBe("");
     });
 
-    it("renders submenu items with itemSubIndicator and open submenu content", () => {
+    it("renders submenu items with an indicator and the open submenu body", () => {
       const items: ContextMenuItem[] = [
         {
           label: "Sort by",
@@ -273,39 +254,63 @@ describe("RLContextMenu", () => {
       ));
 
       expect(slotTag(html, "item-sub-indicator")).not.toBe("");
-      expect(html).toContain("Sort by");
+      expect(slotTag(html, "submenu")).not.toBe("");
       expect(html).toContain("Name");
       expect(html).toContain("Modified date");
     });
 
-    it("marks disabled trigger and disabled items with data-disabled", () => {
+    it("marks disabled items with data-disabled and aria-disabled", () => {
       const html = render(() => (
-        <RLContextMenu
-          open
-          portal={false}
-          disabled
-          items={[{ label: "Disabled Action", disabled: true }]}
-        >
-          Disabled Trigger
+        <RLContextMenu open portal={false} items={[{ label: "Disabled Action", disabled: true }]}>
+          Surface
         </RLContextMenu>
       ));
 
-      expect(slotTag(html, "trigger")).toContain("data-disabled");
-      expect(slotTag(html, "item")).toContain("data-disabled");
+      const item = slotTag(html, "item");
+      expect(item).toContain("data-disabled");
+      expect(attr(item, "aria-disabled")).toBe("true");
     });
   });
 
-  describe("Custom Renderers & Styling", () => {
-    it("supports topRender, bottomRender, and itemRender", () => {
+  describe("Slots", () => {
+    it("renders topSlot and bottomSlot around the items", () => {
       const html = render(() => (
         <RLContextMenu
           open
           portal={false}
-          topSlot={() => <div class="custom-top">Header Metadata</div>}
+          topSlot={({ open }) => <div class="custom-top">Header {String(open)}</div>}
           bottomSlot={() => <div class="custom-bottom">Footer Info</div>}
-          itemSlot={(props) => (
-            <div class="custom-item-render" data-index={props.index}>
-              Custom: {props.item.label}
+          items={[{ label: "Action 1" }]}
+        >
+          Surface
+        </RLContextMenu>
+      ));
+
+      expect(html).toContain("Header true");
+      expect(html).toContain("Footer Info");
+      expect(html.indexOf("Header true")).toBeLessThan(html.indexOf("Action 1"));
+      expect(html.indexOf("Footer Info")).toBeGreaterThan(html.indexOf("Action 1"));
+    });
+
+    it("renders bodySlot inside the menu body", () => {
+      const html = render(() => (
+        <RLContextMenu open portal={false} bodySlot={<p class="extra-body">Extra body</p>}>
+          Surface
+        </RLContextMenu>
+      ));
+
+      expect(html).toContain("Extra body");
+      expect(slotTag(html, "body")).not.toBe("");
+    });
+
+    it("renders each item through itemSlot", () => {
+      const html = render(() => (
+        <RLContextMenu
+          open
+          portal={false}
+          itemSlot={(args) => (
+            <div class="custom-item-render" data-index={args.index}>
+              Custom: {args.item.label}
             </div>
           )}
           items={[{ label: "Action 1" }]}
@@ -314,12 +319,9 @@ describe("RLContextMenu", () => {
         </RLContextMenu>
       ));
 
-      expect(html).toContain("custom-top");
-      expect(html).toContain("Header Metadata");
-      expect(html).toContain("custom-bottom");
-      expect(html).toContain("Footer Info");
       expect(html).toContain("custom-item-render");
       expect(html).toContain("Custom: Action 1");
+      expect(slotTag(html, "item")).toBe("");
     });
   });
 });

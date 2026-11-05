@@ -216,6 +216,40 @@ export const avatarAudit: ComponentAuditDefinition = {
       ),
     },
     {
+      id: "icon-slot",
+      title: "Icon slot",
+      description: "`iconSlot` replaces the icon rendered when there is no image.",
+      render: () => (
+        <RLAvatar
+          iconSlot={
+            <span class="text-xs font-bold" aria-hidden="true">
+              {"★"}
+            </span>
+          }
+        />
+      ),
+    },
+    {
+      id: "fallback-slot",
+      title: "Fallback slot",
+      description: "`fallbackSlot` replaces the whole fallback content (initials or icon).",
+      render: () => (
+        <RLAvatar alt="Benjamin Canac" fallbackSlot={<span class="text-xs">{"Custom"}</span>} />
+      ),
+    },
+    {
+      id: "badge-slot",
+      title: "Badge slot",
+      description: "`badgeSlot` replaces the badge text inside the chip at `position`.",
+      render: () => (
+        <RLAvatar
+          alt="Ada Lovelace"
+          position="top-left"
+          badgeSlot={<span class="text-xs font-bold">{"NEW"}</span>}
+        />
+      ),
+    },
+    {
       id: "profile-wrapper",
       get title() {
         return t("app.text.title-subtitle-profile-layout");
@@ -244,9 +278,9 @@ export const avatarAudit: ComponentAuditDefinition = {
           <RLPopover
             mode="hover"
             placement="top"
-            triggerSlot={
+            triggerSlot={() => (
               <RLAvatar src="https://github.com/benjamincanac.png" alt={"Benjamin Canac"} />
-            }
+            )}
           >
             <RLAvatar
               src="https://github.com/benjamincanac.png"
@@ -256,7 +290,11 @@ export const avatarAudit: ComponentAuditDefinition = {
             />
           </RLPopover>
 
-          <RLPopover mode="hover" placement="top" triggerSlot={<RLAvatar alt={"Daniel Marchi"} />}>
+          <RLPopover
+            mode="hover"
+            placement="top"
+            triggerSlot={() => <RLAvatar alt={"Daniel Marchi"} />}
+          >
             <RLAvatar
               src="https://github.com/benjamincanac.png"
               alt={"Daniel Marchi"}
@@ -265,7 +303,11 @@ export const avatarAudit: ComponentAuditDefinition = {
             />
           </RLPopover>
 
-          <RLPopover mode="hover" placement="top" triggerSlot={<RLAvatar alt={"Hugo Richard"} />}>
+          <RLPopover
+            mode="hover"
+            placement="top"
+            triggerSlot={() => <RLAvatar alt={"Hugo Richard"} />}
+          >
             <RLAvatar
               alt={"Hugo Richard"}
               title={"Hugo Richard"}
@@ -277,7 +319,7 @@ export const avatarAudit: ComponentAuditDefinition = {
           <RLPopover
             mode="hover"
             placement="top"
-            triggerSlot={<RLAvatar alt={"Sebastien Chopin"} />}
+            triggerSlot={() => <RLAvatar alt={"Sebastien Chopin"} />}
           >
             <RLAvatar
               alt={"Sebastien Chopin"}

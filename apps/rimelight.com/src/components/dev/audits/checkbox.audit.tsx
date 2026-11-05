@@ -210,7 +210,8 @@ export const CheckboxSandbox = (): JSX.Element => {
             size={size()}
             color={color()}
             layout={variant()}
-            indicator={indicator()}
+            side={indicator() === "end" ? "end" : "start"}
+            hasIndicator={indicator() !== "hidden"}
             highlight={highlight()}
             disabled={disabled()}
             required={required()}
@@ -414,14 +415,14 @@ export const checkboxAudit: ComponentAuditDefinition = {
           />
           <RLCheckbox
             layout="card"
-            indicator="end"
+            side="end"
             defaultChecked
             label="Card Variant (End Indicator)"
             description="Reversed layout with indicator aligned to end."
           />
           <RLCheckbox
             layout="card"
-            indicator="hidden"
+            hasIndicator={false}
             icon="star"
             defaultChecked
             label="Hidden Indicator (Card)"
@@ -429,7 +430,7 @@ export const checkboxAudit: ComponentAuditDefinition = {
           />
           <RLCheckbox
             layout="list"
-            indicator="hidden"
+            hasIndicator={false}
             icon="sparkles"
             defaultChecked
             label="Hidden Indicator (List)"

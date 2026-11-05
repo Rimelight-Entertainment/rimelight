@@ -10,7 +10,6 @@ export const RLStickySurfaceTheme = defineTheme("sticky-surface", {
       true: {
         root: "rl-sticky-shadow",
       },
-      false: {},
     },
   },
   defaultVariants: {

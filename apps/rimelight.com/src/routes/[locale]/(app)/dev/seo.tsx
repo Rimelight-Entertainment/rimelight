@@ -841,7 +841,7 @@ export default function DevSeoPage() {
             "Live Open Graph images generated via the SVG layout renderer with live site identity tokens.",
           content: (
             <div class="flex flex-col gap-md w-full">
-              <RLCarousel items={ogPreviewCards} dots arrows>
+              <RLCarousel items={ogPreviewCards} hasDots arrows>
                 {({ index }: { index: number }) => {
                   const page = ogPreviewCards[index];
                   if (!page) return null;

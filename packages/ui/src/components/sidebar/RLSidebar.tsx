@@ -1,9 +1,16 @@
 import type { JSX } from "@solidjs/web";
-import { For, Show } from "solid-js";
-import type { RLSidebarProps, SidebarBadge, SidebarItem } from "./sidebar.types";
-import { RLSidebarTheme, type SidebarClasses } from "./sidebar.theme";
+import { createSignal, For, Show } from "solid-js";
+import type {
+  RLSidebarProps,
+  SidebarBadge,
+  SidebarItem,
+  SidebarItemListProps,
+} from "./sidebar.types";
+import { RLSidebarTheme } from "./sidebar.theme";
 import { RLBadge } from "../badge/RLBadge";
 import { RLIcon } from "../icon/RLIcon";
+import { RLButton } from "../button/RLButton";
+import { RLLink } from "../link/RLLink";
 import { uiT } from "../../locale";
 
 function hasActiveChild(item: SidebarItem): boolean {
@@ -23,15 +30,7 @@ function normalizeBadge(badge: SidebarItem["badge"]): Required<SidebarBadge> | n
   };
 }
 
-interface SidebarItemListProps {
-  items: SidebarItem[];
-  depth: number;
-  itemClasses: SidebarClasses;
-}
-
 const SidebarItemList = (props: SidebarItemListProps): JSX.Element => {
-  const indentClass = () => (props.depth === 0 ? "ml-6" : props.depth === 1 ? "ml-4" : "ml-3");
-
   return (
     <div class={props.itemClasses.itemsContainer}>
       <For each={props.items}>
@@ -42,28 +41,30 @@ const SidebarItemList = (props: SidebarItemListProps): JSX.Element => {
 
           return (
             <div
-              class={props.depth === 1 ? props.itemClasses.item : ""}
+              class={props.depth === 1 ? props.itemClasses.item : undefined}
               data-slot={props.depth === 1 ? "item" : undefined}
             >
               <Show
                 when={hasChildren()}
                 fallback={
-                  <a
+                  <RLLink
+                    localize={false}
                     href={item.href ?? "#"}
-                    class={`${
+                    class={
                       props.depth === 1 ? props.itemClasses.itemLink : props.itemClasses.subItemLink
-                    } ${isActive() ? " text-highlighted bg-muted" : ""}`}
+                    }
+                    data-active={isActive() ? "" : undefined}
                     aria-current={isActive() ? "page" : undefined}
                   >
                     <Show when={item.icon}>
                       {(icon) => (
-                        <span
-                          class={`${
+                        <RLIcon
+                          name={icon()}
+                          class={
                             props.depth === 1
                               ? props.itemClasses.itemIcon
                               : props.itemClasses.subItemIcon
-                          } ${icon()}`}
-                          aria-hidden="true"
+                          }
                         />
                       )}
                     </Show>
@@ -76,34 +77,35 @@ const SidebarItemList = (props: SidebarItemListProps): JSX.Element => {
                           variant={b().variant}
                           color={b().color}
                           size="sm"
-                          class="ml-auto select-none"
+                          class={props.itemClasses.itemBadge}
                           data-slot="item-badge"
                         >
                           {b().label}
                         </RLBadge>
                       )}
                     </Show>
-                  </a>
+                  </RLLink>
                 }
               >
-                <details open={isActive()} class="group/details">
+                <details open={isActive()} class={props.itemClasses.itemDetails}>
                   <summary
-                    class={`${
+                    class={
                       props.depth === 1
                         ? props.itemClasses.itemSummary
                         : props.itemClasses.subItemLink
-                    } ${isActive() ? " text-highlighted bg-muted" : ""}`}
+                    }
+                    data-active={isActive() ? "" : undefined}
                     data-slot="item-summary"
                   >
                     <Show when={item.icon}>
                       {(icon) => (
-                        <span
-                          class={`${
+                        <RLIcon
+                          name={icon()}
+                          class={
                             props.depth === 1
                               ? props.itemClasses.itemIcon
                               : props.itemClasses.subItemIcon
-                          } ${icon()}`}
-                          aria-hidden="true"
+                          }
                         />
                       )}
                     </Show>
@@ -116,7 +118,7 @@ const SidebarItemList = (props: SidebarItemListProps): JSX.Element => {
                           variant={b().variant}
                           color={b().color}
                           size="sm"
-                          class="ml-auto select-none"
+                          class={props.itemClasses.itemBadge}
                           data-slot="item-badge"
                         >
                           {b().label}
@@ -125,7 +127,13 @@ const SidebarItemList = (props: SidebarItemListProps): JSX.Element => {
                     </Show>
                     <RLIcon name="chevron-right" class={props.itemClasses.itemChevron} />
                   </summary>
-                  <div class={`mt-0.5 ${indentClass()} flex flex-col gap-0.5`}>
+                  <div
+                    class={
+                      props.depth === 1
+                        ? props.itemClasses.itemChildren
+                        : props.itemClasses.subItemChildren
+                    }
+                  >
                     <SidebarItemList
                       items={item.children ?? []}
                       depth={props.depth + 1}
@@ -159,50 +167,40 @@ export const RLSidebar = (props: RLSidebarProps): JSX.Element => {
     slots: ["headerSlot", "footerSlot"] as const,
   });
 
-  const items = () => props.items ?? [];
-
-  let sidebarRef: HTMLElement | null = null;
-
-  const toggleSidebar = () => {
-    if (sidebarRef) {
-      sidebarRef.classList.toggle("-translate-x-full");
-    }
-  };
-
-  const headerContent = () => (
-    <Show
-      when={slots.headerSlot()}
-      fallback={
-        <Show when={props.logo}>
-          <span data-slot="sidebar-logo" class={classes().logoWrapper}>
-            <RLIcon name="i-lucide-layers" class="size-5 text-primary" />
-            <span class="truncate">{props.logo}</span>
-          </span>
-        </Show>
-      }
-    >
-      {slots.headerSlot()}
-    </Show>
-  );
+  const [offcanvasOpen, setOffcanvasOpen] = createSignal(false);
 
   return (
     <>
       <Tag
-        ref={(el: HTMLElement) => (sidebarRef = el)}
         class={classes().root}
         data-slot="root"
         data-theme={theme()}
         data-sidebar
+        data-open={offcanvasOpen() ? "" : undefined}
         {...rest}
       >
         <div class={classes().header} data-slot="header">
-          {headerContent()}
+          <Show
+            when={slots.headerSlot()}
+            fallback={
+              <Show when={props.logo}>
+                <span data-slot="logo-wrapper" class={classes().logoWrapper}>
+                  <RLIcon name="layers" class={classes().logoIcon} />
+                  <span class={classes().logoText}>{props.logo}</span>
+                </span>
+              </Show>
+            }
+          >
+            {slots.headerSlot()}
+          </Show>
         </div>
 
         <div class={classes().content} data-slot="content">
           <Show
             when={children()}
-            fallback={<SidebarItemList items={items()} depth={1} itemClasses={classes()} />}
+            fallback={
+              <SidebarItemList items={props.items ?? []} depth={1} itemClasses={classes()} />
+            }
           >
             {children()}
           </Show>
@@ -216,15 +214,16 @@ export const RLSidebar = (props: RLSidebarProps): JSX.Element => {
       </Tag>
 
       <Show when={props.collapsible === "offcanvas"}>
-        <button
+        <RLButton
           type="button"
           data-sidebar-toggle
           class={classes().toggleButton}
           aria-label={uiT("sidebar.toggle")}
-          onClick={toggleSidebar}
+          aria-expanded={offcanvasOpen() ? "true" : "false"}
+          onClick={() => setOffcanvasOpen((open) => !open)}
         >
-          <RLIcon name="i-lucide-panel-left" class="size-4" />
-        </button>
+          <RLIcon name="panel-left" class={classes().toggleIcon} />
+        </RLButton>
       </Show>
     </>
   );

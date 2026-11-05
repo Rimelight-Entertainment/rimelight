@@ -2,30 +2,29 @@ import type { RLScrollAreaProps } from "./scroll-area.types";
 import { RLScrollAreaTheme } from "./scroll-area.theme";
 import { createEffect, createSignal, onSettled, Show, type Component } from "solid-js";
 
-const OMIT_KEYS = ["scrollHideDelay", "height"] as const;
+const OMIT_KEYS = ["scrollHideDelay", "height", "orientation"] as const;
 
 export const RLScrollArea: Component<RLScrollAreaProps> = (props) => {
+  const [barsVisible, setBarsVisible] = createSignal(false);
+
   const { Tag, classes, rest, children, theme } = RLScrollAreaTheme.setup(props, {
     omit: OMIT_KEYS,
+    variants: () => ({ visible: barsVisible(), sized: props.height !== undefined }),
   });
 
+  const orientation = () => props.orientation ?? "vertical";
   const hideDelay = () => props.scrollHideDelay ?? 600;
+  const heightValue = () => (typeof props.height === "number" ? `${props.height}px` : props.height);
 
   let viewportRef: HTMLDivElement | null = null;
   let vBarRef: HTMLDivElement | null = null;
   let hBarRef: HTMLDivElement | null = null;
   let vThumbRef: HTMLDivElement | null = null;
   let hThumbRef: HTMLDivElement | null = null;
-
-  const [barsVisible, setBarsVisible] = createSignal(false);
   let hideTimer: ReturnType<typeof setTimeout> | undefined;
 
-  const showBars = () => {
-    setBarsVisible(true);
-  };
-
   const hideBars = () => {
-    if (hideTimer) clearTimeout(hideTimer);
+    clearTimeout(hideTimer);
     hideTimer = setTimeout(() => {
       setBarsVisible(false);
     }, hideDelay());
@@ -53,8 +52,8 @@ export const RLScrollArea: Component<RLScrollAreaProps> = (props) => {
   };
 
   const handleScroll = () => {
-    if (hideTimer) clearTimeout(hideTimer);
-    showBars();
+    clearTimeout(hideTimer);
+    setBarsVisible(true);
     updateThumbs();
     hideBars();
   };
@@ -110,7 +109,7 @@ export const RLScrollArea: Component<RLScrollAreaProps> = (props) => {
     const cleanH = setupDraggable(hThumbRef, "scrollLeft", "clientX", "scrollWidth", "clientWidth");
 
     return () => {
-      if (hideTimer) clearTimeout(hideTimer);
+      clearTimeout(hideTimer);
       cleanV();
       cleanH();
     };
@@ -123,66 +122,45 @@ export const RLScrollArea: Component<RLScrollAreaProps> = (props) => {
     },
   );
 
-  const heightClass = () =>
-    props.height
-      ? typeof props.height === "number"
-        ? `h-[${props.height}px]`
-        : `h-[${props.height}]`
-      : "";
-
   return (
     <Tag
       data-slot="root"
       data-theme={theme()}
-      class={`${classes().root} ${heightClass()}`}
-      data-scroll-area
-      data-orientation={props.orientation}
-      data-hide-delay={hideDelay()}
+      data-orientation={orientation()}
+      class={classes().root}
+      style={{ "--rl-scroll-area-height": heightValue() }}
       {...rest}
     >
       <div
         ref={(el) => (viewportRef = el)}
         class={classes().viewport}
         data-slot="viewport"
-        data-scroll-viewport
         onScroll={handleScroll}
       >
         {children()}
       </div>
 
-      <Show when={props.orientation !== "horizontal"}>
+      <Show when={orientation() !== "horizontal"}>
         <div
           ref={(el) => (vBarRef = el)}
-          class={`${classes().scrollbar} transition-opacity ${
-            barsVisible() ? "opacity-100" : "opacity-0"
-          }`}
+          class={classes().scrollbar}
           data-slot="scrollbar"
-          data-scroll-bar="vertical"
+          data-orientation="vertical"
           aria-hidden="true"
         >
-          <div
-            ref={(el) => (vThumbRef = el)}
-            class={classes().thumb}
-            data-scroll-thumb="vertical"
-          />
+          <div ref={(el) => (vThumbRef = el)} class={classes().thumb} data-slot="thumb" />
         </div>
       </Show>
 
-      <Show when={props.orientation === "horizontal" || props.orientation === "both"}>
+      <Show when={orientation() === "horizontal" || orientation() === "both"}>
         <div
           ref={(el) => (hBarRef = el)}
-          class={`absolute bottom-0 left-0 right-0 h-2.5 flex-row flex p-0.5 bg-transparent transition-colors duration-150 ease-out hover:bg-muted/10 transition-opacity ${
-            barsVisible() ? "opacity-100" : "opacity-0"
-          }`}
+          class={classes().scrollbar}
           data-slot="scrollbar"
-          data-scroll-bar="horizontal"
+          data-orientation="horizontal"
           aria-hidden="true"
         >
-          <div
-            ref={(el) => (hThumbRef = el)}
-            class={classes().thumb}
-            data-scroll-thumb="horizontal"
-          />
+          <div ref={(el) => (hThumbRef = el)} class={classes().thumb} data-slot="thumb" />
         </div>
       </Show>
     </Tag>

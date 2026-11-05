@@ -3,11 +3,12 @@ import { RLInputNumberTheme } from "./input-number.theme";
 import { createMemo, type Component } from "solid-js";
 import { RLInputTheme } from "../input/input.theme";
 import { RLIcon } from "../icon/RLIcon";
+import { RLButton } from "../button/RLButton";
 import { createControllable } from "../../controllable";
-import { cx } from "../../resolver";
 import { uiT } from "../../locale";
 
 const OMIT_KEYS = [
+  "size",
   "value",
   "defaultValue",
   "min",
@@ -18,6 +19,9 @@ const OMIT_KEYS = [
   "disabled",
   "readonly",
   "required",
+  "aria-label",
+  "aria-labelledby",
+  "aria-describedby",
   "onInput",
   "onBlur",
   "onFocus",
@@ -26,11 +30,12 @@ const OMIT_KEYS = [
 ] as const;
 
 export const RLInputNumber: Component<RLInputNumberProps> = (props) => {
-  const { Tag, classes, rest, children, theme, ui } = RLInputNumberTheme.setup(props, {
+  const { Tag, classes, rest, children, theme } = RLInputNumberTheme.setup(props, {
     omit: OMIT_KEYS,
   });
 
-  const inputClasses = createMemo(() => RLInputTheme({ size: props.size, ui: ui() }));
+  const inputUi = () => ({ root: classes().wrapper, input: classes().input });
+  const inputClasses = createMemo(() => RLInputTheme({ size: props.size, ui: inputUi() }));
 
   const clamp = (value: number) =>
     Math.min(
@@ -86,14 +91,8 @@ export const RLInputNumber: Component<RLInputNumberProps> = (props) => {
   };
 
   return (
-    <Tag
-      data-slot="root"
-      data-theme={theme()}
-      class={classes().root}
-      {...rest}
-      onChange={undefined}
-    >
-      <div class={cx("relative w-full", inputClasses().root)}>
+    <Tag data-slot="root" data-theme={theme()} class={classes().root} {...rest}>
+      <div class={inputClasses().root} data-slot="wrapper">
         <input
           ref={(el) => (inputRef = el)}
           type="number"
@@ -106,7 +105,10 @@ export const RLInputNumber: Component<RLInputNumberProps> = (props) => {
           disabled={props.disabled}
           readonly={props.readonly}
           required={props.required}
-          class={cx(inputClasses().input, classes().input)}
+          aria-label={props["aria-label"]}
+          aria-labelledby={props["aria-labelledby"]}
+          aria-describedby={props["aria-describedby"]}
+          class={inputClasses().input}
           data-slot="input"
           onInput={props.onInput}
           onBlur={commit}
@@ -114,9 +116,11 @@ export const RLInputNumber: Component<RLInputNumberProps> = (props) => {
           onKeyDown={handleKeyDown}
           onWheel={handleWheel}
         />
-        <div class="absolute right-1 top-1/2 flex -translate-y-1/2 flex-col">
-          <button
-            type="button"
+        <div class={classes().stepper} data-slot="stepper">
+          <RLButton
+            variant="ghost"
+            color="neutral"
+            size="xs"
             tabindex={-1}
             aria-label={uiT("input-number.increment")}
             class={classes().increment}
@@ -125,9 +129,11 @@ export const RLInputNumber: Component<RLInputNumberProps> = (props) => {
             onClick={() => stepBy(1)}
           >
             <RLIcon name="arrow-up" size="xs" aria-hidden="true" />
-          </button>
-          <button
-            type="button"
+          </RLButton>
+          <RLButton
+            variant="ghost"
+            color="neutral"
+            size="xs"
             tabindex={-1}
             aria-label={uiT("input-number.decrement")}
             class={classes().decrement}
@@ -136,7 +142,7 @@ export const RLInputNumber: Component<RLInputNumberProps> = (props) => {
             onClick={() => stepBy(-1)}
           >
             <RLIcon name="arrow-down" size="xs" aria-hidden="true" />
-          </button>
+          </RLButton>
         </div>
       </div>
       {children()}

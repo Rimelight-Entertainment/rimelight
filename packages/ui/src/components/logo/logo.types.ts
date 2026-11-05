@@ -1,7 +1,7 @@
 import type { InferThemeProps } from "../../resolver";
 import type { RLLogoTheme } from "./logo.theme";
 
-export type RLLogoProps = InferThemeProps<typeof RLLogoTheme> & {
+export type RLLogoProps = Omit<InferThemeProps<typeof RLLogoTheme>, "as"> & {
   /**
    * Logo set key from the UI config `logos` map (e.g. `logomark`, `wordmark`).
    *
@@ -11,10 +11,14 @@ export type RLLogoProps = InferThemeProps<typeof RLLogoTheme> & {
   /**
    * Logo asset key within the set (e.g. `color`, `black`, `white`). When omitted, the
    * light and dark assets switch automatically.
+   *
+   * @default undefined
    */
   mode?: string;
   /**
    * Image URL that overrides the configured logo set.
+   *
+   * @default undefined
    */
   src?: string;
   /**
@@ -24,7 +28,7 @@ export type RLLogoProps = InferThemeProps<typeof RLLogoTheme> & {
    */
   alt?: string;
   /**
-   * Link target of the root element.
+   * Link target of the root element. Localized by the link.
    *
    * @default "/"
    */

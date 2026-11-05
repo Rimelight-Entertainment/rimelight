@@ -1,14 +1,14 @@
 import type { RLSlideoverProps } from "./slideover.types";
 import { RLSlideoverTheme } from "./slideover.theme";
-import { createEffect, onSettled, Show, type Component } from "solid-js";
-import { Portal, type JSX } from "@solidjs/web";
+import { createEffect, createMemo, onSettled, Show, type Component } from "solid-js";
+import { Portal } from "@solidjs/web";
 import { RLIcon } from "../icon/RLIcon";
+import { RLButton } from "../button/RLButton";
 import { createControllable } from "../../controllable";
 import { uiT } from "../../locale";
-import { slot } from "../../slot";
+import { renderSlot } from "../../slot";
 
 const OMIT_KEYS = [
-  "side",
   "open",
   "defaultOpen",
   "title",
@@ -43,6 +43,8 @@ export const RLSlideover: Component<RLSlideoverProps> = (props) => {
     }
   };
 
+  const triggerNode = createMemo(() => renderSlot(slots.triggerSlot()));
+
   createEffect(
     () => isOpen(),
     (open) => {
@@ -64,33 +66,39 @@ export const RLSlideover: Component<RLSlideoverProps> = (props) => {
   });
 
   // Rendered inside the mounted Show child, so the memos are created once per mount. When
-  // unmountOnHide is false, the content stays mounted while closed, as before.
+  // unmountOnHide is false, the content stays mounted while closed.
   const renderContent = () => {
-    const titleNode = slot(() => slots.titleSlot()?.() ?? props.title);
-    const descriptionNode = slot(() => slots.descriptionSlot()?.() ?? props.description);
-    const footerNode = slot(() => slots.footerSlot()?.());
+    const titleNode = createMemo(() => renderSlot(slots.titleSlot()) ?? props.title);
+    const descriptionNode = createMemo(
+      () => renderSlot(slots.descriptionSlot()) ?? props.description,
+    );
+    const footerNode = createMemo(() => renderSlot(slots.footerSlot()));
 
     return (
       <>
-        <Show when={isOpen() && isDismissible()}>
-          <div class={classes().backdrop} data-slot="backdrop" onClick={dismiss} />
+        <Show when={isDismissible()}>
+          <Show when={isOpen()}>
+            <div class={classes().backdrop} data-slot="backdrop" onClick={dismiss} />
+          </Show>
         </Show>
 
         <div
-          class={`${classes().content}${isOpen() ? "" : " hidden!"}`}
+          class={classes().content}
           data-slot="content"
           data-state={isOpen() ? "open" : "closed"}
         >
           <Show when={isDismissible()}>
-            <button
-              class={classes().closeButton}
-              data-slot="close-button"
+            <RLButton
+              variant="ghost"
+              color="neutral"
+              class={classes().close}
+              data-slot="close"
               type="button"
               aria-label={uiT("slideover.close")}
               onClick={dismiss}
             >
-              <RLIcon name="x" class="size-4" aria-hidden="true" />
-            </button>
+              <RLIcon name="x" class={classes().closeIcon} />
+            </RLButton>
           </Show>
 
           <div class={classes().header} data-slot="header">
@@ -107,11 +115,11 @@ export const RLSlideover: Component<RLSlideoverProps> = (props) => {
             </Show>
           </div>
 
-          <div class="flex flex-col flex-1 gap-2 overflow-y-auto">
-            {(children() as unknown as (() => JSX.Element) | undefined)?.()}
+          <div class={classes().body} data-slot="body">
+            {children()}
           </div>
 
-          <Show when={slots.footerSlot() !== undefined}>
+          <Show when={footerNode()}>
             <div class={classes().footer} data-slot="footer">
               {footerNode()}
             </div>
@@ -126,19 +134,25 @@ export const RLSlideover: Component<RLSlideoverProps> = (props) => {
       <Show
         when={props.triggerLabel}
         fallback={
-          <span class="inline-flex cursor-pointer" onClick={() => setOpen(true)}>
-            {slots.triggerSlot()}
+          <span
+            class={classes().triggerWrapper}
+            data-slot="trigger-wrapper"
+            onClick={() => setOpen(true)}
+          >
+            {triggerNode()}
           </span>
         }
       >
-        <button
+        <RLButton
+          variant="ghost"
+          color="neutral"
           type="button"
           class={classes().trigger}
           data-slot="trigger"
           onClick={() => setOpen(true)}
         >
           {props.triggerLabel}
-        </button>
+        </RLButton>
       </Show>
 
       <Show when={!unmountOnHide() || isOpen()}>

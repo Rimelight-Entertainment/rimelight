@@ -1,10 +1,16 @@
 import type { InferThemeProps } from "../../resolver";
+import type { RLInputTheme } from "../input/input.theme";
 import type { RLInputNumberTheme } from "./input-number.theme";
 
 export type RLInputNumberProps = Omit<
   InferThemeProps<typeof RLInputNumberTheme>,
   "onInput" | "onChange" | "onBlur" | "onFocus" | "onKeyDown"
 > & {
+  /**
+   * Size of the input, matching `RLInput`.
+   * @default "md"
+   */
+  size?: InferThemeProps<typeof RLInputTheme>["size"];
   /**
    * Numeric value. Setting it makes the input controlled.
    * @default undefined
@@ -55,6 +61,21 @@ export type RLInputNumberProps = Omit<
    * @default false
    */
   required?: boolean;
+  /**
+   * Accessible label applied to the input.
+   * @default undefined
+   */
+  "aria-label"?: string | undefined;
+  /**
+   * Element ID that labels the input.
+   * @default undefined
+   */
+  "aria-labelledby"?: string | undefined;
+  /**
+   * Element ID that describes the input.
+   * @default undefined
+   */
+  "aria-describedby"?: string | undefined;
   /**
    * Called with the clamped numeric value when it changes.
    * @default undefined

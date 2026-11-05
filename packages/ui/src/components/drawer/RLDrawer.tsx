@@ -2,14 +2,14 @@ import type { RLDrawerProps } from "./drawer.types";
 import { RLDrawerTheme } from "./drawer.theme";
 import { createEffect, Show, onSettled, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
+import { RLButton } from "../button/RLButton";
 import { createControllable } from "../../controllable";
 import { uiT } from "../../locale";
-import { slot } from "../../slot";
+import { renderSlot } from "../../slot";
 
 const OMIT_KEYS = [
   "open",
   "defaultOpen",
-  "direction",
   "title",
   "description",
   "triggerLabel",
@@ -30,11 +30,8 @@ export const RLDrawer: Component<RLDrawerProps> = (props) => {
     props.onOpenChange,
   );
 
-  const isDismissible = () => props.dismissible ?? true;
-  const lockScroll = () => props.lockScroll ?? true;
-
   const handleDismiss = () => {
-    if (isDismissible()) {
+    if (props.dismissible ?? true) {
       setOpen(false);
     }
   };
@@ -42,10 +39,10 @@ export const RLDrawer: Component<RLDrawerProps> = (props) => {
   let dialogRef: HTMLDialogElement | undefined;
 
   createEffect(
-    () => ({ open: isOpen(), lock: lockScroll() }),
-    ({ open, lock }) => {
-      if (open) {
-        if (lock) {
+    () => ({ open: isOpen(), lock: props.lockScroll ?? true }),
+    (state) => {
+      if (state.open) {
+        if (state.lock) {
           document.body.style.overflow = "hidden";
         }
         if (dialogRef && !dialogRef.open) dialogRef.showModal();
@@ -76,79 +73,89 @@ export const RLDrawer: Component<RLDrawerProps> = (props) => {
     };
   });
 
-  // Overlay slots are invoked inside the dialog render, which only runs while open.
-  const renderDialog = () => {
-    const titleNode = slot(() => slots.titleSlot()?.());
-    const descriptionNode = slot(() => slots.descriptionSlot()?.());
-    const footerNode = slot(() => slots.footerSlot()?.());
-
-    return (
-      <dialog
-        ref={(el) => (dialogRef = el)}
-        class={`${classes().content} ${isOpen() ? "" : "hidden"}`}
-        data-slot="content"
-        aria-modal="true"
-        data-state={isOpen() ? "open" : "closed"}
-      >
-        <div class={classes().handle} data-slot="handle" />
-
-        <Show when={isDismissible()}>
-          <button
-            class={classes().closeButton}
-            data-slot="close-button"
-            type="button"
-            aria-label={uiT("drawer.close")}
-            onClick={handleDismiss}
-          >
-            <RLIcon name="x" size="sm" aria-hidden="true" />
-          </button>
-        </Show>
-
-        <div class={classes().header} data-slot="header">
-          {titleNode() ? (
-            titleNode()
-          ) : props.title ? (
-            <h3 class={classes().title} data-slot="title">
-              {props.title}
-            </h3>
-          ) : null}
-
-          {descriptionNode() ? (
-            descriptionNode()
-          ) : props.description ? (
-            <p class={classes().description} data-slot="description">
-              {props.description}
-            </p>
-          ) : null}
-        </div>
-
-        {children()}
-
-        {footerNode() ? (
-          <div class={classes().footer} data-slot="footer">
-            {footerNode()}
-          </div>
-        ) : null}
-      </dialog>
-    );
-  };
-
   return (
     <Tag data-slot="root" data-theme={theme()} class={classes().root} {...rest}>
-      {props.triggerLabel ? (
-        <button
+      <Show
+        when={props.triggerLabel}
+        fallback={
+          <Show when={slots.triggerSlot()}>
+            <span onClick={() => setOpen(true)}>{renderSlot(slots.triggerSlot())}</span>
+          </Show>
+        }
+      >
+        <RLButton
+          variant="ghost"
+          color="neutral"
           class={classes().trigger}
           data-slot="trigger"
           type="button"
           onClick={() => setOpen(true)}
         >
           {props.triggerLabel}
-        </button>
-      ) : slots.triggerSlot() ? (
-        <span onClick={() => setOpen(true)}>{slots.triggerSlot()}</span>
-      ) : null}
+        </RLButton>
+      </Show>
 
-      <Show when={isOpen()}>{renderDialog()}</Show>
+      <Show when={isOpen()}>
+        <dialog
+          ref={(el) => (dialogRef = el)}
+          class={classes().body}
+          data-slot="body"
+          aria-modal="true"
+          data-state="open"
+        >
+          <div class={classes().handle} data-slot="handle" />
+
+          <Show when={props.dismissible ?? true}>
+            <RLButton
+              variant="ghost"
+              color="neutral"
+              class={classes().close}
+              data-slot="close"
+              type="button"
+              aria-label={uiT("drawer.close")}
+              onClick={handleDismiss}
+            >
+              <RLIcon name="x" size="sm" aria-hidden="true" />
+            </RLButton>
+          </Show>
+
+          <div class={classes().header} data-slot="header">
+            <Show
+              when={slots.titleSlot()}
+              fallback={
+                <Show when={props.title}>
+                  <h3 class={classes().title} data-slot="title">
+                    {props.title}
+                  </h3>
+                </Show>
+              }
+            >
+              {renderSlot(slots.titleSlot())}
+            </Show>
+
+            <Show
+              when={slots.descriptionSlot()}
+              fallback={
+                <Show when={props.description}>
+                  <p class={classes().description} data-slot="description">
+                    {props.description}
+                  </p>
+                </Show>
+              }
+            >
+              {renderSlot(slots.descriptionSlot())}
+            </Show>
+          </div>
+
+          {children()}
+
+          <Show when={slots.footerSlot()}>
+            <div class={classes().footer} data-slot="footer">
+              {renderSlot(slots.footerSlot())}
+            </div>
+          </Show>
+        </dialog>
+      </Show>
     </Tag>
   );
 };

@@ -5,9 +5,10 @@ import type {
   RLCheckboxGroupProps,
 } from "./checkbox-group.types";
 import { RLCheckboxGroupTheme } from "./checkbox-group.theme";
-import { createMemo, createSignal, For, omit, Show, type Component } from "solid-js";
+import { createMemo, createSignal, For, omit, Show } from "solid-js";
 import { RLCheckbox } from "../checkbox/RLCheckbox";
 import type { CheckboxLayout } from "../checkbox/checkbox.types";
+import { renderSlot } from "../../slot";
 
 const OMIT_KEYS = [
   "id",
@@ -15,9 +16,10 @@ const OMIT_KEYS = [
   "items",
   "value",
   "defaultValue",
-  "indicator",
   "icon",
-  "loop",
+  "side",
+  "hasIndicator",
+  "disabled",
   "max",
   "name",
   "valueKey",
@@ -26,7 +28,9 @@ const OMIT_KEYS = [
   "onValueChange",
 ] as const;
 
-export const RLCheckboxGroup: Component<RLCheckboxGroupProps> = (props) => {
+export const RLCheckboxGroup = <T extends CheckboxGroupItem = CheckboxGroupItem>(
+  props: RLCheckboxGroupProps<T>,
+) => {
   const { Tag, classes, rest, id, slots, children, theme, ui } = RLCheckboxGroupTheme.setup(props, {
     slots: ["legendSlot", "labelSlot", "descriptionSlot"] as const,
     omit: OMIT_KEYS,
@@ -45,18 +49,11 @@ export const RLCheckboxGroup: Component<RLCheckboxGroupProps> = (props) => {
   const childLayout = (): CheckboxLayout | undefined =>
     props.layout === "table" ? "list" : props.layout;
 
-  const [internalValue, setInternalValue] = createSignal<any[]>(
-    props.defaultValue ? [...props.defaultValue] : [],
-  );
+  const [internalValue, setInternalValue] = createSignal<CheckboxGroupItemValue[]>([
+    ...(props.defaultValue ?? []),
+  ]);
 
-  const selectedValues = (): any[] => {
-    if (props.value !== undefined) {
-      return Array.isArray(props.value) ? props.value : [];
-    }
-    return internalValue();
-  };
-
-  const isValueSelected = (val: any) => selectedValues().includes(val);
+  const selectedValues = () => props.value ?? internalValue();
 
   const isMaxReached = () => {
     if (props.max === undefined || props.max === null) return false;
@@ -64,51 +61,37 @@ export const RLCheckboxGroup: Component<RLCheckboxGroupProps> = (props) => {
   };
 
   const normalizeItem = (item: CheckboxGroupItem, index: number): CheckboxGroupItemObject => {
-    if (item === null || item === undefined) {
-      return {
-        id: `${id()}:null:${index}`,
-        value: undefined,
-        label: undefined,
-        description: undefined,
-        disabled: undefined,
-        icon: undefined,
-        class: undefined,
-        ui: undefined,
-      };
+    if (typeof item !== "object") {
+      return { id: `${id()}:${item}`, value: item, label: String(item) };
     }
-    if (typeof item === "string" || typeof item === "number" || typeof item === "boolean") {
-      return {
-        id: `${id()}:${item}`,
-        value: item,
-        label: String(item),
-        description: undefined,
-        disabled: undefined,
-        icon: undefined,
-        class: undefined,
-        ui: undefined,
-      };
-    }
-    const val = item[valueKey()];
-    const lbl = item[labelKey()];
-    const desc = item[descriptionKey()];
+    const rawValue = Reflect.get(item, valueKey());
+    const rawLabel = Reflect.get(item, labelKey());
+    const rawDescription = Reflect.get(item, descriptionKey());
+    const value =
+      typeof rawValue === "string" || typeof rawValue === "number" ? rawValue : undefined;
 
     return {
       ...item,
-      id: item.id || `${id()}:${val ?? index}`,
-      value: val,
-      label: lbl,
-      description: desc,
+      id: item.id || `${id()}:${value ?? index}`,
+      value,
+      label: typeof rawLabel === "string" ? rawLabel : undefined,
+      description: typeof rawDescription === "string" ? rawDescription : undefined,
     };
   };
 
-  const normalizedItems = createMemo(() => {
-    if (!props.items) return [];
-    return props.items.map((item, index) => normalizeItem(item, index));
+  const normalizedItems = createMemo(() =>
+    (props.items ?? []).map((item, index) => normalizeItem(item, index)),
+  );
+
+  const childUi = createMemo(() => {
+    const groupUi = ui();
+    if (!groupUi) return undefined;
+    return omit(groupUi, "root", "fieldset", "legend", "item");
   });
 
-  const toggleValue = (itemVal: CheckboxGroupItemValue | undefined, checked: boolean) => {
+  const toggleValue = (itemVal: CheckboxGroupItemValue, checked: boolean) => {
     const current = selectedValues();
-    let next: any[];
+    let next: CheckboxGroupItemValue[];
 
     if (checked) {
       if (isMaxReached() && !current.includes(itemVal)) {
@@ -120,15 +103,7 @@ export const RLCheckboxGroup: Component<RLCheckboxGroupProps> = (props) => {
     }
 
     setInternalValue(next);
-
-    if (props.onValueChange) {
-      props.onValueChange(next);
-    }
-  };
-
-  const renderLegend = () => {
-    if (slots.legendSlot() !== undefined) return slots.legendSlot();
-    return props.legend;
+    props.onValueChange?.(next);
   };
 
   return (
@@ -137,30 +112,25 @@ export const RLCheckboxGroup: Component<RLCheckboxGroupProps> = (props) => {
       class={classes().root}
       data-slot="root"
       data-theme={theme()}
-      data-disabled={disabled() ? "true" : undefined}
+      data-disabled={disabled() ? "" : undefined}
       {...rest}
     >
       <fieldset class={classes().fieldset} data-slot="fieldset">
         <Show when={props.legend || slots.legendSlot()}>
           <legend class={classes().legend} data-slot="legend">
-            {renderLegend()}
+            <Show when={slots.legendSlot()} fallback={props.legend}>
+              {renderSlot(slots.legendSlot())}
+            </Show>
           </legend>
         </Show>
 
         <Show when={normalizedItems().length > 0} fallback={children()}>
           <For each={normalizedItems()}>
             {(item) => {
-              const itemSelected = () => isValueSelected(item.value);
+              const itemSelected = () =>
+                item.value !== undefined && selectedValues().includes(item.value);
               const itemDisabled = () =>
                 disabled() || Boolean(item.disabled) || (isMaxReached() && !itemSelected());
-
-              const childUi = () => {
-                const baseUi = ui() ? omit(ui()!, "root", "fieldset", "legend", "item") : {};
-                return {
-                  ...baseUi,
-                  ...item.ui,
-                };
-              };
 
               return (
                 <div
@@ -179,21 +149,22 @@ export const RLCheckboxGroup: Component<RLCheckboxGroupProps> = (props) => {
                     size={size()}
                     color={color()}
                     layout={childLayout()}
-                    indicator={props.indicator}
+                    side={props.side}
+                    hasIndicator={props.hasIndicator}
                     highlight={highlight()}
                     checked={itemSelected()}
                     disabled={itemDisabled()}
                     ui={childUi()}
                     class={item.class}
-                    onChange={(e) => toggleValue(item.value, e.currentTarget.checked)}
+                    onCheckedChange={(checked) => {
+                      if (item.value !== undefined) toggleValue(item.value, checked);
+                    }}
                     labelSlot={
-                      slots.labelSlot()
-                        ? () => slots.labelSlot()!({ item: item as any })
-                        : undefined
+                      slots.labelSlot() ? () => renderSlot(slots.labelSlot(), { item }) : undefined
                     }
                     descriptionSlot={
                       slots.descriptionSlot()
-                        ? () => slots.descriptionSlot()!({ item: item as any })
+                        ? () => renderSlot(slots.descriptionSlot(), { item })
                         : undefined
                     }
                   />

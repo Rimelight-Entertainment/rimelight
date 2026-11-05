@@ -1,23 +1,9 @@
 import { defineTheme } from "../../resolver";
 
 export const RLThemeSelectorTheme = defineTheme("theme-selector", {
-  slots: ["root", "wrapper", "select"],
+  slots: ["root", "wrapper"],
   base: {
     root: "inline-flex flex-col gap-1.5",
     wrapper: "relative inline-block",
-    select: "",
-  },
-  variants: {
-    color: "auto",
-    size: {
-      xs: { select: "" },
-      sm: { select: "" },
-      md: { select: "" },
-      lg: { select: "" },
-      xl: { select: "" },
-    },
-  },
-  defaultVariants: {
-    size: "md",
   },
 });

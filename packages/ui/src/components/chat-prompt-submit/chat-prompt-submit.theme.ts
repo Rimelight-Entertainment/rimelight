@@ -3,8 +3,7 @@ import { defineTheme } from "../../resolver";
 export const RLChatPromptSubmitTheme = defineTheme("chat-prompt-submit", {
   slots: ["root"],
   base: {
-    root: "",
+    root: "shrink-0 rounded-full",
   },
   variants: {},
-  defaultVariants: {},
 });

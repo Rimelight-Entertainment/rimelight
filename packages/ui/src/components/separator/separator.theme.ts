@@ -1,14 +1,13 @@
 import { defineTheme } from "../../resolver";
 
 export const RLSeparatorTheme = defineTheme("separator", {
-  slots: ["root", "border", "container", "icon", "avatar", "avatarSize", "label"],
+  slots: ["root", "border", "container", "icon", "avatar", "label"],
   base: {
     root: "flex items-center align-center text-center",
     border: "border-[var(--rl-border)]",
     container: "font-medium text-default flex",
     icon: "shrink-0 size-5",
     avatar: "shrink-0",
-    avatarSize: "xs",
     label: "text-sm",
   },
   variants: {
@@ -22,20 +21,19 @@ export const RLSeparatorTheme = defineTheme("separator", {
       vertical: {
         root: "h-full flex-col",
         border: "h-full",
-        container: "",
       },
     },
     size: {
-      xs: {},
-      sm: {},
-      md: {},
-      lg: {},
-      xl: {},
+      xs: { label: "text-xs" },
+      sm: { label: "text-xs" },
+      md: { label: "text-sm" },
+      lg: { label: "text-base" },
+      xl: { label: "text-lg" },
     },
     position: {
-      start: {},
-      center: {},
-      end: {},
+      start: { container: "order-first" },
+      center: { container: "order-none" },
+      end: { container: "order-last" },
     },
     type: {
       solid: {
@@ -140,5 +138,6 @@ export const RLSeparatorTheme = defineTheme("separator", {
     size: "md",
     type: "solid",
     orientation: "horizontal",
+    position: "center",
   },
 });

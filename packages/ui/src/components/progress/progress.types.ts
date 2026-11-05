@@ -6,13 +6,13 @@ import type { RLProgressTheme } from "./progress.theme";
  */
 export type RLProgressProps = InferThemeProps<typeof RLProgressTheme> & {
   /**
-   * Current value, between 0 and `max`.
+   * Current value, clamped into `[0, max]`.
    * @default 0
    */
   value?: number | undefined;
 
   /**
-   * Upper bound of the progress range.
+   * Upper bound of the progress range. Non-finite or non-positive values fall back to 100.
    * @default 100
    */
   max?: number | undefined;

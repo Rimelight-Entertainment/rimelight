@@ -189,7 +189,7 @@ export const BrowserMockupSandbox = (): JSX.Element => {
                   Production-ready SSR & high performance web components
                 </p>
               </div>
-              <span class="px-2.5 py-1 text-xs rounded-full bg-emerald-500/10 text-emerald-500 font-medium border border-emerald-500/20">
+              <span class="px-2.5 py-1 text-xs rounded-full bg-success/10 text-success font-medium border border-success/20">
                 Live Preview
               </span>
             </div>
@@ -200,7 +200,7 @@ export const BrowserMockupSandbox = (): JSX.Element => {
               </div>
               <div class="p-3 rounded-lg border border-default bg-elevated/20">
                 <span class="text-xs text-muted">{t("app.text.performance")}</span>
-                <p class="text-xl font-bold text-emerald-500 mt-1">99.8%</p>
+                <p class="text-xl font-bold text-success mt-1">99.8%</p>
               </div>
               <div class="p-3 rounded-lg border border-default bg-elevated/20">
                 <span class="text-xs text-muted">{t("app.text.aria-compliance")}</span>
@@ -331,6 +331,121 @@ export const browserMockupAudit: ComponentAuditDefinition = {
           <div class="text-xs text-muted">
             Clean monochrome appearance for documentation screenshots.
           </div>
+        </RLBrowserMockup>
+      ),
+    },
+    {
+      id: "default-children",
+      title: "Default slot",
+      description: "Children render inside the body slot below the default header.",
+      render: () => (
+        <RLBrowserMockup url="https://rimelight.com/default">
+          <div class="text-xs text-muted">Default slot content.</div>
+        </RLBrowserMockup>
+      ),
+    },
+    {
+      id: "header-slot",
+      title: "Header slot",
+      description:
+        "Replaces the entire header, including controls, navigation, URL bar and actions.",
+      render: () => (
+        <RLBrowserMockup
+          url="https://rimelight.com/header"
+          navigation
+          headerSlot={() => (
+            <div class="flex items-center justify-between w-full text-xs text-highlighted">
+              Custom header
+            </div>
+          )}
+        >
+          <div class="text-xs text-muted">Body rendered below a custom header.</div>
+        </RLBrowserMockup>
+      ),
+    },
+    {
+      id: "controls-slot",
+      title: "Controls slot",
+      description: "Replaces the window dots with custom content.",
+      render: () => (
+        <RLBrowserMockup
+          url="https://rimelight.com/controls"
+          controlsSlot={() => <span class="text-xs text-muted">Custom controls</span>}
+        >
+          <div class="text-xs text-muted">Body with custom controls.</div>
+        </RLBrowserMockup>
+      ),
+    },
+    {
+      id: "navigation-slot",
+      title: "Navigation slot",
+      description: "Replaces the back, forward and reload buttons with custom content.",
+      render: () => (
+        <RLBrowserMockup
+          navigation
+          url="https://rimelight.com/navigation"
+          navigationSlot={() => <span class="text-xs text-muted">Custom navigation</span>}
+        >
+          <div class="text-xs text-muted">Body with custom navigation.</div>
+        </RLBrowserMockup>
+      ),
+    },
+    {
+      id: "url-bar-slot",
+      title: "URL bar slot",
+      description: "Replaces the whole URL bar with custom content.",
+      render: () => (
+        <RLBrowserMockup
+          url="https://rimelight.com/url-bar"
+          urlBarSlot={() => <span class="text-xs text-muted">Custom URL bar</span>}
+        >
+          <div class="text-xs text-muted">Body with a custom URL bar.</div>
+        </RLBrowserMockup>
+      ),
+    },
+    {
+      id: "url-prefix-slot",
+      title: "URL prefix slot",
+      description: "Replaces the URL prefix icon with custom content.",
+      render: () => (
+        <RLBrowserMockup
+          url="https://rimelight.com/url-prefix"
+          urlPrefixSlot={() => <span class="text-xs text-success">https</span>}
+        >
+          <div class="text-xs text-muted">Body with a custom URL prefix.</div>
+        </RLBrowserMockup>
+      ),
+    },
+    {
+      id: "url-suffix-slot",
+      title: "URL suffix slot",
+      description: "Renders custom content after the URL text.",
+      render: () => (
+        <RLBrowserMockup
+          url="https://rimelight.com/url-suffix"
+          urlSuffixSlot={() => <span class="text-xs text-dimmed">★</span>}
+        >
+          <div class="text-xs text-muted">Body with a custom URL suffix.</div>
+        </RLBrowserMockup>
+      ),
+    },
+    {
+      id: "actions-slot",
+      title: "Actions slot",
+      description: "Renders custom action buttons at the end of the header.",
+      render: () => (
+        <RLBrowserMockup
+          url="https://rimelight.com/actions"
+          actionsSlot={() => (
+            <button
+              type="button"
+              class="px-2 py-0.5 rounded text-xs bg-primary text-inverted font-medium transition-colors hover:bg-primary/90"
+            >
+              Deploy
+            </button>
+          )}
+        >
+          <div class="text-xs text-muted">Body with a custom action.</div>
         </RLBrowserMockup>
       ),
     },

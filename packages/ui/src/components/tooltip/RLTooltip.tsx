@@ -1,9 +1,11 @@
 import type { Component } from "solid-js";
+import { Show } from "solid-js";
 import type { RLTooltipProps } from "./tooltip.types";
 import { RLTooltipTheme } from "./tooltip.theme";
 import { createControllable } from "../../controllable";
+import { renderSlot } from "../../slot";
 
-const OMIT_KEYS = ["content", "placement", "open", "defaultOpen", "onOpenChange"] as const;
+const OMIT_KEYS = ["body", "placement", "open", "defaultOpen", "onOpenChange"] as const;
 
 export const RLTooltip: Component<RLTooltipProps> = (props) => {
   const { Tag, classes, rest, slots, children, theme } = RLTooltipTheme.setup(props, {
@@ -43,7 +45,11 @@ export const RLTooltip: Component<RLTooltipProps> = (props) => {
         data-state={isOpen() ? "open" : "closed"}
         role="tooltip"
       >
-        {slots.bodySlot() !== undefined ? slots.bodySlot() : props.content}
+        <div class={classes().body} data-slot="body">
+          <Show when={slots.bodySlot() !== undefined} fallback={props.body}>
+            {renderSlot(slots.bodySlot())}
+          </Show>
+        </div>
       </div>
     </Tag>
   );

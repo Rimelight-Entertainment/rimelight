@@ -1225,7 +1225,12 @@
       "default-main-element": "Elemento <main> predeterminado",
       "renders-a-self-contained-empty-main-with-no-chil": "Renderiza un <main> vacío e independiente, sin hijos.",
       "root-renders-the-configured-element-defaults-to": "La raíz renderiza el elemento configurado (por defecto <section>).",
-      "visual-progress-bar-disabled-via-progress-false": "Barra de progreso visual desactivada mediante la prop progress establecida en false."
+      "visual-progress-bar-disabled-via-progress-false": "Barra de progreso visual desactivada mediante la prop progress establecida en false.",
+      "internal-external-links": "Enlaces internos y externos",
+      "rel-target-controls": "Controles de rel y target",
+      "localize-href": "Localizar href",
+      "icons-slots": "Iconos y slots",
+      "active-disabled-states": "Estados activo y deshabilitado"
     }
   },
   "error": {

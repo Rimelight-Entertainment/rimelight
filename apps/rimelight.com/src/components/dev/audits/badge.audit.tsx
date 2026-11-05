@@ -14,7 +14,6 @@ export const BadgeSandbox = (): JSX.Element => {
   const [variant, setVariant] = createSignal<(typeof VARIANTS)[number]>("solid");
   const [color, setColor] = createSignal<string>("primary");
   const [shape, setShape] = createSignal<(typeof SHAPES)[number]>("pill");
-  const [square, setSquare] = createSignal(false);
   const [hasLeadingIcon, setHasLeadingIcon] = createSignal(false);
   const [hasTrailingIcon, setHasTrailingIcon] = createSignal(false);
   const [hasAvatar, setHasAvatar] = createSignal(false);
@@ -104,16 +103,6 @@ export const BadgeSandbox = (): JSX.Element => {
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
               type="checkbox"
-              checked={square()}
-              onInput={(e) => setSquare(e.currentTarget.checked)}
-              onChange={(e) => setSquare(e.currentTarget.checked)}
-              class="rounded border-default"
-            />
-            <span class="text-muted">Square (Equal Padding)</span>
-          </label>
-          <label class="flex items-center gap-1.5 cursor-pointer">
-            <input
-              type="checkbox"
               checked={hasLeadingIcon()}
               onInput={(e) => setHasLeadingIcon(e.currentTarget.checked)}
               onChange={(e) => setHasLeadingIcon(e.currentTarget.checked)}
@@ -168,7 +157,6 @@ export const BadgeSandbox = (): JSX.Element => {
           variant={variant()}
           color={color()}
           shape={shape()}
-          square={square()}
           leadingIcon={hasLeadingIcon() ? "rocket" : undefined}
           trailingIcon={hasTrailingIcon() ? "arrow-right" : undefined}
           avatar={hasAvatar() ? { src: "https://github.com/nuxt.png", alt: "Nuxt" } : undefined}
@@ -240,7 +228,7 @@ export const badgeAudit: ComponentAuditDefinition = {
           <RLBadge icon="rocket" label="Leading Icon" />
           <RLBadge trailingIcon="arrow-right" label="Trailing Icon" />
           <RLBadge icon="star" trailingIcon="check" label="Both Icons" />
-          <RLBadge icon="bell" square aria-label={"Notifications"} />
+          <RLBadge icon="bell" shape="square" aria-label="Notifications" />
         </div>
       ),
     },
@@ -282,9 +270,39 @@ export const badgeAudit: ComponentAuditDefinition = {
           <RLBadge shape="pill" label="Pill (rounded-full)" />
           <RLBadge shape="rounded" label="Rounded (rounded-md)" />
           <RLBadge shape="square" label="Square (rounded-none)" />
-          <RLBadge square label="99+" color="error" />
-          <RLBadge square icon="star" color="warning" shape="pill" />
-          <RLBadge square icon="check" color="success" shape="square" />
+          <RLBadge shape="square" label="99+" color="error" />
+          <RLBadge shape="pill" icon="star" color="warning" />
+          <RLBadge icon="check" color="success" shape="square" />
+        </div>
+      ),
+    },
+    {
+      id: "leading-slot",
+      title: "Leading slot",
+      description: "Custom content on the leading side replaces the icon and avatar.",
+      render: () => (
+        <div class="flex items-center gap-3 flex-wrap">
+          <RLBadge label="Leading slot" leadingSlot={<span class="text-xs">★</span>} />
+        </div>
+      ),
+    },
+    {
+      id: "trailing-slot",
+      title: "Trailing slot",
+      description: "Custom content on the trailing side replaces the trailing icon.",
+      render: () => (
+        <div class="flex items-center gap-3 flex-wrap">
+          <RLBadge label="Trailing slot" trailingSlot={<span class="text-xs">NEW</span>} />
+        </div>
+      ),
+    },
+    {
+      id: "default-children",
+      title: "Default slot",
+      description: "Children replace the label as the default slot.",
+      render: () => (
+        <div class="flex items-center gap-3 flex-wrap">
+          <RLBadge color="info">Default slot</RLBadge>
         </div>
       ),
     },
@@ -313,7 +331,7 @@ export const badgeAudit: ComponentAuditDefinition = {
       criterion: "Nuxt UI v4 API parity (Badge)",
       status: "pass",
       notes:
-        "Supports as, label, color, variant, size, square, icon, avatar, leading, leadingIcon, trailing, trailingIcon, ui, class.",
+        "Supports as, label, color, variant, size, shape, icon, avatar, leadingIcon, trailingIcon, leadingSlot, trailingSlot, trailing, ui, class.",
     },
     {
       criterion: "Slot pattern parity (leading, default, trailing)",

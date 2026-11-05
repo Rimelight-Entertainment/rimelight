@@ -1,5 +1,5 @@
-import type { JSX } from "@solidjs/web";
 import type { InferThemeProps } from "../../resolver";
+import type { SlotRenderer } from "../../types";
 import type { RLChipTheme } from "./chip.theme";
 
 /**
@@ -22,5 +22,5 @@ export type RLChipProps = InferThemeProps<typeof RLChipTheme> & {
    * Replaces the `text` content with custom JSX.
    * @default undefined
    */
-  textSlot?: JSX.Element;
+  labelSlot?: SlotRenderer;
 };

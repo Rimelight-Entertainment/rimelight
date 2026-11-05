@@ -1,20 +1,19 @@
-import type { Component } from "solid-js";
-import { For, Show } from "solid-js";
+import { For, Show, type Component } from "solid-js";
 import type { RLPageSectionProps } from "./page-section.types";
 import { RLPageSectionTheme } from "./page-section.theme";
 import { RLIcon } from "../icon/RLIcon";
 import { RLButton } from "../button/RLButton";
+import { renderSlot } from "../../slot";
 
 const OMIT_KEYS = [
-  "ctaVariant",
-  "headline",
   "icon",
+  "headline",
   "title",
   "description",
   "links",
   "reverse",
-  "contentVisibility",
   "containIntrinsicSize",
+  "contentVisibility",
   "style",
 ] as const;
 
@@ -35,78 +34,75 @@ export const RLPageSection: Component<RLPageSectionProps> = (props) => {
       "actionSlot",
     ] as const,
     variants: (s) => ({
-      layout: resolvedLayout(),
-      ...(resolvedLayout() === "cta" ? { ctaVariant: props.ctaVariant ?? "solid" } : {}),
-      orientation: props.orientation ?? "vertical",
+      ctaVariant: resolvedLayout() === "cta" ? (props.ctaVariant ?? "solid") : undefined,
       reverse: Boolean(props.reverse),
-      headline: Boolean(props.headline),
-      title: Boolean(s.titleSlot() ?? props.title),
-      description: Boolean(s.descriptionSlot() ?? props.description),
-      body: Boolean(s.bodySlot()),
+      hasHeadline: Boolean(props.headline),
+      hasTitle: Boolean(s.titleSlot() ?? props.title),
+      hasDescription: Boolean(s.descriptionSlot() ?? props.description),
+      hasBody: Boolean(s.bodySlot()),
     }),
   });
 
   const resolvedTitle = () => slots.titleSlot() ?? props.title;
   const resolvedDescription = () => slots.descriptionSlot() ?? props.description;
-
-  const showHeader = () =>
-    Boolean(
-      slots.headerSlot() ||
-      props.icon ||
-      slots.leadingSlot() ||
-      props.headline ||
-      resolvedTitle() ||
-      resolvedDescription(),
-    );
-
-  const showWrapper = () =>
-    Boolean(
-      showHeader() ||
-      slots.bodySlot() ||
-      slots.footerSlot() ||
-      slots.actionSlot() ||
-      (props.links?.length ?? 0) > 0,
-    );
+  const hasLinks = () => (props.links?.length ?? 0) > 0;
+  const hasDefaultHeader = () =>
+    Boolean(slots.leadingSlot() ?? props.icon) ||
+    Boolean(props.headline) ||
+    Boolean(resolvedTitle()) ||
+    Boolean(resolvedDescription());
 
   return (
     <Tag
       data-slot="root"
       data-theme={theme()}
       data-orientation={props.orientation ?? "vertical"}
-      class={`${classes().root} ${
+      class={[
+        classes().root,
         props.contentVisibility === "auto"
           ? "[content-visibility:auto] [contain-intrinsic-size:var(--rl-contain-intrinsic-size,auto_500px)]"
-          : ""
-      }`}
-      style={
-        props.containIntrinsicSize
-          ? { "--rl-contain-intrinsic-size": props.containIntrinsicSize }
-          : undefined
-      }
+          : undefined,
+      ]
+        .filter(Boolean)
+        .join(" ")}
+      style={{ "--rl-contain-intrinsic-size": props.containIntrinsicSize }}
       {...rest}
     >
       <Show when={slots.backgroundSlot()}>
         <div class={classes().background} data-slot="background">
-          {slots.backgroundSlot()}
+          {renderSlot(slots.backgroundSlot())}
         </div>
       </Show>
 
       <div class={classes().container}>
-        <Show when={showWrapper()}>
+        <Show
+          when={
+            Boolean(slots.headerSlot()) ||
+            hasDefaultHeader() ||
+            Boolean(slots.bodySlot()) ||
+            Boolean(slots.footerSlot()) ||
+            Boolean(slots.actionSlot()) ||
+            hasLinks()
+          }
+        >
           <div class={classes().wrapper}>
-            <Show when={slots.headerSlot()}>{slots.headerSlot()}</Show>
+            <Show when={slots.headerSlot()}>{renderSlot(slots.headerSlot())}</Show>
 
-            <Show when={!slots.headerSlot() && showHeader()}>
+            <Show when={!slots.headerSlot() && hasDefaultHeader()}>
               <div class={classes().header}>
-                <Show when={props.icon || slots.leadingSlot()}>
+                <Show when={slots.leadingSlot() ?? props.icon}>
                   <div class={classes().leading}>
                     <Show
                       when={slots.leadingSlot()}
                       fallback={
-                        <RLIcon name={props.icon!} size="md" class={classes().leadingIcon} />
+                        <Show when={props.icon}>
+                          {(icon) => (
+                            <RLIcon name={icon()} size="md" class={classes().leadingIcon} />
+                          )}
+                        </Show>
                       }
                     >
-                      {slots.leadingSlot()}
+                      {renderSlot(slots.leadingSlot())}
                     </Show>
                   </div>
                 </Show>
@@ -118,34 +114,36 @@ export const RLPageSection: Component<RLPageSectionProps> = (props) => {
                 <Show when={resolvedTitle()}>
                   <Show
                     when={resolvedLayout() === "hero"}
-                    fallback={<h2 class={classes().title}>{resolvedTitle()}</h2>}
+                    fallback={<h2 class={classes().title}>{renderSlot(resolvedTitle())}</h2>}
                   >
-                    <h1 class={classes().title}>{resolvedTitle()}</h1>
+                    <h1 class={classes().title}>{renderSlot(resolvedTitle())}</h1>
                   </Show>
                 </Show>
 
                 <Show when={resolvedDescription()}>
-                  <div class={classes().description}>{resolvedDescription()}</div>
+                  <div class={classes().description}>{renderSlot(resolvedDescription())}</div>
                 </Show>
               </div>
             </Show>
 
             <Show when={slots.bodySlot()}>
-              <div class={classes().body}>{slots.bodySlot()}</div>
+              <div class={classes().body}>{renderSlot(slots.bodySlot())}</div>
             </Show>
 
             <Show when={slots.footerSlot()}>
-              <div class={classes().footer}>{slots.footerSlot()}</div>
+              <div class={classes().footer}>{renderSlot(slots.footerSlot())}</div>
             </Show>
 
-            <Show
-              when={!slots.footerSlot() && (slots.actionSlot() || (props.links?.length ?? 0) > 0)}
-            >
+            <Show when={!slots.footerSlot() && (hasLinks() || slots.actionSlot())}>
               <div class={classes().footer}>
-                <div class={classes().links}>
-                  <For each={props.links ?? []}>{(link) => <RLButton size="lg" {...link} />}</For>
-                  {slots.actionSlot()}
-                </div>
+                <Show when={hasLinks()}>
+                  <div class={classes().links}>
+                    <For each={props.links ?? []}>{(link) => <RLButton size="lg" {...link} />}</For>
+                  </div>
+                </Show>
+                <Show when={slots.actionSlot()}>
+                  <div class={classes().action}>{renderSlot(slots.actionSlot())}</div>
+                </Show>
               </div>
             </Show>
           </div>

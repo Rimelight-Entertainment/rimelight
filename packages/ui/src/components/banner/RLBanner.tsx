@@ -3,9 +3,11 @@ import { createEffect, createMemo, createSignal, For, onSettled, Show } from "so
 import type { RLBannerProps } from "./banner.types";
 import { RLBannerTheme } from "./banner.theme";
 import { RLButton } from "../button/RLButton";
+import { RLLink } from "../link/RLLink";
 import { RLIcon } from "../icon/RLIcon";
-import { useHeaderStack } from "../header/useHeaderStack";
-import { resolveLinkAttrs } from "../link/helpers";
+import { useHeaderStack } from "../header/header.helpers";
+import { resolveLinkAttrs } from "../link/link.helpers";
+import { renderSlot } from "../../slot";
 import { uiT } from "../../locale";
 
 /** Value written to localStorage to persist dismissal across visits. */
@@ -91,11 +93,9 @@ export const RLBanner: Component<RLBannerProps> = (props) => {
   };
 
   const hasTitle = () =>
-    Boolean(
-      slots.titleSlot() !== undefined || props.title !== undefined || children() !== undefined,
-    );
+    slots.titleSlot() !== undefined || props.title !== undefined || children() !== undefined;
   const hasActions = () =>
-    Boolean(slots.actionsSlot() !== undefined || (props.actions && props.actions.length > 0));
+    slots.actionsSlot() !== undefined || (props.actions !== undefined && props.actions.length > 0);
 
   const { registerHeader } = useHeaderStack();
   const layer = registerHeader({
@@ -155,14 +155,13 @@ export const RLBanner: Component<RLBannerProps> = (props) => {
         data-theme={theme()}
         role={hasTitle() || props["aria-label"] ? "region" : undefined}
         aria-labelledby={hasTitle() ? titleId() : undefined}
-        aria-label={!hasTitle() ? props["aria-label"] : undefined}
+        aria-label={hasTitle() ? undefined : props["aria-label"]}
         class={classes().root}
         data-color={props.color}
-        data-contain={(props.contain ?? true) ? "true" : "false"}
-        data-collapsed={isStacked() && layer.isCollapsed() ? "true" : "false"}
-        data-rl-banner={isStacked() ? "true" : undefined}
+        data-collapsed={isStacked() && layer.isCollapsed() ? "" : undefined}
+        data-rl-banner={isStacked() ? "" : undefined}
         data-stack-index={stackIndex()}
-        data-hide-on-scroll={String(hideOnScroll())}
+        data-hide-on-scroll={hideOnScroll() ? "" : undefined}
         data-header-layer-id={id()}
         data-layer-type="banner"
         data-dismiss-key={storageKey()}
@@ -171,7 +170,9 @@ export const RLBanner: Component<RLBannerProps> = (props) => {
         {/* Full-surface overlay link (never wraps interactive children). */}
         <Show when={linkAttrs()}>
           {(attrs) => (
-            <a
+            <RLLink
+              localize={false}
+              noExternalIcon
               class={classes().link}
               data-slot="link"
               href={attrs().href}
@@ -188,38 +189,54 @@ export const RLBanner: Component<RLBannerProps> = (props) => {
         <div class={classes().content} data-slot="content" data-header-content>
           <div class={classes().container} data-slot="container">
             <div class={classes().left} data-slot="left">
-              {slots.leadingSlot()}
+              {renderSlot(slots.leadingSlot())}
             </div>
 
             <div class={classes().center} data-slot="center">
-              <Show when={!slots.centerSlot()} fallback={slots.centerSlot()}>
-                <Show
-                  when={slots.iconSlot()}
-                  fallback={
-                    <Show when={props.icon}>
-                      {(icon) => (
-                        <span class={classes().icon} data-slot="icon" aria-hidden="true">
-                          <RLIcon name={icon()} size="sm" aria-hidden="true" />
-                        </span>
-                      )}
+              <Show
+                when={slots.centerSlot()}
+                fallback={
+                  <>
+                    <Show
+                      when={slots.iconSlot()}
+                      fallback={
+                        <Show when={props.icon}>
+                          {(icon) => (
+                            <span class={classes().icon} data-slot="icon" aria-hidden="true">
+                              <RLIcon name={icon()} size="sm" aria-hidden="true" />
+                            </span>
+                          )}
+                        </Show>
+                      }
+                    >
+                      <span class={classes().icon} data-slot="icon" aria-hidden="true">
+                        {renderSlot(slots.iconSlot())}
+                      </span>
                     </Show>
-                  }
-                >
-                  <span class={classes().icon} data-slot="icon" aria-hidden="true">
-                    {slots.iconSlot()}
-                  </span>
-                </Show>
 
-                <Show when={hasTitle()}>
-                  <div id={titleId()} class={classes().title} data-slot="title">
-                    {slots.titleSlot() ?? props.title ?? children()}
-                  </div>
-                </Show>
+                    <Show when={hasTitle()}>
+                      <div id={titleId()} class={classes().title} data-slot="title">
+                        <Show
+                          when={slots.titleSlot()}
+                          fallback={
+                            <Show when={props.title} fallback={children()}>
+                              {props.title}
+                            </Show>
+                          }
+                        >
+                          {renderSlot(slots.titleSlot())}
+                        </Show>
+                      </div>
+                    </Show>
+                  </>
+                }
+              >
+                {renderSlot(slots.centerSlot())}
               </Show>
             </div>
 
             <div class={classes().right} data-slot="right">
-              {slots.trailingSlot()}
+              {renderSlot(slots.trailingSlot())}
 
               <Show when={hasActions()}>
                 <div class={classes().actions} data-slot="actions">
@@ -231,7 +248,7 @@ export const RLBanner: Component<RLBannerProps> = (props) => {
                       </For>
                     }
                   >
-                    {slots.actionsSlot()}
+                    {renderSlot(slots.actionsSlot())}
                   </Show>
                 </div>
               </Show>
@@ -245,18 +262,17 @@ export const RLBanner: Component<RLBannerProps> = (props) => {
                       size="md"
                       color="neutral"
                       variant="ghost"
-                      square
+                      shape="square"
                       leadingIcon={props.closeIcon ?? "x"}
                       class={classes().close}
                       data-slot="close"
-                      data-banner-close
                       aria-label={uiT("banner.close")}
                       onClick={handleDismiss}
                     />
                   </Show>
                 }
               >
-                {slots.closeSlot()}
+                {renderSlot(slots.closeSlot())}
               </Show>
             </div>
           </div>

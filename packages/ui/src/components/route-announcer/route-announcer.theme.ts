@@ -3,10 +3,9 @@ import { defineTheme } from "../../resolver";
 export const RLRouteAnnouncerTheme = defineTheme("route-announcer", {
   slots: ["root", "announcer", "progressBar", "progressIndicator"],
   base: {
-    root: "",
     announcer: "sr-only",
-    progressBar: "fixed top-0 inset-x-0 z-50 pointer-events-none overflow-hidden bg-transparent",
-    progressIndicator: "h-full w-full origin-left-right animate-pulse bg-[var(--rl-bg)]",
+    progressBar: "fixed top-0 inset-x-0 z-50 pointer-events-none overflow-hidden",
+    progressIndicator: "h-full w-full animate-pulse bg-[var(--rl-bg)]",
   },
   variants: {
     color: "auto",

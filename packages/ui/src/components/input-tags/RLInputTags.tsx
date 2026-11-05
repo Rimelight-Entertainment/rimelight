@@ -4,14 +4,7 @@ import { createMemo, createSignal, For, Show, type Component } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import { uiT } from "../../locale";
 
-const OMIT_KEYS = [
-  "items",
-  "displayLimit",
-  "showInput",
-  "name",
-  "placeholder",
-  "onAddTag",
-] as const;
+const OMIT_KEYS = ["items", "displayLimit", "hasInput", "name", "placeholder", "onAddTag"] as const;
 
 export const RLInputTags: Component<RLInputTagsProps> = (props) => {
   const { Tag, classes, rest, children, theme } = RLInputTagsTheme.setup(props, {
@@ -56,16 +49,17 @@ export const RLInputTags: Component<RLInputTagsProps> = (props) => {
         </For>
 
         <Show when={overflowCount() > 0}>
-          <span class={classes().more} data-slot="more" aria-hidden="true">
+          <span class={classes().more} data-slot="more">
             {uiT("input-tags.more").replace("{count}", String(overflowCount()))}
           </span>
         </Show>
       </Show>
 
-      <Show when={props.showInput}>
+      <Show when={props.hasInput}>
         <input
           type="text"
           name={props.name ? `${props.name}__input` : undefined}
+          aria-label={props.placeholder || uiT("input-tags.placeholder")}
           placeholder={props.placeholder || uiT("input-tags.placeholder")}
           value={inputValue()}
           onInput={(e) => setInputValue(e.currentTarget.value)}

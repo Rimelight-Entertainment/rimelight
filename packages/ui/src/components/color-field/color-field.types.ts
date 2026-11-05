@@ -1,20 +1,38 @@
 import type { InferThemeProps } from "../../resolver";
 import type { RLColorFieldTheme } from "./color-field.theme";
 
+/**
+ * Channel a color field can edit.
+ */
+export type RLColorFieldChannel =
+  | "hue"
+  | "saturation"
+  | "red"
+  | "green"
+  | "blue"
+  | "alpha"
+  | "lightness"
+  | "brightness";
+
+/**
+ * Color space a channel is expressed in.
+ */
+export type RLColorFieldColorSpace = "hsl" | "rgb" | "hsb";
+
 export type RLColorFieldProps = InferThemeProps<typeof RLColorFieldTheme> & {
   /**
    * Channel edited by the field. Without a channel the field edits the full hex value.
    * @default undefined
    */
-  channel?: "hue" | "saturation" | "red" | "green" | "blue" | "alpha" | "lightness" | "brightness";
+  channel?: RLColorFieldChannel;
   /**
    * Color space used to read and write `channel`.
    * @default "hsl"
    */
-  colorSpace?: "hsl" | "rgb" | "hsb";
+  colorSpace?: RLColorFieldColorSpace;
   /**
    * Uncontrolled initial hex value.
-   * @default "#000000"
+   * @default DEFAULT_COLOR_HEX
    */
   defaultValue?: string;
   /**
@@ -22,6 +40,21 @@ export type RLColorFieldProps = InferThemeProps<typeof RLColorFieldTheme> & {
    * @default undefined
    */
   value?: string;
+  /**
+   * Accessible name of the text input. Use when the field has no visible label.
+   * @default undefined
+   */
+  "aria-label"?: string | undefined;
+  /**
+   * Element id that labels the text input.
+   * @default undefined
+   */
+  "aria-labelledby"?: string | undefined;
+  /**
+   * Element id that describes the text input.
+   * @default undefined
+   */
+  "aria-describedby"?: string | undefined;
   /**
    * Called with the new hex value on every change.
    * @default undefined
@@ -31,7 +64,7 @@ export type RLColorFieldProps = InferThemeProps<typeof RLColorFieldTheme> & {
    * Disabled state.
    * @default false
    */
-  disabled?: boolean;
+  disabled?: boolean | undefined;
   /**
    * Disables changing the channel with the mouse wheel.
    * @default false

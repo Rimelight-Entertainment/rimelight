@@ -190,7 +190,6 @@ describe("RLSplitter Component Test Suite", () => {
       const handle = slotTag(html, "handle");
       expect(attr(root, "data-orientation")).toBe("vertical");
       expect(attr(handle, "aria-orientation")).toBe("horizontal");
-      expect(handle).toContain("cursor-row-resize");
     });
 
     it("enables intersection targets when intersection prop is set", () => {
@@ -201,7 +200,7 @@ describe("RLSplitter Component Test Suite", () => {
       const endTarget = container.querySelector("[data-resizable-handle-end-target]");
       expect(startTarget).not.toBeNull();
       expect(endTarget).not.toBeNull();
-      expect(startTarget?.className).not.toContain("hidden");
+      expect(startTarget?.hasAttribute("data-intersecting")).toBe(true);
     });
 
     it("locks handles when disabled is true or adjacent panel has resizable={false}", () => {

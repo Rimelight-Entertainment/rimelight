@@ -6,7 +6,6 @@ export const RLCheckboxGroupTheme = defineTheme("checkbox-group", {
     root: "relative",
     fieldset: "flex gap-x-2",
     legend: "mb-1 block font-medium text-default",
-    item: "",
   },
   variants: {
     orientation: {
@@ -59,13 +58,7 @@ export const RLCheckboxGroupTheme = defineTheme("checkbox-group", {
         legend: "after:content-['*'] after:ms-0.5 after:text-error",
       },
     },
-    highlight: {
-      true: {},
-      false: {},
-    },
-    disabled: {
-      true: {},
-    },
+    highlight: {},
   },
   compoundVariants: [
     {
@@ -107,13 +100,6 @@ export const RLCheckboxGroupTheme = defineTheme("checkbox-group", {
       layout: "table",
       class: {
         item: "has-data-[state=checked]:bg-elevated has-data-[state=checked]:border-inverted/50 has-data-[state=checked]:z-[2]",
-      },
-    },
-    {
-      layout: "table",
-      disabled: true,
-      class: {
-        item: "cursor-not-allowed",
       },
     },
   ],

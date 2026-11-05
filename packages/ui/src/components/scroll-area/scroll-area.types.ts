@@ -1,9 +1,12 @@
 import type { InferThemeProps } from "../../resolver";
 import type { RLScrollAreaTheme } from "./scroll-area.theme";
 
-export type RLScrollAreaProps = Omit<InferThemeProps<typeof RLScrollAreaTheme>, "orientation"> & {
+export type RLScrollAreaProps = Omit<
+  InferThemeProps<typeof RLScrollAreaTheme>,
+  "visible" | "sized"
+> & {
   /**
-   * Orientation of the scrollbar.
+   * Which scrollbars are rendered. `both` renders vertical and horizontal bars.
    *
    * @default "vertical"
    */
@@ -15,7 +18,7 @@ export type RLScrollAreaProps = Omit<InferThemeProps<typeof RLScrollAreaTheme>, 
    */
   scrollHideDelay?: number;
   /**
-   * Height override if needed.
+   * Fixed height of the root. Numbers are treated as pixels.
    *
    * @default undefined
    */

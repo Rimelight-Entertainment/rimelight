@@ -1,11 +1,13 @@
 import { createMemo, type Accessor } from "solid-js";
 import type { JSX } from "@solidjs/web";
 
-/**
- * Type of a slot that is rendered inside an overlay's body (modal, drawer, slideover, confirm).
- * Overlay content is function-only so the memo holds a function and builds no DOM while closed.
- */
-export type OverlaySlot = () => JSX.Element;
+/** Invokes a render-function slot with its context, or returns a static slot node as-is. */
+export function renderSlot<Ctx = void>(
+  value: JSX.Element | ((ctx: Ctx) => JSX.Element),
+  ctx?: Ctx,
+): JSX.Element {
+  return typeof value === "function" ? (value as (ctx?: Ctx) => JSX.Element)(ctx) : value;
+}
 
 /**
  * The only way a component reads a slot prop.

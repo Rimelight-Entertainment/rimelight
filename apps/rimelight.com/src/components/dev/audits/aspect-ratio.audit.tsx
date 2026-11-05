@@ -168,7 +168,7 @@ export const aspectRatioAudit: ComponentAuditDefinition = {
       criterion: "Polymorphic as prop",
       status: "pass",
       notes:
-        "Renders via dynamic() (<Dynamic> is deprecated); plain div default. See as-prop scenario.",
+        "Root tag resolved by the theme setup (as prop); plain div default. See as-prop scenario.",
     },
     {
       criterion: "No innerHTML / dangerouslySetInnerHTML",

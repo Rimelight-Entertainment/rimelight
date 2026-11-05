@@ -1,5 +1,4 @@
-import type { JSX } from "@solidjs/web";
-import type { ThemeColor } from "../../types";
+import type { SlotRenderer, ThemeColor } from "../../types";
 import type { InferThemeProps } from "../../resolver";
 import type { RLSelectTheme } from "./select.theme";
 
@@ -7,8 +6,6 @@ export interface SelectItem {
   label?: string;
   value?: string | number;
   disabled?: boolean;
-  icon?: string;
-  avatar?: string;
 }
 
 export type SelectVariant = "solid" | "outline" | "soft" | "subtle" | "ghost" | "link";
@@ -85,7 +82,7 @@ export type RLSelectProps = Omit<
   /**
    * Option items. Strings or objects with label/value.
    */
-  items?: SelectItem[] | string[] | undefined;
+  items?: (SelectItem | string)[] | undefined;
 
   /**
    * Icon name rendered before the selected label.
@@ -93,9 +90,9 @@ export type RLSelectProps = Omit<
   leadingIcon?: string | undefined;
 
   /**
-   * Custom leading slot content.
+   * Custom leading content, rendered in place of `leadingIcon` when present.
    */
-  leadingSlot?: JSX.Element | undefined;
+  leadingSlot?: SlotRenderer;
 
   /**
    * Native change event callback.

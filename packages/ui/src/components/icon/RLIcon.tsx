@@ -12,7 +12,7 @@ export const RLIcon: Component<RLIconProps> = (props) => {
 
   return (
     <Tag
-      class={resolved() ? `${classes().root} ${resolved()}` : classes().root}
+      class={[classes().root, resolved()].filter(Boolean).join(" ")}
       data-slot="root"
       data-theme={theme()}
       aria-hidden="true"

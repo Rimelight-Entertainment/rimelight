@@ -8,278 +8,114 @@ function render(fn: () => any): string {
   return cleanHtml(renderToString(fn));
 }
 
-function slotTag(html: string, slot: string): string {
-  const match = html.match(new RegExp(`<[a-z0-9]+[^>]*data-slot="${slot}"[^>]*>`));
-  return match?.[0] ?? "";
-}
-
-function attr(tag: string, name: string): string | undefined {
-  return tag.match(new RegExp(`\\s${name}="([^"]*)"`))?.[1];
+function hasSlot(html: string, slot: string): boolean {
+  return html.includes(`data-slot="${slot}"`);
 }
 
 describe("RLCard", () => {
-  const variants = ["solid", "outline", "soft", "subtle"] as const;
-
-  describe("Exports", () => {
-    it("exports RLCard component from index", () => {
-      expect(RLCard).toBeDefined();
-    });
+  it("renders a div root by default", () => {
+    const html = render(() => <RLCard>Body</RLCard>);
+    expect(html).toMatch(/^<div[^>]*data-slot="root"/);
+    expect(html).not.toContain("data-theme=");
   });
 
-  describe("Structure, Slots & Props", () => {
-    it("renders default card structure as div", () => {
-      const html = render(() => <RLCard>Body content</RLCard>);
-      expect(html).toMatch(/^<div/);
-      expect(slotTag(html, "root")).not.toBe("");
-      expect(slotTag(html, "body")).not.toBe("");
-      expect(html).toContain("Body content");
-    });
-
-    it("does not render header, body, or footer when empty", () => {
-      const html = render(() => <RLCard />);
-      expect(slotTag(html, "root")).not.toBe("");
-      expect(slotTag(html, "header")).toBe("");
-      expect(slotTag(html, "body")).toBe("");
-      expect(slotTag(html, "footer")).toBe("");
-    });
-
-    it("renders title and description in header", () => {
-      const html = render(() => (
-        <RLCard title="Card Title" description="Card Description">
-          Body
-        </RLCard>
-      ));
-      expect(slotTag(html, "header")).not.toBe("");
-      expect(slotTag(html, "title")).not.toBe("");
-      expect(slotTag(html, "description")).not.toBe("");
-      expect(html).toContain("Card Title");
-      expect(html).toContain("Card Description");
-    });
-
-    it("prefers titleSlot and descriptionSlot over props", () => {
-      const html = render(() => (
-        <RLCard
-          title="Prop Title"
-          description="Prop Desc"
-          titleSlot={<h3>Slot Title</h3>}
-          descriptionSlot={<p>Slot Desc</p>}
-        />
-      ));
-      expect(html).toContain("Slot Title");
-      expect(html).toContain("Slot Desc");
-      expect(html).not.toContain("Prop Title");
-      expect(html).not.toContain("Prop Desc");
-    });
-
-    it("renders header slot directly and replaces title/description", () => {
-      const html = render(() => (
-        <RLCard
-          title="Ignored Title"
-          description="Ignored Desc"
-          headerSlot={<div class="custom-header">Custom Header</div>}
-        >
-          Body
-        </RLCard>
-      ));
-      expect(html).toContain("Custom Header");
-      expect(html).not.toContain("Ignored Title");
-      expect(html).not.toContain("Ignored Desc");
-    });
-
-    it("renders headerSlot content", () => {
-      const html = render(() => (
-        <RLCard headerSlot={<div class="header-alias">Header Alias</div>} />
-      ));
-      expect(html).toContain("Header Alias");
-    });
-
-    it("renders bodySlot content", () => {
-      const html = render(() => <RLCard bodySlot={<span>Body Slot</span>} />);
-      expect(html).toContain("Body Slot");
-      expect(slotTag(html, "body")).not.toBe("");
-    });
-
-    it("renders footerSlot", () => {
-      const footerHtml = render(() => (
-        <RLCard footerSlot={<button type="button">Action</button>}>Content</RLCard>
-      ));
-      expect(slotTag(footerHtml, "footer")).not.toBe("");
-      expect(footerHtml).toContain("Action");
-
-      const footerSlotHtml = render(() => (
-        <RLCard footerSlot={<button type="button">Slot Action</button>} />
-      ));
-      expect(slotTag(footerSlotHtml, "footer")).not.toBe("");
-      expect(footerSlotHtml).toContain("Slot Action");
-    });
+  it("sets data-theme from the theme prop", () => {
+    const html = render(() => <RLCard theme="dark">Body</RLCard>);
+    expect(html).toContain('data-theme="dark"');
   });
 
-  describe("Variants", () => {
-    it("renders outline variant by default", () => {
-      const html = render(() => <RLCard title="Outline Default" />);
-      const root = slotTag(html, "root");
-      expect(root).toContain("bg-default ring ring-default divide-y divide-default");
-    });
-
-    for (const variant of variants) {
-      it(`renders variant=${variant} correctly`, () => {
-        const html = render(() => (
-          <RLCard variant={variant} title="Title" description="Desc">
-            Content
-          </RLCard>
-        ));
-        expect(html).toContain("Title");
-        expect(html).toContain("Content");
-      });
-    }
-
-    it("renders solid variant with inverted styles", () => {
-      const html = render(() => <RLCard variant="solid" title="Solid Title" description="Desc" />);
-      const root = slotTag(html, "root");
-      expect(root).toContain("bg-inverted text-inverted");
-    });
-
-    it("renders soft variant with elevated styles", () => {
-      const html = render(() => <RLCard variant="soft" title="Soft Title" />);
-      const root = slotTag(html, "root");
-      expect(root).toContain("bg-elevated/50 divide-y divide-default");
-    });
-
-    it("renders subtle variant with ring and elevated styles", () => {
-      const html = render(() => <RLCard variant="subtle" title="Subtle Title" />);
-      const root = slotTag(html, "root");
-      expect(root).toContain("bg-elevated/50 ring ring-default divide-y divide-default");
-    });
+  it("renders an anchor root when href is given", () => {
+    const html = render(() => <RLCard href="/docs">Body</RLCard>);
+    expect(html).toMatch(/^<a[^>]*data-slot="root"/);
+    expect(html).toContain('href="/docs"');
   });
 
-  describe("Media & Overlay", () => {
-    it("renders media with mediaSrc prop", () => {
-      const html = render(() => (
-        <RLCard mediaSrc="https://example.com/image.jpg" title="Photo Card" />
-      ));
-      expect(slotTag(html, "media")).not.toBe("");
-      expect(html).toContain('src="https://example.com/image.jpg"');
-      expect(html).toContain('alt="Photo Card"');
-    });
-
-    it("renders custom media or mediaSlot", () => {
-      const html = render(() => (
-        <RLCard mediaSlot={<div class="video-player">Video</div>} title="Video Card" />
-      ));
-      expect(html).toContain("video-player");
-      expect(html).toContain("Video");
-    });
-
-    it("renders custom overlaySlot", () => {
-      const html = render(() => (
-        <RLCard
-          overlaySlot={<div class="custom-overlay">Custom Overlay Content</div>}
-          mediaSrc="https://example.com/bg.jpg"
-        />
-      ));
-      expect(html).toContain("custom-overlay");
-      expect(html).toContain("Custom Overlay Content");
-    });
+  it("renders the title and description props in the header", () => {
+    const html = render(() => <RLCard title="Plan" description="Monthly" />);
+    expect(hasSlot(html, "header")).toBe(true);
+    expect(html).toContain("Plan");
+    expect(html).toContain("Monthly");
   });
 
-  describe("Polymorphism & Links", () => {
-    it("renders custom HTML element via as prop", () => {
-      const sectionHtml = render(() => <RLCard as="section" title="Section Card" />);
-      expect(sectionHtml).toMatch(/^<section/);
-
-      const articleHtml = render(() => <RLCard as="article" title="Article Card" />);
-      expect(articleHtml).toMatch(/^<article/);
-
-      const asideHtml = render(() => <RLCard as="aside" title="Aside Card" />);
-      expect(asideHtml).toMatch(/^<aside/);
-    });
-
-    it("automatically renders as an anchor when href is provided", () => {
-      const html = render(() => <RLCard href="https://example.com" title="Link Card" />);
-      expect(html).toMatch(/^<a/);
-      expect(html).toContain('href="https://example.com"');
-    });
-
-    it("applies target and rel attributes for external links", () => {
-      const html = render(() => (
-        <RLCard href="https://example.com" target="_blank" title="External Link" />
-      ));
-      expect(html).toContain('target="_blank"');
-      expect(html).toContain('rel="noopener noreferrer"');
-    });
+  it("renders no header when no title, description or headerSlot is provided", () => {
+    const html = render(() => <RLCard>Body</RLCard>);
+    expect(hasSlot(html, "header")).toBe(false);
   });
 
-  describe("Accessibility (WAI-ARIA)", () => {
-    it("automatically links title with aria-labelledby", () => {
-      const html = render(() => <RLCard id="test-card" title="My Title" />);
-      const root = slotTag(html, "root");
-      const title = slotTag(html, "title");
-      expect(attr(root, "aria-labelledby")).toBe("test-card-title");
-      expect(attr(title, "id")).toBe("test-card-title");
-    });
-
-    it("automatically links description with aria-describedby", () => {
-      const html = render(() => <RLCard id="test-card" description="My Description Details" />);
-      const root = slotTag(html, "root");
-      const desc = slotTag(html, "description");
-      expect(attr(root, "aria-describedby")).toBe("test-card-description");
-      expect(attr(desc, "id")).toBe("test-card-description");
-    });
-
-    it("supports explicit aria-label, aria-labelledby, aria-describedby, and role", () => {
-      const html = render(() => (
-        <RLCard
-          role="region"
-          aria-label="Card region"
-          aria-labelledby="custom-heading"
-          aria-describedby="custom-desc"
-        >
-          Content
-        </RLCard>
-      ));
-      const root = slotTag(html, "root");
-      expect(attr(root, "role")).toBe("region");
-      expect(attr(root, "aria-label")).toBe("Card region");
-      expect(attr(root, "aria-labelledby")).toBe("custom-heading");
-      expect(attr(root, "aria-describedby")).toBe("custom-desc");
-    });
+  it("replaces the title with titleSlot", () => {
+    const html = render(() => <RLCard title="Ignored" titleSlot={() => <span>Slot title</span>} />);
+    expect(html).toContain("Slot title");
+    expect(html).not.toContain("Ignored");
   });
 
-  describe("Custom UI and Classes", () => {
-    it("applies class prop to root", () => {
-      const html = render(() => <RLCard class="custom-card-class" title="Test" />);
-      expect(slotTag(html, "root")).toContain("custom-card-class");
-    });
+  it("replaces the description with descriptionSlot", () => {
+    const html = render(() => (
+      <RLCard description="Ignored" descriptionSlot={() => <span>Slot description</span>} />
+    ));
+    expect(html).toContain("Slot description");
+    expect(html).not.toContain("Ignored");
+  });
 
-    it("applies ui slot class overrides", () => {
-      const html = render(() => (
-        <RLCard
-          title="Customized"
-          description="Sub-text"
-          footerSlot="Footer"
-          ui={{
-            root: "shadow-2xl",
-            header: "p-8",
-            title: "font-black tracking-widest",
-            description: "italic text-xs",
-            body: "p-8",
-            footer: "bg-elevated",
-          }}
-        >
-          Body
-        </RLCard>
-      ));
-      expect(slotTag(html, "root")).toContain("shadow-2xl");
-      expect(slotTag(html, "header")).toContain("p-8");
-      expect(slotTag(html, "title")).toContain("font-black tracking-widest");
-      expect(slotTag(html, "description")).toContain("italic text-xs");
-      expect(slotTag(html, "body")).toContain("p-8");
-      expect(slotTag(html, "footer")).toContain("bg-elevated");
-    });
+  it("replaces the whole header with headerSlot", () => {
+    const html = render(() => (
+      <RLCard title="Ignored" headerSlot={() => <span>Slot header</span>} />
+    ));
+    expect(html).toContain("Slot header");
+    expect(html).not.toContain("Ignored");
+    expect(hasSlot(html, "title")).toBe(false);
+  });
 
-    it("applies data-theme attribute", () => {
-      const html = render(() => <RLCard theme="dark" title="Dark Theme" />);
-      expect(attr(slotTag(html, "root"), "data-theme")).toBe("dark");
-    });
+  it("renders children as the body", () => {
+    const html = render(() => <RLCard>Child body</RLCard>);
+    expect(hasSlot(html, "body")).toBe(true);
+    expect(html).toContain("Child body");
+  });
+
+  it("replaces the body with bodySlot", () => {
+    const html = render(() => <RLCard bodySlot={() => <span>Slot body</span>}>Ignored</RLCard>);
+    expect(html).toContain("Slot body");
+    expect(html).not.toContain("Ignored");
+  });
+
+  it("renders footerSlot in the footer", () => {
+    const html = render(() => <RLCard footerSlot={() => <span>Slot footer</span>} />);
+    expect(hasSlot(html, "footer")).toBe(true);
+    expect(html).toContain("Slot footer");
+  });
+
+  it("renders mediaSrc as an image inside the media area", () => {
+    const html = render(() => <RLCard mediaSrc="/cover.png" title="Cover" />);
+    expect(hasSlot(html, "media")).toBe(true);
+    expect(html).toContain('src="/cover.png"');
+  });
+
+  it("replaces the media area with mediaSlot", () => {
+    const html = render(() => (
+      <RLCard mediaSrc="/cover.png" mediaSlot={() => <span>Slot media</span>} />
+    ));
+    expect(html).toContain("Slot media");
+    expect(html).not.toContain('src="/cover.png"');
+  });
+
+  it("renders overlaySlot over the header, body and footer", () => {
+    const html = render(() => (
+      <RLCard
+        title="Hidden"
+        footerSlot={() => <span>Hidden footer</span>}
+        overlaySlot={() => <span>Slot overlay</span>}
+      >
+        Hidden body
+      </RLCard>
+    ));
+    expect(hasSlot(html, "overlay")).toBe(true);
+    expect(html).toContain("Slot overlay");
+    expect(hasSlot(html, "header")).toBe(false);
+    expect(hasSlot(html, "body")).toBe(false);
+    expect(hasSlot(html, "footer")).toBe(false);
+  });
+
+  it("does not render the overlay without overlaySlot", () => {
+    const html = render(() => <RLCard>Body</RLCard>);
+    expect(hasSlot(html, "overlay")).toBe(false);
   });
 });

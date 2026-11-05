@@ -6,5 +6,4 @@ export const RLDashboardGroupTheme = defineTheme("dashboard-group", {
     root: "relative w-full h-full min-h-0 flex flex-row overflow-hidden",
   },
   variants: {},
-  defaultVariants: {},
 });

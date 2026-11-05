@@ -2,7 +2,7 @@ import type { InferThemeProps } from "../../resolver";
 import type { ThemeColor } from "../../types";
 import type { RLRouteAnnouncerTheme } from "./route-announcer.theme";
 
-export type RouteAnnouncerProgressSize = "xs" | "sm" | "md" | "lg";
+export type RouteAnnouncerProgressSize = "xs" | "sm" | "md" | "lg" | "xl";
 
 /**
  * Progress bar options. Used in place of the boolean `progress`.
@@ -16,7 +16,7 @@ export interface RouteAnnouncerProgressOptions {
 
   /**
    * Height of the progress bar.
-   * @default undefined; the `size` prop applies, otherwise "sm".
+   * @default undefined; the `size` prop applies, otherwise "md".
    */
   size?: RouteAnnouncerProgressSize;
 

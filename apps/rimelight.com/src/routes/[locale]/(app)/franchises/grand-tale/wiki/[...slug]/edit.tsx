@@ -1,7 +1,7 @@
 import { type Component, createSignal, createMemo } from "solid-js";
 import { useParams } from "@solidjs/router";
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
-import { getLocaleUrl, getCurrentLocale } from "@rimelight/i18n";
+import { getCurrentLocale } from "@rimelight/i18n";
 import { api } from "#api/client";
 import { t } from "@rimelight/i18n";
 
@@ -52,7 +52,7 @@ export const WikiEditPage: Component = () => {
     try {
       const res = await fetch(`/api/cms/pages/${page.id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "X-Rimelight-Request": "1" },
         body: JSON.stringify({
           title: { [currentLocale()]: titleVal() },
           description: { [currentLocale()]: descVal() },
@@ -72,11 +72,11 @@ export const WikiEditPage: Component = () => {
       <header class="h-12 w-full border-b border-neutral-800 flex items-center justify-between px-4 shrink-0 z-30">
         <div class="flex items-center gap-2.5">
           <RLButton
-            href={getLocaleUrl("/franchises/grand-tale/wiki")}
+            href="/franchises/grand-tale/wiki"
             variant="ghost"
             color="neutral"
             size="xs"
-            leadingIcon="i-lucide-arrow-left"
+            leadingIcon="arrow-left"
             class="!px-2"
           >
             Wiki
@@ -92,7 +92,7 @@ export const WikiEditPage: Component = () => {
             variant="solid"
             color="primary"
             size="xs"
-            leadingIcon="i-lucide-save"
+            leadingIcon="save"
             disabled={saving()}
             onClick={handleSave}
           >

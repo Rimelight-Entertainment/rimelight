@@ -1,5 +1,5 @@
-import type { JSX } from "@solidjs/web";
 import type { InferThemeProps } from "../../resolver";
+import type { SlotRenderer } from "../../types";
 import type { RLBadgeTheme } from "./badge.theme";
 import type { RLAvatarProps } from "../avatar/avatar.types";
 
@@ -14,16 +14,10 @@ export type RLBadgeProps = InferThemeProps<typeof RLBadgeTheme> & {
   label?: string | number | undefined;
 
   /**
-   * Icon name shown on the side selected by `leading` / `trailing`.
+   * Icon name shown on the side selected by `trailing`. Without `trailing` it is shown on the left.
    * @default undefined
    */
   icon?: string | undefined;
-
-  /**
-   * When `true`, `icon` is displayed on the left side.
-   * @default false
-   */
-  leading?: boolean | undefined;
 
   /**
    * When `true`, `icon` is displayed on the right side.
@@ -50,14 +44,14 @@ export type RLBadgeProps = InferThemeProps<typeof RLBadgeTheme> & {
   avatar?: RLAvatarProps | string | undefined;
 
   /**
-   * Custom JSX rendered on the left side. Replaces the leading icon and avatar.
+   * Custom content rendered on the left side. Replaces the leading icon and avatar.
    * @default undefined
    */
-  leadingSlot?: JSX.Element;
+  leadingSlot?: SlotRenderer;
 
   /**
-   * Custom JSX rendered on the right side. Replaces the trailing icon.
+   * Custom content rendered on the right side. Replaces the trailing icon.
    * @default undefined
    */
-  trailingSlot?: JSX.Element;
+  trailingSlot?: SlotRenderer;
 };

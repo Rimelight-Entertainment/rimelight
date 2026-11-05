@@ -232,6 +232,29 @@ export const bannerAudit: ComponentAuditDefinition = {
       ),
     },
     {
+      id: "center-slot",
+      title: "Center slot",
+      description: "`centerSlot` replaces the whole center area, including the icon and title.",
+      render: () => (
+        <RLBanner
+          color="info"
+          centerSlot={<span class="text-sm">{"Custom center content replacing the title."}</span>}
+        />
+      ),
+    },
+    {
+      id: "trailing-slot",
+      title: "Trailing slot",
+      description: "`trailingSlot` renders content on the right edge, before the actions.",
+      render: () => (
+        <RLBanner
+          color="warning"
+          title="Trailing slot"
+          trailingSlot={<span class="text-xs font-bold uppercase">{"Trailing"}</span>}
+        />
+      ),
+    },
+    {
       id: "link-mode",
       get title() {
         return t("app.text.interactive-link-mode");

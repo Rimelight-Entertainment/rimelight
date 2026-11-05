@@ -171,13 +171,9 @@ export const confirmAudit: ComponentAuditDefinition = {
       },
     },
     {
-      id: "custom-slots-and-labels",
-      get title() {
-        return t("app.text.custom-slots-layout");
-      },
-      get description() {
-        return t("app.text.custom-titleslot-descriptionslot-and-triggerlabe");
-      },
+      id: "default-children",
+      title: "Default Children Body",
+      description: "Children render as the dialog body between the description and the action row.",
       render: () => {
         const [open, setOpen] = createSignal(false);
         return (
@@ -185,19 +181,110 @@ export const confirmAudit: ComponentAuditDefinition = {
             <RLConfirm
               open={open()}
               onOpenChange={setOpen}
-              triggerLabel="Confirm with Custom Slots"
+              triggerLabel="Open with children"
+              title="Review details"
+              onConfirm={() => setOpen(false)}
+              onCancel={() => setOpen(false)}
+            >
+              <p class="text-sm text-muted">Children render as the dialog body.</p>
+            </RLConfirm>
+          </div>
+        );
+      },
+    },
+    {
+      id: "trigger-slot",
+      title: "Trigger Slot",
+      description: "A custom trigger element replaces the default trigger button.",
+      render: () => {
+        const [open, setOpen] = createSignal(false);
+        return (
+          <div>
+            <RLConfirm
+              open={open()}
+              onOpenChange={setOpen}
+              title="Archive project?"
+              onConfirm={() => setOpen(false)}
+              onCancel={() => setOpen(false)}
+              triggerSlot={
+                <RLButton variant="outline" onClick={() => setOpen(true)}>
+                  Archive project
+                </RLButton>
+              }
+            />
+          </div>
+        );
+      },
+    },
+    {
+      id: "title-slot",
+      title: "Title Slot",
+      description: "Custom title markup renders in place of the title string.",
+      render: () => {
+        const [open, setOpen] = createSignal(false);
+        return (
+          <div>
+            <RLConfirm
+              open={open()}
+              onOpenChange={setOpen}
+              triggerLabel="Open title slot"
               titleSlot={() => (
-                <span class="text-error-500 font-bold">{"⚠️ Warning: Sensitive Action"}</span>
-              )}
-              descriptionSlot={() => (
-                <span class="text-xs text-muted">
-                  Custom formatted notice regarding your data export request.
-                </span>
+                <span class="text-error font-bold">{"⚠️ Warning: Sensitive Action"}</span>
               )}
               actionLabel="Proceed"
               cancelLabel="Abort"
               onConfirm={() => setOpen(false)}
               onCancel={() => setOpen(false)}
+            />
+          </div>
+        );
+      },
+    },
+    {
+      id: "description-slot",
+      title: "Description Slot",
+      description: "Custom description markup renders in place of the description string.",
+      render: () => {
+        const [open, setOpen] = createSignal(false);
+        return (
+          <div>
+            <RLConfirm
+              open={open()}
+              onOpenChange={setOpen}
+              triggerLabel="Open description slot"
+              title="Export data?"
+              descriptionSlot={() => (
+                <span class="text-xs text-muted">
+                  Custom formatted notice regarding your data export request.
+                </span>
+              )}
+              onConfirm={() => setOpen(false)}
+              onCancel={() => setOpen(false)}
+            />
+          </div>
+        );
+      },
+    },
+    {
+      id: "footer-slot",
+      title: "Footer Slot",
+      description: "Custom footer replaces the default Cancel and Confirm row.",
+      render: () => {
+        const [open, setOpen] = createSignal(false);
+        return (
+          <div>
+            <RLConfirm
+              open={open()}
+              onOpenChange={setOpen}
+              triggerLabel="Open footer slot"
+              title="Acknowledge notice"
+              footerSlot={() => (
+                <div class="flex w-full justify-end">
+                  <RLButton variant="solid" onClick={() => setOpen(false)}>
+                    Understood
+                  </RLButton>
+                </div>
+              )}
             />
           </div>
         );
@@ -209,7 +296,7 @@ export const confirmAudit: ComponentAuditDefinition = {
       criterion: "API and slot pattern parity",
       status: "pass",
       notes:
-        "Full support for title, description, color (primary, error), actionLabel, cancelLabel, triggerLabel, onConfirm, onCancel, and slot aliases.",
+        "Full support for title, description, color (primary, error), actionLabel, cancelLabel, triggerLabel, onConfirm, onCancel, and slot props.",
     },
     {
       criterion: "Composition over RLModal",

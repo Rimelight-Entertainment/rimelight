@@ -1,12 +1,51 @@
-import type { Component } from "solid-js";
 import type { JSX, ValidComponent } from "@solidjs/web";
-import type { ThemeColor } from "../../types";
+import type { SlotRenderer, ThemeColor } from "../../types";
 import type { InferThemeProps } from "../../resolver";
 import type { RLContextMenuTheme } from "./context-menu.theme";
 
 export type ContextMenuAlign = "start" | "center" | "end";
 export type ContextMenuPlacement = "top" | "right" | "bottom" | "left";
 export type ContextMenuSize = "sm" | "md" | "lg";
+
+/** Slot keys rendered by the context menu theme. */
+export type ContextMenuSlot =
+  | "root"
+  | "trigger"
+  | "overlay"
+  | "positioner"
+  | "body"
+  | "submenu"
+  | "group"
+  | "groupLabel"
+  | "item"
+  | "itemLeading"
+  | "itemLeadingIcon"
+  | "itemWrapper"
+  | "itemLabel"
+  | "itemDescription"
+  | "itemTrailing"
+  | "itemKbds"
+  | "itemKbd"
+  | "itemIndicator"
+  | "itemSubIndicator"
+  | "separator"
+  | "itemContainer"
+  | "sections";
+
+/** Resolved class names for every context menu slot. */
+export type ContextMenuClasses = Record<ContextMenuSlot, string>;
+
+/** Pointer anchor position in viewport pixels. */
+export interface ContextMenuCoords {
+  /**
+   * Horizontal position in pixels.
+   */
+  x: number;
+  /**
+   * Vertical position in pixels.
+   */
+  y: number;
+}
 
 export interface ContextMenuItemBase {
   /**
@@ -133,10 +172,6 @@ export interface ContextMenuGroupItem extends ContextMenuItemBase {
    * Child items in this group.
    */
   items?: ContextMenuItem[] | undefined;
-  /**
-   * Backward-compatible alias for `items`.
-   */
-  children?: ContextMenuItem[] | undefined;
 }
 
 export interface ContextMenuSeparatorItem extends ContextMenuItemBase {
@@ -152,30 +187,76 @@ export type ContextMenuItem =
 
 export type ContextMenuItems = Array<ContextMenuItem | ContextMenuItem[]>;
 
+/** A rendered section of the menu: a group of items or a separator. */
+export interface ContextMenuSection {
+  /**
+   * Kind of section.
+   */
+  type: "group" | "separator";
+  /**
+   * Optional group heading.
+   */
+  label?: JSX.Element | undefined;
+  /**
+   * Items rendered inside the group.
+   */
+  items?: ContextMenuItem[] | undefined;
+}
+
 export interface ContextMenuTopRenderArgs {
+  /**
+   * Whether the menu is open.
+   */
   open: boolean;
+  /**
+   * Closes the menu.
+   */
   closeMenu: () => void;
 }
 
 export interface ContextMenuBottomRenderArgs {
+  /**
+   * Whether the menu is open.
+   */
   open: boolean;
+  /**
+   * Closes the menu.
+   */
   closeMenu: () => void;
 }
 
 export interface ContextMenuItemRenderArgs {
+  /**
+   * Item being rendered.
+   */
   item: ContextMenuItem;
+  /**
+   * Flat index of the item across all sections.
+   */
   index: number;
+  /**
+   * Whether the item is disabled.
+   */
   disabled: boolean;
+  /**
+   * Whether the item is highlighted.
+   */
   highlighted: boolean;
+  /**
+   * Whether the item is checked.
+   */
   selected: boolean;
+  /**
+   * Whether the item's submenu is open.
+   */
   expanded: boolean;
+  /**
+   * Closes the menu.
+   */
   closeMenu: () => void;
 }
 
-export type RLContextMenuProps = Omit<
-  InferThemeProps<typeof RLContextMenuTheme>,
-  "size" | "disabled"
-> & {
+export type RLContextMenuProps = Omit<InferThemeProps<typeof RLContextMenuTheme>, "size"> & {
   /**
    * Element or component the root should render as.
    *
@@ -267,23 +348,23 @@ export type RLContextMenuProps = Omit<
   /**
    * Content rendered before the resolved item groups.
    */
-  topSlot?: JSX.Element | Component<ContextMenuTopRenderArgs> | undefined;
+  topSlot?: SlotRenderer<ContextMenuTopRenderArgs> | undefined;
   /**
    * Content rendered after the resolved item groups.
    */
-  bottomSlot?: JSX.Element | Component<ContextMenuBottomRenderArgs> | undefined;
+  bottomSlot?: SlotRenderer<ContextMenuBottomRenderArgs> | undefined;
   /**
    * Renderer for each menu item.
    */
-  itemSlot?: Component<ContextMenuItemRenderArgs> | undefined;
+  itemSlot?: ((args: ContextMenuItemRenderArgs) => JSX.Element) | undefined;
   /**
    * Trigger element when not using `children`.
    */
-  triggerSlot?: JSX.Element | undefined;
+  triggerSlot?: SlotRenderer | undefined;
   /**
    * Body content rendered after the items, for content that is not expressed as `items`.
    */
-  bodySlot?: JSX.Element | undefined;
+  bodySlot?: SlotRenderer | undefined;
   /**
    * Whether to render menu content inside a Portal. Pass an element to portal into it.
    *
@@ -303,7 +384,55 @@ export type RLContextMenuProps = Omit<
    */
   longPressDelay?: number | undefined;
   /**
+   * Accessible name of the trigger element.
+   */
+  "aria-label"?: string | undefined;
+  /**
+   * Id of the element that labels the trigger element.
+   */
+  "aria-labelledby"?: string | undefined;
+  /**
+   * Id of the element that describes the trigger element.
+   */
+  "aria-describedby"?: string | undefined;
+  /**
    * Trigger children.
    */
   children?: JSX.Element | undefined;
+};
+
+/** Props for one menu layer (the root menu or a submenu). */
+export type ContextMenuLayerProps = {
+  /**
+   * Sections rendered by this layer.
+   */
+  sections: ContextMenuSection[];
+  /**
+   * Accessor for resolved slot classes.
+   */
+  menuClasses: () => ContextMenuClasses;
+  /**
+   * Accessor for the icon used by checked checkbox and radio items.
+   */
+  checkedIcon: () => string;
+  /**
+   * Accessor for the icon used by submenu trigger items.
+   */
+  submenuIcon: () => string;
+  /**
+   * Renderer for each item.
+   */
+  renderItem?: ((args: ContextMenuItemRenderArgs) => JSX.Element) | undefined;
+  /**
+   * Whether this layer is a submenu.
+   */
+  isSubmenu?: boolean | undefined;
+  /**
+   * Closes this submenu layer.
+   */
+  closeLayer?: (() => void) | undefined;
+  /**
+   * Closes the whole menu.
+   */
+  closeRoot: () => void;
 };

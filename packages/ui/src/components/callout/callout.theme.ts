@@ -1,12 +1,23 @@
 import { defineTheme } from "../../resolver";
 
 export const RLCalloutTheme = defineTheme("callout", {
-  slots: ["root", "wrapper", "title", "description", "icon", "avatar", "actions", "close"],
+  slots: [
+    "root",
+    "wrapper",
+    "title",
+    "description",
+    "header",
+    "icon",
+    "avatar",
+    "actions",
+    "close",
+  ],
   base: {
     root: "relative overflow-hidden w-full rounded-lg p-4 flex gap-2.5",
     wrapper: "min-w-0 flex-1 flex flex-col",
     title: "text-sm font-medium",
     description: "text-sm opacity-90 leading-relaxed",
+    header: "min-w-0",
     icon: "shrink-0 size-5 inline-flex items-center justify-center pointer-events-none",
     avatar: "shrink-0",
     actions: "flex flex-wrap gap-1.5 shrink-0",
@@ -38,11 +49,10 @@ export const RLCalloutTheme = defineTheme("callout", {
         actions: "items-start mt-2.5",
       },
     },
-    title: {
+    hasTitle: {
       true: {
         description: "mt-1",
       },
-      false: {},
     },
   },
   compoundVariants: [

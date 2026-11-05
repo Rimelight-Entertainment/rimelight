@@ -1,33 +1,31 @@
-import type { BreadcrumbItem, BreadcrumbUi, RLBreadcrumbProps } from "./breadcrumb.types";
-import { RLBreadcrumbTheme, type BreadcrumbClasses } from "./breadcrumb.theme";
-import { createMemo, For, type Accessor, type Component } from "solid-js";
+import { createMemo, For, Show } from "solid-js";
+import type {
+  BreadcrumbItem,
+  BreadcrumbItemSlotContext,
+  BreadcrumbItemState,
+  BreadcrumbOverflowEntry,
+  BreadcrumbUi,
+  BreadcrumbVisibleEntry,
+  BreadcrumbVisibleItem,
+  RLBreadcrumbProps,
+} from "./breadcrumb.types";
+import { RLBreadcrumbTheme } from "./breadcrumb.theme";
+import type { RLAvatarProps } from "../avatar/avatar.types";
 import { RLIcon } from "../icon/RLIcon";
 import { RLAvatar } from "../avatar/RLAvatar";
-import { resolveLinkAttrs } from "../link/helpers";
+import { RLButton } from "../button/RLButton";
+import { RLLink } from "../link/RLLink";
 import { uiT } from "../../locale";
-import type { SlotRenderer } from "../../types";
+import { renderSlot } from "../../slot";
 
 const OMIT_KEYS = ["items", "separatorIcon", "labelKey", "maxVisible", "itemAttrs"] as const;
 
-interface VisibleItemEntry {
-  item: BreadcrumbItem;
-  originalIndex: number;
-  isLast: boolean;
-  isOverflow: boolean;
-  hiddenCount?: number | undefined;
-}
+const avatarProps = (avatar: RLAvatarProps | string): RLAvatarProps =>
+  typeof avatar === "string" ? { src: avatar } : avatar;
 
-interface ItemTheme {
-  active: boolean;
-  disabled: boolean;
-  hasTo: boolean;
-  classes: Accessor<BreadcrumbClasses>;
-}
-
-const renderSlot = <C,>(renderer: SlotRenderer<C>, ctx: C) =>
-  typeof renderer === "function" ? renderer(ctx) : renderer;
-
-export const RLBreadcrumb: Component<RLBreadcrumbProps> = (props) => {
+export const RLBreadcrumb = <T extends BreadcrumbItem = BreadcrumbItem>(
+  props: RLBreadcrumbProps<T>,
+) => {
   const { Tag, classes, rest, slots, children, ui, theme } = RLBreadcrumbTheme.setup(props, {
     as: "nav",
     omit: OMIT_KEYS,
@@ -40,83 +38,54 @@ export const RLBreadcrumb: Component<RLBreadcrumbProps> = (props) => {
     ] as const,
   });
 
-  const allItems = () => props.items ?? [];
-  const count = () => allItems().length;
+  const max = () => props.maxVisible ?? 0;
 
-  const getItemLabel = (item: BreadcrumbItem): string => {
+  const getItemLabel = (item: T): string => {
     const val = (item as Record<string, unknown>)[props.labelKey ?? "label"] ?? item.label;
     return typeof val === "string" || typeof val === "number" ? String(val) : "";
   };
 
-  const hasOverflow = () =>
-    props.maxVisible !== undefined &&
-    props.maxVisible > 0 &&
-    count() > props.maxVisible &&
-    count() > 2;
-
-  const visibleItemsWithMeta = createMemo<VisibleItemEntry[]>(() => {
-    const items = allItems();
+  const visibleEntries = createMemo<BreadcrumbVisibleEntry<T>[]>(() => {
+    const items = props.items ?? [];
     const total = items.length;
     if (total === 0) return [];
 
-    if (!hasOverflow()) {
-      return items.map((item, idx) => ({
-        item,
-        originalIndex: idx,
-        isLast: idx === total - 1,
-        isOverflow: false,
-      }));
+    const itemEntry = (item: T, index: number): BreadcrumbVisibleItem<T> => ({
+      kind: "item",
+      item,
+      originalIndex: index,
+      isLast: index === total - 1,
+    });
+
+    if (!(max() > 0 && total > max() && total > 2)) {
+      return items.map((item, index) => itemEntry(item, index));
     }
 
-    const max = props.maxVisible!;
-    const insideCount = max - 2;
-    const result: VisibleItemEntry[] = [];
-
-    // First item
-    result.push({
-      item: items[0]!,
-      originalIndex: 0,
-      isLast: total === 1,
-      isOverflow: false,
-    });
-
-    const hiddenCount = total - 1 - insideCount - 1;
-
-    // Overflow item
-    result.push({
-      item: { label: "…" },
-      originalIndex: 1,
-      isLast: false,
-      isOverflow: true,
-      hiddenCount,
-    });
-
-    // Inside items (trailing before last)
+    const insideCount = max() - 2;
     const trailingStartIndex = total - 1 - insideCount;
-    for (let i = trailingStartIndex; i < total - 1; i++) {
-      result.push({
-        item: items[i]!,
-        originalIndex: i,
-        isLast: false,
-        isOverflow: false,
-      });
-    }
+    const overflow: BreadcrumbOverflowEntry = {
+      kind: "overflow",
+      hiddenCount: total - 1 - insideCount - 1,
+    };
 
-    // Last item
-    if (total > 1) {
-      result.push({
-        item: items[total - 1]!,
-        originalIndex: total - 1,
-        isLast: true,
-        isOverflow: false,
-      });
-    }
+    const trailing: BreadcrumbVisibleEntry<T>[] = items
+      .slice(trailingStartIndex, total - 1)
+      .map((item, offset) => itemEntry(item, trailingStartIndex + offset));
 
-    return result;
+    return [
+      ...items.slice(0, 1).map((item) => itemEntry(item, 0)),
+      overflow,
+      ...trailing,
+      ...items.slice(total - 1).map((item) => itemEntry(item, total - 1)),
+    ];
   });
 
+  const asItem = (entry: BreadcrumbVisibleEntry<T>) => (entry.kind === "item" ? entry : undefined);
+  const asOverflow = (entry: BreadcrumbVisibleEntry<T>) =>
+    entry.kind === "overflow" ? entry : undefined;
+
   // Per-item slot overrides: the item's own `ui` and `class` extend the component `ui`.
-  const itemUi = (item: BreadcrumbItem): BreadcrumbUi | undefined => {
+  const itemUi = (item: T): BreadcrumbUi | undefined => {
     const base = ui();
     if (!item.ui && !item.class) return base;
     return {
@@ -126,7 +95,7 @@ export const RLBreadcrumb: Component<RLBreadcrumbProps> = (props) => {
     };
   };
 
-  const getThemeClasses = (item: BreadcrumbItem, isLast: boolean): ItemTheme => {
+  const itemState = (item: T, isLast: boolean): BreadcrumbItemState => {
     const hasTo = Boolean(item.href);
     const active = item.active !== undefined ? Boolean(item.active) : isLast;
     const disabled = Boolean(item.disabled);
@@ -135,7 +104,7 @@ export const RLBreadcrumb: Component<RLBreadcrumbProps> = (props) => {
       active,
       disabled,
       hasTo,
-      classes: createMemo(() =>
+      itemClasses: createMemo(() =>
         RLBreadcrumbTheme({
           color: props.color,
           active,
@@ -147,89 +116,93 @@ export const RLBreadcrumb: Component<RLBreadcrumbProps> = (props) => {
     };
   };
 
-  const renderSeparator = (item?: BreadcrumbItem, index?: number) => {
-    const themeClasses = createMemo(() =>
+  const renderSeparator = (item?: T, index?: number) => {
+    const separatorClasses = createMemo(() =>
       RLBreadcrumbTheme({
         color: props.color,
         ui: item?.ui ? { ...ui(), ...item.ui } : ui(),
       }),
     );
 
-    const separatorRenderer = slots.separatorSlot();
-    if (separatorRenderer !== undefined) {
-      return (
-        <span class={themeClasses().separator} data-slot="separator" aria-hidden="true">
-          {renderSlot(separatorRenderer, { item, index })}
-        </span>
-      );
-    }
-
-    const iconName = () => props.separatorIcon ?? "chevron-right";
-
     return (
-      <span class={themeClasses().separator} data-slot="separator" aria-hidden="true">
-        <span class={themeClasses().separatorIcon} data-slot="separator-icon">
-          <RLIcon name={iconName()} aria-hidden="true" />
-        </span>
+      <span class={separatorClasses().separator} data-slot="separator" aria-hidden="true">
+        <Show
+          when={slots.separatorSlot()}
+          fallback={
+            <span class={separatorClasses().separatorIcon} data-slot="separator-icon">
+              <RLIcon name={props.separatorIcon ?? "chevron-right"} aria-hidden="true" />
+            </span>
+          }
+        >
+          {(separator) => renderSlot(separator(), { item, index })}
+        </Show>
       </span>
     );
   };
 
-  const renderItemContent = (item: BreadcrumbItem, index: number, theme: ItemTheme) => {
-    const active = theme.active;
-    const disabled = theme.disabled;
-    const classes = createMemo(() => theme.classes());
-    const ctx = { item, index, active };
+  const renderItemContent = (item: T, index: number, state: BreadcrumbItemState) => {
+    const itemClasses = state.itemClasses;
+    const ctx: BreadcrumbItemSlotContext<T> = { item, index, active: state.active };
 
-    const itemRenderer = slots.itemSlot();
-    if (itemRenderer) {
-      return renderSlot(itemRenderer, ctx);
-    }
-
-    const leadingSlot = slots.itemLeadingSlot();
-    const labelSlot = slots.itemLabelSlot();
-    const trailingSlot = slots.itemTrailingSlot();
-
-    const renderLeading = () => {
-      if (leadingSlot) {
-        return renderSlot(leadingSlot, ctx);
-      }
-
-      if (item.avatar) {
-        const avatarProps = typeof item.avatar === "object" ? item.avatar : { src: item.avatar };
-        return (
-          <span class={classes().linkLeadingAvatar} data-slot="link-leading-avatar">
-            <RLAvatar size="xs" {...avatarProps} />
+    const renderDefaultLeading = () => (
+      <Show
+        when={item.avatar}
+        fallback={
+          <Show when={item.icon}>
+            {(icon) => (
+              <span class={itemClasses().linkLeadingIcon} data-slot="link-leading-icon">
+                <RLIcon name={icon()} aria-hidden="true" />
+              </span>
+            )}
+          </Show>
+        }
+      >
+        {(avatar) => (
+          <span class={itemClasses().linkLeadingAvatar} data-slot="link-leading-avatar">
+            <RLAvatar size="xs" {...avatarProps(avatar())} />
           </span>
-        );
-      }
+        )}
+      </Show>
+    );
 
-      if (item.icon) {
-        return (
-          <span class={classes().linkLeadingIcon} data-slot="link-leading-icon">
-            <RLIcon name={item.icon} aria-hidden="true" />
+    const renderLeading = () => (
+      <Show when={slots.itemLeadingSlot()} fallback={renderDefaultLeading()}>
+        {(node) => (
+          <span class={itemClasses().itemLeading} data-slot="item-leading">
+            {renderSlot(node(), ctx)}
           </span>
-        );
-      }
+        )}
+      </Show>
+    );
 
-      return null;
-    };
+    const renderLabel = () => (
+      <Show
+        when={slots.itemLabelSlot()}
+        fallback={
+          <span class={itemClasses().itemLabel} data-slot="item-label">
+            {getItemLabel(item)}
+          </span>
+        }
+      >
+        {(node) => (
+          <span class={itemClasses().itemLabel} data-slot="item-label">
+            {renderSlot(node(), ctx)}
+          </span>
+        )}
+      </Show>
+    );
 
-    const renderLabel = () => {
-      if (labelSlot) {
-        return renderSlot(labelSlot, ctx);
-      }
+    const renderTrailing = () => (
+      <Show when={slots.itemTrailingSlot()}>
+        {(node) => (
+          <span class={itemClasses().itemTrailing} data-slot="item-trailing">
+            {renderSlot(node(), ctx)}
+          </span>
+        )}
+      </Show>
+    );
 
-      return (
-        <span class={classes().linkLabel} data-slot="link-label">
-          {getItemLabel(item)}
-        </span>
-      );
-    };
-
-    const renderTrailing = () => (trailingSlot ? renderSlot(trailingSlot, ctx) : null);
-
-    const content = (
+    const content = () => (
       <>
         {renderLeading()}
         {renderLabel()}
@@ -237,62 +210,96 @@ export const RLBreadcrumb: Component<RLBreadcrumbProps> = (props) => {
       </>
     );
 
-    if (theme.hasTo) {
-      const linkAttrs = resolveLinkAttrs({
-        href: item.href,
-        target: item.target,
-        rel: item.rel,
-        external: item.external,
-        disabled,
-        active,
-      });
-
-      return (
-        <a
-          class={classes().link}
-          data-slot="link"
-          href={linkAttrs.href}
-          target={linkAttrs.target}
-          rel={linkAttrs.rel}
-          aria-label={item["aria-label"]}
-          aria-current={active ? "page" : undefined}
-          aria-disabled={disabled ? "true" : undefined}
-          tabindex={disabled ? -1 : undefined}
-        >
-          {content}
-        </a>
-      );
-    }
-
-    if (item.onSelect) {
-      return (
-        <button
-          type="button"
-          class={classes().link}
-          data-slot="link"
-          aria-current={active ? "page" : undefined}
-          disabled={disabled}
-          onClick={() => item.onSelect?.(item)}
-        >
-          {content}
-        </button>
-      );
-    }
-
     return (
-      <span class={classes().link} data-slot="link" aria-current={active ? "page" : undefined}>
-        {content}
-      </span>
+      <Show
+        when={slots.itemSlot()}
+        fallback={
+          <Show
+            when={state.hasTo}
+            fallback={
+              <Show
+                when={item.onSelect}
+                fallback={
+                  <span
+                    class={itemClasses().link}
+                    data-slot="link"
+                    aria-current={state.active ? "page" : undefined}
+                  >
+                    {content()}
+                  </span>
+                }
+              >
+                <RLButton
+                  variant="ghost"
+                  color="neutral"
+                  size="sm"
+                  class={itemClasses().link}
+                  data-slot="link"
+                  disabled={state.disabled}
+                  aria-current={state.active ? "page" : undefined}
+                  onClick={() => item.onSelect?.(item)}
+                >
+                  {content()}
+                </RLButton>
+              </Show>
+            }
+          >
+            <RLLink
+              class={itemClasses().link}
+              data-slot="link"
+              href={item.href}
+              target={item.target}
+              rel={item.rel}
+              external={item.external}
+              active={state.active}
+              disabled={state.disabled}
+              noExternalIcon
+              localize={false}
+              aria-label={item["aria-label"]}
+            >
+              {content()}
+            </RLLink>
+          </Show>
+        }
+      >
+        {(node) => renderSlot(node(), ctx)}
+      </Show>
     );
   };
 
-  const overflowThemeClasses = createMemo(() => {
+  const overflowClasses = createMemo(() => {
     const u = ui();
     return RLBreadcrumbTheme({
       color: props.color,
       ui: u?.overflow === undefined && u?.item !== undefined ? { ...u, overflow: u.item } : u,
     });
   });
+
+  const renderOverflow = (hiddenCount: number) => (
+    <li class={overflowClasses().overflow} aria-hidden="true" data-slot="overflow">
+      <span class={overflowClasses().overflowEllipsis} data-slot="overflow-ellipsis">
+        …
+      </span>
+      <span class={overflowClasses().overflowCount} data-slot="overflow-count">
+        +{hiddenCount}
+      </span>
+      {renderSeparator()}
+    </li>
+  );
+
+  const renderItem = (entry: BreadcrumbVisibleItem<T>) => {
+    const state = itemState(entry.item, entry.isLast);
+    return (
+      <li
+        class={state.itemClasses().item}
+        data-slot="item"
+        {...(props.itemAttrs?.(entry.item, entry.originalIndex) ?? {})}
+      >
+        {renderItemContent(entry.item, entry.originalIndex, state)}
+        <Show when={!entry.isLast}>{renderSeparator(entry.item, entry.originalIndex)}</Show>
+      </li>
+    );
+  };
 
   return (
     <Tag
@@ -303,46 +310,18 @@ export const RLBreadcrumb: Component<RLBreadcrumbProps> = (props) => {
       {...rest}
     >
       <ol class={classes().list} data-slot="list">
-        {props.items ? (
-          <For each={visibleItemsWithMeta()}>
-            {({ item, originalIndex, isLast, isOverflow, hiddenCount }) => {
-              if (isOverflow) {
-                return (
-                  <li
-                    class={overflowThemeClasses().overflow}
-                    aria-hidden="true"
-                    data-slot="overflow"
-                  >
-                    <span
-                      class={overflowThemeClasses().overflowEllipsis}
-                      data-slot="overflow-ellipsis"
-                    >
-                      …
-                    </span>
-                    <span class={overflowThemeClasses().overflowCount} data-slot="overflow-count">
-                      +{hiddenCount}
-                    </span>
-                    {renderSeparator()}
-                  </li>
-                );
-              }
-
-              const itemTheme = getThemeClasses(item, isLast);
-              return (
-                <li
-                  class={itemTheme.classes().item}
-                  data-slot="item"
-                  {...(props.itemAttrs?.(item, originalIndex) ?? {})}
-                >
-                  {renderItemContent(item, originalIndex, itemTheme)}
-                  {!isLast && renderSeparator(item, originalIndex)}
-                </li>
-              );
-            }}
+        <Show when={props.items} fallback={children()}>
+          <For each={visibleEntries()}>
+            {(entry) => (
+              <>
+                <Show when={asItem(entry)}>{(item) => renderItem(item())}</Show>
+                <Show when={asOverflow(entry)}>
+                  {(overflow) => renderOverflow(overflow().hiddenCount)}
+                </Show>
+              </>
+            )}
           </For>
-        ) : (
-          children()
-        )}
+        </Show>
       </ol>
     </Tag>
   );

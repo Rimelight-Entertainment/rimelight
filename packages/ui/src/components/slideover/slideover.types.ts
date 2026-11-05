@@ -1,7 +1,9 @@
 import type { JSX } from "@solidjs/web";
 import type { InferThemeProps } from "../../resolver";
-import type { OverlaySlot } from "../../slot";
+import type { SlotRenderer } from "../../types";
 import type { RLSlideoverTheme } from "./slideover.theme";
+
+export type SlideoverSide = "top" | "right" | "bottom" | "left";
 
 export type RLSlideoverProps = Omit<
   InferThemeProps<typeof RLSlideoverTheme>,
@@ -12,7 +14,7 @@ export type RLSlideoverProps = Omit<
    *
    * @default "left"
    */
-  side?: "top" | "right" | "bottom" | "left" | undefined;
+  side?: SlideoverSide | undefined;
   /**
    * Controlled open state.
    */
@@ -55,25 +57,25 @@ export type RLSlideoverProps = Omit<
    */
   portal?: boolean | HTMLElement | undefined;
   /**
-   * Body content. Function-only: invoked while the sheet is mounted.
+   * Body content of the sheet.
    */
-  children?: OverlaySlot | undefined;
+  children?: JSX.Element | undefined;
   /**
-   * Trigger element. Always rendered, so it is plain JSX.
+   * Trigger element. Replaces the default trigger button.
    */
-  triggerSlot?: JSX.Element | undefined;
+  triggerSlot?: SlotRenderer | undefined;
   /**
-   * Title content. Takes precedence over the `title` string. Function-only: invoked while the sheet is mounted.
+   * Title content. Takes precedence over the `title` string.
    */
-  titleSlot?: OverlaySlot | undefined;
+  titleSlot?: SlotRenderer | undefined;
   /**
-   * Description content. Takes precedence over the `description` string. Function-only: invoked while the sheet is mounted.
+   * Description content. Takes precedence over the `description` string.
    */
-  descriptionSlot?: OverlaySlot | undefined;
+  descriptionSlot?: SlotRenderer | undefined;
   /**
-   * Footer content. Function-only: invoked while the sheet is mounted.
+   * Footer content rendered below the body.
    */
-  footerSlot?: OverlaySlot | undefined;
+  footerSlot?: SlotRenderer | undefined;
   /**
    * Called whenever the open state changes.
    */

@@ -1,4 +1,4 @@
-import type { JSX } from "@solidjs/web";
+import type { SlotRenderer } from "../../types";
 import type { InferThemeProps } from "../../resolver";
 import type { RLImageTheme } from "./image.theme";
 
@@ -167,10 +167,10 @@ export type RLImageProps = InferThemeProps<typeof RLImageTheme> & {
   /**
    * Custom JSX replacing the default trigger.
    */
-  triggerSlot?: JSX.Element;
+  triggerSlot?: SlotRenderer;
 
   /**
    * Custom JSX rendered after the caption.
    */
-  captionSlot?: JSX.Element;
+  captionSlot?: SlotRenderer;
 };

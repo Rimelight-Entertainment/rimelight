@@ -1,5 +1,5 @@
-import { Portal, type JSX } from "@solidjs/web";
-import type { RLShortcutsProps, CategorySection } from "./shortcuts.types";
+import { Portal } from "@solidjs/web";
+import type { RLShortcutsProps, CategorySection, ShortcutsBackdropEvent } from "./shortcuts.types";
 import { RLShortcutsTheme } from "./shortcuts.theme";
 import { getUIConfig } from "../../runtime";
 import { createEffect, createMemo, For, onSettled, Show, type Component } from "solid-js";
@@ -12,18 +12,11 @@ import {
 } from "../../shortcuts";
 import { createControllable } from "../../controllable";
 import { RLIcon } from "../icon/RLIcon";
+import { RLButton } from "../button/RLButton";
 import { RLKbd } from "../kbd/RLKbd";
 import { uiNodes, uiT } from "../../locale";
 
 const OMIT_KEYS = ["categories", "open", "defaultOpen", "onOpenChange", "portal"] as const;
-
-/** Portals children unless `portal` is false. The SSR Portal renders nothing, so `portal: false` renders inline. */
-const DialogLayer = (p: { portal: boolean | HTMLElement | undefined; children: JSX.Element }) => {
-  if (p.portal === false) return p.children;
-  return (
-    <Portal {...(typeof p.portal === "object" ? { mount: p.portal } : {})}>{p.children}</Portal>
-  );
-};
 
 export const RLShortcuts: Component<RLShortcutsProps> = (props) => {
   const {
@@ -35,6 +28,9 @@ export const RLShortcuts: Component<RLShortcutsProps> = (props) => {
   } = RLShortcutsTheme.setup(props, {
     omit: OMIT_KEYS,
   });
+
+  // Resolved once, outside a reactive getter: Portal reads `mount` during the effect phase.
+  const portalMount = typeof props.portal === "object" ? props.portal : undefined;
 
   const [openState, setOpenState] = createControllable(
     () => props.open,
@@ -70,9 +66,6 @@ export const RLShortcuts: Component<RLShortcutsProps> = (props) => {
     () => isOpen(),
     (open) => {
       document.body.style.overflow = open ? "hidden" : "";
-      return () => {
-        document.body.style.overflow = "";
-      };
     },
   );
 
@@ -97,6 +90,7 @@ export const RLShortcuts: Component<RLShortcutsProps> = (props) => {
     return () => {
       window.removeEventListener("keydown", onKeyDown);
       qShortcutCleanup();
+      document.body.style.overflow = "";
     };
   });
 
@@ -142,96 +136,102 @@ export const RLShortcuts: Component<RLShortcutsProps> = (props) => {
     });
   });
 
+  const Dialog = (dialogArgs: { theme: RLShortcutsProps["theme"] }) => (
+    <Tag
+      class={classes().root}
+      data-slot="root"
+      data-theme={dialogArgs.theme}
+      onClick={(e: ShortcutsBackdropEvent) => {
+        if (e.target === e.currentTarget) handleClose();
+      }}
+      {...rest}
+    >
+      <div
+        id={modalId()}
+        class={classes().dialog}
+        data-slot="dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={`${modalId()}-title`}
+      >
+        <div class={classes().header} data-slot="header">
+          <h3 id={`${modalId()}-title`} class={classes().title} data-slot="title">
+            {uiT("shortcuts.title")}
+          </h3>
+          <RLButton
+            type="button"
+            class={classes().close}
+            aria-label={uiT("shortcuts.close")}
+            onClick={handleClose}
+            data-slot="close"
+          >
+            <RLIcon name="x" size="sm" />
+          </RLButton>
+        </div>
+
+        <div class={classes().body} data-slot="body">
+          <Show
+            when={activeShortcutsStore.length > 0}
+            fallback={
+              <div class={classes().empty} data-slot="empty">
+                {uiT("shortcuts.empty")}
+              </div>
+            }
+          >
+            <For each={sections()}>
+              {(section) => (
+                <div class={classes().categorySection} data-slot="category-section">
+                  <h4 class={classes().categoryTitle} data-slot="category-title">
+                    {section.label}
+                  </h4>
+                  <div class={classes().grid} data-slot="grid">
+                    <For each={section.items}>
+                      {(shortcut) => (
+                        <div class={classes().row} data-slot="row">
+                          <div class={classes().info} data-slot="info">
+                            <span class={classes().name} data-slot="name">
+                              {shortcut.label || shortcut.id}
+                            </span>
+                            <Show when={shortcut.description}>
+                              <span class={classes().desc} data-slot="desc">
+                                {shortcut.description}
+                              </span>
+                            </Show>
+                          </div>
+                          <div class={classes().keys} data-slot="keys">
+                            <For each={shortcut.keys}>
+                              {(key) => <RLKbd size="sm">{key}</RLKbd>}
+                            </For>
+                          </div>
+                        </div>
+                      )}
+                    </For>
+                  </div>
+                </div>
+              )}
+            </For>
+          </Show>
+        </div>
+
+        <div class={classes().footer} data-slot="footer">
+          <span class={classes().footerHint} data-slot="footer-hint">
+            {uiNodes("shortcuts.press-to-close", {
+              question: <RLKbd size="sm">?</RLKbd>,
+              escape: <RLKbd size="sm">{uiT("search.esc")}</RLKbd>,
+            })}
+          </span>
+        </div>
+      </div>
+    </Tag>
+  );
+
   return (
     <Show when={isOpen()}>
-      <DialogLayer portal={props.portal}>
-        <Tag
-          class={classes().root}
-          data-slot="root"
-          data-theme={theme()}
-          onClick={(e: MouseEvent & { currentTarget: Element; target: Element }) => {
-            if (e.target === e.currentTarget) handleClose();
-          }}
-          {...rest}
-        >
-          <div
-            id={modalId()}
-            class={classes().dialog}
-            data-slot="dialog"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby={`${modalId()}-title`}
-          >
-            <div class={classes().header} data-slot="header">
-              <h3 id={`${modalId()}-title`} class={classes().title} data-slot="title">
-                {uiT("shortcuts.title")}
-              </h3>
-              <button
-                type="button"
-                class={classes().close}
-                aria-label={uiT("shortcuts.close")}
-                onClick={handleClose}
-                data-slot="close"
-              >
-                <RLIcon name="x" size="sm" />
-              </button>
-            </div>
-
-            <div class={classes().body} data-slot="body">
-              <Show
-                when={activeShortcutsStore.length > 0}
-                fallback={
-                  <div class={classes().empty} data-slot="empty">
-                    {uiT("shortcuts.empty")}
-                  </div>
-                }
-              >
-                <For each={sections()}>
-                  {(section) => (
-                    <div class={classes().categorySection} data-slot="category-section">
-                      <h4 class={classes().categoryTitle} data-slot="category-title">
-                        {section.label}
-                      </h4>
-                      <div class={classes().grid} data-slot="grid">
-                        <For each={section.items}>
-                          {(shortcut) => (
-                            <div class={classes().row} data-slot="row">
-                              <div class={classes().info} data-slot="info">
-                                <span class={classes().name} data-slot="name">
-                                  {shortcut.label || shortcut.id}
-                                </span>
-                                <Show when={shortcut.description}>
-                                  <span class={classes().desc} data-slot="desc">
-                                    {shortcut.description}
-                                  </span>
-                                </Show>
-                              </div>
-                              <div class={classes().keys} data-slot="keys">
-                                <For each={shortcut.keys}>
-                                  {(key) => <RLKbd size="sm">{key}</RLKbd>}
-                                </For>
-                              </div>
-                            </div>
-                          )}
-                        </For>
-                      </div>
-                    </div>
-                  )}
-                </For>
-              </Show>
-            </div>
-
-            <div class={classes().footer} data-slot="footer">
-              <span class="flex items-center gap-1">
-                {uiNodes("shortcuts.press-to-close", {
-                  question: <RLKbd size="sm">?</RLKbd>,
-                  escape: <RLKbd size="sm">Esc</RLKbd>,
-                })}
-              </span>
-            </div>
-          </div>
-        </Tag>
-      </DialogLayer>
+      <Show when={props.portal !== false} fallback={<Dialog theme={theme()} />}>
+        <Portal {...(portalMount ? { mount: portalMount } : {})}>
+          <Dialog theme={theme()} />
+        </Portal>
+      </Show>
     </Show>
   );
 };

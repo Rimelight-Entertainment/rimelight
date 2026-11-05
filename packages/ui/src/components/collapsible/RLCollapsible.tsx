@@ -1,7 +1,7 @@
 import type { CollapsibleSlotContext, RLCollapsibleProps } from "./collapsible.types";
 import { RLCollapsibleTheme } from "./collapsible.theme";
 import { Show, type Component } from "solid-js";
-import type { SlotRenderer } from "../../types";
+import { renderSlot } from "../../slot";
 import { createControllable } from "../../controllable";
 
 const OMIT_KEYS = [
@@ -13,11 +13,6 @@ const OMIT_KEYS = [
   "triggerSlot",
   "bodySlot",
 ] as const;
-
-const resolveSlot = (
-  renderer: SlotRenderer<CollapsibleSlotContext> | undefined,
-  ctx: CollapsibleSlotContext,
-) => (typeof renderer === "function" ? renderer(ctx) : renderer);
 
 export const RLCollapsible: Component<RLCollapsibleProps> = (props) => {
   const { Tag, classes, rest, id, slots, children, theme } = RLCollapsibleTheme.setup(props, {
@@ -46,14 +41,15 @@ export const RLCollapsible: Component<RLCollapsibleProps> = (props) => {
   const hasTriggerSlot = () => slots.triggerSlot() !== undefined;
 
   // `children` is the trigger, or the content when `triggerSlot` is set.
-  const triggerContent = () =>
-    hasTriggerSlot() ? resolveSlot(slots.triggerSlot(), ctx()) : children();
-  const contentContent = () =>
-    slots.bodySlot() !== undefined
-      ? resolveSlot(slots.bodySlot(), ctx())
-      : hasTriggerSlot()
-        ? children()
-        : undefined;
+  const triggerContent = () => {
+    const trigger = slots.triggerSlot();
+    return trigger === undefined ? children() : renderSlot(trigger, ctx());
+  };
+  const contentContent = () => {
+    const body = slots.bodySlot();
+    if (body !== undefined) return renderSlot(body, ctx());
+    return hasTriggerSlot() ? children() : undefined;
+  };
 
   return (
     <Tag
@@ -93,14 +89,14 @@ export const RLCollapsible: Component<RLCollapsibleProps> = (props) => {
         </div>
       </Show>
 
-      <Show when={contentContent() !== undefined}>
+      <Show when={slots.bodySlot() !== undefined || children() !== undefined}>
         <Show
           when={unmountOnHide()}
           fallback={
             <div
               id={contentId()}
-              class={classes().content}
-              data-slot="content"
+              class={classes().body}
+              data-slot="body"
               data-state={isOpen() ? "open" : "closed"}
               data-disabled={isDisabled() ? "" : undefined}
               hidden={!isOpen() ? true : undefined}
@@ -112,8 +108,8 @@ export const RLCollapsible: Component<RLCollapsibleProps> = (props) => {
           <Show when={isOpen()}>
             <div
               id={contentId()}
-              class={classes().content}
-              data-slot="content"
+              class={classes().body}
+              data-slot="body"
               data-state="open"
               data-disabled={isDisabled() ? "" : undefined}
             >

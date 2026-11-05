@@ -39,11 +39,11 @@ export const RLInputRating: Component<RLInputRatingProps> = (props) => {
 
   const items = createMemo(() => Array.from({ length: length() }, (_, idx) => idx + 1));
 
-  const getWidthClass = (val: number, itemIndex: number) => {
-    if (val >= itemIndex) return "w-full";
-    if (val <= itemIndex - 1) return "w-0";
-    const pct = Math.round((val - (itemIndex - 1)) * 100);
-    return pct === 75 ? "w-3/4" : pct === 50 ? "w-1/2" : pct === 25 ? "w-1/4" : `w-[${pct}%]`;
+  const fillPercent = (itemIndex: number): number => {
+    const val = display();
+    if (val >= itemIndex) return 100;
+    if (val <= itemIndex - 1) return 0;
+    return Math.round((val - (itemIndex - 1)) * 100);
   };
 
   const getValueFromEvent = (e: MouseEvent, el: HTMLElement, index: number) => {
@@ -55,16 +55,12 @@ export const RLInputRating: Component<RLInputRatingProps> = (props) => {
 
   const handleMouseMove = (e: MouseEvent, el: HTMLElement, index: number) => {
     if (!props.hoverable) return;
-    const val = getValueFromEvent(e, el, index);
-    setHoverValue(val);
+    setHoverValue(getValueFromEvent(e, el, index));
   };
 
   const handleClick = (e: MouseEvent, el: HTMLElement, index: number) => {
     const val = getValueFromEvent(e, el, index);
-    let next = val;
-    if (props.clearable && value() === val) {
-      next = 0;
-    }
+    const next = props.clearable && value() === val ? 0 : val;
     setValue(next);
     setHoverValue(null);
   };
@@ -97,17 +93,17 @@ export const RLInputRating: Component<RLInputRatingProps> = (props) => {
       class={classes().root}
       data-step={step()}
       data-length={length()}
-      data-clearable={props.clearable ? "true" : "false"}
-      data-hoverable={props.hoverable ? "true" : "false"}
-      data-disabled={props.disabled ? "true" : "false"}
-      data-readonly={props.readonly ? "true" : "false"}
+      data-clearable={props.clearable ? "" : undefined}
+      data-hoverable={props.hoverable ? "" : undefined}
+      data-disabled={props.disabled ? "" : undefined}
+      data-readonly={props.readonly ? "" : undefined}
       id={id()}
       role="slider"
       aria-valuenow={value()}
       aria-valuemin={0}
       aria-valuemax={length()}
-      aria-readonly={props.readonly ? "true" : "false"}
-      aria-disabled={props.disabled ? "true" : "false"}
+      aria-readonly={props.readonly}
+      aria-disabled={props.disabled}
       tabindex={props.disabled || props.readonly ? undefined : 0}
       onKeyDown={handleKeyDown}
       {...rest}
@@ -118,13 +114,12 @@ export const RLInputRating: Component<RLInputRatingProps> = (props) => {
         value={value()}
         required={props.required}
         disabled={props.disabled || props.readonly}
-        class="rating-hidden-input"
       />
 
       <For each={items()}>
         {(i) => (
           <div
-            class={`input-rating-item ${classes().item}`}
+            class={classes().item}
             data-slot="item"
             data-index={i}
             onMouseMove={(e) => handleMouseMove(e, e.currentTarget, i)}
@@ -141,9 +136,10 @@ export const RLInputRating: Component<RLInputRatingProps> = (props) => {
             </div>
 
             <div
-              class={`rating-item-indicator ${classes().indicator} ${getWidthClass(display(), i)}`}
+              class={classes().indicator}
               data-slot="indicator"
-              data-state={display() >= i - 0.99 ? "active" : "inactive"}
+              data-active={display() >= i - 0.99 ? "" : undefined}
+              style={{ "--rl-progress": `${fillPercent(i)}%` }}
             >
               <RLIcon
                 name={props.icon || "star"}

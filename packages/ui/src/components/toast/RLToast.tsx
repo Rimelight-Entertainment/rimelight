@@ -2,11 +2,13 @@ import type { RLToastProps } from "./toast.types";
 import type { ThemeColor } from "../../types";
 import { RLToastTheme } from "./toast.theme";
 import { createSignal, onSettled, Show, type Component } from "solid-js";
+import { RLButton } from "../button/RLButton";
 import { RLIcon } from "../icon/RLIcon";
+import { renderSlot } from "../../slot";
 import { uiT } from "../../locale";
 
 const colorIcons: Partial<Record<ThemeColor, string>> = {
-  neutral: "bell",
+  primary: "bell",
   error: "circle-check",
   success: "circle-check",
   warning: "triangle-alert",
@@ -17,7 +19,6 @@ const OMIT_KEYS = [
   "color",
   "title",
   "description",
-  "actionLabel",
   "duration",
   "dismissible",
   "onDismiss",
@@ -33,21 +34,21 @@ export const RLToast: Component<RLToastProps> = (props) => {
   const duration = () => props.duration ?? 6000;
   const isDismissible = () => props.dismissible ?? true;
   const isError = () => props.color === "error";
+  const hasTitle = () => Boolean(slots.titleSlot() || props.title);
+  const hasDescription = () => Boolean(slots.descriptionSlot() || props.description);
 
   let rootRef: HTMLDivElement | undefined;
-  let timerId: ReturnType<typeof setTimeout> | undefined;
-  let dismissTimerId: ReturnType<typeof setTimeout> | undefined;
+  let timerId: number | undefined;
+  let dismissTimerId: number | undefined;
   let startTime = 0;
   let remaining = duration();
-
-  const icon = () => colorIcons[props.color ?? "neutral"] ?? "bell";
 
   const dismiss = () => {
     if (leaving()) return;
     setLeaving(true);
     if (props.onDismiss) {
       clearTimeout(dismissTimerId);
-      dismissTimerId = setTimeout(props.onDismiss, 300);
+      dismissTimerId = window.setTimeout(props.onDismiss, 300);
     }
   };
 
@@ -56,7 +57,7 @@ export const RLToast: Component<RLToastProps> = (props) => {
     if (!isDismissible()) return;
     if (duration() > 0 && remaining > 0 && timerId === undefined) {
       startTime = Date.now();
-      timerId = setTimeout(dismiss, remaining);
+      timerId = window.setTimeout(dismiss, remaining);
     }
   };
 
@@ -82,12 +83,12 @@ export const RLToast: Component<RLToastProps> = (props) => {
   return (
     <Tag
       ref={(el: HTMLDivElement) => (rootRef = el)}
-      class={`${classes().root} ${isError() ? "error" : ""} ${leaving() ? "opacity-0 translate-y-2 pointer-events-none" : ""}`}
+      class={classes().root}
       data-slot="root"
       data-theme={theme()}
-      data-toast
+      data-state={leaving() ? "closed" : "open"}
       data-duration={duration()}
-      data-dismissible={isDismissible().toString()}
+      data-dismissible={isDismissible() ? "" : undefined}
       role={isError() ? "alert" : "status"}
       aria-live={isError() ? "assertive" : "polite"}
       aria-atomic="true"
@@ -108,44 +109,40 @@ export const RLToast: Component<RLToastProps> = (props) => {
       }}
       {...rest}
     >
-      <RLIcon name={icon()} class="size-4 shrink-0 mt-0.5" aria-hidden="true" />
+      <RLIcon name={colorIcons[props.color ?? "primary"] ?? "bell"} class={classes().icon} />
 
-      <div class="flex flex-col gap-0.5 flex-1 min-w-0">
-        {slots.titleSlot() || props.title ? (
+      <div class={classes().body} data-slot="body">
+        <Show when={hasTitle()}>
           <div class={classes().title} data-slot="title">
-            {slots.titleSlot() ? slots.titleSlot() : props.title}
+            <Show when={slots.titleSlot()} fallback={props.title}>
+              {renderSlot(slots.titleSlot())}
+            </Show>
           </div>
-        ) : null}
-        {slots.descriptionSlot() || props.description ? (
+        </Show>
+        <Show when={hasDescription()}>
           <div class={classes().description} data-slot="description">
-            {slots.descriptionSlot() ? slots.descriptionSlot() : props.description}
+            <Show when={slots.descriptionSlot()} fallback={props.description}>
+              {renderSlot(slots.descriptionSlot())}
+            </Show>
           </div>
-        ) : null}
+        </Show>
         {children()}
-        {slots.actionsSlot() || props.actionLabel ? (
-          <div class="flex items-center justify-end gap-2 mt-3" data-slot="actions">
-            {slots.actionsSlot() ? (
-              slots.actionsSlot()
-            ) : (
-              <button type="button" class={classes().action} data-slot="action" data-toast-action>
-                {props.actionLabel}
-              </button>
-            )}
+        <Show when={slots.actionsSlot()}>
+          <div class={classes().actions} data-slot="actions">
+            {renderSlot(slots.actionsSlot())}
           </div>
-        ) : null}
+        </Show>
       </div>
 
       <Show when={isDismissible()}>
-        <button
-          type="button"
+        <RLButton
+          icon="x"
+          variant="ghost"
+          size="xs"
           class={classes().close}
-          data-slot="close"
-          data-toast-close
           aria-label={uiT("toast.dismiss")}
           onClick={dismiss}
-        >
-          <RLIcon name="x" class="size-3.5" aria-hidden="true" />
-        </button>
+        />
       </Show>
     </Tag>
   );

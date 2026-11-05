@@ -1,7 +1,10 @@
 import type { RLVideoProps } from "./video.types";
 import { RLVideoTheme } from "./video.theme";
 import { createMemo, createSignal, Show, type Component } from "solid-js";
+import { RLButton } from "../button/RLButton";
 import { RLIcon } from "../icon/RLIcon";
+import { RLImage } from "../image/RLImage";
+import { renderSlot } from "../../slot";
 import { uiT } from "../../locale";
 
 const PLACEHOLDER_THUMBNAIL = "/assets/placeholder.webp";
@@ -71,61 +74,74 @@ export const RLVideo: Component<RLVideoProps> = (props) => {
   const defaultThumbnail = createMemo(() =>
     videoId() ? `${YOUTUBE_THUMB_BASE}${videoId()}/hqdefault.jpg` : PLACEHOLDER_THUMBNAIL,
   );
+  const playingUrl = () => (isPlaying() ? embedUrl() : null);
+  const hasTranscript = () => slots.transcriptSlot() !== undefined || Boolean(children());
+
+  const triggerImageUi = createMemo(() => ({ triggerImage: classes().image }));
 
   return (
     <>
       <Tag class={classes().root} data-slot="root" data-theme={theme()} {...rest}>
         <Show
-          when={isPlaying() && embedUrl()}
+          when={playingUrl()}
           fallback={
-            <button
-              type="button"
+            <RLButton
               class={classes().trigger}
               data-slot="trigger"
+              variant="ghost"
+              shape="square"
+              size="xs"
               aria-label={
                 embedUrl() !== null ? uiT("video.playLabel") : uiT("video.unavailableLabel")
               }
               disabled={embedUrl() === null}
               onClick={() => setIsPlaying(true)}
             >
-              <img
+              <RLImage
                 src={props.thumbnail || defaultThumbnail()}
                 alt={props.title || uiT("video.defaultTitle")}
                 loading="lazy"
-                class={classes().image}
-                data-slot="image"
+                lightbox={false}
+                ui={triggerImageUi()}
               />
 
-              {slots.iconSlot() ? (
-                slots.iconSlot()
-              ) : (
-                <RLIcon
-                  name={props.icon || "play"}
-                  class={classes().icon}
-                  data-slot="icon"
-                  aria-hidden="true"
-                />
-              )}
-            </button>
+              <Show
+                when={slots.iconSlot() !== undefined}
+                fallback={
+                  <RLIcon
+                    name={props.icon || "play"}
+                    class={classes().icon}
+                    data-slot="icon"
+                    aria-hidden="true"
+                  />
+                }
+              >
+                {renderSlot(slots.iconSlot())}
+              </Show>
+            </RLButton>
           }
         >
-          <iframe
-            src={embedUrl()!}
-            title={props.title || uiT("video.defaultTitle")}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowfullscreen
-            loading="lazy"
-            credentialless
-            referrerpolicy="strict-origin-when-cross-origin"
-            class={classes().iframe}
-            data-slot="iframe"
-          />
+          {(url) => (
+            <iframe
+              src={url()}
+              title={props.title || uiT("video.defaultTitle")}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen
+              loading="lazy"
+              credentialless
+              referrerpolicy="strict-origin-when-cross-origin"
+              class={classes().iframe}
+              data-slot="iframe"
+            />
+          )}
         </Show>
       </Tag>
 
-      <Show when={slots.transcriptSlot() || children()}>
+      <Show when={hasTranscript()}>
         <div class={classes().transcript} data-slot="transcript">
-          {slots.transcriptSlot() ? slots.transcriptSlot() : children()}
+          <Show when={slots.transcriptSlot() !== undefined} fallback={children()}>
+            {renderSlot(slots.transcriptSlot())}
+          </Show>
         </div>
       </Show>
     </>

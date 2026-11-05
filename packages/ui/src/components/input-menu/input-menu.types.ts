@@ -18,7 +18,7 @@ export type RLInputMenuProps = InferThemeProps<typeof RLInputMenuTheme> & {
    * Controlled value. Omit to let the component manage its own value.
    * @default undefined
    */
-  value?: string;
+  value?: string | undefined;
   /**
    * Initial value when uncontrolled.
    * @default ""
@@ -49,4 +49,19 @@ export type RLInputMenuProps = InferThemeProps<typeof RLInputMenuTheme> & {
    * @default undefined
    */
   label?: string;
+  /**
+   * Accessible label applied to the trigger button.
+   * @default undefined
+   */
+  "aria-label"?: string | undefined;
+  /**
+   * Element ID that labels the trigger button.
+   * @default undefined
+   */
+  "aria-labelledby"?: string | undefined;
+  /**
+   * Element ID that describes the trigger button.
+   * @default undefined
+   */
+  "aria-describedby"?: string | undefined;
 };

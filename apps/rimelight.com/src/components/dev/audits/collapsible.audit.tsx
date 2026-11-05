@@ -261,7 +261,7 @@ export const collapsibleAudit: ComponentAuditDefinition = {
           ui={{
             root: "w-80 rounded-xl border border-primary/30 p-2 bg-primary/5",
             trigger: "font-semibold text-primary",
-            content: "mt-2 p-3 rounded-lg bg-elevated border border-primary/20 text-xs",
+            body: "mt-2 p-3 rounded-lg bg-elevated border border-primary/20 text-xs",
           }}
           bodySlot={<div>{"Custom styled slot content"}</div>}
         >
@@ -304,7 +304,7 @@ export const collapsibleAudit: ComponentAuditDefinition = {
       criterion: "Full WAI-ARIA compliance",
       status: "pass",
       notes:
-        "Trigger has aria-expanded and aria-controls linked with content ID; data-state and data-disabled attributes applied.",
+        "Trigger has aria-expanded and aria-controls linked with body ID; data-state and data-disabled attributes applied.",
     },
     {
       criterion: "Theme token resolution",

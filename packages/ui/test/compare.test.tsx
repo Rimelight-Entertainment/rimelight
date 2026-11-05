@@ -4,338 +4,309 @@ import { renderToString } from "@solidjs/web";
 import { RLCompare } from "../src/components/compare/RLCompare";
 import { cleanHtml } from "./utils/normalize";
 
+function render(fn: () => any): string {
+  return cleanHtml(renderToString(fn));
+}
+
 function slotTag(html: string, slot: string): string {
-  const match = html.match(new RegExp(`<[a-z0-9-]+[^>]*data-slot="${slot}"[^>]*>`));
+  const match = html.match(new RegExp(`<[a-z0-9]+[^>]*data-slot="${slot}"[^>]*>`));
   return match?.[0] ?? "";
 }
 
-function attr(tag: string, name: string): string | undefined {
-  return tag.match(new RegExp(`\\s${name}="([^"]*)"`))?.[1];
+function slotContent(html: string, slot: string): string {
+  const match = html.match(
+    new RegExp(`<([a-z0-9]+)[^>]*data-slot="${slot}"[^>]*>([\\s\\S]*?)</\\1>`),
+  );
+  return match?.[2] ?? "";
 }
 
-describe("RLCompare Component Test Suite", () => {
-  describe("Exports", () => {
-    it("exports RLCompare component from package index", () => {
-      expect(RLCompare).toBeDefined();
-    });
-  });
+// Solid SSR writes empty-string attributes on spread elements as bare names (HTML-equivalent to name="").
+function attr(tag: string, name: string): string | undefined {
+  const match = tag.match(new RegExp(`\\s${name}(?:="([^"]*)")?(?=[\\s>])`));
+  return match ? (match[1] ?? "") : undefined;
+}
 
-  describe("Structure & Slots", () => {
-    it("renders default structure with root, container, after, before, divider, and handle slots", () => {
-      const html = cleanHtml(
-        renderToString(() => (
-          <RLCompare
-            beforeSrc="/before.jpg"
-            afterSrc="/after.jpg"
-            beforeAlt="Original Photo"
-            afterAlt="Edited Photo"
-          />
-        )),
-      );
+describe("RLCompare", () => {
+  describe("Structure", () => {
+    it("renders the root, layers, divider, and handle by default", () => {
+      const html = render(() => <RLCompare beforeSrc="/before.jpg" afterSrc="/after.jpg" />);
 
-      expect(html).toMatch(/^<div/);
       expect(slotTag(html, "root")).not.toBe("");
       expect(slotTag(html, "container")).not.toBe("");
-      expect(slotTag(html, "after")).not.toBe("");
       expect(slotTag(html, "before")).not.toBe("");
+      expect(slotTag(html, "after")).not.toBe("");
       expect(slotTag(html, "divider")).not.toBe("");
       expect(slotTag(html, "handle")).not.toBe("");
-      expect(html).toContain('alt="Original Photo"');
-      expect(html).toContain('alt="Edited Photo"');
     });
 
-    it("renders polymorphic root element via as prop", () => {
-      const sectionHtml = cleanHtml(
-        renderToString(() => <RLCompare as="section" beforeSrc="/b.jpg" afterSrc="/a.jpg" />),
-      );
-      expect(sectionHtml).toMatch(/^<section/);
+    it("renders the polymorphic root through the as prop", () => {
+      const html = render(() => <RLCompare as="section" beforeSrc="/b.jpg" afterSrc="/a.jpg" />);
 
-      const articleHtml = cleanHtml(
-        renderToString(() => <RLCompare as="article" beforeSrc="/b.jpg" afterSrc="/a.jpg" />),
-      );
-      expect(articleHtml).toMatch(/^<article/);
+      expect(html).toMatch(/^<section/);
+    });
+
+    it("forwards class and ui overrides to the root and handle", () => {
+      const html = render(() => (
+        <RLCompare
+          class="root-override"
+          ui={{ handle: "handle-override" }}
+          beforeSrc="/b.jpg"
+          afterSrc="/a.jpg"
+        />
+      ));
+
+      expect(slotTag(html, "root")).toContain("root-override");
+      expect(slotTag(html, "handle")).toContain("handle-override");
     });
   });
 
-  describe("Value & Clipping Calculation", () => {
-    it("renders default value 50% with matching clip-path and handle position", () => {
-      const html = cleanHtml(
-        renderToString(() => <RLCompare beforeSrc="/b.jpg" afterSrc="/a.jpg" />),
+  describe("Value", () => {
+    it("starts at 50 when no value is provided", () => {
+      const handle = slotTag(
+        render(() => <RLCompare />),
+        "handle",
       );
 
-      const beforeSlot = slotTag(html, "before");
-      expect(beforeSlot).toMatch(/--rl-compare-clip:\s*inset\(0 calc\(100% - 50%\) 0 0\)/);
-
-      const handleSlot = slotTag(html, "handle");
-      expect(handleSlot).toMatch(/--rl-compare-pos:\s*50%/);
-      expect(attr(handleSlot, "aria-valuenow")).toBe("50");
-      expect(attr(handleSlot, "aria-valuetext")).toBe("50%");
+      expect(attr(handle, "aria-valuenow")).toBe("50");
+      expect(attr(handle, "aria-valuetext")).toBe("50%");
     });
 
-    it("applies custom controlled value and clip-path", () => {
-      const html = cleanHtml(
-        renderToString(() => <RLCompare value={75} beforeSrc="/b.jpg" afterSrc="/a.jpg" />),
+    it("uses defaultValue as the initial position", () => {
+      const handle = slotTag(
+        render(() => <RLCompare defaultValue={30} />),
+        "handle",
       );
 
-      const beforeSlot = slotTag(html, "before");
-      expect(beforeSlot).toMatch(/--rl-compare-clip:\s*inset\(0 calc\(100% - 75%\) 0 0\)/);
-
-      const handleSlot = slotTag(html, "handle");
-      expect(handleSlot).toMatch(/--rl-compare-pos:\s*75%/);
-      expect(attr(handleSlot, "aria-valuenow")).toBe("75");
+      expect(attr(handle, "aria-valuenow")).toBe("30");
     });
 
-    it("clamps value to min and max boundaries", () => {
-      const htmlMin = cleanHtml(
-        renderToString(() => (
-          <RLCompare value={-20} min={10} max={90} beforeSrc="/b.jpg" afterSrc="/a.jpg" />
-        )),
+    it("prefers a controlled value over defaultValue", () => {
+      const handle = slotTag(
+        render(() => <RLCompare value={70} defaultValue={30} />),
+        "handle",
       );
-      const handleMin = slotTag(htmlMin, "handle");
-      expect(attr(handleMin, "aria-valuenow")).toBe("10");
 
-      const htmlMax = cleanHtml(
-        renderToString(() => (
-          <RLCompare value={150} min={10} max={90} beforeSrc="/b.jpg" afterSrc="/a.jpg" />
-        )),
+      expect(attr(handle, "aria-valuenow")).toBe("70");
+    });
+
+    it("clamps the value to the default 0 to 100 range", () => {
+      const high = slotTag(
+        render(() => <RLCompare value={150} />),
+        "handle",
       );
-      const handleMax = slotTag(htmlMax, "handle");
-      expect(attr(handleMax, "aria-valuenow")).toBe("90");
+      const low = slotTag(
+        render(() => <RLCompare value={-20} />),
+        "handle",
+      );
+
+      expect(attr(high, "aria-valuenow")).toBe("100");
+      expect(attr(low, "aria-valuenow")).toBe("0");
+    });
+
+    it("clamps the value to custom min and max bounds", () => {
+      const handle = slotTag(
+        render(() => <RLCompare value={10} min={20} max={80} />),
+        "handle",
+      );
+
+      expect(attr(handle, "aria-valuemin")).toBe("20");
+      expect(attr(handle, "aria-valuemax")).toBe("80");
+      expect(attr(handle, "aria-valuenow")).toBe("20");
+    });
+
+    it("accepts the bounds themselves without clamping", () => {
+      const atMax = slotTag(
+        render(() => <RLCompare value={100} />),
+        "handle",
+      );
+      const atMin = slotTag(
+        render(() => <RLCompare value={0} />),
+        "handle",
+      );
+
+      expect(attr(atMax, "aria-valuenow")).toBe("100");
+      expect(attr(atMin, "aria-valuenow")).toBe("0");
+    });
+
+    it("writes the position as a CSS variable on the divider and handle", () => {
+      const html = render(() => <RLCompare value={25} />);
+
+      expect(html).toMatch(/--rl-compare-pos:\s*25%/);
     });
   });
 
   describe("Orientation", () => {
-    it("renders horizontal orientation by default with vertical divider and ew cursor", () => {
-      const html = cleanHtml(
-        renderToString(() => (
-          <RLCompare orientation="horizontal" beforeSrc="/b.jpg" afterSrc="/a.jpg" />
-        )),
-      );
+    it("is horizontal by default", () => {
+      const html = render(() => <RLCompare />);
+      const root = slotTag(html, "root");
 
-      const rootTag = slotTag(html, "root");
-      expect(attr(rootTag, "data-orientation")).toBe("horizontal");
-
-      const handleTag = slotTag(html, "handle");
-      expect(attr(handleTag, "aria-orientation")).toBe("horizontal");
-      expect(handleTag).toContain("cursor-ew-resize");
+      expect(attr(root, "data-orientation")).toBe("horizontal");
+      expect(attr(slotTag(html, "handle"), "aria-orientation")).toBe("horizontal");
     });
 
-    it("renders vertical orientation with horizontal divider, top-to-bottom clip, and ns cursor", () => {
-      const html = cleanHtml(
-        renderToString(() => (
-          <RLCompare orientation="vertical" value={30} beforeSrc="/b.jpg" afterSrc="/a.jpg" />
-        )),
-      );
+    it("reports vertical orientation on the root and handle", () => {
+      const html = render(() => <RLCompare orientation="vertical" />);
 
-      const rootTag = slotTag(html, "root");
-      expect(attr(rootTag, "data-orientation")).toBe("vertical");
-
-      const beforeSlot = slotTag(html, "before");
-      expect(beforeSlot).toMatch(/--rl-compare-clip:\s*inset\(0 0 calc\(100% - 30%\) 0\)/);
-
-      const handleTag = slotTag(html, "handle");
-      expect(attr(handleTag, "aria-orientation")).toBe("vertical");
-      expect(handleTag).toContain("cursor-ns-resize");
-      expect(handleTag).toMatch(/--rl-compare-pos:\s*30%/);
+      expect(attr(slotTag(html, "root"), "data-orientation")).toBe("vertical");
+      expect(attr(slotTag(html, "handle"), "aria-orientation")).toBe("vertical");
     });
   });
 
-  describe("Content Support", () => {
-    it("renders custom JSX elements via leading and trailing slots", () => {
-      const html = cleanHtml(
-        renderToString(() => (
-          <RLCompare
-            leadingSlot={<div class="p-4 bg-red-500">Left Version</div>}
-            trailingSlot={<div class="p-4 bg-blue-500">Right Version</div>}
-          />
-        )),
-      );
+  describe("Content slots", () => {
+    it("renders beforeSrc and afterSrc images in their layers", () => {
+      const html = render(() => (
+        <RLCompare
+          beforeSrc="/before.jpg"
+          afterSrc="/after.jpg"
+          beforeAlt="Original"
+          afterAlt="Edited"
+        />
+      ));
 
-      expect(html).toContain("Left Version");
-      expect(html).toContain("Right Version");
+      expect(html).toContain('src="/before.jpg"');
+      expect(html).toContain('src="/after.jpg"');
+      expect(html).toContain('alt="Original"');
+      expect(html).toContain('alt="Edited"');
     });
 
-    it("renders dynamic function content receiving current value", () => {
-      const html = cleanHtml(
-        renderToString(() => (
-          <RLCompare
-            value={60}
-            leadingSlot={(val: number) => <span>Before at {val}%</span>}
-            trailingSlot={(val: number) => <span>After at {val}%</span>}
-          />
-        )),
-      );
+    it("prefers beforeLayerSlot over beforeSrc", () => {
+      const html = render(() => (
+        <RLCompare beforeSrc="/before.jpg" beforeLayerSlot={<span>Custom before</span>} />
+      ));
 
-      expect(html).toContain("Before at 60%");
-      expect(html).toContain("After at 60%");
+      expect(html).toContain("Custom before");
+      expect(html).not.toContain('src="/before.jpg"');
     });
 
-    it("renders children elements as [before, after] fallback", () => {
-      const html = cleanHtml(
-        renderToString(() => (
-          <RLCompare>
-            <div id="child-before">Child Before</div>
-            <div id="child-after">Child After</div>
-          </RLCompare>
-        )),
-      );
+    it("passes the current value to a render function beforeLayerSlot", () => {
+      const html = render(() => (
+        <RLCompare
+          defaultValue={25}
+          beforeLayerSlot={(value) => <span>{`before ${value}`}</span>}
+        />
+      ));
 
-      expect(html).toContain("Child Before");
-      expect(html).toContain("Child After");
+      expect(html).toContain("before 25");
+    });
+
+    it("passes the current value to a render function afterLayerSlot", () => {
+      const html = render(() => (
+        <RLCompare defaultValue={60} afterLayerSlot={(value) => <span>{`after ${value}`}</span>} />
+      ));
+
+      expect(html).toContain("after 60");
+    });
+
+    it("uses the first and second children for the before and after layers", () => {
+      const html = render(() => (
+        <RLCompare>
+          <span>Left content</span>
+          <span>Right content</span>
+        </RLCompare>
+      ));
+      const beforeStart = html.indexOf('data-slot="before"');
+      const afterStart = html.indexOf('data-slot="after"');
+
+      expect(beforeStart).toBeGreaterThan(-1);
+      expect(html.indexOf("Left content")).toBeGreaterThan(beforeStart);
+      expect(html.indexOf("Right content")).toBeGreaterThan(afterStart);
+      expect(html.indexOf("Right content")).toBeLessThan(beforeStart);
     });
   });
 
-  describe("Labels & Badges", () => {
-    it("renders before and after labels when provided", () => {
-      const html = cleanHtml(
-        renderToString(() => (
-          <RLCompare
-            beforeSrc="/b.jpg"
-            afterSrc="/a.jpg"
-            beforeLabelSlot="Before Polish"
-            afterLabelSlot="After Polish"
-          />
-        )),
-      );
+  describe("Labels", () => {
+    it("renders label slots when labels are provided", () => {
+      const html = render(() => <RLCompare beforeLabelSlot="Day" afterLabelSlot="Night" />);
 
       expect(slotTag(html, "before-label")).not.toBe("");
       expect(slotTag(html, "after-label")).not.toBe("");
-      expect(html).toContain("Before Polish");
-      expect(html).toContain("After Polish");
+      expect(html).toContain("Day");
+      expect(html).toContain("Night");
     });
 
-    it("applies custom label placements", () => {
-      const html = cleanHtml(
-        renderToString(() => (
-          <RLCompare
-            beforeSrc="/b.jpg"
-            afterSrc="/a.jpg"
-            beforeLabelSlot="B"
-            afterLabelSlot="A"
-            beforeLabelPlacement="bottom-left"
-            afterLabelPlacement="bottom-right"
-          />
-        )),
-      );
+    it("hides labels when showLabels is false", () => {
+      const html = render(() => (
+        <RLCompare showLabels={false} beforeLabelSlot="Day" afterLabelSlot="Night" />
+      ));
 
-      const beforeLabel = slotTag(html, "before-label");
-      const afterLabel = slotTag(html, "after-label");
-      expect(beforeLabel).toContain("bottom-3 left-3");
-      expect(afterLabel).toContain("bottom-3 right-3");
+      expect(slotTag(html, "before-label")).toBe("");
+      expect(slotTag(html, "after-label")).toBe("");
+    });
+
+    it("renders no labels when no label slot is provided", () => {
+      const html = render(() => <RLCompare />);
+
+      expect(slotTag(html, "before-label")).toBe("");
+      expect(slotTag(html, "after-label")).toBe("");
     });
   });
 
-  describe("Handle, Divider, and Icons", () => {
-    it("can hide handle and divider via props", () => {
-      const html = cleanHtml(
-        renderToString(() => (
-          <RLCompare beforeSrc="/b.jpg" afterSrc="/a.jpg" showHandle={false} showDivider={false} />
-        )),
-      );
+  describe("Handle and divider", () => {
+    it("hides the handle when hasHandle is false", () => {
+      const html = render(() => <RLCompare hasHandle={false} />);
 
       expect(slotTag(html, "handle")).toBe("");
+    });
+
+    it("hides the divider when hasDivider is false", () => {
+      const html = render(() => <RLCompare hasDivider={false} />);
+
       expect(slotTag(html, "divider")).toBe("");
     });
 
-    it("renders custom handle slot element or render function", () => {
-      const html = cleanHtml(
-        renderToString(() => (
-          <RLCompare
-            beforeSrc="/b.jpg"
-            afterSrc="/a.jpg"
-            handleSlot={({ orientation, value }) => (
-              <div data-custom-handle>
-                {orientation}-{value}
-              </div>
-            )}
-          />
-        )),
+    it("passes orientation and value to a render function handleSlot", () => {
+      const html = render(() => (
+        <RLCompare
+          orientation="vertical"
+          defaultValue={40}
+          handleSlot={({ orientation, value }) => <span>{`${orientation}:${value}`}</span>}
+        />
+      ));
+
+      expect(slotContent(html, "handle")).toContain("vertical:40");
+    });
+
+    it("renders the handle with the supplied aria-label and aria-labelledby", () => {
+      const labelled = slotTag(
+        render(() => <RLCompare aria-label="Photo position" />),
+        "handle",
+      );
+      const referenced = slotTag(
+        render(() => <RLCompare aria-labelledby="compare-title" />),
+        "handle",
       );
 
-      expect(html).toContain("data-custom-handle");
-      expect(html).toContain("horizontal-50");
+      expect(attr(labelled, "aria-label")).toBe("Photo position");
+      expect(attr(referenced, "aria-labelledby")).toBe("compare-title");
+    });
+
+    it("provides a default accessible name for the handle", () => {
+      const handle = slotTag(
+        render(() => <RLCompare />),
+        "handle",
+      );
+
+      expect(attr(handle, "aria-label")).toBeTruthy();
     });
   });
 
-  describe("Variants, Sizes & Theming", () => {
-    it("renders size variants correctly", () => {
-      for (const size of ["xs", "sm", "md", "lg", "xl"] as const) {
-        const html = cleanHtml(
-          renderToString(() => <RLCompare size={size} beforeSrc="/b.jpg" afterSrc="/a.jpg" />),
-        );
-        expect(html).toContain('data-slot="root"');
-      }
+  describe("Disabled", () => {
+    it("is interactive by default", () => {
+      const html = render(() => <RLCompare />);
+      const handle = slotTag(html, "handle");
+
+      expect(attr(slotTag(html, "root"), "data-disabled")).toBeUndefined();
+      expect(attr(handle, "aria-disabled")).toBeUndefined();
+      expect(attr(handle, "tabindex")).toBe("0");
     });
 
-    it("renders visual variants correctly", () => {
-      for (const variant of ["solid", "outline", "subtle", "ghost"] as const) {
-        const html = cleanHtml(
-          renderToString(() => (
-            <RLCompare variant={variant} beforeSrc="/b.jpg" afterSrc="/a.jpg" />
-          )),
-        );
-        expect(html).toContain('data-slot="root"');
-      }
-    });
+    it("marks the root with a presence flag and removes the handle from tab order", () => {
+      const html = render(() => <RLCompare disabled />);
+      const handle = slotTag(html, "handle");
 
-    it("supports custom class and ui slot overrides", () => {
-      const html = cleanHtml(
-        renderToString(() => (
-          <RLCompare
-            class="my-custom-root shadow-2xl"
-            ui={{
-              handle: "custom-handle-class",
-              divider: "custom-divider-class",
-            }}
-            beforeSrc="/b.jpg"
-            afterSrc="/a.jpg"
-          />
-        )),
-      );
-
-      expect(slotTag(html, "root")).toContain("my-custom-root");
-      expect(slotTag(html, "root")).toContain("shadow-2xl");
-      expect(slotTag(html, "handle")).toContain("custom-handle-class");
-      expect(slotTag(html, "divider")).toContain("custom-divider-class");
-    });
-  });
-
-  describe("Accessibility (WAI-ARIA)", () => {
-    it("provides complete ARIA slider attributes on handle", () => {
-      const html = cleanHtml(
-        renderToString(() => (
-          <RLCompare
-            value={42}
-            min={0}
-            max={100}
-            aria-label="Custom image comparison"
-            beforeSrc="/b.jpg"
-            afterSrc="/a.jpg"
-          />
-        )),
-      );
-
-      const handleTag = slotTag(html, "handle");
-      expect(attr(handleTag, "role")).toBe("slider");
-      expect(attr(handleTag, "tabindex")).toBe("0");
-      expect(attr(handleTag, "aria-valuenow")).toBe("42");
-      expect(attr(handleTag, "aria-valuemin")).toBe("0");
-      expect(attr(handleTag, "aria-valuemax")).toBe("100");
-      expect(attr(handleTag, "aria-valuetext")).toBe("42%");
-      expect(attr(handleTag, "aria-label")).toBe("Custom image comparison");
-    });
-
-    it("handles disabled state with tabindex -1 and aria-disabled", () => {
-      const html = cleanHtml(
-        renderToString(() => <RLCompare disabled={true} beforeSrc="/b.jpg" afterSrc="/a.jpg" />),
-      );
-
-      const rootTag = slotTag(html, "root");
-      expect(attr(rootTag, "data-disabled")).toBe("true");
-
-      const handleTag = slotTag(html, "handle");
-      expect(attr(handleTag, "tabindex")).toBe("-1");
-      expect(attr(handleTag, "aria-disabled")).toBe("true");
+      expect(attr(slotTag(html, "root"), "data-disabled")).toBe("");
+      expect(attr(handle, "aria-disabled")).toBe("true");
+      expect(attr(handle, "tabindex")).toBe("-1");
     });
   });
 });

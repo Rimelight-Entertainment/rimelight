@@ -47,21 +47,19 @@ export type RLTabsProps<T extends TabItem = TabItem> = InferThemeProps<typeof RL
    */
   onValueChange?: ((value: string) => void) | undefined;
   /**
-   * Whether to render content panels automatically. Set to false for tab bar only.
+   * Whether to render the panel body automatically from each item's `content`. Set to false for the
+   * tab bar only.
    * @default true
    */
-  content?: boolean | undefined;
+  body?: boolean | undefined;
   /**
-   * Unmount hidden tab panels from DOM. If false, panels are hidden via CSS/attribute.
+   * Unmount hidden tab panels from DOM. If false, panels are hidden via the `hidden` attribute.
    * @default true
    */
   unmountOnHide?: boolean | undefined;
   /**
-   * Maximum number of tab triggers to render in the tab list. Tabs beyond this cap are placed in a
-   * native popover accessible via a '+N more' overflow button at the end of the tab list.
-   *
-   * Additionally, container queries will progressively hide visible triggers from right to left as
-   * the container narrows, surfacing those in the popover as well.
+   * Maximum number of tab triggers rendered in the tab list. Tabs beyond this cap are listed in an
+   * overflow menu opened by a "+N more" button at the end of the tab list.
    *
    * When undefined, all tabs are rendered in the list.
    */

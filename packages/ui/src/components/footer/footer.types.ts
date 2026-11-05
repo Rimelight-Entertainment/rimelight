@@ -1,4 +1,4 @@
-import type { JSX } from "@solidjs/web";
+import type { SlotRenderer } from "../../types";
 import type { InferThemeProps } from "../../resolver";
 import type { RLFooterTheme } from "./footer.theme";
 
@@ -14,17 +14,17 @@ export type RLFooterProps = Omit<InferThemeProps<typeof RLFooterTheme>, "contain
    *
    * @default undefined
    */
-  leadingSlot?: JSX.Element;
+  leadingSlot?: SlotRenderer;
   /**
    * Replaces the center area content. Falls back to `children` when omitted.
    *
    * @default undefined
    */
-  centerSlot?: JSX.Element;
+  centerSlot?: SlotRenderer;
   /**
    * Content rendered in the trailing area.
    *
    * @default undefined
    */
-  trailingSlot?: JSX.Element;
+  trailingSlot?: SlotRenderer;
 };

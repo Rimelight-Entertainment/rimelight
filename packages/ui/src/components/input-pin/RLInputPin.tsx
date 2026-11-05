@@ -6,6 +6,7 @@ import { createControllable } from "../../controllable";
 import { uiT } from "../../locale";
 
 const OMIT_KEYS = [
+  "size",
   "length",
   "value",
   "defaultValue",
@@ -14,21 +15,27 @@ const OMIT_KEYS = [
   "disabled",
   "required",
   "type",
+  "aria-label",
+  "aria-labelledby",
+  "aria-describedby",
   "onInput",
   "onKeyDown",
   "onComplete",
 ] as const;
 
 export const RLInputPin: Component<RLInputPinProps> = (props) => {
-  const { Tag, classes, rest, children, theme, ui } = RLInputPinTheme.setup(props, {
+  const { Tag, classes, rest, children, theme } = RLInputPinTheme.setup(props, {
     omit: OMIT_KEYS,
   });
 
-  const cellsClasses = createMemo(() => RLInputTheme({ size: props.size, ui: ui() }));
+  const cellsUi = () => ({ root: classes().cell, input: classes().input });
+  const cellsClasses = createMemo(() => RLInputTheme({ size: props.size, ui: cellsUi() }));
 
   const length = () => props.length ?? 4;
   const pinType = () => props.type ?? "numeric";
   const cells = createMemo(() => Array.from({ length: length() }));
+  const cellName = (index: number) => (props.name ? `${props.name}-${index}` : undefined);
+  const cellInputMode = () => (pinType() === "numeric" ? "numeric" : "text");
 
   const [current, setCurrent] = createControllable<string>(
     () => props.value,
@@ -108,42 +115,38 @@ export const RLInputPin: Component<RLInputPinProps> = (props) => {
   };
 
   return (
-    <Tag
-      data-slot="root"
-      data-theme={theme()}
-      class={classes().root}
-      {...rest}
-      onChange={undefined}
-    >
+    <Tag data-slot="root" data-theme={theme()} class={classes().root} {...rest}>
       <div
         role="group"
-        aria-label={uiT("input-pin.label")}
+        aria-label={props["aria-label"] ?? uiT("input-pin.label")}
+        aria-labelledby={props["aria-labelledby"]}
+        aria-describedby={props["aria-describedby"]}
         class={classes().group}
         data-slot="group"
       >
-        <For each={cells()}>
+        <For each={cells()} keyed={false}>
           {(_, index) => (
-            <div class={`${cellsClasses().root} ${classes().cell}`} data-slot="cell">
+            <div class={cellsClasses().root} data-slot="cell">
               <input
-                ref={(el) => (pinRefs[index()] = el)}
+                ref={(el) => (pinRefs[index] = el)}
                 type="text"
-                name={props.name ? `${props.name}-${index()}` : undefined}
-                inputmode={pinType() === "numeric" ? "numeric" : "text"}
+                name={cellName(index)}
+                inputmode={cellInputMode()}
                 autocomplete="one-time-code"
                 maxlength={1}
-                value={current()[index()] ?? ""}
+                value={current()[index] ?? ""}
                 disabled={props.disabled}
                 required={props.required}
-                aria-label={uiT("input-pin.digitLabel").replace("{n}", String(index() + 1))}
-                class={`${cellsClasses().input} ${classes().input}`}
+                aria-label={uiT("input-pin.digitLabel").replace("{n}", String(index + 1))}
+                class={cellsClasses().input}
                 data-slot="input"
                 onInput={(e) =>
-                  handleInput(e as InputEvent & { currentTarget: HTMLInputElement }, index())
+                  handleInput(e as InputEvent & { currentTarget: HTMLInputElement }, index)
                 }
                 onKeyDown={(e) =>
-                  handleKeyDown(e as KeyboardEvent & { currentTarget: HTMLInputElement }, index())
+                  handleKeyDown(e as KeyboardEvent & { currentTarget: HTMLInputElement }, index)
                 }
-                onPaste={(e) => handlePaste(e, index())}
+                onPaste={(e) => handlePaste(e, index)}
               />
             </div>
           )}

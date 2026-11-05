@@ -62,8 +62,8 @@ Audit a component file to ensure strict adherence to our design patterns and fun
   - No `cx` calls directly in the component JSX.
   - Use `color = "auto"` instead of hardcoding color variants when color is configurable.
 - Full WAI-ARIA & Accessibility compliance:
-  - Required props for aria labels on interactive elements (`ariaLabel`, `ariaLabelledby`).
-  - Use camelCase prop names (`ariaLabel`, `ariaLabelledby`, `ariaDescribedby`). Never support or inspect kebab-case `aria-*` via `(props as any)["aria-label"]`.
+  - Required props for aria labels on interactive elements: `aria-label`, `aria-labelledby`, `aria-describedby`.
+  - Use kebab-case prop names matching the DOM attribute (`aria-label`, `aria-labelledby`, `aria-describedby`). Never support camelCase aliases (`ariaLabel`, `ariaLabelledby`).
   - SSR/Hydration-safe automatic ID generation: use `createUniqueId()` for deterministic element associations (`aria-labelledby`, `aria-describedby`, `id`).
   - No `innerHTML` or `dangerouslySetInnerHTML`.
 - Strictly adhere to SolidJS 2.0 SSR & hydration invariants:
@@ -85,8 +85,11 @@ Audit a component file to ensure strict adherence to our design patterns and fun
       1. Spreading un-omitted props onto native HTML DOM elements attaches non-standard attributes (like `ui`, `as`, `color`, `variant`) directly to the DOM in SSR HTML. During client hydration, the browser's DOM mismatch causes hydration attribute warnings and bailouts.
       2. Solid 2.0 `omit(props, ...)` creates a reactive proxy slice without consuming or breaking fine-grained tracking on the retained attributes.
   - **Slots & Children:**
-    - Use native Solid JSX slot props (`props.leadingSlot`, `props.trailingSlot`, `props.children`), or typed render functions `(item: T) => JSX.Element`.
-    - Never use Vue-like `props.slots` record bags or dynamic string lookups (`props.slots?.['header']`).
+    - Theme slot keys are camelCase nouns declared in the theme `slots` array. `data-slot` is the kebab form of the key. Every `data-slot` in JSX and every `classes()` key must be declared in `slots`; every declared key must be used.
+    - A consumer-replaceable slot is a prop named `<key>Slot` (key `leading` → `leadingSlot`). Typed `SlotRenderer<Ctx>` from `types.ts` (node or render function; `Ctx = void` when there is no context). `OverlaySlot` is removed.
+    - Read slot props only through `setup(props, { slots: [...] })` accessors (`slots.leadingSlot()`). Render-function slots are invoked at the render site through `renderSlot(value, ctx)`.
+    - Slot names follow the vocabulary below. Banned: `content` (use `body`), `closeButton` (use `close`), `leftSlot`/`rightSlot` (use `leading`/`trailing`), `textSlot` (use `label`), and any `*Slot` prop that duplicates another slot.
+    - Never `props.slots` record bags or dynamic string lookups.
 - Audit & Test Coverage:
   - Do not surround the component in any wrapper on the audit page.
   - The audit page must include a test scenario where every slot of the component is passed children (a single dedicated example per slot, including the default slot).
@@ -104,6 +107,28 @@ Audit a component file to ensure strict adherence to our design patterns and fun
 - Audit page: `apps/rimelight.com/src/components/dev/audits/<name>.audit.tsx`, importing the component from `@rimelight/ui/components/<name>/RL<Name>.tsx` and following an existing audit as the pattern reference.
 - Tests: `packages/ui/test/<name>.test.tsx` (plus `<name>.helpers.test.ts` / `<name>.browser.test.tsx` when applicable). Mirror an existing component's test file for setup and conventions.
 - Read one healthy existing component end to end (component, theme, tests, audit page) before writing anything; conform to it rather than inventing structure.
+
+## Tokens, data attributes, and API vocabulary
+
+- Colors:
+  - Palette utilities use the shade-less name (`text-primary`, `bg-error/10`); DEFAULT is the 500 shade. Numbered steps (`-50` to `-950`) are banned in `*.theme.ts` and JSX.
+  - Neutral surfaces, text, and borders use intents: `default`, `muted`, `elevated`, `accented`, `dimmed`, `toned`, `highlighted`, `inverted` (`bg-default`, `text-muted`, `border-default`, `ring-default`). Names outside that list (`bg-background`, `bg-border`) are banned.
+  - Backdrops: `bg-scrim/<n>`. Foreground or surfaces on images or scrims: `text-on-scrim`, `bg-on-scrim/<n>`. Both defined in `preset.ts`. Tints that flip per mode (black in light, white in dark): `inverted/<n>`.
+  - Raw `black`, `white`, and Tailwind palette names (`rose-500`, `amber-400`) are banned. Map them to palette names (`error`, `warning`, `success`).
+  - Hex, rgb, and hsl literals are banned in `RL*.tsx` and `*.theme.ts`. Default color values live in `src/constants/`. SVG fills use `currentColor` or `var(--rl-*)`.
+  - Runtime-sized values (progress, offsets) use a CSS variable set through `style` plus a static arbitrary class: `w-[var(--rl-progress)]` with `style={{ "--rl-progress": "37%" }}`. No value-to-class lookup tables.
+- Data attributes:
+  - Flags that style an element use presence: `data-disabled=""` when true, attribute omitted when false. Never `"true"` or `"false"` for flags.
+  - ARIA states use `aria-*` (`aria-expanded`, `aria-selected`, `aria-checked`, `aria-disabled`, `aria-invalid`), never `data-*`.
+  - Multi-valued state uses enum strings: `data-state="open|closed|active|inactive"`, `data-variant`, `data-size`, `data-orientation`.
+  - Names are kebab-case (`data-file-upload`, not `data-fileUpload`).
+- Icons: bare lucide name (`x`, `search`). `i-<set>-<name>` only for non-lucide sets.
+- Placement: `side` for the edge a container attaches to (drawer, slideover, sidebar, navbar). `position` for a corner or anchor (avatar badge, chip). `orientation` for an axis (carousel, slider, tabs, separator). Replaces `direction`, `toggleSide`, `badgePosition`.
+- Callbacks: value-bearing controls use `onValueChange` (pagination `onPageChange` becomes `onValueChange`). Open state uses `onOpenChange`. `onChange` exists only on native form-control wrappers.
+- Booleans that toggle a slot's presence use `has<Slot>` (`hasTitle`). A variant group name must not equal a slot key.
+- Shape: one `shape` enum (`square`, `rounded`, `pill`). No separate boolean `square`.
+- Color: `color` variants use `color="auto"`, default `"primary"`. Status components default to their own palette (`error` defaults to `error`). Delete empty variant options and dead theme keys.
+- Native elements: use the RL primitive when one exists (`RLButton`, `RLLink`, `RLLabel`, `RLImage`). Native `input`, `textarea`, `select` only inside form-control components. `svg` allowed for icons.
 
 ## Validation
 

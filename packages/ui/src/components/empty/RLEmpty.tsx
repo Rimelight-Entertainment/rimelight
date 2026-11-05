@@ -1,5 +1,5 @@
 import type { Component } from "solid-js";
-import { For, Show } from "solid-js";
+import { For, Show, createMemo } from "solid-js";
 import type { RLEmptyProps } from "./empty.types";
 import { RLEmptyTheme } from "./empty.theme";
 import { RLButton } from "../button/RLButton";
@@ -31,8 +31,11 @@ export const RLEmpty: Component<RLEmptyProps> = (props) => {
     ] as const,
   });
 
-  const activeIcon = () =>
-    props.loading ? (props.loadingIcon ?? "i-lucide-loader-circle") : props.icon;
+  const activeIcon = createMemo(() =>
+    props.loading ? (props.loadingIcon ?? "loader-circle") : props.icon,
+  );
+  const actionItems = createMemo(() => props.actions ?? []);
+  const actionSize = createMemo(() => (props.size === "xs" || props.size === "sm" ? "xs" : "sm"));
 
   return (
     <Tag class={classes().root} data-slot="root" data-theme={theme()} {...rest}>
@@ -57,17 +60,15 @@ export const RLEmpty: Component<RLEmptyProps> = (props) => {
                 >
                   {(icon) => (
                     <div class={classes().avatar} data-slot="avatar">
-                      <RLIcon
-                        name={icon()}
-                        class={`size-full ${props.loading ? "animate-spin" : ""}`}
-                        aria-hidden="true"
-                      />
+                      <RLIcon name={icon()} class={classes().icon} aria-hidden="true" />
                     </div>
                   )}
                 </Show>
               }
             >
-              {slots.leadingSlot()}
+              <div class={classes().leading} data-slot="leading">
+                {slots.leadingSlot()}
+              </div>
             </Show>
 
             <Show when={props.title || slots.titleSlot()}>
@@ -99,20 +100,16 @@ export const RLEmpty: Component<RLEmptyProps> = (props) => {
         </div>
       </Show>
 
-      <Show when={(props.actions ?? []).length > 0 || slots.actionsSlot()}>
+      <Show when={actionItems().length > 0 || slots.actionsSlot()}>
         <div class={classes().actions} data-slot="actions">
           <Show
             when={slots.actionsSlot()}
             fallback={
-              <For each={props.actions ?? []}>
+              <For each={actionItems()}>
                 {(action) => {
                   const { icon, label, ...buttonProps } = action;
                   return (
-                    <RLButton
-                      size={props.size === "xs" || props.size === "sm" ? "xs" : "sm"}
-                      {...(icon ? { leadingIcon: icon } : {})}
-                      {...buttonProps}
-                    >
+                    <RLButton size={actionSize()} leadingIcon={icon} {...buttonProps}>
                       {label}
                     </RLButton>
                   );

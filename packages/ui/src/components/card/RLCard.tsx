@@ -1,6 +1,8 @@
 import { Show, type Component } from "solid-js";
 import type { RLCardProps } from "./card.types";
 import { RLCardTheme } from "./card.theme";
+import { RLImage } from "../image/RLImage";
+import { renderSlot } from "../../slot";
 
 const OMIT_KEYS = [
   "title",
@@ -33,7 +35,9 @@ export const RLCard: Component<RLCardProps> = (props) => {
   const hasTitle = () => slots.titleSlot() !== undefined || props.title !== undefined;
   const hasDescription = () =>
     slots.descriptionSlot() !== undefined || props.description !== undefined;
+  const hasHeader = () => slots.headerSlot() !== undefined || hasTitle() || hasDescription();
   const hasBody = () => slots.bodySlot() !== undefined || children() !== undefined;
+  const hasMedia = () => slots.mediaSlot() !== undefined || props.mediaSrc !== undefined;
 
   return (
     <Tag
@@ -50,34 +54,33 @@ export const RLCard: Component<RLCardProps> = (props) => {
       }
       {...rest}
     >
-      {/* Media */}
-      <Show when={slots.mediaSlot() ?? props.mediaSrc}>
+      <Show when={hasMedia()}>
         <Show
           when={slots.mediaSlot()}
           fallback={
             <Show when={props.mediaSrc}>
               {(src) => (
                 <div class={classes().media} data-slot="media">
-                  <img
+                  <RLImage
                     src={src()}
-                    alt={typeof props.title === "string" ? props.title : ""}
-                    class="h-full w-full object-cover"
+                    alt={props.title ?? ""}
+                    class={classes().image}
+                    lightbox={false}
                   />
                 </div>
               )}
             </Show>
           }
         >
-          {slots.mediaSlot()}
+          {renderSlot(slots.mediaSlot())}
         </Show>
       </Show>
 
       <Show
-        when={slots.overlaySlot() !== undefined}
+        when={slots.overlaySlot()}
         fallback={
           <>
-            {/* Header */}
-            <Show when={slots.headerSlot() !== undefined || hasTitle() || hasDescription()}>
+            <Show when={hasHeader()}>
               <div class={classes().header} data-slot="header">
                 <Show
                   when={slots.headerSlot()}
@@ -85,7 +88,9 @@ export const RLCard: Component<RLCardProps> = (props) => {
                     <>
                       <Show when={hasTitle()}>
                         <div id={titleId()} class={classes().title} data-slot="title">
-                          {slots.titleSlot() ?? props.title}
+                          <Show when={slots.titleSlot()} fallback={props.title}>
+                            {renderSlot(slots.titleSlot())}
+                          </Show>
                         </div>
                       </Show>
                       <Show when={hasDescription()}>
@@ -94,63 +99,37 @@ export const RLCard: Component<RLCardProps> = (props) => {
                           class={classes().description}
                           data-slot="description"
                         >
-                          {slots.descriptionSlot() ?? props.description}
+                          <Show when={slots.descriptionSlot()} fallback={props.description}>
+                            {renderSlot(slots.descriptionSlot())}
+                          </Show>
                         </div>
                       </Show>
                     </>
                   }
                 >
-                  {slots.headerSlot()}
+                  {renderSlot(slots.headerSlot())}
                 </Show>
               </div>
             </Show>
 
-            {/* Body */}
             <Show when={hasBody()}>
               <div class={classes().body} data-slot="body">
-                {slots.bodySlot() ?? children()}
+                <Show when={slots.bodySlot()} fallback={children()}>
+                  {renderSlot(slots.bodySlot())}
+                </Show>
               </div>
             </Show>
 
-            {/* Footer */}
-            <Show when={slots.footerSlot() !== undefined}>
+            <Show when={slots.footerSlot()}>
               <div class={classes().footer} data-slot="footer">
-                {slots.footerSlot()}
+                {renderSlot(slots.footerSlot())}
               </div>
             </Show>
           </>
         }
       >
         <div class={classes().overlay} data-slot="overlay">
-          <Show
-            when={slots.overlaySlot()}
-            fallback={
-              <>
-                <Show when={hasTitle()}>
-                  <div id={titleId()} class={classes().title} data-slot="title">
-                    {slots.titleSlot() ?? props.title}
-                  </div>
-                </Show>
-                <Show when={hasDescription()}>
-                  <div id={descriptionId()} class={classes().description} data-slot="description">
-                    {slots.descriptionSlot() ?? props.description}
-                  </div>
-                </Show>
-                <Show when={hasBody()}>
-                  <div class={classes().body} data-slot="body">
-                    {slots.bodySlot() ?? children()}
-                  </div>
-                </Show>
-                <Show when={slots.footerSlot() !== undefined}>
-                  <div class={classes().footer} data-slot="footer">
-                    {slots.footerSlot()}
-                  </div>
-                </Show>
-              </>
-            }
-          >
-            {slots.overlaySlot()}
-          </Show>
+          {renderSlot(slots.overlaySlot())}
         </div>
       </Show>
     </Tag>

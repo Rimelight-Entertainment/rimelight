@@ -12,7 +12,7 @@ export const ModalSandbox = (): JSX.Element => {
   const [size, setSize] = createSignal<(typeof SIZES)[number]>("md");
   const [scrollable, setScrollable] = createSignal(false);
   const [fullscreen, setFullscreen] = createSignal(false);
-  const [overlay, setOverlay] = createSignal(true);
+  const [backdrop, setBackdrop] = createSignal(true);
   const [isModal, setIsModal] = createSignal(true);
   const [dismissible, setDismissible] = createSignal(true);
   const [hasHeader, setHasHeader] = createSignal(true);
@@ -69,9 +69,9 @@ export const ModalSandbox = (): JSX.Element => {
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
               type="checkbox"
-              checked={overlay()}
-              onInput={(e) => setOverlay(e.currentTarget.checked)}
-              onChange={(e) => setOverlay(e.currentTarget.checked)}
+              checked={backdrop()}
+              onInput={(e) => setBackdrop(e.currentTarget.checked)}
+              onChange={(e) => setBackdrop(e.currentTarget.checked)}
               class="rounded border-default"
             />
             <span class="text-muted">{t("app.text.overlay")}</span>
@@ -147,7 +147,7 @@ export const ModalSandbox = (): JSX.Element => {
           size={size()}
           scrollable={scrollable()}
           fullscreen={fullscreen()}
-          overlay={overlay()}
+          backdrop={backdrop()}
           modal={isModal()}
           dismissible={dismissible()}
           title={hasHeader() ? title() : undefined}
@@ -389,7 +389,7 @@ export const modalAudit: ComponentAuditDefinition = {
               title={"Custom Styled Modal"}
               description="Enhanced styling overrides on all dialog slots."
               ui={{
-                overlay: "bg-black/80 backdrop-blur-md",
+                overlay: "bg-scrim/80 backdrop-blur-md",
                 content: "border-2 border-primary/40 rounded-2xl shadow-2xl bg-default p-2",
                 header: "p-6 bg-primary/5 rounded-t-xl",
                 title: "text-xl font-black text-primary",
@@ -413,13 +413,46 @@ export const modalAudit: ComponentAuditDefinition = {
         );
       },
     },
+    {
+      id: "slot-overrides",
+      title: "Header, trigger, close, and body slots",
+      description: "headerSlot, triggerSlot, closeSlot, and bodySlot replace the default markup.",
+      render: () => {
+        const [open, setOpen] = createSignal(false);
+        return (
+          <RLModal
+            open={open()}
+            onOpenChange={setOpen}
+            triggerSlot={
+              <RLButton variant="subtle" onClick={() => setOpen(true)}>
+                Open Slot Modal
+              </RLButton>
+            }
+            headerSlot={
+              <div class="flex flex-col gap-1 p-4 w-full">
+                <span class="text-xs font-mono text-muted">headerSlot</span>
+                <span class="font-semibold text-highlighted">Custom header</span>
+              </div>
+            }
+            closeSlot={
+              <RLButton variant="outline" size="sm" onClick={() => setOpen(false)}>
+                Done
+              </RLButton>
+            }
+            bodySlot={<p class="text-sm text-muted">bodySlot replaces the children below.</p>}
+          >
+            <p class="text-sm text-muted">Children are ignored when bodySlot is set.</p>
+          </RLModal>
+        );
+      },
+    },
   ],
   checklist: [
     {
       criterion: "API and slot pattern parity",
       status: "pass",
       notes:
-        "Full support for title, description, open (v-model), defaultOpen, size, overlay, scrollable, transition, fullscreen, portal, closeIcon, dismissible, modal, unmountOnHide, headerSlot, titleSlot, descriptionSlot, actionsSlot, closeSlot, bodySlot, footerSlot slots and aliases.",
+        "Full support for title, description, open (controlled via onOpenChange), defaultOpen, size, backdrop, scrollable, transition, fullscreen, modal, portal, dismissible, unmountOnHide, triggerSlot, headerSlot, titleSlot, descriptionSlot, actionsSlot, closeSlot, bodySlot, footerSlot, and children.",
     },
     {
       criterion: "Full WAI-ARIA compliance",
@@ -430,8 +463,7 @@ export const modalAudit: ComponentAuditDefinition = {
     {
       criterion: "Keyboard & Outside Click Dismissal",
       status: "pass",
-      notes:
-        "Handles Escape key and backdrop clicks smoothly with dismissible support and onClosePrevent callbacks.",
+      notes: "Handles Escape key, the close control, and overlay clicks with dismissible support.",
     },
     {
       criterion: "Theme token resolution",

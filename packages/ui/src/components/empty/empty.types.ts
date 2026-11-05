@@ -18,6 +18,12 @@ export type EmptyAction = Omit<RLButtonProps, "children" | "label" | "leadingIco
    * @default undefined
    */
   icon?: string;
+
+  /**
+   * Target URL. Renders the action as a link; `onClick` is not used when set.
+   * @default undefined
+   */
+  href?: string;
 };
 
 /**
@@ -38,7 +44,7 @@ export type RLEmptyProps = InferThemeProps<typeof RLEmptyTheme> & {
 
   /**
    * Icon shown while `loading` is true.
-   * @default "i-lucide-loader-circle"
+   * @default "loader-circle"
    */
   loadingIcon?: string;
 

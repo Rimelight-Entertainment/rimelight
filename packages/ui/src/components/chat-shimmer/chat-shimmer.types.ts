@@ -2,8 +2,6 @@ import type { InferThemeProps } from "../../resolver";
 import type { RLChatShimmerTheme } from "./chat-shimmer.theme";
 
 /**
- * Props for `RLChatShimmer`. Renders its children inside the themed root.
- *
- * @status stub
+ * Props for `RLChatShimmer`. Animated gradient text that signals in-progress activity.
  */
 export type RLChatShimmerProps = InferThemeProps<typeof RLChatShimmerTheme>;

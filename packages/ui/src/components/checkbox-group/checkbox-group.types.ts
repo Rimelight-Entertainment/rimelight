@@ -1,7 +1,5 @@
-import type { ValidComponent } from "@solidjs/web";
-import type { JSX } from "@solidjs/web";
-import type { Theme, ThemeColor } from "../../types";
-import type { CheckboxIndicator, CheckboxSize, CheckboxUi } from "../checkbox/checkbox.types";
+import type { SlotRenderer, ThemeColor } from "../../types";
+import type { CheckboxSide, CheckboxSize } from "../checkbox/checkbox.types";
 import type { InferThemeProps } from "../../resolver";
 import type { RLCheckboxGroupTheme } from "./checkbox-group.theme";
 
@@ -15,13 +13,6 @@ export interface CheckboxGroupItemObject {
   id?: string | undefined;
   icon?: string | undefined;
   class?: string | undefined;
-  ui?:
-    | (Partial<{
-        item?: string | undefined;
-      }> &
-        Omit<CheckboxUi, "root">)
-    | undefined;
-  [key: string]: any;
 }
 
 export type CheckboxGroupItem = CheckboxGroupItemValue | CheckboxGroupItemObject;
@@ -29,60 +20,47 @@ export type CheckboxGroupItem = CheckboxGroupItemValue | CheckboxGroupItemObject
 export type CheckboxGroupOrientation = "horizontal" | "vertical";
 export type CheckboxGroupLayout = "list" | "card" | "table";
 
-export interface CheckboxGroupUi {
-  root?: string | undefined;
-  fieldset?: string | undefined;
-  legend?: string | undefined;
-  item?: string | undefined;
-}
-
-export type RLCheckboxGroupProps<
-  T extends CheckboxGroupItem = CheckboxGroupItem,
-  V = CheckboxGroupItemValue,
-> = Omit<InferThemeProps<typeof RLCheckboxGroupTheme>, "onChange"> & {
-  /**
-   * The element or component this component should render as.
-   * @default 'div'
-   */
-  as?: ValidComponent;
-
+export type RLCheckboxGroupProps<T extends CheckboxGroupItem = CheckboxGroupItem> = Omit<
+  InferThemeProps<typeof RLCheckboxGroupTheme>,
+  "onChange" | "highlight" | "disabled"
+> & {
   /**
    * Group legend or title.
    */
   legend?: string | undefined;
 
   /**
-   * When `items` is an array of objects, select the field to use as the value.
+   * When `items` is an array of objects, the field used as the value.
    * @default 'value'
    */
   valueKey?: string | undefined;
 
   /**
-   * When `items` is an array of objects, select the field to use as the label.
+   * When `items` is an array of objects, the field used as the label.
    * @default 'label'
    */
   labelKey?: string | undefined;
 
   /**
-   * When `items` is an array of objects, select the field to use as the description.
+   * When `items` is an array of objects, the field used as the description.
    * @default 'description'
    */
   descriptionKey?: string | undefined;
 
   /**
-   * List of items to display as checkboxes.
+   * Items rendered as checkboxes.
    */
   items?: T[] | undefined;
 
   /**
-   * The controlled value array of selected values.
+   * The controlled array of selected values.
    */
-  value?: V[] | undefined;
+  value?: CheckboxGroupItemValue[] | undefined;
 
   /**
-   * The initial uncontrolled value array.
+   * The initial uncontrolled array of selected values.
    */
-  defaultValue?: V[] | undefined;
+  defaultValue?: CheckboxGroupItemValue[] | undefined;
 
   /**
    * Size scale for all checkboxes in the group.
@@ -109,19 +87,25 @@ export type RLCheckboxGroupProps<
   color?: ThemeColor | undefined;
 
   /**
-   * Highlight focus state ring.
+   * Highlight the ring color like a focus state on every child checkbox.
    * @default false
    */
   highlight?: boolean | undefined;
 
   /**
-   * Indicator position.
+   * Edge the checkbox box sits on relative to each label.
    * @default 'start'
    */
-  indicator?: CheckboxIndicator | undefined;
+  side?: CheckboxSide | undefined;
 
   /**
-   * Checkbox icon.
+   * Whether each checkbox box is rendered. When `false`, the icon is rendered above each label instead.
+   * @default true
+   */
+  hasIndicator?: boolean | undefined;
+
+  /**
+   * Bare lucide icon name used by every checkbox in the group.
    * @default 'check'
    */
   icon?: string | undefined;
@@ -130,12 +114,6 @@ export type RLCheckboxGroupProps<
    * Whether the entire group is disabled.
    */
   disabled?: boolean | undefined;
-
-  /**
-   * Loop keyboard navigation.
-   * @default false
-   */
-  loop?: boolean | undefined;
 
   /**
    * The maximum number of values that can be selected.
@@ -158,60 +136,22 @@ export type RLCheckboxGroupProps<
   id?: string | undefined;
 
   /**
-   * Slot-specific CSS class overrides.
+   * Value change callback.
    */
-  ui?: (CheckboxGroupUi & CheckboxUi) | undefined;
+  onValueChange?: ((value: CheckboxGroupItemValue[]) => void) | undefined;
 
   /**
-   * Additional CSS classes to apply to the root element.
+   * Replaces the legend. Renders instead of the `legend` prop.
    */
-  class?: string | undefined;
+  legendSlot?: SlotRenderer;
 
   /**
-   * Theme mode override.
+   * Replaces each item label. Receives the normalized item.
    */
-  theme?: Theme | undefined;
+  labelSlot?: SlotRenderer<{ item: CheckboxGroupItemObject }>;
 
   /**
-   * Value change callback for reactive binding.
+   * Replaces each item description. Receives the normalized item.
    */
-  onValueChange?: ((value: V[]) => void) | undefined;
-
-  /**
-   * Custom legend slot.
-   */
-  legendSlot?: JSX.Element | undefined;
-
-  /**
-   * Custom item label slot renderer.
-   */
-  labelSlot?:
-    | ((props: {
-        item: T & {
-          id: string;
-          label?: string;
-          description?: string;
-          value?: CheckboxGroupItemValue;
-        };
-      }) => JSX.Element)
-    | undefined;
-
-  /**
-   * Custom item description slot renderer.
-   */
-  descriptionSlot?:
-    | ((props: {
-        item: T & {
-          id: string;
-          label?: string;
-          description?: string;
-          value?: CheckboxGroupItemValue;
-        };
-      }) => JSX.Element)
-    | undefined;
-
-  /**
-   * Custom children (alternative to items prop).
-   */
-  children?: JSX.Element;
+  descriptionSlot?: SlotRenderer<{ item: CheckboxGroupItemObject }>;
 };

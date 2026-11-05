@@ -5,7 +5,7 @@ import type { RouteAnnouncerProgressSize } from "@rimelight/ui/components/route-
 import { AUDIT_COLORS, type ComponentAuditDefinition } from "./types";
 import { t } from "@rimelight/i18n";
 
-const SIZES: RouteAnnouncerProgressSize[] = ["xs", "sm", "md", "lg"];
+const SIZES: RouteAnnouncerProgressSize[] = ["xs", "sm", "md", "lg", "xl"];
 const COLORS = AUDIT_COLORS;
 
 export const RouteAnnouncerSandbox = (): JSX.Element => {
@@ -36,7 +36,7 @@ export const RouteAnnouncerSandbox = (): JSX.Element => {
               type="text"
               value={prefix()}
               onInput={(e) => setPrefix(e.currentTarget.value)}
-              class="px-2 py-1 rounded bg-elevated border border-default font-mono text-xs text-foreground focus:outline-none focus:border-primary"
+              class="px-2 py-1 rounded bg-elevated border border-default font-mono text-xs text-default focus:outline-none focus:border-primary"
             />
           </label>
         </div>
@@ -91,8 +91,8 @@ export const RouteAnnouncerSandbox = (): JSX.Element => {
                 onClick={() => setIsSimulatedRouting((prev) => !prev)}
                 class={`px-2.5 py-0.5 rounded text-xs font-mono font-medium transition-colors border ${
                   isSimulatedRouting()
-                    ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/40"
-                    : "bg-rose-500/20 text-rose-400 border-rose-500/40"
+                    ? "bg-success/20 text-success border-success/40"
+                    : "bg-error/20 text-error border-error/40"
                 }`}
               >
                 {isSimulatedRouting() ? "Simulated Routing: ACTIVE" : "Simulated Routing: IDLE"}
@@ -135,7 +135,17 @@ export const RouteAnnouncerSandbox = (): JSX.Element => {
                         : "bg-elevated text-muted hover:text-highlighted border border-default"
                     }`}
                   >
-                    {s} ({s === "xs" ? "h-0.5" : s === "sm" ? "h-1" : s === "md" ? "h-1.5" : "h-2"})
+                    {s} (
+                    {s === "xs"
+                      ? "h-0.5"
+                      : s === "sm"
+                        ? "h-1"
+                        : s === "md"
+                          ? "h-1.5"
+                          : s === "lg"
+                            ? "h-2"
+                            : "h-2.5"}
+                    )
                   </button>
                 )}
               </For>
@@ -150,7 +160,7 @@ export const RouteAnnouncerSandbox = (): JSX.Element => {
           <span class="text-xs font-mono uppercase tracking-wider text-muted">
             Screen Reader Announcement (aria-live='polite')
           </span>
-          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-success/10 text-success border border-success/30">
             role="status" aria-atomic="true"
           </span>
         </div>
@@ -188,10 +198,12 @@ export const RouteAnnouncerSandbox = (): JSX.Element => {
                       ? "h-1"
                       : selectedSize() === "md"
                         ? "h-1.5"
-                        : "h-2"
+                        : selectedSize() === "lg"
+                          ? "h-2"
+                          : "h-2.5"
                 }`}
               >
-                <div class="h-full w-full origin-left-right animate-pulse bg-[var(--rl-bg)]" />
+                <div class="h-full w-full animate-pulse bg-[var(--rl-bg)]" />
               </div>
             </Show>
             <div class="flex-1 flex items-center justify-center p-3 text-center">
@@ -269,11 +281,36 @@ export const routeAnnouncerAudit: ComponentAuditDefinition = {
         return t("app.text.configured-progress-color-size");
       },
       description:
-        "Supports discrete semantic sizes (xs to lg) and all design system theme colors.",
+        "Supports discrete semantic sizes (xs to xl) and all design system theme colors.",
       render: () => (
         <div class="p-4 rounded border border-default bg-elevated/20 text-xs flex flex-col gap-2">
           <RLRouteAnnouncer color="secondary" size="md" />
           <p class="text-muted">Customized color='secondary' and size='md'.</p>
+        </div>
+      ),
+    },
+    {
+      id: "progress-options",
+      title: "Progress options object",
+      description: "progress accepts an options object with color, size and a bar class.",
+      render: () => (
+        <div class="p-4 rounded border border-default bg-elevated/20 text-xs flex flex-col gap-2">
+          <RLRouteAnnouncer progress={{ color: "success", size: "xl", class: "opacity-80" }} />
+          <p class="text-muted">
+            Customized progress color='success', size='xl', class='opacity-80'.
+          </p>
+        </div>
+      ),
+    },
+    {
+      id: "default-slot",
+      title: "Default slot (children)",
+      description: "Children render inside the root alongside the live region.",
+      render: () => (
+        <div class="p-4 rounded border border-default bg-elevated/20 text-xs flex flex-col gap-2">
+          <RLRouteAnnouncer>
+            <span class="text-muted">Child content rendered in the default slot.</span>
+          </RLRouteAnnouncer>
         </div>
       ),
     },
@@ -282,7 +319,7 @@ export const routeAnnouncerAudit: ComponentAuditDefinition = {
     {
       criterion: "Unified API parity",
       status: "pass",
-      notes: "prefix, progress boolean or options object, color, size, and custom slots.",
+      notes: "prefix, progress boolean or options object, color, size, and the default slot.",
     },
     {
       criterion: "Full WAI-ARIA compliance",

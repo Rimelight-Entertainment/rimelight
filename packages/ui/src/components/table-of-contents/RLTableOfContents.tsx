@@ -2,15 +2,10 @@ import type { RLTableOfContentsProps, TableOfContentsHeading } from "./table-of-
 import { RLTableOfContentsTheme } from "./table-of-contents.theme";
 import { createMemo, createSignal, For, onSettled, Show, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
+import { RLLink } from "../link/RLLink";
 import { uiT } from "../../locale";
 
-const OMIT_KEYS = [
-  "headings",
-  "tableOfContents",
-  "containerSelector",
-  "collapsible",
-  "ref",
-] as const;
+const OMIT_KEYS = ["headings", "tableOfContents", "collapsible", "ref"] as const;
 
 export const RLTableOfContents: Component<RLTableOfContentsProps> = (props) => {
   const { Tag, classes, rest, theme } = RLTableOfContentsTheme.setup(props, {
@@ -23,35 +18,19 @@ export const RLTableOfContents: Component<RLTableOfContentsProps> = (props) => {
   let rootRef: HTMLElement | undefined;
   let detailsRef: HTMLDetailsElement | undefined;
 
-  const collapsible = () => props.collapsible === true;
-  const containerSelector = () => props.containerSelector ?? ".markdown-content";
-
-  const minLevel = createMemo(() =>
-    props.tableOfContents ? (props.tableOfContents.minHeadingLevel ?? 2) : 2,
-  );
-  const maxLevel = createMemo(() =>
-    props.tableOfContents ? (props.tableOfContents.maxHeadingLevel ?? 3) : 3,
-  );
-
-  const filteredHeadings = createMemo(() =>
-    props.tableOfContents !== false
-      ? props.headings.filter((h) => h.depth >= minLevel() && h.depth <= maxLevel())
-      : [],
-  );
-
-  const headingSelector = createMemo(() =>
-    Array.from(
-      { length: maxLevel() - minLevel() + 1 },
-      (_, i) => `:scope > h${minLevel() + i}`,
-    ).join(", "),
-  );
+  const filteredHeadings = createMemo(() => {
+    const config = props.tableOfContents;
+    if (config === false) return [];
+    const min = config?.minHeadingLevel ?? 2;
+    const max = config?.maxHeadingLevel ?? 3;
+    return props.headings.filter((h) => h.depth >= min && h.depth <= max);
+  });
 
   onSettled(() => {
-    if (collapsible() || !rootRef) return;
+    if (props.collapsible === true || !rootRef) return;
+    const root = rootRef;
     const update = () => {
-      const root = rootRef;
-      if (!root) return;
-      const links = root.querySelectorAll(".toc-link");
+      const links = root.querySelectorAll<HTMLAnchorElement>("a[data-slot=link]");
       if (links.length === 0) return;
       const threshold = window.innerHeight * 0.5;
       let active: string | undefined;
@@ -71,54 +50,45 @@ export const RLTableOfContents: Component<RLTableOfContentsProps> = (props) => {
     return () => window.removeEventListener("scroll", update);
   });
 
-  const depthClass = (depth: number) => {
-    if (depth === 2) return "pl-xs";
-    if (depth === 3) return "pl-6";
-    return "pl-9";
-  };
-
   return (
     <Show when={props.tableOfContents !== false}>
       <Show
-        when={collapsible()}
+        when={props.collapsible === true}
         fallback={
-          <>
-            <Tag
-              ref={(el: HTMLElement) => (rootRef = el)}
-              class={classes().root}
-              data-slot="root"
-              data-theme={theme()}
-              hidden={filteredHeadings().length === 0}
-              data-container-selector={containerSelector()}
-              data-heading-selector={headingSelector()}
-              {...rest}
-            >
-              <div class={classes().container} data-slot="container">
-                <h4 class={classes().title} data-slot="title">
-                  {uiT("toc.heading")}
-                </h4>
-                <ul class={`${classes().list} mt-2xl flex flex-col gap-xs`} data-slot="list">
-                  <For each={filteredHeadings()}>
-                    {(heading: TableOfContentsHeading) => (
-                      <li class={`${classes().item} ${depthClass(heading.depth)}`} data-slot="item">
-                        <a
-                          href={`#${heading.slug}`}
-                          class={`toc-link ${classes().link} ${
-                            activeId() === heading.slug ? classes().linkActive : ""
-                          }`}
-                          data-slot="link"
-                        >
-                          <span class={classes().linkText} data-slot="link-text">
-                            {heading.text}
-                          </span>
-                        </a>
-                      </li>
-                    )}
-                  </For>
-                </ul>
-              </div>
-            </Tag>
-          </>
+          <Tag
+            ref={(el: HTMLElement) => (rootRef = el)}
+            class={classes().root}
+            data-slot="root"
+            data-theme={theme()}
+            hidden={filteredHeadings().length === 0}
+            {...rest}
+          >
+            <div class={classes().container} data-slot="container">
+              <h4 class={classes().title} data-slot="title">
+                {uiT("toc.heading")}
+              </h4>
+              <ul class={classes().list} data-slot="list">
+                <For each={filteredHeadings()}>
+                  {(heading: TableOfContentsHeading) => (
+                    <li class={classes().item} data-slot="item" data-depth={heading.depth}>
+                      <RLLink
+                        href={`#${heading.slug}`}
+                        localize={false}
+                        class={classes().link}
+                        data-slot="link"
+                        data-depth={heading.depth}
+                        aria-current={activeId() === heading.slug ? "location" : undefined}
+                      >
+                        <span class={classes().linkText} data-slot="link-text">
+                          {heading.text}
+                        </span>
+                      </RLLink>
+                    </li>
+                  )}
+                </For>
+              </ul>
+            </div>
+          </Tag>
         }
       >
         <details
@@ -129,43 +99,48 @@ export const RLTableOfContents: Component<RLTableOfContentsProps> = (props) => {
           data-slot="root"
           data-theme={theme()}
           hidden={filteredHeadings().length === 0}
-          data-rl-toc-collapsible
-          data-container-selector={containerSelector()}
-          data-heading-selector={headingSelector()}
           onToggle={(e) => setOpen((e.currentTarget as HTMLDetailsElement).open)}
           {...rest}
         >
-          <summary class="flex items-center justify-between gap-3 px-4 h-10 text-sm font-medium text-highlighted cursor-pointer select-none hover:bg-muted/40 transition-colors list-none">
-            <span class="flex items-center gap-2">
-              <RLIcon name="list" class="size-4 text-primary shrink-0" aria-hidden="true" />
+          <summary
+            class={classes().trigger}
+            data-slot="trigger"
+            data-state={open() ? "open" : "closed"}
+          >
+            <span class={classes().triggerLabel} data-slot="trigger-label">
+              <RLIcon
+                name="list"
+                class={classes().triggerIcon}
+                data-slot="trigger-icon"
+                aria-hidden="true"
+              />
               <span>{uiT("toc.heading")}</span>
             </span>
             <RLIcon
               name="chevron-down"
-              class={`rl-toc-chevron size-4 text-muted shrink-0 transition-transform duration-200 ${
-                open() ? "rotate-180" : ""
-              }`}
+              class={classes().trailingIcon}
+              data-slot="trailing-icon"
               aria-hidden="true"
             />
           </summary>
-          <div class="px-4 pt-3 max-h-[40vh] overflow-y-auto border-t border-default/50 bg-default">
-            <ul class="flex flex-col gap-0.5 pb-8">
+          <div class={classes().body} data-slot="body">
+            <ul class={classes().bodyList} data-slot="body-list">
               <For each={filteredHeadings()}>
                 {(heading) => (
-                  <li class={heading.depth === 3 ? "pl-4" : undefined}>
-                    <a
+                  <li class={classes().bodyItem} data-slot="body-item" data-depth={heading.depth}>
+                    <RLLink
                       href={`#${heading.slug}`}
-                      class={`toc-link block py-1.5 text-sm transition-colors hover:text-primary no-underline ${
-                        heading.depth === 2 ? "text-highlighted font-medium" : "text-muted"
-                      }`}
-                      data-rl-toc-link
+                      localize={false}
+                      class={classes().bodyLink}
+                      data-slot="body-link"
+                      data-depth={heading.depth}
                       onClick={() => {
                         if (detailsRef) detailsRef.open = false;
                         setOpen(false);
                       }}
                     >
                       {heading.text}
-                    </a>
+                    </RLLink>
                   </li>
                 )}
               </For>

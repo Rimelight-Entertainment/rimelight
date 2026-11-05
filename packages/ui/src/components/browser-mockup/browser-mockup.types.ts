@@ -1,5 +1,5 @@
-import type { JSX } from "@solidjs/web";
 import type { InferThemeProps } from "../../resolver";
+import type { SlotRenderer } from "../../types";
 import type { RLBrowserMockupTheme } from "./browser-mockup.theme";
 
 export type RLBrowserMockupProps = InferThemeProps<typeof RLBrowserMockupTheme> & {
@@ -34,29 +34,29 @@ export type RLBrowserMockupProps = InferThemeProps<typeof RLBrowserMockupTheme> 
   /**
    * Custom content that replaces the whole header.
    */
-  headerSlot?: JSX.Element;
+  headerSlot?: SlotRenderer;
   /**
    * Custom content that replaces the window controls.
    */
-  controlsSlot?: JSX.Element;
+  controlsSlot?: SlotRenderer;
   /**
    * Custom content that replaces the navigation buttons.
    */
-  navigationSlot?: JSX.Element;
+  navigationSlot?: SlotRenderer;
   /**
    * Custom content that replaces the URL bar.
    */
-  urlSlot?: JSX.Element;
+  urlBarSlot?: SlotRenderer;
   /**
-   * Custom content rendered before the URL text.
+   * Custom content that replaces the URL prefix (icon or text).
    */
-  urlPrefixSlot?: JSX.Element;
+  urlPrefixSlot?: SlotRenderer;
   /**
    * Custom content rendered after the URL text.
    */
-  urlSuffixSlot?: JSX.Element;
+  urlSuffixSlot?: SlotRenderer;
   /**
    * Custom content rendered at the end of the header.
    */
-  actionsSlot?: JSX.Element;
+  actionsSlot?: SlotRenderer;
 };

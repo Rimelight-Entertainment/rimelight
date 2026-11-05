@@ -1,5 +1,8 @@
 import type {
   DragState,
+  CrossDragHook,
+  HandleElement,
+  PanelBounds,
   SplitterHandleConfig,
   SplitterPanelItem,
   RLSplitterProps,
@@ -10,17 +13,17 @@ import type {
   SplitterSize,
 } from "./splitter.types";
 import { RLSplitterTheme } from "./splitter.theme";
-import { cx } from "../../resolver";
+import { renderSlot } from "../../slot";
 import {
   createEffect,
   createMemo,
   createSignal,
   For,
   onSettled,
+  Show,
   untrack,
   type Component,
 } from "solid-js";
-import type { JSX } from "@solidjs/web";
 import { RLIcon } from "../icon/RLIcon";
 import { uiT } from "../../locale";
 
@@ -59,17 +62,6 @@ const PANEL_ITEM_KEYS = new Set([
   "class",
   "style",
 ]);
-
-interface CrossDragHook {
-  orientation: SplitterOrientation;
-  start: (e: PointerEvent) => void;
-  move: (e: PointerEvent) => void;
-  end: (e: PointerEvent) => void;
-}
-
-type HandleElement = HTMLDivElement & {
-  __rlCrossDrag?: CrossDragHook;
-};
 
 export function isPanelItem(val: unknown): val is SplitterPanelItem {
   if (!val || typeof val !== "object" || Array.isArray(val)) return false;
@@ -158,29 +150,21 @@ export function inferFallbackTotalPx(
   return 1000;
 }
 
-interface PanelBounds {
-  minPx: number;
-  maxPx: number;
-  rawMinPx: number;
-  rawMaxPx: number;
-  collapsible: boolean;
-  collapsibleMinPx: number;
-  resizable: boolean;
-}
-
 export const RLSplitter: Component<RLSplitterProps> = (props) => {
   const effectiveOrientation = (): SplitterOrientation => props.orientation ?? "horizontal";
   const isHorizontal = () => effectiveOrientation() === "horizontal";
   const isDisabled = () => Boolean(props.disabled);
 
-  const { Tag, classes, rest, id, slots, children, theme } = RLSplitterTheme.setup(props, {
+  const { Tag, classes, rest, id, slots, children, theme, ui } = RLSplitterTheme.setup(props, {
     omit: OMIT_KEYS,
-    slots: ["handleSlot"] as const,
+    slots: ["handleControlSlot"] as const,
     variants: () => ({
       orientation: effectiveOrientation(),
       disabled: isDisabled(),
     }),
   });
+
+  const slotVariants = () => ({ orientation: effectiveOrientation(), disabled: isDisabled() });
 
   const normalizedPanels = createMemo<SplitterPanelItem[]>(() => {
     const kids = [children()]
@@ -325,11 +309,13 @@ export const RLSplitter: Component<RLSplitterProps> = (props) => {
 
     const bounds = getBoundsList(totalPx, collapsedOverride);
     const parsed: Array<number | undefined> = Array.from({ length: count }, (_, idx) => {
-      const b = bounds[idx]!;
+      const b = bounds[idx];
+      const panel = panels[idx];
+      if (!b || !panel) return undefined;
       const isCol =
         collapsedOverride && idx in collapsedOverride
           ? Boolean(collapsedOverride[idx])
-          : isPanelCollapsed(idx, panels[idx]!);
+          : isPanelCollapsed(idx, panel);
       if (b.collapsible && isCol) {
         return b.collapsibleMinPx;
       }
@@ -340,7 +326,8 @@ export const RLSplitter: Component<RLSplitterProps> = (props) => {
     let knownSum = 0;
     let unknownCount = 0;
     for (let i = 0; i < count; i++) {
-      if (parsed[i] !== undefined) knownSum += parsed[i]!;
+      const known = parsed[i];
+      if (known !== undefined) knownSum += known;
       else unknownCount++;
     }
 
@@ -348,8 +335,9 @@ export const RLSplitter: Component<RLSplitterProps> = (props) => {
       unknownCount > 0 ? Math.max(0, (totalPx - knownSum) / unknownCount) : totalPx / count;
 
     const sizes = parsed.map((val, idx) => {
-      const b = bounds[idx]!;
       const initial = val !== undefined ? val : defaultEach;
+      const b = bounds[idx];
+      if (!b) return initial;
       return Math.min(b.maxPx, Math.max(b.minPx, initial));
     });
 
@@ -360,10 +348,12 @@ export const RLSplitter: Component<RLSplitterProps> = (props) => {
 
       const adjustableIndices: number[] = [];
       for (let i = 0; i < count; i++) {
-        const b = bounds[i]!;
+        const b = bounds[i];
+        const s = sizes[i];
+        if (!b || s === undefined) continue;
         if (!b.resizable && pass < 3) continue;
-        if (diff > 0 && sizes[i]! < b.maxPx - 0.05) adjustableIndices.push(i);
-        else if (diff < 0 && sizes[i]! > b.minPx + 0.05) adjustableIndices.push(i);
+        if (diff > 0 && s < b.maxPx - 0.05) adjustableIndices.push(i);
+        else if (diff < 0 && s > b.minPx + 0.05) adjustableIndices.push(i);
       }
 
       if (adjustableIndices.length === 0) {
@@ -373,8 +363,10 @@ export const RLSplitter: Component<RLSplitterProps> = (props) => {
 
       const share = diff / adjustableIndices.length;
       for (const idx of adjustableIndices) {
-        const b = bounds[idx]!;
-        sizes[idx] = Math.min(b.maxPx, Math.max(b.minPx, sizes[idx]! + share));
+        const b = bounds[idx];
+        const s = sizes[idx];
+        if (!b || s === undefined) continue;
+        sizes[idx] = Math.min(b.maxPx, Math.max(b.minPx, s + share));
       }
     }
 
@@ -382,7 +374,8 @@ export const RLSplitter: Component<RLSplitterProps> = (props) => {
     if (finalSum > 0 && Math.abs(finalSum - totalPx) > 0.5) {
       const scale = totalPx / finalSum;
       for (let i = 0; i < count; i++) {
-        sizes[i] = sizes[i]! * scale;
+        const s = sizes[i];
+        if (s !== undefined) sizes[i] = s * scale;
       }
     }
 
@@ -501,7 +494,8 @@ export const RLSplitter: Component<RLSplitterProps> = (props) => {
     );
 
     const pairTotal = (currentPx[targetIdx] ?? 0) + (currentPx[neighborIdx] ?? 0);
-    const neighborBounds = getBoundsList(totalPx)[neighborIdx]!;
+    const neighborBounds = getBoundsList(totalPx)[neighborIdx];
+    if (!neighborBounds) return;
 
     triggerTransition([targetIdx, neighborIdx]);
 
@@ -518,9 +512,10 @@ export const RLSplitter: Component<RLSplitterProps> = (props) => {
         neighborBounds.maxPx,
         Math.max(neighborBounds.minPx, pairTotal - nextTargetPx),
       );
-      currentPx[targetIdx] = pairTotal - nextNeighborPx;
+      const collapsedTargetPx = pairTotal - nextNeighborPx;
+      currentPx[targetIdx] = collapsedTargetPx;
       currentPx[neighborIdx] = nextNeighborPx;
-      setCollapsedState(targetIdx, true, currentPx[targetIdx]!);
+      setCollapsedState(targetIdx, true, collapsedTargetPx);
       commitSizesPx(currentPx, totalPx);
     } else {
       const savedRatio = savedExpandedRatios()[targetIdx];
@@ -529,9 +524,10 @@ export const RLSplitter: Component<RLSplitterProps> = (props) => {
       const maxAvailableForTarget = Math.min(rawMaxPx, pairTotal - neighborBounds.minPx);
       const nextTargetPx = Math.max(rawMinPx, Math.min(maxAvailableForTarget, desiredPx));
       const nextNeighborPx = Math.max(neighborBounds.minPx, pairTotal - nextTargetPx);
-      currentPx[targetIdx] = pairTotal - nextNeighborPx;
+      const collapsedTargetPx = pairTotal - nextNeighborPx;
+      currentPx[targetIdx] = collapsedTargetPx;
       currentPx[neighborIdx] = nextNeighborPx;
-      setCollapsedState(targetIdx, false, currentPx[targetIdx]!);
+      setCollapsedState(targetIdx, false, collapsedTargetPx);
       commitSizesPx(currentPx, totalPx);
     }
   };
@@ -572,9 +568,9 @@ export const RLSplitter: Component<RLSplitterProps> = (props) => {
       ? Math.max(0, Math.min(totalPx, resolveConstraintPx(panelB.collapsibleMin, totalPx, 0)))
       : rawMinB;
 
-    if (symmetric && handleIdx > 0 && panels[handleIdx - 1]?.resizable !== false) {
+    const panelPrev = panels[handleIdx - 1];
+    if (symmetric && handleIdx > 0 && panelPrev && panelPrev.resizable !== false) {
       const prevIdx = handleIdx - 1;
-      const panelPrev = panels[prevIdx]!;
       const startPrev = baseSizesPx[prevIdx] ?? 0;
       const trioTotal = startPrev + startA + startB;
       const rawMinPrev = Math.max(
@@ -888,28 +884,21 @@ export const RLSplitter: Component<RLSplitterProps> = (props) => {
   };
 
   const renderPanelContent = (panel: SplitterPanelItem, idx: number) => {
-    const raw = panel.children;
-    if (typeof raw === "function") {
-      const state: SplitterPanelState = {
-        size: Math.round(currentSizesPx()[idx] ?? 0),
-        percentage: currentPercentages()[idx] ?? 0,
-        collapsed: isPanelCollapsed(idx, panel),
-        resizing: isResizing(),
-        index: idx,
-      };
-      return (raw as (s: SplitterPanelState) => JSX.Element)(state);
-    }
-    return raw;
+    if (typeof panel.children !== "function") return panel.children;
+    const state: SplitterPanelState = {
+      size: Math.round(currentSizesPx()[idx] ?? 0),
+      percentage: currentPercentages()[idx] ?? 0,
+      collapsed: isPanelCollapsed(idx, panel),
+      resizing: isResizing(),
+      index: idx,
+    };
+    return renderSlot(panel.children, state);
   };
 
   const renderHandleInner = (i: number, state: SplitterHandleState) => {
     const cfg = getHandleConfig(i);
-    const custom = cfg.children ?? slots.handleSlot();
-    if (custom !== undefined) {
-      return typeof custom === "function"
-        ? (custom as (s: SplitterHandleState) => JSX.Element)(state)
-        : custom;
-    }
+    const custom = cfg.children ?? slots.handleControlSlot();
+    if (custom !== undefined) return renderSlot(custom, state);
     if (props.handleIcon === false) return null;
     const iconName =
       typeof props.handleIcon === "string"
@@ -917,7 +906,7 @@ export const RLSplitter: Component<RLSplitterProps> = (props) => {
         : isHorizontal()
           ? "grip-vertical"
           : "grip-horizontal";
-    return <RLIcon name={iconName} class="size-3.5 text-muted/60" aria-hidden="true" />;
+    return <RLIcon name={iconName} class={classes().handleIcon} />;
   };
 
   return (
@@ -941,11 +930,6 @@ export const RLSplitter: Component<RLSplitterProps> = (props) => {
           const collapsed = () => isPanelCollapsed(i(), panel);
           const transitioning = () => Boolean(transitioningPanels()[i()]);
           const panelId = () => panel.id ?? `${id()}-panel-${i()}`;
-
-          // Runtime size only; the flex-basis and orientation axis are applied by the panel classes.
-          const panelSizeStyle = (): JSX.CSSProperties => ({
-            "--rl-panel-size": `${pct()}%`,
-          });
 
           const hasNextPanel = () => i() < normalizedPanels().length - 1;
           const handleDragging = () => drag()?.i === i();
@@ -988,29 +972,38 @@ export const RLSplitter: Component<RLSplitterProps> = (props) => {
             return Math.round(((b?.rawMaxPx ?? total) / total) * 100);
           };
 
+          const panelCls = createMemo(
+            () =>
+              RLSplitterTheme(props, {
+                ...slotVariants(),
+                ui: { ...ui(), panel: [ui()?.panel, panel.class] },
+              }).panel,
+          );
+          const handleCls = createMemo(
+            () =>
+              RLSplitterTheme(props, {
+                ...slotVariants(),
+                ui: { ...ui(), handle: [ui()?.handle, getHandleConfig(i()).class] },
+              }).handle,
+          );
+
           return (
             <>
               <div
                 id={panelId()}
-                class={cx(
-                  classes().panel,
-                  isHorizontal()
-                    ? "[flex-basis:var(--rl-panel-size)] [width:var(--rl-panel-size)]"
-                    : "[flex-basis:var(--rl-panel-size)] [height:var(--rl-panel-size)]",
-                  panel.class,
-                )}
-                style={panelSizeStyle()}
+                class={panelCls()}
+                style={{ "--rl-panel-size": `${pct()}%` }}
                 data-slot="panel"
                 data-resizable-panel={i()}
                 data-collapsed={collapsed() ? "" : undefined}
-                data-expanded={!collapsed() ? "" : undefined}
+                aria-expanded={collapsed() ? "false" : "true"}
                 data-resizing={isResizing() ? "" : undefined}
                 data-transitioning={transitioning() ? "" : undefined}
               >
                 {renderPanelContent(panel, i())}
               </div>
 
-              {hasNextPanel() ? (
+              <Show when={hasNextPanel()}>
                 <div
                   ref={(el: HandleElement) => {
                     el.__rlCrossDrag = {
@@ -1020,7 +1013,7 @@ export const RLSplitter: Component<RLSplitterProps> = (props) => {
                       end: (ev) => endHandleDrag(i(), ev, true),
                     };
                   }}
-                  class={cx(classes().handle, getHandleConfig(i()).class)}
+                  class={handleCls()}
                   data-slot="handle"
                   data-resizable-handle={i()}
                   data-orientation={effectiveOrientation()}
@@ -1029,7 +1022,7 @@ export const RLSplitter: Component<RLSplitterProps> = (props) => {
                   data-resizing={isResizing() ? "" : undefined}
                   data-collapse={handleAction() === "collapse" ? "" : undefined}
                   data-collapsed={adjacentCollapsed() ? "" : undefined}
-                  data-expanded={!adjacentCollapsed() ? "" : undefined}
+                  aria-expanded={adjacentCollapsed() ? "false" : "true"}
                   data-cross={crossActiveHandle() === i() ? "" : undefined}
                   data-disabled={handleDisabled() ? "" : undefined}
                   role="separator"
@@ -1056,11 +1049,9 @@ export const RLSplitter: Component<RLSplitterProps> = (props) => {
                   onKeyDown={(e) => handleKeyDown(i(), e)}
                 >
                   <div
-                    class={cx(
-                      classes().intersection,
-                      !handleIntersection() && "hidden pointer-events-none",
-                    )}
+                    class={classes().intersection}
                     data-slot="intersection"
+                    data-intersecting={handleIntersection() ? "" : undefined}
                     data-resizable-handle-start-target=""
                     data-cross={crossActiveHandle() === i() ? "" : undefined}
                     onPointerDown={(e) => {
@@ -1080,11 +1071,9 @@ export const RLSplitter: Component<RLSplitterProps> = (props) => {
                   </div>
 
                   <div
-                    class={cx(
-                      classes().intersection,
-                      !handleIntersection() && "hidden pointer-events-none",
-                    )}
+                    class={classes().intersection}
                     data-slot="intersection"
+                    data-intersecting={handleIntersection() ? "" : undefined}
                     data-resizable-handle-end-target=""
                     data-cross={crossActiveHandle() === i() ? "" : undefined}
                     onPointerDown={(e) => {
@@ -1092,7 +1081,7 @@ export const RLSplitter: Component<RLSplitterProps> = (props) => {
                     }}
                   />
                 </div>
-              ) : null}
+              </Show>
             </>
           );
         }}

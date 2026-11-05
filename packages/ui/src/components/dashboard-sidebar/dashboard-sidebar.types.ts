@@ -2,7 +2,15 @@ import type { JSX } from "@solidjs/web";
 import type { InferThemeProps } from "../../resolver";
 import type { RLDashboardSidebarTheme } from "./dashboard-sidebar.theme";
 
-export type RLDashboardSidebarProps = InferThemeProps<typeof RLDashboardSidebarTheme> & {
+export type RLDashboardSidebarProps = Omit<
+  InferThemeProps<typeof RLDashboardSidebarTheme>,
+  "side"
+> & {
+  /**
+   * Edge of the layout the sidebar attaches to.
+   * @default "left"
+   */
+  side?: "left" | "right" | undefined;
   /**
    * Enables the collapse toggle, which shrinks the sidebar to icon width (desktop only).
    * @default false

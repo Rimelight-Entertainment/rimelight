@@ -2,6 +2,7 @@ import type { RLCalloutProps } from "./callout.types";
 import { RLCalloutTheme } from "./callout.theme";
 import { For, Show, type Component } from "solid-js";
 import { createControllable } from "../../controllable";
+import { renderSlot } from "../../slot";
 import { uiT } from "../../locale";
 import { RLAvatar } from "../avatar/RLAvatar";
 import { RLButton } from "../button/RLButton";
@@ -36,7 +37,9 @@ export const RLCallout: Component<RLCalloutProps> = (props) => {
       "closeSlot",
       "actionsSlot",
     ] as const,
-    variants: (s) => ({ title: props.title !== undefined || s.titleSlot() !== undefined }),
+    variants: (s) => ({
+      hasTitle: props.title !== undefined || s.titleSlot() !== undefined,
+    }),
   });
 
   const [isOpen, setOpen] = createControllable(
@@ -45,24 +48,19 @@ export const RLCallout: Component<RLCalloutProps> = (props) => {
     props.onOpenChange,
   );
 
-  const hasTitle = () => Boolean(props.title !== undefined || slots.titleSlot() !== undefined);
+  const hasTitle = () => props.title !== undefined || slots.titleSlot() !== undefined;
   const hasDescription = () =>
-    Boolean(
-      props.description !== undefined ||
-      slots.descriptionSlot() !== undefined ||
-      children() !== undefined,
-    );
+    props.description !== undefined ||
+    slots.descriptionSlot() !== undefined ||
+    children() !== undefined;
   const hasActions = () =>
-    Boolean(slots.actionsSlot() !== undefined || (props.actions && props.actions.length > 0));
+    slots.actionsSlot() !== undefined || (props.actions !== undefined && props.actions.length > 0);
   const hasLeading = () =>
-    Boolean(
-      slots.iconSlot() !== undefined ||
-      slots.avatarSlot() !== undefined ||
-      props.avatar !== undefined ||
-      props.icon !== undefined,
-    );
-  const isDismissible = () => props.dismissible ?? true;
-  const hasClose = () => Boolean(slots.closeSlot() !== undefined || isDismissible());
+    slots.iconSlot() !== undefined ||
+    slots.avatarSlot() !== undefined ||
+    props.avatar !== undefined ||
+    props.icon !== undefined;
+  const hasClose = () => slots.closeSlot() !== undefined || (props.dismissible ?? true);
 
   const titleId = () => `${id()}-title`;
   const descriptionId = () => `${id()}-description`;
@@ -72,6 +70,19 @@ export const RLCallout: Component<RLCalloutProps> = (props) => {
     setOpen(false);
     props.onDismiss?.();
   };
+
+  const renderActions = () => (
+    <Show
+      when={slots.actionsSlot()}
+      fallback={
+        <For each={props.actions}>
+          {(action) => <RLButton size="xs" color={props.color} {...action} />}
+        </For>
+      }
+    >
+      {renderSlot(slots.actionsSlot())}
+    </Show>
+  );
 
   return (
     <Show when={isOpen()}>
@@ -83,95 +94,95 @@ export const RLCallout: Component<RLCalloutProps> = (props) => {
         role="alert"
         aria-labelledby={hasTitle() ? titleId() : props["aria-labelledby"]}
         aria-describedby={hasDescription() ? descriptionId() : props["aria-describedby"]}
-        aria-label={!hasTitle() ? props["aria-label"] : undefined}
+        aria-label={hasTitle() ? undefined : props["aria-label"]}
         class={classes().root}
         {...rest}
       >
-        {/* Leading Icon / Avatar / Slot */}
         <Show when={hasLeading()}>
           <Show
             when={slots.iconSlot()}
             fallback={
               <Show
-                when={slots.avatarSlot() !== undefined ? slots.avatarSlot() : props.avatar}
+                when={slots.avatarSlot()}
                 fallback={
-                  <Show when={props.icon}>
-                    {(icon) => (
-                      <span class={classes().icon} data-slot="icon" aria-hidden="true">
-                        <RLIcon name={icon()} aria-hidden="true" />
-                      </span>
-                    )}
+                  <Show
+                    when={props.avatar}
+                    fallback={
+                      <Show when={props.icon}>
+                        {(icon) => (
+                          <span class={classes().icon} data-slot="icon" aria-hidden="true">
+                            <RLIcon name={icon()} aria-hidden="true" />
+                          </span>
+                        )}
+                      </Show>
+                    }
+                  >
+                    {(avatar) => {
+                      const avatarValue = avatar();
+                      return (
+                        <RLAvatar
+                          {...(typeof avatarValue === "string"
+                            ? { src: avatarValue }
+                            : avatarValue)}
+                          size="xl"
+                          class={classes().avatar}
+                          data-slot="avatar"
+                        />
+                      );
+                    }}
                   </Show>
                 }
               >
-                <Show
-                  when={slots.avatarSlot()}
-                  fallback={
-                    <RLAvatar
-                      {...(typeof props.avatar === "string" ? { src: props.avatar } : props.avatar)}
-                      size="xl"
-                      class={classes().avatar}
-                      data-slot="avatar"
-                    />
-                  }
-                >
-                  {slots.avatarSlot()}
-                </Show>
+                {renderSlot(slots.avatarSlot())}
               </Show>
             }
           >
-            {slots.iconSlot()}
+            <span class={classes().icon} data-slot="icon" aria-hidden="true">
+              {renderSlot(slots.iconSlot())}
+            </span>
           </Show>
         </Show>
 
-        {/* Body / Content Wrapper */}
         <div class={classes().wrapper} data-slot="wrapper">
           <Show when={hasTitle()}>
             <div id={titleId()} class={classes().title} data-slot="title">
-              {slots.titleSlot() ?? props.title}
+              <Show when={slots.titleSlot()} fallback={props.title}>
+                {renderSlot(slots.titleSlot())}
+              </Show>
             </div>
           </Show>
 
-          {slots.headerSlot()}
+          <Show when={slots.headerSlot()}>
+            <div class={classes().header} data-slot="header">
+              {renderSlot(slots.headerSlot())}
+            </div>
+          </Show>
 
           <Show when={hasDescription()}>
             <div id={descriptionId()} class={classes().description} data-slot="description">
-              {slots.descriptionSlot() ?? props.description ?? children()}
+              <Show
+                when={slots.descriptionSlot()}
+                fallback={
+                  <Show when={props.description} fallback={children()}>
+                    {props.description}
+                  </Show>
+                }
+              >
+                {renderSlot(slots.descriptionSlot())}
+              </Show>
             </div>
           </Show>
 
-          {/* Vertical Actions */}
           <Show when={(props.orientation ?? "vertical") === "vertical" && hasActions()}>
             <div class={classes().actions} data-slot="actions">
-              <Show
-                when={slots.actionsSlot()}
-                fallback={
-                  <For each={props.actions}>
-                    {(action) => <RLButton size="xs" color={props.color} {...action} />}
-                  </For>
-                }
-              >
-                {slots.actionsSlot()}
-              </Show>
+              {renderActions()}
             </div>
           </Show>
         </div>
 
-        {/* Trailing Horizontal Actions & Close Button */}
         <Show when={(props.orientation === "horizontal" && hasActions()) || hasClose()}>
           <div class={classes().actions} data-slot="actions">
-            <Show when={props.orientation === "horizontal" && hasActions()}>
-              <Show
-                when={slots.actionsSlot()}
-                fallback={
-                  <For each={props.actions}>
-                    {(action) => <RLButton size="xs" color={props.color} {...action} />}
-                  </For>
-                }
-              >
-                {slots.actionsSlot()}
-              </Show>
-            </Show>
+            <Show when={props.orientation === "horizontal" && hasActions()}>{renderActions()}</Show>
 
             <Show when={hasClose()}>
               <Show
@@ -190,7 +201,7 @@ export const RLCallout: Component<RLCalloutProps> = (props) => {
                   />
                 }
               >
-                {slots.closeSlot()}
+                {renderSlot(slots.closeSlot())}
               </Show>
             </Show>
           </div>

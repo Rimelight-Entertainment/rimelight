@@ -1,5 +1,5 @@
-import type { JSX } from "@solidjs/web";
 import type { InferThemeProps } from "../../resolver";
+import type { SlotRenderer } from "../../types";
 import type { RLFormFieldTheme } from "./form-field.theme";
 
 export type RLFormFieldProps = InferThemeProps<typeof RLFormFieldTheme> & {
@@ -30,22 +30,27 @@ export type RLFormFieldProps = InferThemeProps<typeof RLFormFieldTheme> & {
   required?: boolean | undefined;
   /**
    * Replaces the label text.
+   * @default undefined
    */
-  labelSlot?: JSX.Element;
+  labelSlot?: SlotRenderer;
   /**
    * Replaces the description text.
+   * @default undefined
    */
-  descriptionSlot?: JSX.Element;
+  descriptionSlot?: SlotRenderer;
   /**
    * Replaces the error message.
+   * @default undefined
    */
-  errorSlot?: JSX.Element;
+  errorSlot?: SlotRenderer;
   /**
-   * Content shown below the error message.
+   * Contextual content below the control and error message. Rendered in the `help` slot.
+   * @default undefined
    */
-  helpSlot?: JSX.Element;
+  helpSlot?: SlotRenderer;
   /**
-   * Content shown at the right of the label row.
+   * Inline annotation at the right of the label row. Rendered in the `hint` slot.
+   * @default undefined
    */
-  hintSlot?: JSX.Element;
+  hintSlot?: SlotRenderer;
 };

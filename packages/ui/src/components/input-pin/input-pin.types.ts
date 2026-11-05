@@ -1,10 +1,16 @@
 import type { InferThemeProps } from "../../resolver";
+import type { RLInputTheme } from "../input/input.theme";
 import type { RLInputPinTheme } from "./input-pin.theme";
 
 export type RLInputPinProps = Omit<
   InferThemeProps<typeof RLInputPinTheme>,
   "onInput" | "onChange" | "onKeyDown"
 > & {
+  /**
+   * Size of each digit cell, matching `RLInput`.
+   * @default "md"
+   */
+  size?: InferThemeProps<typeof RLInputTheme>["size"];
   /**
    * Number of digit cells.
    * @default 4
@@ -45,6 +51,21 @@ export type RLInputPinProps = Omit<
    * @default "numeric"
    */
   type?: "text" | "numeric" | "alphanumeric";
+  /**
+   * Accessible label for the group of cells. Falls back to the localized "One-time code" label.
+   * @default undefined
+   */
+  "aria-label"?: string | undefined;
+  /**
+   * Element ID that labels the group of cells.
+   * @default undefined
+   */
+  "aria-labelledby"?: string | undefined;
+  /**
+   * Element ID that describes the group of cells.
+   * @default undefined
+   */
+  "aria-describedby"?: string | undefined;
   /**
    * Native input event handler, called for each cell.
    * @default undefined

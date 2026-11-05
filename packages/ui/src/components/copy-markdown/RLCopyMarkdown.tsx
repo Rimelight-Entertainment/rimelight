@@ -8,10 +8,9 @@ import { uiT } from "../../locale";
 const OMIT_KEYS = ["raw", "onClick"] as const;
 
 export const RLCopyMarkdown: Component<RLCopyMarkdownProps> = (props) => {
-  const { Tag, classes, rest, slots, children, theme } = RLCopyMarkdownTheme.setup(props, {
+  const { Tag, classes, rest, children, theme } = RLCopyMarkdownTheme.setup(props, {
     as: "button",
     omit: OMIT_KEYS,
-    slots: ["leadingSlot", "trailingSlot"] as const,
   });
   const [copied, setCopied] = createSignal(false);
   let timeoutId: number | undefined;
@@ -45,8 +44,6 @@ export const RLCopyMarkdown: Component<RLCopyMarkdownProps> = (props) => {
       as={Tag}
       leadingIcon="copy"
       label={copied() ? uiT("copy-markdown.copied") : uiT("copy-markdown.copy")}
-      leadingSlot={slots.leadingSlot()}
-      trailingSlot={slots.trailingSlot()}
       data-raw={props.raw}
       onClick={handleClick}
       {...rest}

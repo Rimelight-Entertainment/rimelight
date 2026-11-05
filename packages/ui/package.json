@@ -748,10 +748,10 @@
       "solid": "./src/components/header/header.types.ts",
       "import": "./src/components/header/header.types.ts"
     },
-    "./components/header/useHeaderStack.ts": {
-      "types": "./src/components/header/useHeaderStack.ts",
-      "solid": "./src/components/header/useHeaderStack.ts",
-      "import": "./src/components/header/useHeaderStack.ts"
+    "./components/header/header.helpers.ts": {
+      "types": "./src/components/header/header.helpers.ts",
+      "solid": "./src/components/header/header.helpers.ts",
+      "import": "./src/components/header/header.helpers.ts"
     },
     "./components/hover-card/RLHoverCard.tsx": {
       "types": "./src/components/hover-card/RLHoverCard.tsx",

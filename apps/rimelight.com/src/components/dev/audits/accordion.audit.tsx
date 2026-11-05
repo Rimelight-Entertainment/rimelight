@@ -9,26 +9,26 @@ export const AccordionSandbox = (): JSX.Element => {
   const BASE_ITEMS: AccordionItem[] = [
     {
       label: t("app.text.what-is-rimelight-ui"),
-      icon: "i-lucide-sparkles",
+      icon: "sparkles",
       content:
         "Rimelight UI is an enterprise-grade, high-performance UI library designed for SolidJS.",
     },
     {
       label: t("app.text.how-does-accordion-grouping-work"),
-      icon: "i-lucide-folder-tree",
+      icon: "folder-tree",
       content:
         "When `type` is `single`, items share an HTML5 `name` attribute on the `<details>` elements to enforce exclusive single-item open state natively without heavy JS.",
     },
     {
       label: t("app.text.can-items-be-individually-disabled"),
-      icon: "i-lucide-shield-alert",
+      icon: "shield-alert",
       disabled: true,
       content: "This item is disabled (disabled: true) and should not respond to user clicks.",
     },
     {
       label: t("app.text.custom-trailing-icon-support"),
-      icon: "i-lucide-settings",
-      trailingIcon: "i-lucide-arrow-down-circle",
+      icon: "settings",
+      trailingIcon: "arrow-down-circle",
       content: "This item overrides the default chevron trailing icon.",
     },
   ];
@@ -43,7 +43,7 @@ export const AccordionSandbox = (): JSX.Element => {
     BASE_ITEMS.slice(0, itemCount()).map((item): AccordionItem => {
       const res: AccordionItem = { ...item };
       if (useCustomIcon()) {
-        res.trailingIcon = "i-lucide-plus";
+        res.trailingIcon = "plus";
       }
       return res;
     }),
@@ -122,9 +122,9 @@ export const accordionAudit: ComponentAuditDefinition = {
   id: "accordion",
   name: "Accordion",
   category: "Data Display",
-  status: "Passed",
+  status: "Auditing",
   description:
-    "A collapsible content panel component built on native HTML5 <details> & <summary> elements with props (type, value/defaultValue + onValueChange, collapsible, unmountOnHide, slots) plus extras (summary/children single mode, name, trailingIconSlot).",
+    "A collapsible content panel component built on native HTML5 <details> & <summary> elements with props (type, value/defaultValue + onValueChange, collapsible, unmountOnHide, slots) plus extras (summary/children single mode, name).",
   importPath: "@rimelight/ui/components/accordion/RLAccordion.tsx",
   renderSandbox: () => <AccordionSandbox />,
   testScenarios: [
@@ -140,7 +140,7 @@ export const accordionAudit: ComponentAuditDefinition = {
           <div class="p-3 rounded bg-elevated/40 border border-default text-xs space-y-2 mt-2">
             <div class="flex justify-between">
               <span class="text-muted">{"Status:"}</span>
-              <span class="text-emerald-500 font-medium">{"Operational"}</span>
+              <span class="text-success font-medium">{"Operational"}</span>
             </div>
             <div class="flex justify-between">
               <span class="text-muted">{"Latency:"}</span>
@@ -160,7 +160,7 @@ export const accordionAudit: ComponentAuditDefinition = {
         return t("app.text.custom-leading-trailing-icons");
       },
       description:
-        "Verifying icon resolution for UnoCSS class icons, custom trailing icons, and rotational transitions.",
+        "Verifying icon resolution for bare icon names, custom trailing icons, and rotational transitions.",
       render: () => (
         <RLAccordion
           items={[
@@ -168,16 +168,16 @@ export const accordionAudit: ComponentAuditDefinition = {
               get label() {
                 return t("app.text.security-permissions");
               },
-              icon: "i-lucide-shield-check",
-              trailingIcon: "i-lucide-lock",
+              icon: "shield-check",
+              trailingIcon: "lock",
               content: "Role-based access controls and token expirations.",
             },
             {
               get label() {
                 return t("app.text.payment-invoices");
               },
-              icon: "i-lucide-credit-card",
-              trailingIcon: "i-lucide-external-link",
+              icon: "credit-card",
+              trailingIcon: "external-link",
               content: "Subscription management, payment gateways, and tax history.",
             },
           ]}
@@ -199,14 +199,14 @@ export const accordionAudit: ComponentAuditDefinition = {
               get label() {
                 return t("app.text.enabled-section-1");
               },
-              icon: "i-lucide-check",
+              icon: "check",
               content: "Can be opened and closed freely.",
             },
             {
               get label() {
                 return t("app.text.disabled-section-2-disabled-true");
               },
-              icon: "i-lucide-ban",
+              icon: "ban",
               disabled: true,
               content: "Should not be clickable or expandable.",
             },
@@ -214,7 +214,7 @@ export const accordionAudit: ComponentAuditDefinition = {
               get label() {
                 return t("app.text.enabled-section-3");
               },
-              icon: "i-lucide-check",
+              icon: "check",
               content: "Another enabled section.",
             },
           ]}
@@ -235,21 +235,21 @@ export const accordionAudit: ComponentAuditDefinition = {
               get label() {
                 return t("app.text.icons");
               },
-              icon: "i-lucide-smile",
+              icon: "smile",
               content: "You have nothing to do, @nuxt/icon will handle it automatically.",
             },
             {
               get label() {
                 return t("app.text.colors");
               },
-              icon: "i-lucide-swatch-book",
+              icon: "swatch-book",
               content: "Choose a primary and a neutral color from your Tailwind CSS theme.",
             },
             {
               get label() {
                 return t("app.text.components");
               },
-              icon: "i-lucide-box",
+              icon: "box",
               content: "Customize via the `class` / `ui` props or in your app config.",
             },
           ]}
@@ -311,21 +311,21 @@ export const accordionAudit: ComponentAuditDefinition = {
         "The root trailingIcon prop overrides the default chevron for every item that does not set its own trailingIcon.",
       render: () => (
         <RLAccordion
-          trailingIcon="i-lucide-plus"
+          trailingIcon="plus"
           items={[
             {
               get label() {
                 return t("app.text.global-plus-icon");
               },
-              icon: "i-lucide-smile",
+              icon: "smile",
               content: "Uses the root trailingIcon.",
             },
             {
               get label() {
                 return t("app.text.per-item-override-wins");
               },
-              icon: "i-lucide-swatch-book",
-              trailingIcon: "i-lucide-arrow-down",
+              icon: "swatch-book",
+              trailingIcon: "arrow-down",
               content: "Uses its own trailingIcon.",
             },
           ]}
@@ -365,7 +365,7 @@ export const accordionAudit: ComponentAuditDefinition = {
         return t("app.text.per-item-class-ui-override");
       },
       description:
-        "item.class appends to the item node; item.ui merges per slot over the root ui. The second row label renders rose/black.",
+        "item.class appends to the item node; item.ui merges per slot over the root ui. The second row label renders in the error color.",
       render: () => (
         <RLAccordion
           items={[
@@ -380,7 +380,7 @@ export const accordionAudit: ComponentAuditDefinition = {
                 return t("app.text.item-with-ui-override");
               },
               content: "This label is styled by item.ui.",
-              ui: { label: "text-rose-500 font-black" },
+              ui: { label: "text-error font-black" },
             },
           ]}
         />
@@ -392,7 +392,7 @@ export const accordionAudit: ComponentAuditDefinition = {
         return t("app.text.controlled-value-onchange-nuxt-v-model");
       },
       description:
-        "Maps to Nuxt's v-model / update:modelValue. External buttons drive the open item; clicking triggers reports through onChange.",
+        "Maps to Nuxt's v-model / update:modelValue. External buttons drive the open item; clicking triggers reports through onValueChange.",
       render: () => {
         const [active, setActive] = createSignal<string | undefined>("0");
         const ids = ["0", "1", "2"];
@@ -490,8 +490,7 @@ export const accordionAudit: ComponentAuditDefinition = {
     {
       id: "type-multiple",
       title: 'type="multiple" + array defaultValue (Nuxt: type)',
-      description:
-        "Nuxt-shaped API. Two items start open; toggling one leaves the other open. The boolean multiple prop remains as a Rimelight alias.",
+      description: "Nuxt-shaped API. Two items start open; toggling one leaves the other open.",
       render: () => (
         <RLAccordion
           type="multiple"
@@ -615,10 +614,10 @@ export const accordionAudit: ComponentAuditDefinition = {
       ),
     },
     {
-      id: "render-slots",
-      title: "leading / trailing / body / content Render Props (Nuxt slots)",
+      id: "leading-slot",
+      title: "leadingSlot Render Prop",
       description:
-        "Maps to Nuxt's #leading #trailing #body #content slots. Custom badge leading, action trailing, markdown-ish body. The last item's fully custom content area starts from scratch (Nuxt semantics) so it carries its own px-4 to align with default body text.",
+        "Replaces the default leading icon per item. Receives { item, index } and renders a custom badge built from the item label.",
       render: () => (
         <RLAccordion
           leadingSlot={({ item }) => (
@@ -626,9 +625,69 @@ export const accordionAudit: ComponentAuditDefinition = {
               {(item.label ?? "?").slice(0, 1)}
             </span>
           )}
+          items={[
+            {
+              get label() {
+                return t("app.text.alpha");
+              },
+              content: "first",
+            },
+            {
+              get label() {
+                return t("app.text.beta");
+              },
+              content: "second",
+            },
+            {
+              get label() {
+                return t("app.text.gamma");
+              },
+              content: "third",
+            },
+          ]}
+        />
+      ),
+    },
+    {
+      id: "trailing-slot",
+      title: "trailingSlot Render Prop",
+      description:
+        "Replaces the default chevron per item. Receives { item, index }; this scenario renders the item index in its place.",
+      render: () => (
+        <RLAccordion
           trailingSlot={({ index }) => (
             <span class="shrink-0 ms-auto text-[10px] font-mono text-muted">#{index}</span>
           )}
+          items={[
+            {
+              get label() {
+                return t("app.text.alpha");
+              },
+              content: "first",
+            },
+            {
+              get label() {
+                return t("app.text.beta");
+              },
+              content: "second",
+            },
+            {
+              get label() {
+                return t("app.text.gamma");
+              },
+              content: "third",
+            },
+          ]}
+        />
+      ),
+    },
+    {
+      id: "body-slot",
+      title: "bodySlot Render Prop",
+      description:
+        "Replaces the body of every item. Receives { item, index }. The third item renders a fully custom area; the others render their content inside a styled paragraph.",
+      render: () => (
+        <RLAccordion
           bodySlot={({ item, index }) =>
             index === 2 ? (
               <div class="px-4 pb-3.5">
@@ -735,127 +794,101 @@ export const accordionAudit: ComponentAuditDefinition = {
   ],
   checklist: [
     {
-      criterion: "Native HTML5 <details> and <summary> semantics",
-      status: "pass",
-      notes: "Zero JS required for basic open/close toggling.",
-    },
-    {
-      criterion: "Single-item exclusive open grouping",
-      status: "pass",
+      criterion: "Native HTML5 <details> and <summary> elements",
+      status: "pending",
       notes:
-        "Enforced by component state (toggleValue), not native grouping. No auto name: identical accordions previously merged into one native group and fought Solid state (all-closed). name renders only when explicitly passed.",
+        "Items render <details>/<summary>. Open state comes from component state; the summary click handler calls preventDefault.",
     },
     {
-      criterion: "Keyboard navigation (Space/Enter to toggle, Tab to focus)",
-      status: "pass",
-      notes: "Native browser summary keyboard accessibility preserved.",
-    },
-    {
-      criterion: "Disabled item state and accessibility",
-      status: "pass",
+      criterion: "Single-item exclusive open (type single)",
+      status: "pending",
       notes:
-        "Theme disabled variant + aria-disabled; clicks (mouse and keyboard) are intercepted so disabled items never toggle.",
+        "toggleValue replaces the open value; native name grouping applies only when the name prop is passed.",
+    },
+    {
+      criterion: "Keyboard toggling (Enter / Space on the summary)",
+      status: "pending",
+      notes: "Summary click handles keyboard activation; disabled items return before toggling.",
+    },
+    {
+      criterion: "Disabled item and root disabled",
+      status: "pending",
+      notes:
+        "aria-disabled on the trigger, pointer-events-none via the disabled variant, and the click handler blocks toggling.",
     },
     {
       criterion: "Design tokens & theme slot consistency",
-      status: "pass",
+      status: "pending",
       notes:
-        "Slots: root, item, trigger, content, body, leadingIcon, trailingIcon, label. (header removed: a wrapper div would break native <summary> toggling.)",
+        "Slots: root, item, trigger, body, leadingIcon, trailingIcon, label. content was merged into body.",
     },
     {
       criterion: "No innerHTML / dangerouslySetInnerHTML in RLAccordion",
-      status: "pass",
-      notes:
-        "Item label/content render as Solid children. (RLIcon itself uses innerHTML for SVG icons — tracked in the Icon audit.)",
+      status: "pending",
+      notes: "Item labels and bodies render as Solid children.",
     },
     {
-      criterion: "No inline styles (CSP-safe, UnoCSS only)",
-      status: "pass",
+      criterion: "No inline styles and no hardcoded utility classes in the component",
+      status: "pending",
       notes:
-        "No style prop or <style> in the component; all visuals resolve via accordion.theme.ts.",
-    },
-    {
-      criterion: "No Uno/CSS class strings inside the component file",
-      status: "pass",
-      notes:
-        "Zero cx/concatenation in the component: disabled flows through the theme variant, item.class folds into mergeUi as a ui.item entry, icons render via RLIcon.",
-    },
-    {
-      criterion: "No hydration mismatch (keys + auto group name)",
-      status: "pass",
-      notes:
-        "Data-derived name hash (no random/child-id consumption); render path uses plain tags + ternaries only — no <Show>/<Dynamic>/effects, no per-row memos. as still works via isolated <Dynamic> branches.",
-    },
-    {
-      criterion: "Summary disclosure marker hidden cross-browser",
-      status: "pass",
-      notes:
-        "Was webkit-only; added [&::marker]:hidden so Firefox shows no stray triangle offsetting the label.",
-    },
-    {
-      criterion: "Controlled value (Nuxt: v-model / update:modelValue)",
-      status: "pass",
-      notes:
-        "value + defaultValue + onChange implemented (Solid idiom per RLTabs). Item value falls back to index string. See controlled-value scenario.",
-    },
-    {
-      criterion: "Non-collapsible single mode (Nuxt: collapsible={false})",
-      status: "pass",
-      notes: "Implemented; active trigger clicks are swallowed. See collapsible-false scenario.",
-    },
-    {
-      criterion: "Slots: leading / trailing / content / body + per-item slot",
-      status: "pass",
-      notes:
-        "Render props map to Nuxt #leading #trailing #content #body; slots record + item.slot maps to #{{ item.slot }}(-body). See render-slots + named-item-slot scenarios.",
-    },
-    {
-      criterion: "Per-item class / ui overrides",
-      status: "pass",
-      notes:
-        "item.class folds into mergeUi as ui.item; item.ui merges per slot over root ui. See per-item-ui-override scenario.",
-    },
-    {
-      criterion: 'Single/multiple API shape (Nuxt: type="single" | "multiple")',
-      status: "pass",
-      notes:
-        "type union implemented; boolean multiple kept as Rimelight alias (type wins when set).",
-    },
-    {
-      criterion: "Unmount-on-hide semantics (Nuxt default true)",
-      status: "pass",
-      notes:
-        "unmountOnHide implemented, defaults true via <Show>. See unmount-behavior matrix scenario.",
-    },
-    {
-      criterion: "valueKey / labelKey + as prop",
-      status: "pass",
-      notes:
-        "Both keys implemented with dot-path support; as renders via dynamic() (div default in items mode, details default in summary mode). See value-label-keys scenario.",
+        "All visuals resolve through accordion.theme.ts; item classes compose through cx(theme item, item.class).",
     },
     {
       criterion: "Solid 2 strict-mode clean (no STRICT_READ_UNTRACKED)",
-      status: "pass",
-      notes:
-        "Sandbox items derivation moved into createMemo; component reads signals only in JSX/memos, handler snapshots via untrack().",
+      status: "pending",
+      notes: "Signals are read in JSX and memos; the toggle handler reads state through untrack().",
     },
     {
       criterion: "Audited component renders bare (no harness wrappers)",
-      status: "pass",
+      status: "pending",
       notes:
-        "Scenario renders return <RLAccordion/> directly (fragments only for multi-root); shell cards excluded from this criterion.",
+        "Scenario renders return <RLAccordion/> directly; fragments only for multi-root scenarios.",
+    },
+    {
+      criterion: "Slots: leadingSlot / trailingSlot / bodySlot and single-summary children",
+      status: "pending",
+      notes:
+        "Render props receive { item, index }. See leading-slot, trailing-slot, body-slot, named-item-slot, and single-item-children scenarios.",
+    },
+    {
+      criterion: "Per-item class / ui overrides",
+      status: "pending",
+      notes:
+        "item.class is appended to the item root; item.ui merges per slot over the root ui. See per-item-ui-override.",
+    },
+    {
+      criterion: 'Single/multiple API shape (type="single" | "multiple")',
+      status: "pending",
+      notes:
+        "type union drives the open-state model. See type-multiple and default-value scenarios.",
+    },
+    {
+      criterion: "Non-collapsible single mode (collapsible={false})",
+      status: "pending",
+      notes: "The open item cannot be closed by its own trigger. See collapsible-false scenario.",
+    },
+    {
+      criterion: "Unmount-on-hide semantics (default true)",
+      status: "pending",
+      notes:
+        "Collapsed bodies unmount by default; unmountOnHide={false} keeps them mounted. See unmount-behavior scenario.",
+    },
+    {
+      criterion: "Controlled and uncontrolled value (value / defaultValue / onValueChange)",
+      status: "pending",
+      notes: "See controlled-value and default-value scenarios.",
     },
     {
       criterion: "Disabled visuals match Nuxt theme",
       status: "warn",
       notes:
-        "Uses opacity-50, Nuxt uses opacity-75. aria-disabled is now emitted; summary stays focusable (clicks blocked for mouse and keyboard).",
+        "Uses opacity-50, Nuxt uses opacity-75. aria-disabled is emitted; summary stays focusable with clicks blocked.",
     },
     {
       criterion: "v-model naming (Nuxt: modelValue)",
       status: "warn",
       notes:
-        "Intentional mapping: Solid codebase idiom is value + onChange (RLTabs precedent), not modelValue / update:modelValue. Document the mapping.",
+        "Intentional mapping: the Solid codebase idiom is value + onValueChange (RLTabs precedent), not modelValue / update:modelValue.",
     },
     {
       criterion: "Open/close keyframe animations (Nuxt content slot)",

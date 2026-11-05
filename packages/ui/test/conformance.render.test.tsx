@@ -17,7 +17,9 @@ const modules = import.meta.glob<Record<string, unknown>>("../src/components/*/R
 });
 
 /** Per-folder overrides for required props whose type gives no safe default (see the unresolved assertion). */
-const FIXTURE_OVERRIDES: Record<string, Record<string, unknown>> = {};
+const FIXTURE_OVERRIDES: Record<string, Record<string, unknown>> = {
+  "color-slider": { channel: "hue" },
+};
 
 /**
  * Overlay fixtures, merged into every row's props. Overlays render their body only while open.

@@ -3,31 +3,36 @@ import { defineTheme } from "../../resolver";
 export const RLSlideoverTheme = defineTheme("slideover", {
   slots: [
     "root",
+    "triggerWrapper",
     "trigger",
     "backdrop",
     "content",
     "header",
     "title",
     "description",
+    "body",
     "footer",
-    "closeButton",
+    "close",
+    "closeIcon",
   ],
   base: {
     root: "relative inline-block",
-    trigger: "",
-    backdrop: "fixed inset-0 z-[1000] bg-black/60 backdrop-blur-sm transition-all duration-300",
+    triggerWrapper: "inline-flex cursor-pointer",
+    backdrop: "fixed inset-0 z-[1000] bg-scrim/60 backdrop-blur-sm transition-all duration-300",
     content: [
       "fixed z-[1001] bg-elevated text-highlighted p-6 shadow-2xl transition-all duration-300 outline-none overflow-y-auto max-h-screen",
-      "data-[state=open]:animate-in data-[state=closed]:animate-out",
+      "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:hidden!",
     ],
     header: "flex flex-col gap-1.5 mb-4",
     title: "text-lg font-semibold leading-none tracking-tight text-highlighted",
     description: "text-sm text-muted leading-relaxed",
+    body: "flex flex-col flex-1 gap-2 overflow-y-auto",
     footer: "flex flex-col sm:flex-row sm:justify-end gap-2 mt-6",
-    closeButton: [
+    close: [
       "absolute right-4 top-4 rounded-md p-1 opacity-70 transition-opacity hover:opacity-100 text-muted hover:text-highlighted",
-      "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none",
+      "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:pointer-events-none",
     ],
+    closeIcon: "size-4",
   },
   variants: {
     side: {

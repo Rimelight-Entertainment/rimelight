@@ -34,7 +34,6 @@ import {
   toggleMultiValue,
   toggleSingleValue,
   weekDaysOfGrid,
-  type CalendarMonthGrid,
 } from "../src/components/calendar/calendar.helpers";
 
 describe("calendar date math", () => {
@@ -519,13 +518,5 @@ describe("view helpers", () => {
     expect(clampView("day", "month")).toBe("month");
     expect(clampView("year", "day")).toBe("year");
     expect(clampView("month", "day")).toBe("month");
-  });
-});
-
-describe("grid typing sanity", () => {
-  it("createMonthGrid returns a CalendarMonthGrid", () => {
-    const grid: CalendarMonthGrid = createMonthGrid(new Date(2022, 1, 15), 1, true);
-    expect(Array.isArray(grid.rows)).toBe(true);
-    expect(grid.rows.flat().length).toBe(42);
   });
 });

@@ -86,8 +86,8 @@ export interface PresetOptions {
    */
   colors?: Record<string, ColorModeInput>;
   /**
-   * Global icon overrides mapping icon names to Lucide icon names (e.g. `x`) or
-   * UnoCSS/Iconify class names (e.g. `i-lucide-x`).
+   * Global icon overrides mapping icon names to bare Lucide names (e.g. `x`) or
+   * `i-<set>-<name>` class names for non-Lucide sets (e.g. `i-simple-icons-github`).
    */
   icons?: RimelightIcons;
   /**

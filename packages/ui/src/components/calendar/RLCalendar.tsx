@@ -1,4 +1,9 @@
-import type { RLCalendarProps, CalendarModelValue, CalendarRangeValue } from "./calendar.types";
+import type {
+  RLCalendarProps,
+  CalendarModelValue,
+  CalendarRangeValue,
+  CalendarView,
+} from "./calendar.types";
 import { RLCalendarTheme } from "./calendar.theme";
 import { createMemo, createSignal, For, onSettled, Show, untrack, type Component } from "solid-js";
 import { type JSX } from "@solidjs/web";
@@ -40,11 +45,9 @@ import {
 } from "./calendar.helpers";
 import { RLButton } from "../button/RLButton";
 import type { RLButtonProps } from "../button/button.types";
-import type { SlotRenderer } from "../../types";
 import { createControllable } from "../../controllable";
+import { renderSlot } from "../../slot";
 import { uiT } from "../../locale";
-
-type View = "day" | "month" | "year";
 
 const OMIT_KEYS = [
   "type",
@@ -93,8 +96,8 @@ const OMIT_KEYS = [
 export const RLCalendar: Component<RLCalendarProps> = (props) => {
   const locale = () => props.locale ?? "en";
   const type = () => props.type ?? "date";
-  const minView = (): View => minViewFor(type()) as View;
-  const maxView: View = "year";
+  const minView = (): CalendarView => minViewFor(type()) as CalendarView;
+  const maxView: CalendarView = "year";
   const viewControlEnabled = () => props.viewControl ?? true;
   const monthControls = () => props.monthControls ?? true;
   const yearControls = () => props.yearControls ?? true;
@@ -104,12 +107,14 @@ export const RLCalendar: Component<RLCalendarProps> = (props) => {
     props.weekStartsOn !== undefined ? props.weekStartsOn : getWeekStartsOn(locale());
   const weekdayFormat = (): WeekdayFormat => props.weekdayFormat ?? "narrow";
 
-  const [view, setViewRaw] = createSignal<View>(() => initialViewFor(type()) as View);
-  const setView = (v: string) => setViewRaw(clampView(v, minView()) as View);
+  const [view, setViewRaw] = createSignal<CalendarView>(
+    () => initialViewFor(type()) as CalendarView,
+  );
+  const setView = (v: string) => setViewRaw(clampView(v, minView()) as CalendarView);
 
   const isMinView = () => view() === minView();
   const switchable = () => minView() !== maxView;
-  const cycle = () => setViewRaw(cycleView(view(), minView()) as View);
+  const cycle = () => setViewRaw(cycleView(view(), minView()) as CalendarView);
 
   const controlledValue = () => props.value !== undefined;
   const [currentValue, setCurrentValue] = createControllable<CalendarModelValue | undefined>(
@@ -204,7 +209,10 @@ export const RLCalendar: Component<RLCalendarProps> = (props) => {
       );
     if (view() === "month") return formatYearHeading(placeholder(), locale());
     const cells = yearGrid();
-    return formatYearRangeHeading(cells[0]!, cells[cells.length - 1]!, locale());
+    const first = cells[0];
+    const last = cells[cells.length - 1];
+    if (!first || !last) return "";
+    return formatYearRangeHeading(first, last, locale());
   });
 
   const fullLabel = createMemo(
@@ -212,7 +220,15 @@ export const RLCalendar: Component<RLCalendarProps> = (props) => {
   );
 
   const { Tag, classes, rest, children, theme, slots } = RLCalendarTheme.setup(props, {
-    slots: ["headingSlot", "weekDaySlot", "daySlot", "monthCellSlot", "yearCellSlot"] as const,
+    slots: [
+      "headingSlot",
+      "prevSlot",
+      "nextSlot",
+      "weekDaySlot",
+      "daySlot",
+      "monthCellSlot",
+      "yearCellSlot",
+    ] as const,
     omit: OMIT_KEYS,
     variants: () => ({ view: view() }),
   });
@@ -465,12 +481,15 @@ export const RLCalendar: Component<RLCalendarProps> = (props) => {
     color: "neutral",
     variant: "ghost",
     size: props.size,
-    square: true,
     icon,
     "aria-label": label,
     type: "button",
     disabled: props.disabled,
   });
+
+  // A custom prev/next slot replaces the chevron icon.
+  const prevIconName = () => (slots.prevSlot() ? undefined : (props.prevIcon ?? "chevron-left"));
+  const nextIconName = () => (slots.nextSlot() ? undefined : (props.nextIcon ?? "chevron-right"));
 
   const renderDayGrid = (grid: CalendarMonthGrid) => (
     <table
@@ -487,8 +506,10 @@ export const RLCalendar: Component<RLCalendarProps> = (props) => {
         <tr class={classes().gridWeekDaysRow} data-slot="grid-week-days-row">
           <For each={weekDaysOfGrid(grid, locale(), weekdayFormat())}>
             {(wd) => (
-              <th class={classes().headCell} data-slot="head-cell">
-                {renderSlot(slots.weekDaySlot(), { day: wd }) ?? wd}
+              <th class={classes().weekDay} data-slot="week-day">
+                <Show when={slots.weekDaySlot()} fallback={wd}>
+                  {(node) => renderSlot(node(), { day: wd })}
+                </Show>
               </th>
             )}
           </For>
@@ -509,20 +530,14 @@ export const RLCalendar: Component<RLCalendarProps> = (props) => {
                 {(day) => {
                   const st = createMemo(() => dayCellState(day, grid.value, dayCtx()));
                   const isRangeSelected = createMemo(() => Boolean(props.range) && isRangeDay(day));
+                  const selected = () =>
+                    props.range ? isRangeSelected() || st().selected : st().selected;
                   return (
                     <td
                       role="gridcell"
                       class={classes().cell}
                       data-slot="cell"
-                      aria-selected={
-                        props.range
-                          ? isRangeSelected() || st().selected
-                            ? "true"
-                            : undefined
-                          : st().selected
-                            ? "true"
-                            : undefined
-                      }
+                      aria-selected={selected() ? "true" : undefined}
                       aria-disabled={st().disabled || st().unavailable ? "true" : undefined}
                       data-disabled={st().disabled ? "" : undefined}
                     >
@@ -531,11 +546,7 @@ export const RLCalendar: Component<RLCalendarProps> = (props) => {
                         class={classes().cellTrigger}
                         data-slot="cell-trigger"
                         data-value={dateKey(day)}
-                        data-selected={
-                          props.range
-                            ? isRangeSelected() || st().selected || undefined
-                            : st().selected || undefined
-                        }
+                        aria-selected={selected() ? "true" : undefined}
                         data-disabled={st().disabled ? "" : undefined}
                         data-unavailable={st().unavailable ? "" : undefined}
                         data-today={st().today ? "" : undefined}
@@ -550,7 +561,11 @@ export const RLCalendar: Component<RLCalendarProps> = (props) => {
                         onClick={() => onDayClick(day)}
                         onKeyDown={(e) => onDayKey(e, day)}
                       >
-                        {renderSlot(slots.daySlot(), { day }) ?? formatDayLabel(day, locale())}
+                        <span class={classes().day} data-slot="day">
+                          <Show when={slots.daySlot()} fallback={formatDayLabel(day, locale())}>
+                            {(node) => renderSlot(node(), { day })}
+                          </Show>
+                        </span>
                       </div>
                     </td>
                   );
@@ -588,6 +603,7 @@ export const RLCalendar: Component<RLCalendarProps> = (props) => {
 
   const renderPickerGrid = (mode: "month" | "year") => {
     const cells = mode === "month" ? monthGrid() : yearGrid();
+    const cellSlotKey = mode === "month" ? "month-cell" : "year-cell";
     return (
       <table
         class={classes().grid}
@@ -633,7 +649,7 @@ export const RLCalendar: Component<RLCalendarProps> = (props) => {
                           class={classes().cellTrigger}
                           data-slot="cell-trigger"
                           data-value={dateKey(cell)}
-                          data-selected={selected() || undefined}
+                          aria-selected={selected() ? "true" : undefined}
                           data-disabled={disabled() ? "" : undefined}
                           data-today={
                             mode === "month"
@@ -660,17 +676,41 @@ export const RLCalendar: Component<RLCalendarProps> = (props) => {
                           }
                           onKeyDown={(e) => onCellKey(e, cell, mode)}
                         >
-                          {mode === "month"
-                            ? (renderSlot(slots.monthCellSlot(), {
-                                month: cell,
-                                selected: selected(),
-                                disabled: disabled(),
-                              }) ?? formatMonthShort(cell, locale()))
-                            : (renderSlot(slots.yearCellSlot(), {
-                                year: cell,
-                                selected: selected(),
-                                disabled: disabled(),
-                              }) ?? formatYearHeading(cell, locale()))}
+                          <span
+                            class={mode === "month" ? classes().monthCell : classes().yearCell}
+                            data-slot={cellSlotKey}
+                          >
+                            <Show
+                              when={mode === "month"}
+                              fallback={
+                                <Show
+                                  when={slots.yearCellSlot()}
+                                  fallback={formatYearHeading(cell, locale())}
+                                >
+                                  {(node) =>
+                                    renderSlot(node(), {
+                                      year: cell,
+                                      selected: selected(),
+                                      disabled: disabled(),
+                                    })
+                                  }
+                                </Show>
+                              }
+                            >
+                              <Show
+                                when={slots.monthCellSlot()}
+                                fallback={formatMonthShort(cell, locale())}
+                              >
+                                {(node) =>
+                                  renderSlot(node(), {
+                                    month: cell,
+                                    selected: selected(),
+                                    disabled: disabled(),
+                                  })
+                                }
+                              </Show>
+                            </Show>
+                          </span>
                         </div>
                       </td>
                     );
@@ -694,7 +734,7 @@ export const RLCalendar: Component<RLCalendarProps> = (props) => {
       class={classes().root}
       data-readonly={props.readonly ? "" : undefined}
       data-disabled={props.disabled ? "" : undefined}
-      data-invalid={isInvalid() ? "" : undefined}
+      aria-invalid={isInvalid() ? "true" : undefined}
       aria-label={fullLabel()}
       ref={(el: HTMLElement) => {
         rootEl = el;
@@ -719,6 +759,7 @@ export const RLCalendar: Component<RLCalendarProps> = (props) => {
           <Show when={showPrevYear()}>
             <RLButton
               {...controlProps("chevrons-left", uiT("calendar.previousYear"))}
+              shape="square"
               class={classes().prevYear}
               data-slot="prev-year"
               onClick={prevYear}
@@ -726,11 +767,14 @@ export const RLCalendar: Component<RLCalendarProps> = (props) => {
           </Show>
           <Show when={showSideControls()}>
             <RLButton
-              {...controlProps(props.prevIcon ?? "chevron-left", prevLabel())}
-              class={classes().prevMonth}
-              data-slot="prev-month"
+              {...controlProps(prevIconName(), prevLabel())}
+              shape="square"
+              class={classes().prev}
+              data-slot="prev"
               onClick={prevPage}
-            />
+            >
+              <Show when={slots.prevSlot()}>{(node) => renderSlot(node())}</Show>
+            </RLButton>
           </Show>
 
           <div
@@ -753,7 +797,6 @@ export const RLCalendar: Component<RLCalendarProps> = (props) => {
                     {...controlProps(undefined, headingValue())}
                     label={headingValue()}
                     block
-                    square={false}
                     class={classes().viewControl}
                     data-slot="view-control"
                     onClick={cycle}
@@ -761,21 +804,25 @@ export const RLCalendar: Component<RLCalendarProps> = (props) => {
                 </Show>
               }
             >
-              {slots.headingSlot()}
+              {(node) => renderSlot(node())}
             </Show>
           </div>
 
           <Show when={showSideControls()}>
             <RLButton
-              {...controlProps(props.nextIcon ?? "chevron-right", nextLabel())}
-              class={classes().nextMonth}
-              data-slot="next-month"
+              {...controlProps(nextIconName(), nextLabel())}
+              shape="square"
+              class={classes().next}
+              data-slot="next"
               onClick={nextPage}
-            />
+            >
+              <Show when={slots.nextSlot()}>{(node) => renderSlot(node())}</Show>
+            </RLButton>
           </Show>
           <Show when={showPrevYear()}>
             <RLButton
               {...controlProps("chevrons-right", uiT("calendar.nextYear"))}
+              shape="square"
               class={classes().nextYear}
               data-slot="next-year"
               onClick={nextYear}
@@ -786,7 +833,11 @@ export const RLCalendar: Component<RLCalendarProps> = (props) => {
         <div class={classes().body} data-slot="body">
           <Show
             when={view() === "day"}
-            fallback={view() === "month" ? renderPickerGrid("month") : renderPickerGrid("year")}
+            fallback={
+              <Show when={view() === "month"} fallback={renderPickerGrid("year")}>
+                {renderPickerGrid("month")}
+              </Show>
+            }
           >
             <For each={grids()}>{(grid) => renderDayGrid(grid)}</For>
           </Show>
@@ -795,13 +846,6 @@ export const RLCalendar: Component<RLCalendarProps> = (props) => {
     );
   }
 };
-
-function renderSlot<Ctx>(
-  renderer: SlotRenderer<Ctx> | undefined,
-  ctx: Ctx,
-): JSX.Element | undefined {
-  return typeof renderer === "function" ? renderer(ctx) : renderer;
-}
 
 function chunkFour<T>(arr: T[]): T[][] {
   const out: T[][] = [];

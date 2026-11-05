@@ -2,6 +2,7 @@ import { type Component, For } from "solid-js";
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
 import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
 import { RLCard } from "@rimelight/ui/components/card/RLCard.tsx";
+import { RLIcon } from "@rimelight/ui/components/icon/RLIcon.tsx";
 import { getLocaleUrl } from "@rimelight/i18n";
 import { t } from "@rimelight/i18n";
 
@@ -11,25 +12,25 @@ export const WikiIndexPage: Component = () => {
       title: t("app.text.getting-started"),
       description: t("app.text.new-to-grand-tale-start-here-to-learn-the-basics"),
       href: "/franchises/grand-tale/wiki/getting-started",
-      icon: "i-lucide-book-open",
+      icon: "book-open",
     },
     {
       title: t("app.text.characters"),
       description: t("app.text.explore-the-heroes-villains-and-legends-of-the-w"),
       href: "/franchises/grand-tale/wiki/lore/characters",
-      icon: "i-lucide-users",
+      icon: "users",
     },
     {
       title: t("app.text.locations"),
       description: t("app.text.discover-the-regions-cities-and-landmarks"),
       href: "/franchises/grand-tale/wiki/lore/locations",
-      icon: "i-lucide-map-pin",
+      icon: "map-pin",
     },
     {
       title: t("app.text.heroes"),
       description: t("app.text.master-the-playable-heroes-and-their-abilities"),
       href: "/franchises/grand-tale/wiki/lore/heroes",
-      icon: "i-lucide-shield-check",
+      icon: "shield-check",
     },
   ];
   const trendingArticles = [
@@ -96,7 +97,7 @@ export const WikiIndexPage: Component = () => {
 
       <section class="space-y-8">
         <h2 class="text-2xl font-bold text-white uppercase tracking-tight flex items-center gap-3">
-          <span class="i-lucide-compass text-indigo-400 size-6" />
+          <RLIcon name="compass" class="text-indigo-400 size-6" />
           Quick Navigation
         </h2>
 
@@ -125,7 +126,7 @@ export const WikiIndexPage: Component = () => {
 
       <section class="space-y-8">
         <h2 class="text-2xl font-bold text-white uppercase tracking-tight flex items-center gap-3">
-          <span class="i-lucide-flame text-indigo-400 size-6" />
+          <RLIcon name="flame" class="text-indigo-400 size-6" />
           Trending Articles
         </h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">

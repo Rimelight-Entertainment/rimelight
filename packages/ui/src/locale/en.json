@@ -1,4 +1,42 @@
 {
+  "chat": {
+    "label": "Conversation"
+  },
+  "chat-messages": {
+    "label": "Messages"
+  },
+  "chat-prompt": {
+    "label": "Message",
+    "placeholder": "Type a message"
+  },
+  "chat-prompt-submit": {
+    "send": "Send message",
+    "stop": "Stop generating"
+  },
+  "chat-reasoning": {
+    "label": "Reasoning"
+  },
+  "chat-palette": {
+    "label": "Suggestions"
+  },
+  "chat-tool": {
+    "status": {
+      "pending": "Pending",
+      "running": "Running",
+      "completed": "Completed",
+      "error": "Error"
+    }
+  },
+  "command-palette": {
+    "label": "Command palette",
+    "input": "Search commands"
+  },
+  "color-picker": {
+    "label": "Color picker"
+  },
+  "dock": {
+    "label": "Toolbar"
+  },
   "link": {
     "opens-in-new-tab": "(opens in a new tab)"
   },
@@ -188,6 +226,10 @@
   },
   "toast": {
     "dismiss": "Dismiss notification"
+  },
+  "tree": {
+    "expand": "Expand",
+    "collapse": "Collapse"
   },
   "video": {
     "defaultTitle": "YouTube Video Player",

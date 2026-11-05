@@ -1,4 +1,3 @@
-import type { JSX } from "@solidjs/web";
 import type { InferThemeProps } from "../../resolver";
 import type { SlotRenderer } from "../../types";
 import type { RLCalendarTheme } from "./calendar.theme";
@@ -6,6 +5,7 @@ import type { WeekdayFormat, WeekStartsOn } from "./calendar.helpers";
 
 export type CalendarModelValue = string | Date | number | CalendarRangeValue | Date[] | null;
 export type CalendarRangeValue = { start: Date; end: Date };
+export type CalendarView = "day" | "month" | "year";
 
 export type RLCalendarProps = Omit<
   InferThemeProps<typeof RLCalendarTheme>,
@@ -217,10 +217,20 @@ export type RLCalendarProps = Omit<
    */
   calendarLabel?: string;
   /**
-   * Content replacing the heading label. Static JSX; rendered as-is.
+   * Content replacing the heading label.
    * @default undefined
    */
-  headingSlot?: JSX.Element;
+  headingSlot?: SlotRenderer;
+  /**
+   * Content replacing the previous month (or previous year) button icon.
+   * @default undefined
+   */
+  prevSlot?: SlotRenderer;
+  /**
+   * Content replacing the next month (or next year) button icon.
+   * @default undefined
+   */
+  nextSlot?: SlotRenderer;
   /**
    * Weekday header cell content. Receives the weekday label.
    * @default undefined

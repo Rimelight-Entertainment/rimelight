@@ -1,102 +1,95 @@
 import type { JSX } from "@solidjs/web";
 import type { InferThemeProps } from "../../resolver";
+import type { SlotRenderer } from "../../types";
 import type { RLButtonProps } from "../button/button.types";
 import type { RLCarouselTheme } from "./carousel.theme";
 
 export interface CarouselSlide {
+  /** Image source for an object-shaped item. */
   src?: string | undefined;
+  /** Image source for an object-shaped item; takes precedence over `src`. */
   imageSrc?: string | undefined;
+  /** Accessible text for the image. */
   alt?: string | undefined;
-  caption?: string | undefined;
+  /** Caption heading rendered over the image. */
   title?: string | undefined;
+  /** Caption body rendered under the title. */
   description?: string | undefined;
 }
 
-export type CarouselItem = CarouselSlide | string;
+export interface CarouselItemContext<T> {
+  /** The item being rendered. */
+  item: T;
+  /** Zero-based index of the item. */
+  index: number;
+}
 
 export interface CarouselAutoplayOptions {
   /** Delay in milliseconds between slide transitions. */
   delay?: number | undefined;
-  /** Stop autoplay on user interaction. */
-  stopOnInteraction?: boolean | undefined;
-  /** Stop autoplay when hovering over the carousel. */
+  /** Pause autoplay while the pointer is over the carousel. */
   stopOnMouseEnter?: boolean | undefined;
-  /** Stop autoplay on reaching the last snap point. */
+  /** Stop autoplay on reaching the last slide. */
   stopOnLastSnap?: boolean | undefined;
-  /** Start autoplay immediately on initialization. */
-  playOnInit?: boolean | undefined;
 }
 
 export interface CarouselAutoScrollOptions {
-  /** Scroll speed in pixels or rate. */
+  /** Scroll speed in slides per second. */
   speed?: number | undefined;
-  /** Auto scroll direction. */
-  direction?: "forward" | "backward" | undefined;
-  /** Stop auto-scrolling on user interaction. */
-  stopOnInteraction?: boolean | undefined;
-  /** Stop auto-scrolling when hovering. */
-  stopOnMouseEnter?: boolean | undefined;
-  /** Start auto-scrolling immediately on initialization. */
-  playOnInit?: boolean | undefined;
-}
-
-export interface CarouselAutoHeightOptions {
-  /** Whether auto-height adjustment is active. */
-  active?: boolean | undefined;
 }
 
 export interface CarouselStateClassesOptions {
-  /** Class name applied to snapped slide. */
+  /** Class name applied to the snapped slide. */
   snapped?: string | undefined;
-  /** Class name applied to in-view slides. */
+  /** Class name applied to the snapped slide, alongside `snapped`. */
   inView?: string | undefined;
-}
-
-export interface CarouselFadeOptions {
-  /** Whether fade transition is active. */
-  active?: boolean | undefined;
-}
-
-export interface CarouselWheelGesturesOptions {
-  /** Whether wheel gestures navigation is active. */
-  active?: boolean | undefined;
 }
 
 export type RLCarouselProps<T = unknown> = Omit<
   InferThemeProps<typeof RLCarouselTheme>,
-  "children" | "onSelect" | "ref"
+  "children" | "fade" | "onSelect" | "ref"
 > & {
   /**
-   * List of items to render in the carousel.
+   * List of items to render in the carousel. When omitted, `children` render the slides.
    */
   items?: T[] | undefined;
 
   /**
-   * Configure the prev button when arrows are enabled.
-   * @default { size: 'md', color: 'neutral', variant: 'link' }
+   * Button configuration for the previous arrow. Setting `prev` or `next` also shows the arrows.
+   * @default { variant: 'link', color: 'neutral', size: 'md' }
    */
   prev?: Omit<RLButtonProps, "href" | "to"> | undefined;
 
   /**
-   * The icon name displayed in the prev button.
+   * Icon name displayed in the previous arrow.
    * @default 'chevron-left'
    */
   prevIcon?: string | undefined;
 
   /**
-   * Configure the next button when arrows are enabled.
-   * @default { size: 'md', color: 'neutral', variant: 'link' }
+   * Custom content rendered inside the previous arrow instead of `prevIcon`.
+   */
+  prevSlot?: SlotRenderer | undefined;
+
+  /**
+   * Button configuration for the next arrow. Setting `prev` or `next` also shows the arrows.
+   * @default { variant: 'link', color: 'neutral', size: 'md' }
    */
   next?: Omit<RLButtonProps, "href" | "to"> | undefined;
 
   /**
-   * The icon name displayed in the next button.
+   * Icon name displayed in the next arrow.
    * @default 'chevron-right'
    */
   nextIcon?: string | undefined;
 
   /**
-   * Display prev and next buttons to scroll the carousel.
+   * Custom content rendered inside the next arrow instead of `nextIcon`.
+   */
+  nextSlot?: SlotRenderer | undefined;
+
+  /**
+   * Display previous and next arrows to scroll the carousel.
    * @default false
    */
   arrows?: boolean | undefined;
@@ -105,97 +98,56 @@ export type RLCarouselProps<T = unknown> = Omit<
    * Display dots to scroll to a specific slide.
    * @default false
    */
-  dots?: boolean | undefined;
+  hasDots?: boolean | undefined;
 
   /**
-   * Enable Autoplay plugin or configuration object.
+   * Enable autoplay, or pass an options object.
    * @default false
    */
   autoplay?: boolean | CarouselAutoplayOptions | undefined;
 
   /**
-   * Enable Auto Scroll plugin or configuration object.
+   * Enable continuous auto scroll, or pass an options object.
    * @default false
    */
   autoScroll?: boolean | CarouselAutoScrollOptions | undefined;
 
   /**
-   * Enable Auto Height plugin or configuration object.
-   * @default false
-   */
-  autoHeight?: boolean | CarouselAutoHeightOptions | undefined;
-
-  /**
-   * Add state classes to slides: `snapped` on the active slide, `inView` on visible slides.
+   * Add state classes to slides: `snapped` on the active slide and `inView` on visible slides.
    * Pass an object to rename the classes.
    * @default false
    */
   stateClasses?: boolean | CarouselStateClassesOptions | undefined;
 
   /**
-   * Enable Fade plugin or configuration object.
+   * Cross-fade slides instead of sliding them.
    * @default false
    */
-  fade?: boolean | CarouselFadeOptions | undefined;
+  fade?: boolean | undefined;
 
   /**
-   * Enable Wheel Gestures plugin or configuration object.
+   * Navigate slides with the mouse wheel or trackpad.
    * @default false
    */
-  wheelGestures?: boolean | CarouselWheelGesturesOptions | undefined;
-
-  /**
-   * Alignment of items in the viewport.
-   * @default 'start'
-   */
-  align?:
-    | "start"
-    | "center"
-    | "end"
-    | ((viewSize: number, snapSize: number, index: number) => number)
-    | undefined;
-
-  /**
-   * Contain scroll behavior.
-   * @default 'trimSnaps'
-   */
-  containScroll?: false | "trimSnaps" | "keepSnaps" | undefined;
+  wheelGestures?: boolean | undefined;
 
   /**
    * Number of slides to scroll on navigation.
    * @default 1
    */
-  slidesToScroll?: number | "auto" | undefined;
+  slidesToScroll?: number | undefined;
 
   /**
-   * Enable free dragging without snapping.
-   * @default false
-   */
-  dragFree?: boolean | undefined;
-
-  /**
-   * Drag threshold in pixels before drag gesture activates.
+   * Drag distance in pixels before a drag gesture activates.
    * @default 10
    */
   dragThreshold?: number | undefined;
 
   /**
-   * In-view threshold for visibility calculation.
-   * @default 0
-   */
-  inViewThreshold?: number | number[] | undefined;
-
-  /**
-   * Infinite loop navigation.
+   * Wrap navigation from the last slide to the first and back.
    * @default false
    */
   loop?: boolean | undefined;
-
-  /**
-   * Skip snaps during rapid navigation.
-   * @default false
-   */
-  skipSnaps?: boolean | undefined;
 
   /**
    * Transition duration in milliseconds.
@@ -204,56 +156,35 @@ export type RLCarouselProps<T = unknown> = Omit<
   duration?: number | undefined;
 
   /**
-   * Starting slide index.
+   * Index of the initially selected slide.
    * @default 0
    */
   startIndex?: number | undefined;
 
   /**
-   * Watch drag pointer interactions.
+   * Enable pointer dragging.
    * @default true
    */
   watchDrag?: boolean | undefined;
 
   /**
-   * Watch resize events.
-   * @default true
-   */
-  watchResize?: boolean | undefined;
-
-  /**
-   * Watch slide mutations.
-   * @default true
-   */
-  watchSlides?: boolean | undefined;
-
-  /**
-   * Watch focus events for keyboard navigation.
+   * Enable keyboard navigation.
    * @default true
    */
   watchFocus?: boolean | undefined;
 
   /**
-   * Breakpoint responsive configuration.
+   * Slide content. Pass JSX for static slides, or a function that receives each item and its index.
    */
-  breakpoints?: Record<string, Partial<RLCarouselProps<T>>> | undefined;
+  children?: JSX.Element | ((ctx: CarouselItemContext<T>) => JSX.Element) | undefined;
 
   /**
-   * Children content or scoped render function.
-   */
-  children?:
-    | JSX.Element
-    | ((item: T, index: () => number) => JSX.Element)
-    | ((ctx: { item: T; index: number }) => JSX.Element)
-    | undefined;
-
-  /**
-   * Event fired on slide selection with the selected index.
+   * Called with the selected index whenever the selected slide changes.
    */
   onSelect?: ((selectedIndex: number) => void) | undefined;
 
   /**
-   * Ref handle callback.
+   * Receives a handle for programmatic navigation.
    */
   ref?: ((handle: CarouselHandle) => void) | undefined;
 };

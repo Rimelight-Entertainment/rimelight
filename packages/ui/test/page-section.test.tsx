@@ -1,94 +1,146 @@
-import { describe, it, expect, beforeEach, afterEach } from "vite-plus/test";
-import { renderToString } from "@solidjs/web";
+import { describe, it, expect } from "vite-plus/test";
 import { RLPageSection } from "../src/components/page-section/RLPageSection";
+import { mountComponent } from "./utils/browser-render";
+
+function root(container: HTMLElement): HTMLElement | null {
+  return container.querySelector<HTMLElement>("[data-slot='root']");
+}
 
 describe("RLPageSection", () => {
-  let container: HTMLDivElement;
-
-  beforeEach(() => {
-    container = document.createElement("div");
-    document.body.appendChild(container);
+  it("renders a section root by default and the requested element with as", () => {
+    const section = root(mountComponent(() => <RLPageSection title="Hi" />));
+    const article = root(mountComponent(() => <RLPageSection as="article" title="Hi" />));
+    expect(section?.tagName).toBe("SECTION");
+    expect(article?.tagName).toBe("ARTICLE");
   });
 
-  afterEach(() => {
-    container.remove();
+  it("renders title as h2 by default and as h1 in the hero layout", () => {
+    const standard = mountComponent(() => <RLPageSection title="Standard" />);
+    const hero = mountComponent(() => <RLPageSection layout="hero" title="Hero" />);
+    expect(standard.querySelector("h2")?.textContent).toBe("Standard");
+    expect(standard.querySelector("h1")).toBeNull();
+    expect(hero.querySelector("h1")?.textContent).toBe("Hero");
+    expect(hero.querySelector("h2")).toBeNull();
   });
 
-  it("renders with default props and title", () => {
-    const html = renderToString(() => (
-      <RLPageSection title="Dashboard" description="Test description">
-        <div>Content</div>
-      </RLPageSection>
+  it("renders headline, description, and icon when provided", () => {
+    const withAll = mountComponent(() => (
+      <RLPageSection headline="Eyebrow" title="Title" description="Details" icon="rocket" />
     ));
-
-    expect(html).toContain("Dashboard");
-    expect(html).toContain("Test description");
-    expect(html).toContain("Content");
-    expect(html).toContain("<h2");
+    const bare = mountComponent(() => <RLPageSection title="Title" />);
+    expect(withAll.textContent).toContain("Eyebrow");
+    expect(withAll.textContent).toContain("Details");
+    expect(withAll.innerHTML.length).toBeGreaterThan(bare.innerHTML.length);
+    expect(bare.textContent).not.toContain("Eyebrow");
+    expect(bare.textContent).not.toContain("Details");
   });
 
-  it("renders hero layout with h1", () => {
-    const html = renderToString(() => <RLPageSection layout="hero" title="Hero Title" />);
-
-    expect(html).toContain("<h1");
-    expect(html).toContain("Hero Title");
+  it("renders no header element when no header content is provided", () => {
+    const container = mountComponent(() => <RLPageSection>Only children</RLPageSection>);
+    expect(container.querySelector("h1")).toBeNull();
+    expect(container.querySelector("h2")).toBeNull();
+    expect(container.textContent).toContain("Only children");
   });
 
-  it("renders as custom tag using dynamic as prop", () => {
-    const html = renderToString(() => <RLPageSection as="article" title="Article Title" />);
-
-    expect(html).toContain("<article");
-    expect(html).toContain("Article Title");
-  });
-
-  it("renders background prop in the dedicated background container", () => {
-    const html = renderToString(() => (
+  it("renders each slot and replaces its default content", () => {
+    const container = mountComponent(() => (
       <RLPageSection
-        title="With Bg Prop"
-        backgroundSlot={<div class="bg-layer">Custom Background</div>}
+        title="Default title"
+        description="Default description"
+        icon="rocket"
+        backgroundSlot={<span>Background slot</span>}
+        leadingSlot={<span>Leading slot</span>}
+        titleSlot={<span>Title slot</span>}
+        descriptionSlot={<span>Description slot</span>}
+        bodySlot={<span>Body slot</span>}
+        footerSlot={<span>Footer slot</span>}
       >
-        <div class="main-body">Main Children</div>
+        Children
       </RLPageSection>
     ));
-
-    expect(html).toContain('data-slot="background"');
-    expect(html).toContain("Custom Background");
-    expect(html).toContain("Main Children");
-    const bgContainerIndex = html.indexOf('data-slot="background"');
-    const bgTextIndex = html.indexOf("Custom Background");
-    expect(bgTextIndex).toBeGreaterThan(bgContainerIndex);
+    expect(container.textContent).toContain("Background slot");
+    expect(container.textContent).toContain("Leading slot");
+    expect(container.textContent).toContain("Title slot");
+    expect(container.textContent).toContain("Description slot");
+    expect(container.textContent).toContain("Body slot");
+    expect(container.textContent).toContain("Footer slot");
+    expect(container.textContent).toContain("Children");
+    expect(container.textContent).not.toContain("Default title");
+    expect(container.textContent).not.toContain("Default description");
   });
 
-  it("renders body, header, and footer props correctly", () => {
-    const html = renderToString(() => (
+  it("replaces the whole header when headerSlot is provided", () => {
+    const container = mountComponent(() => (
+      <RLPageSection title="Default title" headerSlot={<span>Custom header</span>} />
+    ));
+    expect(container.textContent).toContain("Custom header");
+    expect(container.textContent).not.toContain("Default title");
+    expect(container.querySelector("h2")).toBeNull();
+  });
+
+  it("accepts render-function slots", () => {
+    const container = mountComponent(() => (
+      <RLPageSection bodySlot={() => <span>Rendered body</span>} />
+    ));
+    expect(container.textContent).toContain("Rendered body");
+  });
+
+  it("renders an anchor with href for each entry in links", () => {
+    const container = mountComponent(() => (
       <RLPageSection
-        headerSlot={<div>Custom Header</div>}
-        bodySlot={<div>Custom Body</div>}
-        footerSlot={<div>Custom Footer</div>}
-      >
-        <div>Default Child</div>
-      </RLPageSection>
+        links={[
+          { label: "First", href: "https://example.com/first" },
+          { label: "Second", href: "https://example.com/second" },
+        ]}
+      />
     ));
-
-    expect(html).toContain("Custom Header");
-    expect(html).toContain("Custom Body");
-    expect(html).toContain("Custom Footer");
-    expect(html).toContain("Default Child");
+    expect(container.textContent).toContain("First");
+    expect(container.textContent).toContain("Second");
+    const anchors = container.querySelectorAll("a");
+    expect(anchors.length).toBe(2);
+    expect(anchors[0]?.getAttribute("href")).toBe("https://example.com/first");
+    expect(anchors[1]?.getAttribute("href")).toBe("https://example.com/second");
   });
 
-  it("places background prop in the background container, not inside inner content", () => {
-    const el = document.createElement("div");
-    el.innerHTML = renderToString(() => (
-      <RLPageSection title="Home Hero" backgroundSlot={<div class="bg-img">Hero Image</div>}>
-        <div class="hero-logo">Logo</div>
-      </RLPageSection>
+  it("hides links when footerSlot is provided", () => {
+    const container = mountComponent(() => (
+      <RLPageSection
+        links={[{ label: "Hidden link", href: "/hidden" }]}
+        footerSlot={<span>Custom footer</span>}
+      />
     ));
+    expect(container.textContent).toContain("Custom footer");
+    expect(container.textContent).not.toContain("Hidden link");
+  });
 
-    const bgSlot = el.querySelector('[data-slot="background"]');
-    expect(bgSlot).not.toBeNull();
-    expect(bgSlot?.textContent).toContain("Hero Image");
+  it("renders actionSlot alongside links", () => {
+    const container = mountComponent(() => (
+      <RLPageSection
+        links={[{ label: "Go", href: "/go" }]}
+        actionSlot={<span>Extra action</span>}
+      />
+    ));
+    expect(container.textContent).toContain("Go");
+    expect(container.textContent).toContain("Extra action");
+  });
 
-    expect(bgSlot?.querySelector(".hero-logo")).toBeNull();
-    expect(el.querySelector(".hero-logo")).not.toBeNull();
+  it("applies containIntrinsicSize as a CSS variable on the root", () => {
+    const container = mountComponent(() => (
+      <RLPageSection contentVisibility="auto" containIntrinsicSize="auto 500px" title="Lazy" />
+    ));
+    const style = root(container)?.getAttribute("style") ?? "";
+    expect(style).toContain("--rl-contain-intrinsic-size");
+    expect(style).toContain("auto 500px");
+  });
+
+  it("exposes the orientation on the root", () => {
+    const container = mountComponent(() => <RLPageSection orientation="horizontal" title="Wide" />);
+    expect(root(container)?.getAttribute("data-orientation")).toBe("horizontal");
+  });
+
+  it("renders children without wrapper content when no slots or props are set", () => {
+    const container = mountComponent(() => <RLPageSection>Plain</RLPageSection>);
+    expect(container.querySelector("[data-slot='background']")).toBeNull();
+    expect(container.textContent?.trim()).toBe("Plain");
   });
 });

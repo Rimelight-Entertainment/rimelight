@@ -18,7 +18,7 @@ export type RLSwitchProps = Omit<
   /**
    * Called with the next state when the user toggles the switch.
    */
-  onCheckedChange?: (checked: boolean) => void;
+  onValueChange?: (checked: boolean) => void;
   /**
    * Disables the switch.
    * @default false

@@ -6,5 +6,4 @@ export const RLContainerTheme = defineTheme("container", {
     root: "w-full max-w-[var(--rl-container)] mx-auto px-xs sm:px-md md:px-xl lg:px-xl",
   },
   variants: {},
-  defaultVariants: {},
 });

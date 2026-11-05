@@ -32,13 +32,13 @@ export type ErrorAction = {
   variant?: RLButtonProps["variant"];
 
   /**
-   * Target URL. Renders the button as a link.
+   * Target URL. Renders the action as a link; `onClick` is not used when set.
    * @default undefined
    */
   href?: string;
 
   /**
-   * Click handler.
+   * Click handler. Used only when `href` is not set.
    * @default undefined
    */
   onClick?: RLButtonProps["onClick"];
@@ -49,6 +49,42 @@ export type ErrorAction = {
    */
   class?: string;
 };
+
+/**
+ * Icon and color used for an HTTP status code.
+ */
+export interface ErrorStatusStyle {
+  /**
+   * Icon name.
+   */
+  icon: string;
+
+  /**
+   * Theme color.
+   */
+  color: ThemeColor;
+}
+
+/**
+ * Options for `HttpError`.
+ */
+export interface HttpErrorOptions {
+  /**
+   * Whether `message` is safe to show to visitors in production.
+   * Defaults to `true` for 4xx (errors you expected and wrote) and `false` for 5xx.
+   */
+  expose?: boolean;
+
+  /**
+   * Optional title override shown by `RLError`.
+   */
+  title?: string;
+
+  /**
+   * The underlying error, kept for logging.
+   */
+  cause?: unknown;
+}
 
 /**
  * Error props. `@status stable`.
@@ -101,7 +137,7 @@ export type RLErrorProps = InferThemeProps<typeof RLErrorTheme> & {
    * Show the error message and stack.
    * @default true only in development.
    */
-  showDetails?: boolean;
+  hasDetails?: boolean;
 
   /**
    * Replaces the icon box.

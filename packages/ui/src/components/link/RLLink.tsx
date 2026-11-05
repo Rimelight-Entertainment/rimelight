@@ -2,7 +2,7 @@ import type { RLLinkProps } from "./link.types";
 import { RLLinkTheme } from "./link.theme";
 import { createMemo, Show, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
-import { resolveLinkAttrs } from "./helpers";
+import { resolveLinkAttrs } from "./link.helpers";
 import { uiT } from "../../locale";
 
 const OMIT_KEYS = [
@@ -16,6 +16,7 @@ const OMIT_KEYS = [
   "noExternalIcon",
   "target",
   "rel",
+  "noRel",
   "current",
 ] as const;
 
@@ -44,38 +45,56 @@ export const RLLink: Component<RLLinkProps> = (props) => {
       aria-disabled={attrs().ariaDisabled}
       {...rest}
     >
-      {slots.leadingSlot() ? (
-        slots.leadingSlot()
-      ) : props.leadingIcon ? (
-        <span class={classes().leadingIcon} data-slot="leading-icon">
-          <RLIcon name={props.leadingIcon} size="sm" aria-hidden="true" />
-        </span>
-      ) : null}
+      <Show
+        when={slots.leadingSlot()}
+        fallback={
+          <Show when={props.leadingIcon}>
+            {(iconName) => (
+              <span class={classes().leadingIcon} data-slot="leading-icon">
+                <RLIcon name={iconName()} size="sm" aria-hidden="true" />
+              </span>
+            )}
+          </Show>
+        }
+      >
+        {slots.leadingSlot()}
+      </Show>
 
-      {children() ??
-        (props.label !== undefined && props.label !== null ? (
-          <span class={classes().label} data-slot="label">
-            {props.label}
-          </span>
-        ) : null)}
+      <Show
+        when={children()}
+        fallback={
+          <Show when={props.label}>
+            {(label) => (
+              <span class={classes().label} data-slot="label">
+                {label()}
+              </span>
+            )}
+          </Show>
+        }
+      >
+        {children()}
+      </Show>
 
-      {slots.trailingSlot() ? (
-        slots.trailingSlot()
-      ) : (
-        <Show when={attrs().showTrailingIcon}>
-          {(iconName) => (
-            <span class={classes().trailingIcon} data-slot="trailing-icon">
-              <RLIcon name={iconName()} size="sm" aria-hidden="true" />
-            </span>
-          )}
-        </Show>
-      )}
+      <Show
+        when={slots.trailingSlot()}
+        fallback={
+          <Show when={attrs().showTrailingIcon}>
+            {(iconName) => (
+              <span class={classes().trailingIcon} data-slot="trailing-icon">
+                <RLIcon name={iconName()} size="sm" aria-hidden="true" />
+              </span>
+            )}
+          </Show>
+        }
+      >
+        {slots.trailingSlot()}
+      </Show>
 
-      {attrs().isExternal && attrs().target === "_blank" && !props["aria-label"] && (
+      <Show when={attrs().isExternal && attrs().target === "_blank" && !props["aria-label"]}>
         <span class={classes().externalHint} data-slot="external-hint">
           {uiT("link.opens-in-new-tab")}
         </span>
-      )}
+      </Show>
     </Tag>
   );
 };

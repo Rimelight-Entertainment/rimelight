@@ -1,6 +1,5 @@
-import type { JSX } from "@solidjs/web";
 import type { InferThemeProps } from "../../resolver";
-import type { ThemeColor } from "../../types";
+import type { SlotRenderer, ThemeColor } from "../../types";
 import type { RLPostTheme } from "./post.theme";
 
 export type RLPostProps = InferThemeProps<typeof RLPostTheme> & {
@@ -53,10 +52,40 @@ export type RLPostProps = InferThemeProps<typeof RLPostTheme> & {
    * @default "primary"
    */
   badgeColor?: ThemeColor | undefined;
-  imageSlot?: JSX.Element;
-  titleSlot?: JSX.Element;
-  descriptionSlot?: JSX.Element;
-  badgeSlot?: JSX.Element;
-  dateSlot?: JSX.Element;
-  footerSlot?: JSX.Element;
+  /**
+   * Replaces the image block. Takes precedence over `image`.
+   *
+   * @default undefined
+   */
+  imageSlot?: SlotRenderer;
+  /**
+   * Replaces the title. Takes precedence over `title`.
+   *
+   * @default undefined
+   */
+  titleSlot?: SlotRenderer;
+  /**
+   * Replaces the description. Takes precedence over `description`.
+   *
+   * @default undefined
+   */
+  descriptionSlot?: SlotRenderer;
+  /**
+   * Replaces the badge. Takes precedence over `badge` and `badgeColor`.
+   *
+   * @default undefined
+   */
+  badgeSlot?: SlotRenderer;
+  /**
+   * Replaces the formatted date. Takes precedence over `date`.
+   *
+   * @default undefined
+   */
+  dateSlot?: SlotRenderer;
+  /**
+   * Content rendered in the footer below the post body.
+   *
+   * @default undefined
+   */
+  footerSlot?: SlotRenderer;
 };

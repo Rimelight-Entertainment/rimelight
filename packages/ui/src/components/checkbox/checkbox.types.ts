@@ -1,35 +1,25 @@
 import type { ValidComponent } from "@solidjs/web";
-import type { JSX } from "@solidjs/web";
-import type { Theme, ThemeColor } from "../../types";
+import type { ThemeColor } from "../../types";
+import type { SlotRenderer } from "../../types";
 import type { InferThemeProps } from "../../resolver";
 import type { RLCheckboxTheme } from "./checkbox.theme";
 
 export type CheckboxLayout = "list" | "card";
 export type CheckboxSize = "xs" | "sm" | "md" | "lg" | "xl";
-export type CheckboxIndicator = "start" | "end" | "hidden";
-
-export interface CheckboxUi {
-  root?: string | undefined;
-  container?: string | undefined;
-  base?: string | undefined;
-  indicator?: string | undefined;
-  icon?: string | undefined;
-  wrapper?: string | undefined;
-  label?: string | undefined;
-  description?: string | undefined;
-}
+export type CheckboxSide = "start" | "end";
 
 export type RLCheckboxProps = Omit<
   InferThemeProps<typeof RLCheckboxTheme>,
-  "checked" | "onChange" | "autofocus" | "ref"
+  "checked" | "onChange" | "autofocus" | "ref" | "side" | "hasIndicator"
 > & {
   /**
    * Ref to the native checkbox input element.
    */
   ref?: HTMLInputElement | ((el: HTMLInputElement) => void) | undefined;
+
   /**
    * The element or component this component should render as.
-   * @default 'div'
+   * @default 'label'
    */
   as?: ValidComponent;
 
@@ -39,7 +29,7 @@ export type RLCheckboxProps = Omit<
   label?: string | undefined;
 
   /**
-   * Description text rendered below or beside the label.
+   * Description text rendered below the label.
    */
   description?: string | undefined;
 
@@ -62,10 +52,16 @@ export type RLCheckboxProps = Omit<
   size?: CheckboxSize | undefined;
 
   /**
-   * Position of the indicator checkbox box.
+   * Edge the checkbox box sits on relative to the label.
    * @default 'start'
    */
-  indicator?: CheckboxIndicator | undefined;
+  side?: CheckboxSide | undefined;
+
+  /**
+   * Whether the checkbox box is rendered. When `false`, `icon` is rendered above the label instead.
+   * @default true
+   */
+  hasIndicator?: boolean | undefined;
 
   /**
    * Highlight the ring color like a focus state.
@@ -74,26 +70,16 @@ export type RLCheckboxProps = Omit<
   highlight?: boolean | undefined;
 
   /**
-   * The icon displayed when checked, or above the label when `indicator` is `hidden`.
-   * Defaults to 'check'.
+   * Bare lucide icon name displayed when checked, or above the label when `hasIndicator` is `false`.
+   * @default 'check'
    */
   icon?: string | undefined;
 
   /**
-   * The icon displayed when the checkbox is indeterminate.
-   * Defaults to 'minus'.
+   * Bare lucide icon name displayed when the checkbox is indeterminate.
+   * @default 'minus'
    */
   indeterminateIcon?: string | undefined;
-
-  /**
-   * Slot-specific CSS class overrides.
-   */
-  ui?: CheckboxUi | undefined;
-
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
-  class?: string | undefined;
 
   /**
    * When `true`, prevents the user from interacting with the checkbox.
@@ -137,20 +123,43 @@ export type RLCheckboxProps = Omit<
   indeterminate?: boolean | undefined;
 
   /**
-   * Form-related native attributes.
+   * Whether the checkbox has a `form` owner and the `autofocus` attribute.
    */
   autofocus?: boolean | string | undefined;
-  form?: string | undefined;
-  formaction?: string | undefined;
-  formenctype?: string | undefined;
-  formmethod?: string | undefined;
-  formnovalidate?: boolean | string | undefined;
-  formtarget?: string | undefined;
 
   /**
-   * Theme mode override (pins colors to flat, light, or dark mode).
+   * ID of the form that owns the checkbox.
    */
-  theme?: Theme | undefined;
+  form?: string | undefined;
+
+  /**
+   * URL the owning form submits to when this checkbox is the submitter.
+   */
+  formaction?: string | undefined;
+
+  /**
+   * Encoding type used when the owning form is submitted.
+   */
+  formenctype?:
+    | "application/x-www-form-urlencoded"
+    | "multipart/form-data"
+    | "text/plain"
+    | undefined;
+
+  /**
+   * HTTP method used when the owning form is submitted.
+   */
+  formmethod?: "get" | "post" | "dialog" | undefined;
+
+  /**
+   * Bypass form validation when the owning form is submitted.
+   */
+  formnovalidate?: boolean | string | undefined;
+
+  /**
+   * Browsing context the owning form submits to.
+   */
+  formtarget?: string | undefined;
 
   /**
    * Native change event handler.
@@ -158,21 +167,17 @@ export type RLCheckboxProps = Omit<
   onChange?: ((e: Event & { currentTarget: HTMLInputElement }) => void) | undefined;
 
   /**
-   * Checked state change callback for reactive binding.
+   * Checked state change callback.
    */
   onCheckedChange?: ((checked: boolean) => void) | undefined;
 
   /**
-   * Slot overrides.
+   * Replaces the label text. Receives the `label` prop.
    */
-  labelSlot?: JSX.Element | ((props: { label: string | undefined }) => JSX.Element) | undefined;
-  descriptionSlot?:
-    | JSX.Element
-    | ((props: { description: string | undefined }) => JSX.Element)
-    | undefined;
+  labelSlot?: SlotRenderer<{ label: string | undefined }>;
 
   /**
-   * Custom child content (rendered inside label container).
+   * Replaces the description text. Receives the `description` prop.
    */
-  children?: JSX.Element;
+  descriptionSlot?: SlotRenderer<{ description: string | undefined }>;
 };

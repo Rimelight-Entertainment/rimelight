@@ -8,19 +8,23 @@ export const RLMarqueeTheme = defineTheme("marquee", {
       "flex shrink-0 gap-4 items-center animate-marquee [animation-duration:var(--rl-marquee-speed,40s)]",
   },
   variants: {
-    direction: {
-      left: { track: "flex-row animate-marquee-left" },
-      right: { track: "flex-row animate-marquee-right" },
-      up: { root: "flex-col h-80", track: "flex-col animate-marquee-up" },
-      down: { root: "flex-col h-80", track: "flex-col animate-marquee-down" },
+    orientation: {
+      horizontal: { root: "flex-row", track: "flex-row" },
+      vertical: { root: "flex-col h-80", track: "flex-col" },
     },
     pauseOnHover: {
       true: { track: "group-hover:[animation-play-state:paused]" },
-      false: { track: "" },
     },
   },
+  compoundVariants: [
+    { orientation: "horizontal", reverse: false, class: { track: "animate-marquee-left" } },
+    { orientation: "horizontal", reverse: true, class: { track: "animate-marquee-right" } },
+    { orientation: "vertical", reverse: false, class: { track: "animate-marquee-up" } },
+    { orientation: "vertical", reverse: true, class: { track: "animate-marquee-down" } },
+  ],
   defaultVariants: {
-    direction: "left",
+    orientation: "horizontal",
+    reverse: false,
     pauseOnHover: true,
   },
 });

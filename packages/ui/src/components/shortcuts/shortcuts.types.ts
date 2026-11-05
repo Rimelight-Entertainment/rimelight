@@ -8,6 +8,8 @@ export interface CategorySection {
   items: RegisteredShortcut[];
 }
 
+export type ShortcutsBackdropEvent = MouseEvent & { currentTarget: Element; target: Element };
+
 /**
  * Modal cheat sheet listing the active keyboard shortcuts.
  */

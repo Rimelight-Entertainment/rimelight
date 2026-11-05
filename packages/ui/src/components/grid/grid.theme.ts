@@ -24,7 +24,6 @@ export const RLGridTheme = defineTheme("grid", {
     },
     stagger: {
       true: { root: "pb-20 [&>:nth-child(2n)]:translate-y-20" },
-      false: { root: "" },
     },
   },
   defaultVariants: {

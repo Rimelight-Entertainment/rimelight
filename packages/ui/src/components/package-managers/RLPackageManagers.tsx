@@ -1,119 +1,62 @@
-import type { RLPackageManagersProps, Manager, CommandType } from "./package-managers.types";
-import { RLPackageManagersTheme } from "./package-managers.theme";
 import { createMemo, createSignal, For, Show, type Component } from "solid-js";
 import { RLButton } from "../button/RLButton";
 import { uiT } from "../../locale";
-
-const commands: Record<Manager, Partial<Record<CommandType, string>> & { dev: string }> = {
-  npm: {
-    add: "npm i",
-    create: "npm create",
-    dlx: "npx",
-    exec: "npx",
-    install: "npm install",
-    run: "npm run",
-    remove: "npm uninstall",
-    dev: "-D",
-  },
-  yarn: {
-    add: "yarn add",
-    create: "yarn create",
-    dlx: "yarn dlx",
-    exec: "yarn",
-    install: "yarn install",
-    run: "yarn run",
-    remove: "yarn remove",
-    dev: "-D",
-  },
-  pnpm: {
-    add: "pnpm add",
-    create: "pnpm create",
-    dlx: "pnpx",
-    exec: "pnpm",
-    install: "pnpm install",
-    run: "pnpm run",
-    remove: "pnpm remove",
-    dev: "-D",
-  },
-  deno: {
-    add: "deno add",
-    create: "deno run -A",
-    dlx: "deno run",
-    exec: "deno run",
-    install: "deno install",
-    run: "deno task",
-    remove: "deno remove",
-    dev: "--dev",
-  },
-  bun: {
-    add: "bun add",
-    create: "bun create",
-    install: "bun install",
-    run: "bun run",
-    remove: "bun remove",
-    dev: "-d",
-  },
-  vp: {
-    add: "vp add",
-    create: "vp create",
-    dlx: "vp dlx",
-    exec: "vp exec",
-    install: "vp install",
-    run: "vp run",
-    remove: "vp remove",
-    dev: "-D",
-  },
-};
+import { RLPackageManagersTheme } from "./package-managers.theme";
+import { buildCommand, DEFAULT_MANAGERS, nextTabIndex } from "./package-managers.helpers";
+import type { Manager, RLPackageManagersProps } from "./package-managers.types";
 
 const OMIT_KEYS = ["pkg", "type", "dev", "args", "comment", "prefix", "managers"] as const;
 
+const COPY_FEEDBACK_MS = 2000;
+
 export const RLPackageManagers: Component<RLPackageManagersProps> = (props) => {
-  const { Tag, classes, rest, theme } = RLPackageManagersTheme.setup(props, {
+  const { Tag, classes, rest, theme, id } = RLPackageManagersTheme.setup(props, {
     omit: OMIT_KEYS,
   });
 
-  const getCommand = (mgr: Manager, cmdType: CommandType): string | undefined => {
-    let cmd = commands[mgr][cmdType];
-    if (cmd === undefined) return undefined;
+  const tabs = createMemo(() => {
+    const managers: readonly Manager[] = props.managers ?? DEFAULT_MANAGERS;
+    const type = props.type ?? "add";
+    const options = {
+      pkg: props.pkg,
+      dev: props.dev,
+      args: props.args,
+      comment: props.comment,
+      prefix: props.prefix,
+    };
+    return managers.flatMap((mgr) => {
+      const cmd = buildCommand(mgr, type, options);
+      return cmd === undefined
+        ? []
+        : [{ mgr, cmd, tabId: `${id()}-tab-${mgr}`, panelId: `${id()}-panel-${mgr}` }];
+    });
+  });
 
-    const prefix = props.prefix;
-    const comment = props.comment;
-    const pkg = props.pkg;
-    const args = props.args;
-    if (prefix) cmd = `${prefix} ${cmd}`;
-    if (comment) cmd = `# ${comment.replaceAll("{PKG}", mgr)}\n${cmd}`;
-    if (props.dev && cmdType === "add") cmd += ` ${commands[mgr].dev}`;
+  const [selected, setSelected] = createSignal<Manager>();
+  const activeMgr = createMemo(() => {
+    const list = tabs();
+    return list.find((tab) => tab.mgr === selected())?.mgr ?? list[0]?.mgr;
+  });
 
-    if (pkg) {
-      const processedPkg =
-        cmdType === "create" && mgr === "yarn" ? pkg.replace(/@(?![^@]*\/)\S*$/, "") : pkg;
-      cmd += ` ${processedPkg}`;
-    }
+  const [copied, setCopied] = createSignal<Manager | null>(null);
 
-    if (args) {
-      const needsDoubleDash = mgr === "npm" && !["dlx", "exec", "run"].includes(cmdType);
-      cmd += `${needsDoubleDash ? " --" : ""} ${args}`;
-    }
-
-    return cmd;
+  const onTabKeyDown = (event: KeyboardEvent, index: number) => {
+    const list = tabs();
+    const target = nextTabIndex(event.key, index, list.length);
+    const next = target === undefined ? undefined : list[target];
+    if (!next) return;
+    event.preventDefault();
+    setSelected(next.mgr);
+    document.getElementById(next.tabId)?.focus();
   };
 
-  const tabs = createMemo(() =>
-    (props.managers ?? ["npm", "pnpm", "yarn", "deno", "bun", "vp"])
-      .map((mgr) => ({ mgr, cmd: getCommand(mgr, props.type ?? "add") }))
-      .filter((tab): tab is { mgr: Manager; cmd: string } => tab.cmd !== undefined),
-  );
-
-  const [activeIdx, setActiveIdx] = createSignal(0);
-  const [copied, setCopied] = createSignal<string | null>(null);
-
-  const copyCommand = async (mgr: string, cmd: string) => {
+  const copyCommand = async (mgr: Manager, cmd: string) => {
     try {
       await navigator.clipboard.writeText(cmd);
       setCopied(mgr);
       setTimeout(() => {
         setCopied((current) => (current === mgr ? null : current));
-      }, 2000);
+      }, COPY_FEEDBACK_MS);
     } catch {
       setCopied(null);
     }
@@ -123,56 +66,56 @@ export const RLPackageManagers: Component<RLPackageManagersProps> = (props) => {
     <Tag class={classes().root} data-slot="root" data-theme={theme()} {...rest}>
       <div class={classes().list} role="tablist" data-slot="list">
         <For each={tabs()}>
-          {(tab, idx) => {
-            const active = idx() === activeIdx();
-            return (
-              <button
-                type="button"
-                role="tab"
-                class={`${classes().trigger} ${active ? "bg-default text-highlighted border border-default border-b-transparent" : "text-muted hover:text-highlighted"}`}
-                data-slot="trigger"
-                data-state={active ? "active" : "inactive"}
-                data-value={tab.mgr}
-                aria-selected={active ? "true" : "false"}
-                onClick={() => setActiveIdx(idx())}
-              >
-                {tab.mgr}
-              </button>
-            );
-          }}
+          {(tab, index) => (
+            <RLButton
+              type="button"
+              role="tab"
+              id={tab.tabId}
+              aria-controls={tab.panelId}
+              aria-selected={activeMgr() === tab.mgr ? "true" : "false"}
+              tabindex={activeMgr() === tab.mgr ? 0 : -1}
+              class={classes().trigger}
+              data-slot="trigger"
+              data-state={activeMgr() === tab.mgr ? "active" : "inactive"}
+              data-value={tab.mgr}
+              onClick={() => setSelected(tab.mgr)}
+              onKeyDown={(event: KeyboardEvent) => onTabKeyDown(event, index())}
+            >
+              {tab.mgr}
+            </RLButton>
+          )}
         </For>
       </div>
-
       <For each={tabs()}>
-        {(tab, idx) => (
+        {(tab) => (
           <div
+            id={tab.panelId}
             role="tabpanel"
-            data-value={tab.mgr}
+            aria-labelledby={tab.tabId}
+            hidden={activeMgr() === tab.mgr ? undefined : "until-found"}
             class={classes().content}
             data-slot="content"
-            hidden={idx() !== activeIdx() ? "until-found" : undefined}
+            data-value={tab.mgr}
           >
-            <Show when={idx() === activeIdx()}>
-              <div class="relative">
-                <pre class={classes().codeBlock}>
-                  <code aria-hidden="true">{tab.cmd}</code>
-                </pre>
-                <RLButton
-                  type="button"
-                  variant="ghost"
-                  color="neutral"
-                  size="sm"
-                  class={classes().copyButton}
-                  leadingIcon={copied() === tab.mgr ? "check" : "copy"}
-                  aria-label={uiT("package-managers.copy")}
-                  data-slot="copy-button"
-                  onClick={() => copyCommand(tab.mgr, tab.cmd)}
-                >
-                  {copied() === tab.mgr
-                    ? uiT("package-managers.copied")
-                    : uiT("package-managers.copyButton")}
-                </RLButton>
-              </div>
+            <Show when={activeMgr() === tab.mgr}>
+              <pre class={classes().codeBlock} data-slot="code-block">
+                <code>{tab.cmd}</code>
+              </pre>
+              <RLButton
+                type="button"
+                variant="ghost"
+                color="neutral"
+                size="sm"
+                class={classes().copyButton}
+                leadingIcon={copied() === tab.mgr ? "check" : "copy"}
+                aria-label={uiT("package-managers.copy")}
+                data-slot="copy-button"
+                onClick={() => copyCommand(tab.mgr, tab.cmd)}
+              >
+                <Show when={copied() === tab.mgr} fallback={uiT("package-managers.copyButton")}>
+                  {uiT("package-managers.copied")}
+                </Show>
+              </RLButton>
             </Show>
           </div>
         )}

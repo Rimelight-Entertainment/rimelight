@@ -6,33 +6,28 @@ export const RLModalTheme = defineTheme("modal", {
     "triggerWrapper",
     "trigger",
     "overlay",
-    "backdrop",
     "content",
     "header",
-    "wrapper",
+    "heading",
     "body",
     "footer",
     "title",
     "description",
     "close",
-    "closeButton",
     "actions",
   ],
   base: {
     root: "relative inline-block",
     triggerWrapper: "inline-flex cursor-pointer",
-    trigger: "",
-    overlay: "fixed inset-0 z-50",
-    backdrop: "",
+    overlay: "fixed inset-0 z-50 data-[state=closed]:hidden!",
     content: "bg-default flex flex-col focus:outline-none z-50 pointer-events-auto",
     header: "flex items-center gap-1.5 p-4 sm:px-6 min-h-14 relative border-b border-default/30",
-    wrapper: "",
+    heading: "flex flex-col gap-1 min-w-0 flex-1",
     body: "flex-1 p-4 sm:p-6",
     footer: "flex items-center gap-1.5 p-4 sm:px-6 border-t border-default/30",
     title: "text-highlighted font-semibold text-base",
     description: "mt-1 text-muted text-sm leading-relaxed",
     close: "absolute top-4 right-4 end-4",
-    closeButton: "",
     actions: "flex items-center gap-1.5 ml-auto",
   },
   variants: {
@@ -43,7 +38,6 @@ export const RLModalTheme = defineTheme("modal", {
         content:
           "transition-all duration-200 data-[state=open]:scale-100 data-[state=open]:opacity-100 data-[state=closed]:scale-95 data-[state=closed]:opacity-0",
       },
-      false: {},
     },
     fullscreen: {
       true: {
@@ -53,18 +47,14 @@ export const RLModalTheme = defineTheme("modal", {
         content: "w-[calc(100vw-2rem)] max-w-lg rounded-lg shadow-lg ring ring-default",
       },
     },
-    overlay: {
+    backdrop: {
       true: {
-        overlay: "bg-elevated/75 backdrop-blur-sm",
-      },
-      false: {
-        overlay: "bg-transparent",
+        overlay: "bg-scrim/60 backdrop-blur-sm",
       },
     },
     modal: {
-      true: {},
       false: {
-        overlay: "pointer-events-none bg-transparent",
+        overlay: "pointer-events-none",
       },
     },
     scrollable: {
@@ -89,7 +79,7 @@ export const RLModalTheme = defineTheme("modal", {
   defaultVariants: {
     transition: true,
     fullscreen: false,
-    overlay: true,
+    backdrop: true,
     scrollable: false,
     modal: true,
     size: "md",

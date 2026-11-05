@@ -4,8 +4,8 @@ export const RLAvatarGroupTheme = defineTheme("avatar-group", {
   slots: ["root", "base", "more"],
   base: {
     root: "inline-flex flex-row-reverse justify-end items-center",
-    base: "relative rounded-full inline-flex shrink-0 aspect-square ring-2 ring-bg first:me-0 hover:z-10 transition-transform",
-    more: "relative rounded-full ring-2 ring-bg first:me-0 inline-flex items-center justify-center shrink-0 select-none cursor-default bg-elevated text-muted font-bold hover:z-10 aspect-square",
+    base: "relative rounded-full inline-flex shrink-0 aspect-square ring-2 ring-default first:me-0 hover:z-10 transition-transform",
+    more: "relative rounded-full ring-2 ring-default first:me-0 inline-flex items-center justify-center shrink-0 select-none cursor-default bg-elevated text-muted font-bold hover:z-10 aspect-square",
   },
   variants: {
     size: {

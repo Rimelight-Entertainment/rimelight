@@ -1,63 +1,76 @@
 import type { Component } from "solid-js";
-import { createSignal, onSettled } from "solid-js";
+import { createMemo, createSignal, onSettled, Show } from "solid-js";
 import type { RLScrollToTopProps } from "./scroll-to-top.types";
 import { RLScrollToTopTheme } from "./scroll-to-top.theme";
-import { scrollToTop, trackScroll } from "./scroll";
+import {
+  DEFAULT_PROGRESS_WIDTH,
+  DEFAULT_THRESHOLD,
+  gaugeVars,
+  scrollToTop,
+  trackScroll,
+} from "./scroll-to-top.helpers";
 import { RLIcon } from "../icon/RLIcon";
+import { RLButton } from "../button/RLButton";
 import { uiT } from "../../locale";
 
-const OMIT_KEYS = ["progressWidth", "threshold", "showProgress"] as const;
+const OMIT_KEYS = ["progressWidth", "threshold", "hasProgress"] as const;
 
 export const RLScrollToTop: Component<RLScrollToTopProps> = (props) => {
-  const { Tag, classes, rest, theme } = RLScrollToTopTheme.setup(props, { omit: OMIT_KEYS });
+  const { Tag, classes, rest, theme, children } = RLScrollToTopTheme.setup(props, {
+    omit: OMIT_KEYS,
+  });
 
   const [isVisible, setIsVisible] = createSignal(false);
   const [scrollPercentage, setScrollPercentage] = createSignal(0);
 
-  onSettled(() => {
-    return trackScroll({ threshold: props.threshold ?? 200 }, (state) => {
+  const gauge = createMemo(() =>
+    gaugeVars(props.progressWidth ?? DEFAULT_PROGRESS_WIDTH, scrollPercentage()),
+  );
+
+  onSettled(() =>
+    trackScroll(props.threshold ?? DEFAULT_THRESHOLD, (state) => {
       setIsVisible(state.isVisible);
       setScrollPercentage(state.scrollPercentage);
-    });
-  });
-
-  const color = () => props.color ?? "primary";
-  const showProgress = () => props.showProgress ?? true;
-  const progressWidth = () => props.progressWidth ?? 6;
-  const gaugeBorderWidth = () => progressWidth() * 0.5;
-
-  // Runtime gauge values only; the ring styling itself lives in the theme's track/progress slots.
-  const gaugeVars = () => ({
-    "--rl-stt-border": `${gaugeBorderWidth()}px`,
-    "--rl-stt-track": `var(--rl-${color()}-900)`,
-    "--rl-stt-gauge": `conic-gradient(from 0deg, var(--rl-${color()}-500) 0deg, var(--rl-${color()}-500) ${scrollPercentage() * 3.6}deg, transparent ${scrollPercentage() * 3.6}deg)`,
-    "--rl-stt-mask": `radial-gradient(circle closest-side, transparent calc(100% - ${gaugeBorderWidth()}px), #000 calc(100% - ${gaugeBorderWidth()}px))`,
-  });
+    }),
+  );
 
   return (
     <Tag
-      class={`transition-opacity duration-300 ${classes().root} ${
-        isVisible() ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-      }`}
+      class={classes().root}
       data-slot="root"
       data-theme={theme()}
+      data-state={isVisible() ? "visible" : "hidden"}
       {...rest}
     >
-      <button
+      <RLButton
         type="button"
         class={classes().button}
         aria-label={uiT("scroll-to-top.label")}
-        data-scroll-to-top-button
+        data-slot="button"
         onClick={scrollToTop}
       >
-        <div class={`relative size-full ${classes().progressBase}`} style={gaugeVars()}>
-          <div class={classes().track} />
-          {showProgress() ? <div class={classes().progress} data-gauge-progress /> : null}
-          <div class={classes().iconContainer}>
-            <RLIcon name="arrow-up" class={classes().icon} />
+        <div
+          class={classes().progressBase}
+          data-slot="progress-base"
+          style={{
+            "--rl-stt-border": gauge()["--rl-stt-border"],
+            "--rl-stt-gauge": gauge()["--rl-stt-gauge"],
+          }}
+        >
+          <div class={classes().track} data-slot="track" />
+          <Show when={props.hasProgress ?? true}>
+            <div class={classes().progress} data-slot="progress" />
+          </Show>
+          <div class={classes().iconContainer} data-slot="icon-container">
+            <Show
+              when={children()}
+              fallback={<RLIcon name="arrow-up" class={classes().icon} data-slot="icon" />}
+            >
+              {children()}
+            </Show>
           </div>
         </div>
-      </button>
+      </RLButton>
     </Tag>
   );
 };

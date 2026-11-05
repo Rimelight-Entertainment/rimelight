@@ -98,12 +98,12 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
       {
         label: t("app.header.link-groups.right.grand-tale.resources.download"),
         href: getLocaleUrl("/franchises/grand-tale/download"),
-        leadingIcon: "i-lucide-download",
+        leadingIcon: "download",
       },
       {
         label: t("app.header.link-groups.right.grand-tale.resources.support"),
         href: getLocaleUrl("/franchises/grand-tale/support"),
-        leadingIcon: "i-lucide-headset",
+        leadingIcon: "headset",
       },
     ],
   });
@@ -218,17 +218,17 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
       {
         label: t("app.header.link-groups.right.company.resources.docs"),
         href: getLocaleUrl("/company/docs"),
-        leadingIcon: "i-lucide-file-text",
+        leadingIcon: "file-text",
       },
       {
         label: t("app.header.link-groups.right.company.resources.branding"),
         href: getLocaleUrl("/company/branding"),
-        leadingIcon: "i-lucide-image",
+        leadingIcon: "image",
       },
       {
         label: t("app.header.link-groups.right.company.resources.legal"),
         href: getLocaleUrl("/company/legal"),
-        leadingIcon: "i-lucide-scale",
+        leadingIcon: "scale",
       },
     ],
   });
@@ -351,12 +351,12 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
       {
         label: t("app.header.link-groups.right.store.assistance.orders"),
         href: getLocaleUrl("/store/orders"),
-        leadingIcon: "i-lucide-shopping-bag",
+        leadingIcon: "shopping-bag",
       },
       {
         label: t("app.header.link-groups.right.store.assistance.customer-support"),
         href: getLocaleUrl("/franchises/grand-tale/support"),
-        leadingIcon: "i-lucide-help-circle",
+        leadingIcon: "help-circle",
       },
     ],
   });
@@ -642,17 +642,17 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
           },
           {
             label: t("app.header.user.dropdown.dashboard"),
-            icon: "i-lucide-layout-dashboard",
+            icon: "layout-dashboard",
             href: getLocaleUrl("/dashboard"),
           },
           {
             label: t("app.header.user.dropdown.profile"),
-            icon: "i-lucide-user",
+            icon: "user",
             href: getLocaleUrl("/dashboard/profile"),
           },
           {
             label: t("app.header.user.dropdown.settings"),
-            icon: "i-lucide-cog",
+            icon: "cog",
             href: getLocaleUrl("/dashboard/settings"),
           },
           {
@@ -660,7 +660,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
           },
           {
             label: t("app.header.user.dropdown.sign-out"),
-            icon: "i-lucide-log-out",
+            icon: "log-out",
             href: "/api/auth/logout",
             color: "error",
           },
@@ -839,23 +839,21 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
                 <RLButton
                   color="neutral"
                   variant="ghost"
-                  rounded={true}
-                  leadingIcon="i-lucide-menu"
+                  shape="pill"
+                  leadingIcon="menu"
                   class="!text-white"
                   aria-label={t("app.text.open-menu")}
                 />
               }
             >
-              {() => (
-                <RLNavigationMenu
-                  items={leftLinks()}
-                  panels={leftMobileSlots}
-                  orientation="vertical"
-                  ui={{
-                    link: "flex justify-start items-center w-full text-left py-2 text-lg transition-colors duration-200 hover:text-primary-400 data-[state=open]:text-primary-400 aria-[current]:text-primary-400",
-                  }}
-                />
-              )}
+              <RLNavigationMenu
+                items={leftLinks()}
+                panels={leftMobileSlots}
+                orientation="vertical"
+                ui={{
+                  link: "flex justify-start items-center w-full text-left py-2 text-lg transition-colors duration-200 hover:text-primary-400 data-[state=open]:text-primary-400 aria-[current]:text-primary-400",
+                }}
+              />
             </RLSlideover>
           </div>
         </div>
@@ -873,7 +871,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
           <RLButton
             variant="ghost"
             color="neutral"
-            leadingIcon="i-lucide-keyboard"
+            leadingIcon="keyboard"
             aria-label={t("app.text.keyboard-shortcuts")}
             onClick={() => useShortcuts().open()}
           />
@@ -886,7 +884,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
             >
               <RLDropdownMenu
                 items={userDropdownItems()}
-                content={{ align: "end", side: "bottom" }}
+                body={{ align: "end", side: "bottom" }}
                 class="text-white"
                 triggerSlot={
                   <div class="flex items-center gap-xs cursor-pointer text-white hover:text-primary-400 transition-colors py-1 px-2 rounded-lg">
@@ -924,26 +922,24 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
                     <RLButton
                       color="neutral"
                       variant="ghost"
-                      rounded={true}
-                      leadingIcon="i-lucide-ellipsis-vertical"
+                      shape="pill"
+                      leadingIcon="ellipsis-vertical"
                       class="!text-white"
                       aria-label={t("app.text.open-actions")}
                     />
                   }
                 >
-                  {() => (
-                    <div class="flex flex-col gap-md">
-                      <For each={actions()}>
-                        {(buttonProps) => <RLButton {...buttonProps} block={true} />}
-                      </For>
-                    </div>
-                  )}
+                  <div class="flex flex-col gap-md">
+                    <For each={actions()}>
+                      {(buttonProps) => <RLButton {...buttonProps} block={true} />}
+                    </For>
+                  </div>
                 </RLSlideover>
               }
             >
               <RLDropdownMenu
                 items={userDropdownItems()}
-                content={{ align: "end", side: "bottom" }}
+                body={{ align: "end", side: "bottom" }}
                 class="text-white"
                 triggerSlot={
                   <div class="flex items-center gap-xs cursor-pointer text-white hover:text-primary-400 transition-colors py-1 px-2 rounded-lg">

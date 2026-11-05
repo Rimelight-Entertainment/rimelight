@@ -1,33 +1,29 @@
 import type { Component } from "solid-js";
-import { For, Show } from "solid-js";
-import type { ThemeColor } from "../../types";
-import type { ErrorAction, RLErrorProps } from "./error.types";
+import { createMemo, For, Show } from "solid-js";
+import type { ErrorAction, ErrorStatusStyle, RLErrorProps } from "./error.types";
 import { RLErrorTheme } from "./error.theme";
 import { getErrorStatus, isDevEnvironment, isHttpError } from "./http-error";
 import { uiT } from "../../locale";
 import { RLButton } from "../button/RLButton";
 import { RLIcon } from "../icon/RLIcon";
 
-interface StatusStyle {
-  icon: string;
-  color: ThemeColor;
-}
+const SERVER_STYLE: ErrorStatusStyle = { icon: "server-crash", color: "error" };
 
-const STATUS_STYLES: Record<number, StatusStyle> = {
-  400: { icon: "i-lucide-circle-alert", color: "warning" },
-  401: { icon: "i-lucide-lock", color: "warning" },
-  403: { icon: "i-lucide-shield-alert", color: "error" },
-  404: { icon: "i-lucide-file-question", color: "primary" },
-  408: { icon: "i-lucide-clock", color: "warning" },
-  429: { icon: "i-lucide-gauge", color: "warning" },
-  500: { icon: "i-lucide-server-crash", color: "error" },
-  503: { icon: "i-lucide-server-off", color: "error" },
+const STATUS_STYLES: Record<number, ErrorStatusStyle> = {
+  400: { icon: "circle-alert", color: "warning" },
+  401: { icon: "lock", color: "warning" },
+  403: { icon: "shield-alert", color: "error" },
+  404: { icon: "file-question", color: "primary" },
+  408: { icon: "clock", color: "warning" },
+  429: { icon: "gauge", color: "warning" },
+  500: SERVER_STYLE,
+  503: { icon: "server-off", color: "error" },
 };
 
-const CLIENT_STYLE: StatusStyle = { icon: "i-lucide-circle-alert", color: "warning" };
+const CLIENT_STYLE: ErrorStatusStyle = { icon: "circle-alert", color: "warning" };
 
-const styleFor = (status: number): StatusStyle =>
-  STATUS_STYLES[status] ?? (status < 500 ? CLIENT_STYLE : STATUS_STYLES[500]!);
+const styleFor = (status: number): ErrorStatusStyle =>
+  STATUS_STYLES[status] ?? (status < 500 ? CLIENT_STYLE : SERVER_STYLE);
 
 /** Built-in text for a status, falling back to the generic client/server text. */
 const statusText = (kind: "titles" | "descriptions", status: number): string => {
@@ -54,7 +50,7 @@ const OMIT_KEYS = [
   "color",
   "hideStatus",
   "actions",
-  "showDetails",
+  "hasDetails",
 ] as const;
 
 /**
@@ -77,7 +73,7 @@ export const RLError: Component<RLErrorProps> = (props) => {
     const explicit = props.title;
     if (explicit !== undefined) return explicit;
     const err = props.error;
-    if (isHttpError(err)) return err.title;
+    if (isHttpError(err) && err.title) return err.title;
     return statusText("titles", status());
   };
 
@@ -89,11 +85,14 @@ export const RLError: Component<RLErrorProps> = (props) => {
     return statusText("descriptions", status());
   };
 
-  const showDetails = () =>
-    (props.showDetails ?? isDevEnvironment()) && props.error !== undefined && props.error !== null;
+  const hasDetails = () =>
+    (props.hasDetails ?? isDevEnvironment()) && props.error !== undefined && props.error !== null;
 
-  const actionList = (): ErrorAction[] =>
-    props.actions ?? [{ label: uiT("error.home"), href: "/", icon: "i-lucide-house" }];
+  const actionItems = createMemo(() =>
+    (props.actions ?? [{ label: uiT("error.home"), href: "/", icon: "house" }]).map(
+      (action: ErrorAction) => ({ ...action, class: [classes().action, action.class] }),
+    ),
+  );
 
   const statusLabel = () => `${uiT("error.status")} ${status()}`;
 
@@ -113,7 +112,11 @@ export const RLError: Component<RLErrorProps> = (props) => {
           when={slots.iconSlot()}
           fallback={
             <div class={classes().icon} data-slot="icon">
-              <RLIcon name={props.icon ?? style().icon} class="size-8" aria-hidden="true" />
+              <RLIcon
+                name={props.icon ?? style().icon}
+                class={classes().iconGlyph}
+                aria-hidden="true"
+              />
             </div>
           }
         >
@@ -137,7 +140,7 @@ export const RLError: Component<RLErrorProps> = (props) => {
           </div>
         </Show>
 
-        <Show when={showDetails()}>
+        <Show when={hasDetails()}>
           <details class={classes().details} data-slot="details">
             <summary>{uiT("error.details")}</summary>
             <pre>{errorDetails(props.error)}</pre>
@@ -147,24 +150,21 @@ export const RLError: Component<RLErrorProps> = (props) => {
         <Show
           when={slots.actionsSlot()}
           fallback={
-            <Show when={actionList().length > 0}>
+            <Show when={actionItems().length > 0}>
               <div class={classes().actions} data-slot="actions">
-                <For each={actionList()}>
-                  {(action) => {
-                    const { icon, label, color, variant, href, onClick, class: cls } = action;
-                    return (
-                      <RLButton
-                        variant={variant}
-                        color={color}
-                        href={href}
-                        onClick={onClick}
-                        {...(icon ? { leadingIcon: icon } : {})}
-                        class={`w-full justify-center py-2.5 font-semibold ${cls ?? ""}`}
-                      >
-                        {label}
-                      </RLButton>
-                    );
-                  }}
+                <For each={actionItems()}>
+                  {(action) => (
+                    <RLButton
+                      variant={action.variant}
+                      color={action.color}
+                      href={action.href}
+                      onClick={action.onClick}
+                      leadingIcon={action.icon}
+                      class={action.class}
+                    >
+                      {action.label}
+                    </RLButton>
+                  )}
                 </For>
               </div>
             </Show>

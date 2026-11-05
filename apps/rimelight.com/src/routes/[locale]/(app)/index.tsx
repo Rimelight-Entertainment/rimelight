@@ -39,7 +39,7 @@ export const HomePage: Component = () => {
       href: getLocaleUrl("/company/about"),
       color: "neutral",
       variant: "outline",
-      trailingIcon: "i-lucide-arrow-right",
+      trailingIcon: "arrow-right",
       class:
         "text-white ring-white bg-transparent hover:bg-white hover:text-black px-8 py-3 rounded-md font-bold transition-all duration-300 transform hover:scale-[1.03]",
     },
@@ -281,7 +281,7 @@ export const HomePage: Component = () => {
                   href={getLocaleUrl("/company/blog")}
                   color="primary"
                   variant="link"
-                  trailingIcon="i-lucide-arrow-right"
+                  trailingIcon="arrow-right"
                   class="font-bold uppercase tracking-widest text-primary-500 hover:text-primary-400 transition-colors flex items-center gap-xs"
                 />
               </div>

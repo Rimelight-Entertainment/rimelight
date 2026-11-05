@@ -5,15 +5,11 @@ export const RLBrowserMockupTheme = defineTheme("browser-mockup", {
     "root",
     "header",
     "controls",
-    "dot",
     "dotClose",
     "dotMinimize",
     "dotMaximize",
     "navigation",
     "navButton",
-    "navBack",
-    "navForward",
-    "navReload",
     "urlBar",
     "urlPrefix",
     "urlIcon",
@@ -27,16 +23,12 @@ export const RLBrowserMockupTheme = defineTheme("browser-mockup", {
     header:
       "flex items-center gap-3 px-4 py-2.5 border-b select-none border-default bg-elevated/40 shrink-0 transition-colors",
     controls: "flex items-center gap-2 shrink-0",
-    dot: "w-3 h-3 rounded-full transition-opacity duration-150 inline-block shrink-0",
-    dotClose: "",
-    dotMinimize: "",
-    dotMaximize: "",
+    dotClose: "w-3 h-3 rounded-full transition-opacity duration-150 inline-block shrink-0",
+    dotMinimize: "w-3 h-3 rounded-full transition-opacity duration-150 inline-block shrink-0",
+    dotMaximize: "w-3 h-3 rounded-full transition-opacity duration-150 inline-block shrink-0",
     navigation: "flex items-center gap-1.5 shrink-0 text-muted",
     navButton:
       "inline-flex items-center justify-center w-6 h-6 rounded-md transition-colors hover:bg-elevated hover:text-highlighted focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary text-muted",
-    navBack: "",
-    navForward: "",
-    navReload: "",
     urlBar:
       "flex-1 min-w-0 flex items-center gap-2 px-3 py-1 rounded-md text-xs font-mono bg-default border border-default text-muted transition-colors",
     urlPrefix: "flex items-center gap-1.5 shrink-0 text-dimmed",
@@ -78,7 +70,9 @@ export const RLBrowserMockupTheme = defineTheme("browser-mockup", {
     size: {
       xs: {
         header: "px-2 py-1 gap-1.5",
-        dot: "w-2 h-2",
+        dotClose: "w-2 h-2",
+        dotMinimize: "w-2 h-2",
+        dotMaximize: "w-2 h-2",
         controls: "gap-1",
         urlBar: "px-1.5 py-0.5 text-[10px]",
         urlIcon: "w-2.5 h-2.5",
@@ -87,7 +81,9 @@ export const RLBrowserMockupTheme = defineTheme("browser-mockup", {
       },
       sm: {
         header: "px-3 py-1.5 gap-2",
-        dot: "w-2.5 h-2.5",
+        dotClose: "w-2.5 h-2.5",
+        dotMinimize: "w-2.5 h-2.5",
+        dotMaximize: "w-2.5 h-2.5",
         controls: "gap-1.5",
         urlBar: "px-2 py-0.5 text-[11px]",
         urlIcon: "w-3 h-3",
@@ -96,7 +92,9 @@ export const RLBrowserMockupTheme = defineTheme("browser-mockup", {
       },
       md: {
         header: "px-4 py-2 gap-3",
-        dot: "w-3 h-3",
+        dotClose: "w-3 h-3",
+        dotMinimize: "w-3 h-3",
+        dotMaximize: "w-3 h-3",
         controls: "gap-2",
         urlBar: "px-3 py-1 text-xs",
         urlIcon: "w-3.5 h-3.5",
@@ -105,7 +103,9 @@ export const RLBrowserMockupTheme = defineTheme("browser-mockup", {
       },
       lg: {
         header: "px-5 py-2.5 gap-3.5",
-        dot: "w-3.5 h-3.5",
+        dotClose: "w-3.5 h-3.5",
+        dotMinimize: "w-3.5 h-3.5",
+        dotMaximize: "w-3.5 h-3.5",
         controls: "gap-2.5",
         urlBar: "px-3.5 py-1.5 text-sm",
         urlIcon: "w-4 h-4",
@@ -114,7 +114,9 @@ export const RLBrowserMockupTheme = defineTheme("browser-mockup", {
       },
       xl: {
         header: "px-6 py-3.5 gap-4",
-        dot: "w-4 h-4",
+        dotClose: "w-4 h-4",
+        dotMinimize: "w-4 h-4",
+        dotMaximize: "w-4 h-4",
         controls: "gap-3",
         urlBar: "px-4 py-2 text-base",
         urlIcon: "w-4.5 h-4.5",
@@ -124,9 +126,9 @@ export const RLBrowserMockupTheme = defineTheme("browser-mockup", {
     },
     controlsVariant: {
       color: {
-        dotClose: "bg-rose-500 hover:opacity-80",
-        dotMinimize: "bg-amber-400 hover:opacity-80",
-        dotMaximize: "bg-emerald-500 hover:opacity-80",
+        dotClose: "bg-error hover:opacity-80",
+        dotMinimize: "bg-warning hover:opacity-80",
+        dotMaximize: "bg-success hover:opacity-80",
       },
       monochrome: {
         dotClose: "bg-inverted opacity-60 hover:opacity-100",
@@ -138,14 +140,13 @@ export const RLBrowserMockupTheme = defineTheme("browser-mockup", {
       },
     },
     padded: {
-      true: {},
       false: {
         body: "p-0!",
       },
     },
     shadow: {
       true: {
-        root: "shadow-lg shadow-black/5 dark:shadow-black/20",
+        root: "shadow-lg shadow-scrim/5 dark:shadow-scrim/20",
       },
       false: {
         root: "shadow-none",

@@ -27,7 +27,7 @@ export const RLBannerTheme = defineTheme("banner", {
     title: "text-sm text-inverted font-medium truncate",
     actions: "relative flex items-center gap-1.5 shrink-0 isolate",
     close:
-      "relative isolate text-inverted hover:bg-black/10 dark:hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-current -me-1.5 lg:me-0 transition-colors",
+      "relative isolate text-inverted hover:bg-inverted/10 focus-visible:ring-2 focus-visible:ring-current -me-1.5 lg:me-0 transition-colors",
   },
   variants: {
     color: "auto",
@@ -41,21 +41,18 @@ export const RLBannerTheme = defineTheme("banner", {
     },
     sticky: {
       true: {
-        root: "sticky top-0 inset-x-0 z-50 transition-[top,transform] duration-300 ease-in-out data-[collapsed=true]:-translate-y-full",
+        root: "sticky top-0 inset-x-0 z-50 transition-[top,transform] duration-300 ease-in-out data-[collapsed]:-translate-y-full",
       },
-      false: {},
     },
     fixed: {
       true: {
-        root: "fixed top-0 left-0 right-0 z-50 transition-[top,transform,opacity] duration-300 ease-in-out data-[collapsed=true]:-translate-y-full",
+        root: "fixed top-0 left-0 right-0 z-50 transition-[top,transform,opacity] duration-300 ease-in-out data-[collapsed]:-translate-y-full",
       },
-      false: {},
     },
     to: {
       true: {
         root: "has-[>a:focus-visible]:outline-2 has-[>a:focus-visible]:outline-solid has-[>a:focus-visible]:outline-current -outline-offset-3",
       },
-      false: {},
     },
   },
   compoundVariants: [

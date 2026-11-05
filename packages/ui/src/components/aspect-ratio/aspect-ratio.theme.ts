@@ -7,4 +7,5 @@ export const RLAspectRatioTheme = defineTheme("aspect-ratio", {
     spacer: "block h-auto w-full pointer-events-none",
     content: "absolute inset-0 h-full w-full object-cover [&>*]:h-full [&>*]:w-full",
   },
+  variants: {},
 });

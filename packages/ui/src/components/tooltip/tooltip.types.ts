@@ -1,12 +1,13 @@
 import type { JSX } from "@solidjs/web";
 import type { InferThemeProps } from "../../resolver";
+import type { SlotRenderer } from "../../types";
 import type { RLTooltipTheme } from "./tooltip.theme";
 
 export type RLTooltipProps = Omit<InferThemeProps<typeof RLTooltipTheme>, "placement"> & {
   /**
-   * Plain text shown inside the tooltip. Use `bodySlot` for JSX.
+   * Plain text shown inside the tooltip. Used when `bodySlot` is not set.
    */
-  content?: string | undefined;
+  body?: string | undefined;
   /**
    * Placement of the tooltip relative to the trigger.
    *
@@ -30,9 +31,9 @@ export type RLTooltipProps = Omit<InferThemeProps<typeof RLTooltipTheme>, "place
    */
   children?: JSX.Element | undefined;
   /**
-   * Tooltip body content. Takes precedence over the `content` string.
+   * Tooltip body JSX. Takes precedence over the `body` string.
    */
-  bodySlot?: JSX.Element | undefined;
+  bodySlot?: SlotRenderer;
   /**
    * Called whenever the open state changes through hover or focus.
    */

@@ -13,7 +13,8 @@ export const RLStepperTheme = defineTheme("stepper", {
     "wrapper",
     "title",
     "description",
-    "content",
+    "body",
+    "panel",
   ],
   base: {
     root: "flex gap-4 w-full",
@@ -25,12 +26,13 @@ export const RLStepperTheme = defineTheme("stepper", {
     indicator: "flex items-center justify-center size-full text-current",
     icon: "shrink-0 size-4 text-current transition-colors",
     separator:
-      "flex-1 h-0.5 mx-2 self-start mt-4 transition-colors rounded-full group-data-[state=completed]:bg-[var(--rl-bg)]",
+      "flex-1 h-0.5 mx-2 self-start mt-4 transition-colors rounded-full bg-muted data-[state=completed]:bg-primary",
     wrapper: "mt-2 text-center",
     title:
       "text-xs font-semibold group-data-[state=active]:font-bold group-data-[state=active]:text-[var(--rl-text)] group-data-[state=completed]:text-[var(--rl-text)] text-muted transition-colors",
     description: "text-dimmed text-wrap text-xs",
-    content: "size-full",
+    body: "size-full",
+    panel: "w-full",
   },
   variants: {
     orientation: {

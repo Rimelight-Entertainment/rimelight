@@ -1,13 +1,22 @@
 import { defineTheme } from "../../resolver";
 
 export const RLBadgeTheme = defineTheme("badge", {
-  slots: ["root", "label", "leadingIcon", "leadingAvatar", "leadingAvatarSize", "trailingIcon"],
+  slots: [
+    "root",
+    "label",
+    "leadingSlot",
+    "leadingIcon",
+    "leadingAvatar",
+    "trailingSlot",
+    "trailingIcon",
+  ],
   base: {
     root: "font-medium inline-flex items-center transition-all duration-150 select-none",
     label: "truncate",
+    leadingSlot: "inline-flex items-center shrink-0",
     leadingIcon: "shrink-0",
     leadingAvatar: "shrink-0",
-    leadingAvatarSize: "",
+    trailingSlot: "inline-flex items-center shrink-0",
     trailingIcon: "shrink-0",
   },
   variants: {
@@ -32,20 +41,16 @@ export const RLBadgeTheme = defineTheme("badge", {
     },
     color: "auto",
     size: {
-      xs: { root: "text-xs gap-1", leadingAvatarSize: "xs" },
-      sm: { root: "text-xs gap-1", leadingAvatarSize: "xs" },
-      md: { root: "text-sm gap-1", leadingAvatarSize: "xs" },
-      lg: { root: "text-sm gap-1.5", leadingAvatarSize: "xs" },
-      xl: { root: "text-base gap-1.5", leadingAvatarSize: "xs" },
+      xs: { root: "text-xs gap-1" },
+      sm: { root: "text-xs gap-1" },
+      md: { root: "text-sm gap-1" },
+      lg: { root: "text-sm gap-1.5" },
+      xl: { root: "text-base gap-1.5" },
     },
     shape: {
-      square: { root: "rounded-none" },
+      square: { root: "rounded-none justify-center" },
       rounded: { root: "rounded-md" },
       pill: { root: "rounded-full" },
-    },
-    square: {
-      true: { root: "justify-center" },
-      false: { root: "" },
     },
   },
   compoundVariants: [
@@ -84,56 +89,56 @@ export const RLBadgeTheme = defineTheme("badge", {
         root: "text-default bg-transparent",
       },
     },
-    // Non-square horizontal & vertical padding per size
+    // Rounded and pill padding per size
     {
       size: "xs",
-      square: false,
+      shape: ["rounded", "pill"],
       class: { root: "px-1 py-0.5" },
     },
     {
       size: "sm",
-      square: false,
+      shape: ["rounded", "pill"],
       class: { root: "px-1.5 py-1" },
     },
     {
       size: "md",
-      square: false,
+      shape: ["rounded", "pill"],
       class: { root: "px-2 py-1" },
     },
     {
       size: "lg",
-      square: false,
+      shape: ["rounded", "pill"],
       class: { root: "px-2 py-1" },
     },
     {
       size: "xl",
-      square: false,
+      shape: ["rounded", "pill"],
       class: { root: "px-2.5 py-1" },
     },
     // Square equal padding and min-width per size
     {
       size: "xs",
-      square: true,
+      shape: "square",
       class: { root: "p-0.5 min-w-4" },
     },
     {
       size: "sm",
-      square: true,
+      shape: "square",
       class: { root: "p-1 min-w-5" },
     },
     {
       size: "md",
-      square: true,
+      shape: "square",
       class: { root: "p-1 min-w-6" },
     },
     {
       size: "lg",
-      square: true,
+      shape: "square",
       class: { root: "p-1 min-w-7" },
     },
     {
       size: "xl",
-      square: true,
+      shape: "square",
       class: { root: "p-1 min-w-8" },
     },
     // Rounded shape refinement for small sizes
@@ -153,6 +158,5 @@ export const RLBadgeTheme = defineTheme("badge", {
     color: "primary",
     size: "md",
     shape: "rounded",
-    square: false,
   },
 });

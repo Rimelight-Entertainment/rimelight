@@ -3,19 +3,20 @@ import { RLFileUploadTheme } from "./file-upload.theme";
 import { createSignal, Show, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 import { uiT } from "../../locale";
+import { renderSlot } from "../../slot";
 
 export const RLFileUpload: Component<RLFileUploadProps> = (props) => {
+  const [dragging, setDragging] = createSignal(false);
+
   const { Tag, classes, rest, children, slots, theme } = RLFileUploadTheme.setup(props, {
     omit: ["accept", "multiple", "title", "description", "icon", "onValueChange"] as const,
     slots: ["iconSlot"] as const,
+    variants: () => ({ dragging: dragging() }),
   });
 
-  const [dragging, setDragging] = createSignal(false);
   const [fileLabel, setFileLabel] = createSignal("");
 
   let inputRef: HTMLInputElement | undefined;
-
-  const uploadTitle = () => props.title ?? uiT("file-upload.title");
 
   const openPicker = () => {
     if (props.disabled) return;
@@ -32,8 +33,11 @@ export const RLFileUpload: Component<RLFileUploadProps> = (props) => {
 
   const showFiles = (files: FileList | null) => {
     if (!files || files.length === 0) return;
+    const first = files[0];
     setFileLabel(
-      files.length === 1 ? files[0]!.name : `${files.length} ${uiT("file-upload.files-selected")}`,
+      files.length === 1 && first
+        ? first.name
+        : `${files.length} ${uiT("file-upload.files-selected")}`,
     );
   };
 
@@ -45,10 +49,6 @@ export const RLFileUpload: Component<RLFileUploadProps> = (props) => {
   const handleDragOver = (e: DragEvent) => {
     e.preventDefault();
     setDragging(true);
-  };
-
-  const handleDragLeave = () => {
-    setDragging(false);
   };
 
   const handleDrop = (e: DragEvent) => {
@@ -71,19 +71,18 @@ export const RLFileUpload: Component<RLFileUploadProps> = (props) => {
     <Tag
       data-slot="root"
       data-theme={theme()}
-      class={classes().root + (dragging() ? " border-primary bg-primary/5" : "")}
-      data-fileUpload
-      data-disabled={props.disabled ? "true" : undefined}
+      class={classes().root}
+      data-file-upload=""
+      data-disabled={props.disabled ? "" : undefined}
       role="button"
       tabindex={props.disabled ? -1 : 0}
-      aria-label={uploadTitle()}
+      aria-label={props.title ?? uiT("file-upload.title")}
       onClick={openPicker}
       onKeyDown={handleKeyDown}
       onDragOver={handleDragOver}
-      onDragLeave={handleDragLeave}
+      onDragLeave={() => setDragging(false)}
       onDrop={handleDrop}
       {...rest}
-      onChange={undefined}
     >
       <input
         type="file"
@@ -91,7 +90,7 @@ export const RLFileUpload: Component<RLFileUploadProps> = (props) => {
         accept={props.accept}
         multiple={props.multiple}
         disabled={props.disabled}
-        data-fileUpload-input
+        data-file-upload-input=""
         aria-hidden="true"
         tabindex={-1}
         ref={(el) => (inputRef = el)}
@@ -99,18 +98,21 @@ export const RLFileUpload: Component<RLFileUploadProps> = (props) => {
       />
 
       <div class={classes().content} data-slot="content">
-        {slots.iconSlot() ? (
-          slots.iconSlot()
-        ) : (
-          <RLIcon name={props.icon ?? "cloud-upload"} class={classes().icon} aria-hidden="true" />
-        )}
+        <Show
+          when={slots.iconSlot()}
+          fallback={
+            <RLIcon name={props.icon ?? "cloud-upload"} class={classes().icon} aria-hidden="true" />
+          }
+        >
+          {renderSlot(slots.iconSlot())}
+        </Show>
 
         <Show
           when={children()}
           fallback={
             <>
               <p class={classes().title} data-slot="title">
-                {uploadTitle()}
+                {props.title ?? uiT("file-upload.title")}
               </p>
               <Show when={props.description}>
                 <p class={classes().description} data-slot="description">
@@ -118,8 +120,9 @@ export const RLFileUpload: Component<RLFileUploadProps> = (props) => {
                 </p>
               </Show>
               <Show when={props.accept}>
-                <p class="mt-1 text-[10px] text-muted/70">
-                  {uiT("file-upload.accepted")} <span class="font-mono">{props.accept}</span>
+                <p class={classes().accepted}>
+                  {uiT("file-upload.accepted")}{" "}
+                  <span class={classes().acceptedValue}>{props.accept}</span>
                 </p>
               </Show>
             </>
@@ -128,12 +131,8 @@ export const RLFileUpload: Component<RLFileUploadProps> = (props) => {
           {children()}
         </Show>
 
-        <div
-          class={`mt-3 text-xs text-muted ${fileLabel() ? "" : "hidden"}`}
-          data-fileUpload-filelist
-          aria-live="polite"
-        >
-          {fileLabel() || "\u00a0"}
+        <div class={classes().filelist} data-file-upload-filelist="" aria-live="polite">
+          {fileLabel()}
         </div>
       </div>
     </Tag>

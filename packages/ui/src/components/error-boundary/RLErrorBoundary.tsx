@@ -5,6 +5,7 @@ import { RLErrorBoundaryTheme } from "./error-boundary.theme";
 import type { ErrorAction } from "../error/error.types";
 import { RLError } from "../error/RLError";
 import { getErrorStatus } from "../error/http-error";
+import { renderSlot } from "../../slot";
 import { uiT } from "../../locale";
 
 const OMIT_KEYS = [
@@ -48,23 +49,20 @@ export const RLErrorBoundary: Component<RLErrorBoundaryProps> = (props) => {
             },
           );
 
-          const fallback = slots.fallbackSlot();
-          if (fallback !== undefined) {
-            const context = { error, reset };
-            return typeof fallback === "function" ? fallback(context) : fallback;
-          }
+          const customFallback = slots.fallbackSlot();
+          if (customFallback !== undefined) return renderSlot(customFallback, { error, reset });
 
           const actions = (): ErrorAction[] => {
             const home: ErrorAction = {
               label: props.homeLabel ?? uiT("error.home"),
               href: props.homeHref ?? "/",
-              icon: "i-lucide-house",
+              icon: "house",
             };
             if (getErrorStatus(error) < 500) return [home];
             return [
               {
                 label: props.retryLabel ?? uiT("error.retry"),
-                icon: "i-lucide-rotate-ccw",
+                icon: "rotate-ccw",
                 onClick: () => reset(),
               },
               { ...home, variant: "outline", color: "neutral" },

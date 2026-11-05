@@ -7,11 +7,13 @@ import { t } from "@rimelight/i18n";
 const COLORS = AUDIT_COLORS;
 const VARIANTS = ["solid", "outline", "soft", "subtle", "ghost", "link"] as const;
 const SIZES = ["xs", "sm", "md", "lg", "xl"] as const;
+const SHAPES = ["square", "rounded", "pill"] as const;
 
 export const ButtonSandbox = (): JSX.Element => {
   const [color, setColor] = createSignal<string>("primary");
   const [variant, setVariant] = createSignal<(typeof VARIANTS)[number]>("solid");
   const [size, setSize] = createSignal<(typeof SIZES)[number]>("md");
+  const [shape, setShape] = createSignal<(typeof SHAPES)[number]>("rounded");
   const [label, setLabel] = createSignal("Button Action");
   const [hasIcon, setHasIcon] = createSignal(true);
   const [isTrailing, setIsTrailing] = createSignal(false);
@@ -20,7 +22,6 @@ export const ButtonSandbox = (): JSX.Element => {
   const [loadingAuto, setLoadingAuto] = createSignal(false);
   const [isDisabled, setIsDisabled] = createSignal(false);
   const [isBlock, setIsBlock] = createSignal(false);
-  const [isSquare, setIsSquare] = createSignal(false);
   const [isActive, setIsActive] = createSignal(false);
   const [isLink, setIsLink] = createSignal(false);
 
@@ -78,6 +79,26 @@ export const ButtonSandbox = (): JSX.Element => {
                 onClick={() => setSize(s)}
                 class={`px-2 py-0.5 rounded text-xs font-mono transition-colors ${
                   size() === s
+                    ? "bg-primary text-inverted font-bold"
+                    : "bg-elevated text-muted hover:text-highlighted border border-default"
+                }`}
+              >
+                {s}
+              </button>
+            )}
+          </For>
+        </div>
+
+        {/* Shapes */}
+        <div class="flex items-center gap-1.5 flex-wrap">
+          <span class="text-muted mr-1">shape</span>
+          <For each={SHAPES}>
+            {(s) => (
+              <button
+                type="button"
+                onClick={() => setShape(s)}
+                class={`px-2 py-0.5 rounded text-xs font-mono transition-colors ${
+                  shape() === s
                     ? "bg-primary text-inverted font-bold"
                     : "bg-elevated text-muted hover:text-highlighted border border-default"
                 }`}
@@ -170,17 +191,6 @@ export const ButtonSandbox = (): JSX.Element => {
           <label class="flex items-center gap-1.5 cursor-pointer">
             <input
               type="checkbox"
-              checked={isSquare()}
-              onInput={(e) => setIsSquare(e.currentTarget.checked)}
-              onChange={(e) => setIsSquare(e.currentTarget.checked)}
-              class="rounded border-default"
-            />
-            <span class="text-muted">{t("app.text.square")}</span>
-          </label>
-
-          <label class="flex items-center gap-1.5 cursor-pointer">
-            <input
-              type="checkbox"
               checked={isActive()}
               onInput={(e) => setIsActive(e.currentTarget.checked)}
               onChange={(e) => setIsActive(e.currentTarget.checked)}
@@ -217,6 +227,7 @@ export const ButtonSandbox = (): JSX.Element => {
         color={color()}
         variant={variant()}
         size={size()}
+        shape={shape()}
         label={label() || undefined}
         icon={hasIcon() && !hasAvatar() ? (isTrailing() ? "arrow-right" : "rocket") : undefined}
         trailing={isTrailing()}
@@ -225,7 +236,6 @@ export const ButtonSandbox = (): JSX.Element => {
         loadingAuto={loadingAuto()}
         disabled={isDisabled()}
         block={isBlock()}
-        square={isSquare()}
         active={isActive()}
         href={isLink() ? "https://rimelight.com" : undefined}
         target={isLink() ? "_blank" : undefined}
@@ -297,12 +307,25 @@ export const buttonAudit: ComponentAuditDefinition = {
       ),
     },
     {
+      id: "shape-spectrum",
+      title: "Shape spectrum",
+      description:
+        "The three shapes: square, rounded (default), and pill. An icon-only button without a label defaults to square.",
+      render: () => (
+        <div class="flex items-center gap-3 flex-wrap">
+          <For each={SHAPES}>
+            {(s) => <RLButton shape={s} label={s} color="primary" variant="solid" />}
+          </For>
+          <RLButton icon="star" aria-label="Favorite" variant="subtle" color="warning" />
+        </div>
+      ),
+    },
+    {
       id: "icon-and-avatar-variations",
       get title() {
         return t("app.text.icons-avatars");
       },
-      description:
-        "Leading icon, trailing icon, leading avatar, and icon-only square button modes.",
+      description: "Leading icon, trailing icon, leading avatar, and icon-only button modes.",
       render: () => (
         <div class="flex items-center gap-3 flex-wrap">
           <RLButton icon="search" label="Search" />
@@ -319,8 +342,7 @@ export const buttonAudit: ComponentAuditDefinition = {
             variant="outline"
             color="neutral"
           />
-          <RLButton icon="star" aria-label={"Favorite"} variant="subtle" color="warning" />
-          <RLButton icon="trash" aria-label={"Delete"} variant="ghost" color="error" />
+          <RLButton icon="trash" aria-label="Delete" variant="ghost" color="error" />
         </div>
       ),
     },
@@ -330,7 +352,7 @@ export const buttonAudit: ComponentAuditDefinition = {
         return t("app.text.loading-loadingauto-states");
       },
       description:
-        "Leading and trailing animated spinner loaders, custom loader icons, and automatic promise resolution with loadingAuto.",
+        "Leading and trailing spinner loaders, a custom loading icon, and automatic promise resolution with loadingAuto.",
       render: () => (
         <div class="flex items-center gap-3 flex-wrap">
           <RLButton loading label="Processing..." color="primary" />
@@ -342,12 +364,12 @@ export const buttonAudit: ComponentAuditDefinition = {
             variant="outline"
             onClick={() => new Promise<void>((resolve) => setTimeout(resolve, 1500))}
           />
-          <RLButton loading square aria-label={"Loading action"} />
+          <RLButton loading aria-label="Loading action" />
         </div>
       ),
     },
     {
-      id: "link-and-active-mode",
+      id: "active-state",
       get title() {
         return t("app.text.interactive-link-active-state");
       },
@@ -370,6 +392,7 @@ export const buttonAudit: ComponentAuditDefinition = {
             activeVariant="solid"
             label="Active Route Button"
           />
+          <RLButton active activeColor="success" activeVariant="solid" label="Active Button" />
           <RLButton
             active
             activeClass="ring-2 ring-primary font-bold"
@@ -402,21 +425,18 @@ export const buttonAudit: ComponentAuditDefinition = {
       ),
     },
     {
-      id: "custom-slots-and-ui",
+      id: "custom-slots",
       get title() {
         return t("app.text.custom-slots-ui-overrides");
       },
       description:
-        "Slot overrides for leading/trailing elements, default slot content, and slot styling via the `ui` prop.",
+        "Slot overrides for leading and trailing elements, default slot content, and extra classes via the class prop.",
       render: () => (
         <div class="flex items-center gap-3 flex-wrap">
           <RLButton
             leadingSlot={<span class="text-sm">✨</span>}
-            trailingSlot={<span class="text-xs bg-white/20 px-1 rounded">{"HOT"}</span>}
-            ui={{
-              root: "shadow-lg",
-              label: "tracking-wider uppercase font-bold",
-            }}
+            trailingSlot={<span class="text-xs bg-on-scrim/20 px-1 rounded">HOT</span>}
+            class="shadow-lg"
           >
             Special Promotion
           </RLButton>
@@ -429,13 +449,13 @@ export const buttonAudit: ComponentAuditDefinition = {
       criterion: "API parity (Button)",
       status: "pass",
       notes:
-        "label, color, activeColor, variant, activeVariant, size, square, block, loading, loadingAuto, loadingIcon, icon, avatar, leading, leadingIcon, trailing, trailingIcon, active, activeClass, inactiveClass, href, target, rel, noRel, external, disabled, type, as, fieldGroup, ui, class, onClick. onClick accepts a single handler or an array. square uses `square || (!label && !children)` rule.",
+        "label, color, activeColor, variant, activeVariant, size, shape, block, loading, loadingAuto, loadingIcon, icon, avatar, leading, leadingIcon, leadingSlot, trailing, trailingIcon, trailingSlot, active, activeClass, inactiveClass, href, target, rel, noRel, external, type, as, fieldGroup, class, onClick, ref. onClick accepts a single handler or an array. shape defaults to square for icon-only buttons without a label.",
     },
     {
       criterion: "Slot pattern parity (leading, default, trailing)",
       status: "pass",
       notes:
-        "leadingSlot/leading, children/default slot, trailingSlot/trailing, plus loading spinner in either position. data-slot names follow the repo's kebab-case convention (root, leading-icon, trailing-icon, external-hint).",
+        "leadingSlot, children (default slot), trailingSlot, plus loading spinner in either position. data-slot names follow the kebab-case convention (root, label, leading-icon, leading-avatar, trailing-icon).",
     },
     {
       criterion: "Full WAI-ARIA compliance",
@@ -452,25 +472,18 @@ export const buttonAudit: ComponentAuditDefinition = {
     {
       criterion: "No innerHTML / dangerouslySetInnerHTML",
       status: "pass",
-      notes:
-        "100% reactive JSX. Fixed alongside: RLIcon now parses icon markup into Solid JSX (svgMarkup) instead of innerHTML, and RLLayoutGrid builds its indicator/columns through DOM nodes with theme classes instead of innerHTML.",
+      notes: "100% reactive JSX.",
     },
     {
       criterion: "No hydration mismatches",
       status: "pass",
-      notes:
-        "Pure declarative reactive rendering, deterministic SSR output (asserted by tests). RLIcon's new JSX path builds identical trees on server and client.",
-    },
-    {
-      criterion: "No cx() calls directly in components",
-      status: "pass",
-      notes:
-        "RLButton merges classes only through RLButtonTheme. Fixed alongside: RLBreadcrumb's cx() calls were replaced by a theme-layer mergeUi helper, and hardcoded classes moved into breadcrumb.theme.ts (overflow, overflowEllipsis, overflowCount).",
+      notes: "Pure declarative reactive rendering with deterministic SSR output.",
     },
     {
       criterion: "Exclusively named exports",
       status: "pass",
-      notes: "RLButton, ButtonProps, ButtonClickHandler and button.helpers exports are all named.",
+      notes:
+        "RLButton, RLButtonProps, ButtonClickHandler and button.helpers exports are all named.",
     },
     {
       criterion: "Audited components render bare (no harness wrappers)",

@@ -15,21 +15,17 @@ export const RLPageSectionTheme = defineTheme("page-section", {
     "body",
     "footer",
     "links",
+    "action",
   ],
   base: {
     root: "relative",
     background: "absolute inset-0 -z-1 overflow-hidden",
     container:
       "mx-auto w-full max-w-[1440px] px-xs sm:px-md md:px-xl lg:px-xl flex flex-col lg:grid",
-    wrapper: "",
-    header: "",
     leading: "flex items-center mb-6",
     leadingIcon: "size-10 shrink-0 text-primary",
-    headline: "",
     title: "text-pretty tracking-tight font-bold",
     description: "text-muted",
-    body: "",
-    footer: "",
     links: "flex flex-wrap",
   },
   variants: {
@@ -68,6 +64,7 @@ export const RLPageSectionTheme = defineTheme("page-section", {
     ctaVariant: {
       solid: {
         root: "bg-inverted text-inverted",
+        title: "text-inverted",
         description: "text-dimmed",
       },
       outline: {
@@ -92,7 +89,6 @@ export const RLPageSectionTheme = defineTheme("page-section", {
         description: "text-pretty",
       },
       vertical: {
-        container: "",
         headline: "justify-center",
         leading: "justify-center",
         title: "text-center",
@@ -100,24 +96,20 @@ export const RLPageSectionTheme = defineTheme("page-section", {
         links: "justify-center",
       },
     },
-    reverse: {
-      true: {},
+    contentVisibility: {
+      auto: {
+        root: "[content-visibility:auto] [contain-intrinsic-size:var(--rl-contain-intrinsic-size,auto_500px)]",
+      },
     },
-    headline: {
+    hasHeadline: {
       true: {
         headline: "font-semibold text-primary flex items-center gap-1.5",
       },
     },
-    title: {
+    hasTitle: {
       true: {
         description: "mt-6",
       },
-    },
-    description: {
-      true: {},
-    },
-    body: {
-      true: {},
     },
   },
   compoundVariants: [
@@ -145,7 +137,7 @@ export const RLPageSectionTheme = defineTheme("page-section", {
     {
       layout: "default",
       orientation: "vertical",
-      title: true,
+      hasTitle: true,
       class: {
         body: "mt-16",
       },
@@ -153,7 +145,7 @@ export const RLPageSectionTheme = defineTheme("page-section", {
     {
       layout: "default",
       orientation: "vertical",
-      description: true,
+      hasDescription: true,
       class: {
         body: "mt-16",
       },
@@ -161,41 +153,9 @@ export const RLPageSectionTheme = defineTheme("page-section", {
     {
       layout: "default",
       orientation: "vertical",
-      body: true,
+      hasBody: true,
       class: {
         footer: "mt-16",
-      },
-    },
-    {
-      layout: "cta",
-      ctaVariant: "outline",
-      class: {
-        root: "bg-default ring ring-default",
-      },
-    },
-    {
-      layout: "cta",
-      ctaVariant: "solid",
-      class: {
-        root: "bg-inverted text-inverted",
-        title: "text-inverted",
-        description: "text-dimmed",
-      },
-    },
-    {
-      layout: "cta",
-      ctaVariant: "soft",
-      class: {
-        root: "bg-elevated/50",
-        description: "text-toned",
-      },
-    },
-    {
-      layout: "cta",
-      ctaVariant: "subtle",
-      class: {
-        root: "bg-elevated/50 ring ring-default",
-        description: "text-toned",
       },
     },
   ],

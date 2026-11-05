@@ -7,7 +7,9 @@ export type BreadcrumbSlot =
   | "link"
   | "linkLeadingIcon"
   | "linkLeadingAvatar"
-  | "linkLabel"
+  | "itemLeading"
+  | "itemLabel"
+  | "itemTrailing"
   | "separator"
   | "separatorIcon"
   | "overflow"
@@ -24,7 +26,9 @@ export const RLBreadcrumbTheme = defineTheme("breadcrumb", {
     "link",
     "linkLeadingIcon",
     "linkLeadingAvatar",
-    "linkLabel",
+    "itemLeading",
+    "itemLabel",
+    "itemTrailing",
     "separator",
     "separatorIcon",
     "overflow",
@@ -36,9 +40,11 @@ export const RLBreadcrumbTheme = defineTheme("breadcrumb", {
     list: "flex items-center gap-1.5 flex-wrap",
     item: "inline-flex items-center gap-1.5 min-w-0",
     link: "group relative inline-flex items-center gap-1.5 text-sm min-w-0 rounded-md transition-colors cursor-pointer decoration-none",
-    linkLeadingIcon: "shrink-0 size-4 flex items-center justify-center text-inherit",
+    linkLeadingIcon: "shrink-0 size-4 flex items-center justify-center text-current",
     linkLeadingAvatar: "shrink-0 inline-flex items-center justify-center",
-    linkLabel: "truncate",
+    itemLeading: "shrink-0 inline-flex items-center justify-center",
+    itemLabel: "truncate",
+    itemTrailing: "shrink-0 inline-flex items-center justify-center",
     separator: "inline-flex items-center justify-center shrink-0 select-none",
     separatorIcon: "shrink-0 size-3.5 text-muted flex items-center justify-center",
     overflow: "inline-flex items-center gap-1.5 list-none shrink-0",
@@ -59,9 +65,7 @@ export const RLBreadcrumbTheme = defineTheme("breadcrumb", {
         link: "cursor-not-allowed opacity-75 pointer-events-none",
       },
     },
-    to: {
-      true: "",
-    },
+    to: {},
     color: "auto",
   },
   compoundVariants: [

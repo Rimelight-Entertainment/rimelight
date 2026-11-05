@@ -30,29 +30,24 @@ export interface StepperItem {
   disabled?: boolean | undefined;
 }
 
-export interface StepperSlotContext {
-  item: {
-    title?: string | undefined;
-    description?: string | undefined;
-    content?: string | undefined;
-    icon?: string | undefined;
-    value?: string | number | undefined;
-    disabled?: boolean | undefined;
-  };
-  index: number;
-  state: "completed" | "active" | "inactive";
-}
+export type StepperState = "completed" | "active" | "inactive";
 
 export interface StepperItemContext {
-  item: {
-    title?: string | undefined;
-    description?: string | undefined;
-    content?: string | undefined;
-    icon?: string | undefined;
-    value?: string | number | undefined;
-    disabled?: boolean | undefined;
-  };
+  /**
+   * The step being rendered.
+   */
+  item: StepperItem;
+  /**
+   * Zero-based position of the step.
+   */
   index: number;
+}
+
+export interface StepperSlotContext extends StepperItemContext {
+  /**
+   * Progress of the step relative to the active one.
+   */
+  state: StepperState;
 }
 
 export type RLStepperProps = InferThemeProps<typeof RLStepperTheme> & {
@@ -93,9 +88,9 @@ export type RLStepperProps = InferThemeProps<typeof RLStepperTheme> & {
   /**
    * Custom indicator content per step. Replaces the icon or number.
    */
-  indicatorSlot?: SlotRenderer<StepperSlotContext>;
+  indicatorSlot?: SlotRenderer<StepperSlotContext> | undefined;
   /**
    * Custom wrapper content per step. Replaces the title and description.
    */
-  wrapperSlot?: SlotRenderer<StepperItemContext>;
+  wrapperSlot?: SlotRenderer<StepperItemContext> | undefined;
 };

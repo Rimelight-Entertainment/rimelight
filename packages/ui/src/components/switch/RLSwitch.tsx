@@ -1,4 +1,4 @@
-import { Show, type Component } from "solid-js";
+import { createMemo, Show, type Component } from "solid-js";
 import type { RLSwitchProps } from "./switch.types";
 import { RLSwitchTheme } from "./switch.theme";
 import { createControllable } from "../../controllable";
@@ -7,22 +7,27 @@ export const RLSwitch: Component<RLSwitchProps> = (props) => {
   const [checked, setChecked] = createControllable<boolean>(
     () => props.checked,
     props.defaultChecked ?? false,
-    (next) => props.onCheckedChange?.(next),
+    (next) => props.onValueChange?.(next),
   );
 
   const { Tag, classes, rest, children, theme } = RLSwitchTheme.setup(props, {
     as: "label",
     omit: [
       "defaultChecked",
-      "onCheckedChange",
+      "onValueChange",
       "disabled",
       "name",
       "value",
       "label",
       "onChange",
+      "aria-label",
+      "aria-labelledby",
+      "aria-describedby",
     ] as const,
     variants: () => ({ checked: checked() }),
   });
+
+  const hasLabel = createMemo(() => Boolean(props.label || children()));
 
   const handleChange = (event: Event & { currentTarget: HTMLInputElement }) => {
     setChecked(event.currentTarget.checked);
@@ -39,14 +44,19 @@ export const RLSwitch: Component<RLSwitchProps> = (props) => {
         disabled={props.disabled}
         name={props.name}
         value={props.value}
+        aria-label={props["aria-label"]}
+        aria-labelledby={props["aria-labelledby"]}
+        aria-describedby={props["aria-describedby"]}
         onChange={handleChange}
       />
       <div class={classes().track} data-slot="track">
         <div class={classes().thumb} data-slot="thumb" />
       </div>
-      <Show when={props.label ?? children()}>
+      <Show when={hasLabel()}>
         <span class={classes().label} data-slot="label">
-          {props.label ?? children()}
+          <Show when={props.label} fallback={children()}>
+            {props.label}
+          </Show>
         </span>
       </Show>
     </Tag>

@@ -5,10 +5,12 @@ import type {
   TableColumn,
   TableApi,
   TableRow,
+  TableGroup,
 } from "@rimelight/ui/components/table/table.types.ts";
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
 import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx";
 import { RLCheckbox } from "@rimelight/ui/components/checkbox/RLCheckbox.tsx";
+import { RLIcon } from "@rimelight/ui/components/icon/RLIcon.tsx";
 import { RLDropdownMenu } from "@rimelight/ui/components/dropdown-menu/RLDropdownMenu.tsx";
 import {
   SHOWCASE_PAYMENTS_DATA,
@@ -190,8 +192,9 @@ export const TableSandbox = (): JSX.Element => {
                 row.toggleExpanded();
               }}
             >
-              <span
-                class={`size-3 transition-transform ${row.getIsExpanded() ? "i-lucide-chevron-down" : "i-lucide-chevron-right"}`}
+              <RLIcon
+                name={row.getIsExpanded() ? "chevron-down" : "chevron-right"}
+                class="size-3 transition-transform"
               />
             </button>
           </Show>
@@ -314,14 +317,7 @@ export const TableSandbox = (): JSX.Element => {
           ],
         ];
 
-        return (
-          <RLDropdownMenu
-            items={dropdownItems as any}
-            size="xs"
-            color="neutral"
-            content={{ align: "end" }}
-          />
-        );
+        return <RLDropdownMenu items={dropdownItems as any} size="xs" body={{ align: "end" }} />;
       },
     },
   ]);
@@ -645,6 +641,130 @@ export const tableAudit: ComponentAuditDefinition = {
           </div>
         );
       },
+    },
+    {
+      id: "toolbar-slot",
+      title: "Toolbar slot",
+      description: "Toolbar rendered above the table.",
+      render: () => (
+        <RLTable
+          data={SHOWCASE_PAYMENTS_DATA.slice(0, 4)}
+          columns={[
+            { accessorKey: "status", header: "Status" },
+            { accessorKey: "email", header: "Email" },
+          ]}
+          toolbarSlot={({ table }: { table: TableApi<PaymentItem> }) => (
+            <div class="flex items-center justify-between gap-2 text-xs text-muted">
+              <span>Rows: {table.getFilteredRows().length}</span>
+            </div>
+          )}
+        />
+      ),
+    },
+    {
+      id: "caption-slot",
+      title: "Caption slot",
+      description: "Caption rendered inside the table element.",
+      render: () => (
+        <RLTable
+          data={SHOWCASE_PAYMENTS_DATA.slice(0, 4)}
+          columns={[
+            { accessorKey: "status", header: "Status" },
+            { accessorKey: "email", header: "Email" },
+          ]}
+          captionSlot={({ table }: { table: TableApi<PaymentItem> }) => (
+            <span>Showing {table.getFilteredRows().length} payments</span>
+          )}
+        />
+      ),
+    },
+    {
+      id: "group-header-slot",
+      title: "Group header slot",
+      description:
+        "Custom header for each group row, receiving the group and visible column count.",
+      render: () => (
+        <RLTable
+          data={SHOWCASE_PAYMENTS_DATA}
+          columns={[
+            { accessorKey: "email", header: "Email" },
+            { accessorKey: "amount", header: "Amount" },
+          ]}
+          grouping={["status"]}
+          groupHeaderSlot={({
+            group,
+            colSpan,
+          }: {
+            group: TableGroup<PaymentItem>;
+            colSpan: number;
+          }) => (
+            <span class="font-semibold text-highlighted">
+              {String(group.value)} ({colSpan} columns)
+            </span>
+          )}
+        />
+      ),
+    },
+    {
+      id: "body-top-and-bottom-slots",
+      title: "Body top and bottom slots",
+      description: "Rows rendered before the first and after the last body row.",
+      render: () => (
+        <RLTable
+          data={SHOWCASE_PAYMENTS_DATA.slice(0, 3)}
+          columns={[
+            { accessorKey: "status", header: "Status" },
+            { accessorKey: "email", header: "Email" },
+          ]}
+          bodyTopSlot={() => (
+            <tr>
+              <td colspan={2} class="px-4 py-2 text-xs text-muted">
+                Rows above the data
+              </td>
+            </tr>
+          )}
+          bodyBottomSlot={() => (
+            <tr>
+              <td colspan={2} class="px-4 py-2 text-xs text-muted">
+                Rows below the data
+              </td>
+            </tr>
+          )}
+        />
+      ),
+    },
+    {
+      id: "empty-content-slot",
+      title: "Empty content slot",
+      description: "Replaces the default empty state.",
+      render: () => (
+        <RLTable
+          data={[]}
+          columns={[{ accessorKey: "email", header: "Email" }]}
+          emptyContentSlot={({ table }: { table: TableApi<PaymentItem> }) => (
+            <div class="p-6 text-center text-sm text-muted">
+              No payments match the current filters ({table.getFilteredRows().length}).
+            </div>
+          )}
+        />
+      ),
+    },
+    {
+      id: "loading-content-slot",
+      title: "Loading content slot",
+      description: "Replaces the default loading indicator with children-driven content.",
+      render: () => (
+        <RLTable
+          data={[]}
+          loading
+          columns={[{ accessorKey: "email", header: "Email" }]}
+          loadingContentSlot={({ table }: { table: TableApi<PaymentItem> }) => (
+            <div class="p-6 text-center text-sm text-muted">
+              Loading payments for {table.getFilteredRows().length} rows…
+            </div>
+          )}
+        />
+      ),
     },
   ],
   checklist: [

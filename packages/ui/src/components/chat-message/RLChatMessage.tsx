@@ -6,7 +6,14 @@ export const RLChatMessage: Component<RLChatMessageProps> = (props) => {
   const { Tag, classes, rest, children, theme } = RLChatMessageTheme.setup(props);
 
   return (
-    <Tag data-slot="root" data-theme={theme()} class={classes().root} {...rest}>
+    <Tag
+      data-slot="root"
+      data-theme={theme()}
+      data-from={props.from ?? "assistant"}
+      role="article"
+      class={classes().root}
+      {...rest}
+    >
       {children()}
     </Tag>
   );

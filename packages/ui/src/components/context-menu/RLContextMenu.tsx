@@ -8,17 +8,21 @@ import {
   type Component,
 } from "solid-js";
 import { Portal, type JSX } from "@solidjs/web";
-import { cx } from "../../resolver";
 import { createControllable } from "../../controllable";
+import { renderSlot } from "../../slot";
 import { RLIcon } from "../icon/RLIcon";
-import { RLContextMenuTheme, type ContextMenuClasses } from "./context-menu.theme";
+import { RLContextMenuTheme } from "./context-menu.theme";
 import type {
   ContextMenuActionItem,
   ContextMenuCheckboxItem,
+  ContextMenuCoords,
   ContextMenuGroupItem,
   ContextMenuItem,
+  ContextMenuItemRenderArgs,
   ContextMenuItems,
+  ContextMenuLayerProps,
   ContextMenuRadioItem,
+  ContextMenuSection,
   RLContextMenuProps,
 } from "./context-menu.types";
 
@@ -41,24 +45,16 @@ const OMIT_KEYS = [
   "portal",
   "unmountOnHide",
   "longPressDelay",
+  "aria-label",
+  "aria-labelledby",
+  "aria-describedby",
 ] as const;
 
-interface AnchorCoords {
-  x: number;
-  y: number;
-}
-
-interface ResolvedMenuSection {
-  type: "group" | "separator";
-  label?: JSX.Element | undefined;
-  items?: ContextMenuItem[] | undefined;
-}
-
-function normalizeMenuSections(items: ContextMenuItems | undefined): ResolvedMenuSection[] {
+function normalizeMenuSections(items: ContextMenuItems | undefined): ContextMenuSection[] {
   if (!items || items.length === 0) return [];
 
   if (Array.isArray(items[0])) {
-    const sections: ResolvedMenuSection[] = [];
+    const sections: ContextMenuSection[] = [];
     const groups = items as ContextMenuItem[][];
     for (let i = 0; i < groups.length; i++) {
       const groupItems = groups[i];
@@ -75,7 +71,7 @@ function normalizeMenuSections(items: ContextMenuItems | undefined): ResolvedMen
   }
 
   const flat = items as ContextMenuItem[];
-  const sections: ResolvedMenuSection[] = [];
+  const sections: ContextMenuSection[] = [];
   let currentUngrouped: ContextMenuItem[] = [];
 
   const flushUngrouped = () => {
@@ -97,11 +93,10 @@ function normalizeMenuSections(items: ContextMenuItems | undefined): ResolvedMen
     } else if (it.type === "group") {
       flushUngrouped();
       const grp = it as ContextMenuGroupItem;
-      const grpItems = grp.items ?? grp.children ?? [];
       sections.push({
         type: "group",
         label: grp.label,
-        items: grpItems,
+        items: grp.items ?? [],
       });
     } else {
       currentUngrouped.push(it);
@@ -115,28 +110,7 @@ function normalizeMenuSections(items: ContextMenuItems | undefined): ResolvedMen
 /**
  * Recursive submenu layer component
  */
-interface MenuLayerProps {
-  sections: ResolvedMenuSection[];
-  menuClasses: () => ContextMenuClasses;
-  checkedIcon: () => string;
-  submenuIcon: () => string;
-  itemRender?: ((props: ItemRenderArgs) => JSX.Element) | undefined;
-  isSubmenu?: boolean;
-  closeLayer?: () => void;
-  closeRoot: () => void;
-}
-
-interface ItemRenderArgs {
-  item: ContextMenuItem;
-  index: number;
-  disabled: boolean;
-  highlighted: boolean;
-  selected: boolean;
-  expanded: boolean;
-  closeMenu: () => void;
-}
-
-const MenuLayer: Component<MenuLayerProps> = (props) => {
+const MenuLayer: Component<ContextMenuLayerProps> = (props) => {
   const [highlightedIndex, setHighlightedIndex] = createSignal<number>(-1);
   const [openSubmenuIndex, setOpenSubmenuIndex] = createSignal<number | null>(null);
   const [uncontrolledChecked, setUncontrolledChecked] = createSignal<Record<number, boolean>>({});
@@ -313,9 +287,11 @@ const MenuLayer: Component<MenuLayerProps> = (props) => {
     const isSelected = () => isItemChecked(item, flatIdx);
     const isSubmenu = () => hasSubmenu(item);
     const isSubOpen = () => isSubmenuOpenFor(item, flatIdx);
+    const isCheckable = () => item.type === "checkbox" || item.type === "radio";
 
-    if (props.itemRender) {
-      return props.itemRender({
+    const itemSlot = props.renderItem;
+    if (itemSlot) {
+      const args: ContextMenuItemRenderArgs = {
         item,
         index: flatIdx,
         disabled: isDisabled(),
@@ -323,7 +299,8 @@ const MenuLayer: Component<MenuLayerProps> = (props) => {
         selected: isSelected(),
         expanded: isSubOpen(),
         closeMenu: props.closeRoot,
-      });
+      };
+      return itemSlot(args);
     }
 
     const role = () => {
@@ -332,10 +309,24 @@ const MenuLayer: Component<MenuLayerProps> = (props) => {
       return "menuitem";
     };
 
-    const leadingIcon = () => item.iconSlot ?? item.icon;
+    const leadingIcon = (): JSX.Element | string | undefined => item.iconSlot ?? item.icon;
+
+    const renderLeadingIcon = (): JSX.Element => {
+      const leading = leadingIcon();
+      if (typeof leading === "string") {
+        return (
+          <RLIcon
+            name={leading}
+            class={props.menuClasses().itemLeadingIcon}
+            data-slot="item-leading-icon"
+          />
+        );
+      }
+      return leading;
+    };
 
     return (
-      <div class="relative w-full">
+      <div class={props.menuClasses().itemContainer}>
         <div
           ref={(el) => {
             itemEls.set(flatIdx, el);
@@ -343,26 +334,14 @@ const MenuLayer: Component<MenuLayerProps> = (props) => {
           role={role()}
           tabindex={isDisabled() ? -1 : 0}
           aria-disabled={isDisabled() ? "true" : undefined}
-          aria-checked={
-            item.type === "checkbox" || item.type === "radio"
-              ? isSelected()
-                ? "true"
-                : "false"
-              : undefined
-          }
+          aria-checked={isCheckable() ? (isSelected() ? "true" : "false") : undefined}
           aria-haspopup={isSubmenu() ? "menu" : undefined}
           aria-expanded={isSubmenu() ? (isSubOpen() ? "true" : "false") : undefined}
           data-slot="item"
           data-disabled={isDisabled() ? "" : undefined}
           data-highlighted={isHighlighted() ? "" : undefined}
-          data-selected={isSelected() ? "" : undefined}
           data-danger={isDanger() ? "" : undefined}
-          data-expanded={isSubOpen() ? "" : undefined}
-          class={cx(
-            props.menuClasses().item,
-            isDisabled() && "opacity-50 pointer-events-none",
-            isDanger() && "text-error hover:bg-error/10 focus-visible:bg-error/10",
-          )}
+          class={props.menuClasses().item}
           onClick={(e) => {
             e.stopPropagation();
             activateItem(item, flatIdx, e);
@@ -382,7 +361,7 @@ const MenuLayer: Component<MenuLayerProps> = (props) => {
           }}
         >
           {/* Leading Icon / Check Indicator */}
-          <Show when={leadingIcon() || item.type === "checkbox" || item.type === "radio"}>
+          <Show when={leadingIcon() || isCheckable()}>
             <span class={props.menuClasses().itemLeading} data-slot="item-leading">
               <Show
                 when={leadingIcon()}
@@ -396,15 +375,7 @@ const MenuLayer: Component<MenuLayerProps> = (props) => {
                   </Show>
                 }
               >
-                {typeof leadingIcon() === "string" ? (
-                  <RLIcon
-                    name={leadingIcon() as string}
-                    class={props.menuClasses().itemLeadingIcon}
-                    data-slot="item-leading-icon"
-                  />
-                ) : (
-                  (leadingIcon() as JSX.Element)
-                )}
+                {renderLeadingIcon()}
               </Show>
             </span>
           </Show>
@@ -452,22 +423,22 @@ const MenuLayer: Component<MenuLayerProps> = (props) => {
         {/* Submenu Floating Layer */}
         <Show when={isSubmenu() && isSubOpen()}>
           <div
-            class={cx("absolute left-full top-0 ml-1 z-50", props.menuClasses().content)}
-            data-slot="content"
-            role="menu"
-            tabindex={-1}
+            class={props.menuClasses().submenu}
+            data-slot="submenu"
             onClick={(e) => e.stopPropagation()}
           >
-            <MenuLayer
-              sections={normalizeMenuSections((item as ContextMenuActionItem).children)}
-              menuClasses={props.menuClasses}
-              checkedIcon={props.checkedIcon}
-              submenuIcon={props.submenuIcon}
-              itemRender={props.itemRender}
-              isSubmenu={true}
-              closeLayer={() => setSubmenuOpenFor(item, flatIdx, false)}
-              closeRoot={props.closeRoot}
-            />
+            <div class={props.menuClasses().body} data-slot="body" role="menu" tabindex={-1}>
+              <MenuLayer
+                sections={normalizeMenuSections((item as ContextMenuActionItem).children)}
+                menuClasses={props.menuClasses}
+                checkedIcon={props.checkedIcon}
+                submenuIcon={props.submenuIcon}
+                renderItem={props.renderItem}
+                isSubmenu={true}
+                closeLayer={() => setSubmenuOpenFor(item, flatIdx, false)}
+                closeRoot={props.closeRoot}
+              />
+            </div>
           </div>
         </Show>
       </div>
@@ -475,7 +446,7 @@ const MenuLayer: Component<MenuLayerProps> = (props) => {
   };
 
   return (
-    <div class="flex flex-col w-full" onKeyDown={handleKeyDown}>
+    <div class={props.menuClasses().sections} onKeyDown={handleKeyDown}>
       <For each={props.sections}>
         {(section) => (
           <Show
@@ -493,7 +464,7 @@ const MenuLayer: Component<MenuLayerProps> = (props) => {
               <For each={section.items}>
                 {(item) => {
                   const entry = flatItems().find((it) => it.item === item);
-                  return renderItem(item, entry ? entry.flatIndex : 0);
+                  return renderItem(item, entry?.flatIndex ?? 0);
                 }}
               </For>
             </div>
@@ -518,7 +489,6 @@ export const RLContextMenu: Component<RLContextMenuProps> = (props) => {
     slots: ["topSlot", "bottomSlot", "itemSlot", "triggerSlot", "bodySlot"] as const,
     variants: () => ({
       size: props.size ?? "md",
-      disabled: Boolean(props.disabled),
     }),
   });
 
@@ -528,7 +498,7 @@ export const RLContextMenu: Component<RLContextMenuProps> = (props) => {
     props.onOpenChange,
   );
 
-  const [coords, setCoords] = createSignal<AnchorCoords>({ x: 0, y: 0 });
+  const [coords, setCoords] = createSignal<ContextMenuCoords>({ x: 0, y: 0 });
 
   const align = () => props.align ?? "start";
   const placement = () => props.placement ?? "right";
@@ -548,7 +518,7 @@ export const RLContextMenu: Component<RLContextMenuProps> = (props) => {
   let triggerRef: HTMLElement | undefined;
   let contentRef: HTMLElement | undefined;
 
-  const setOpenState = (next: boolean, nextCoords?: AnchorCoords) => {
+  const setOpenState = (next: boolean, nextCoords?: ContextMenuCoords) => {
     if (disabled() && next) return;
     if (nextCoords) {
       setCoords(nextCoords);
@@ -561,9 +531,9 @@ export const RLContextMenu: Component<RLContextMenuProps> = (props) => {
   // Prevent scroll when open
   createEffect(
     () => ({ open: isOpen(), lock: preventScroll() }),
-    ({ open, lock }) => {
+    (state) => {
       if (typeof document !== "undefined") {
-        document.body.style.overflow = open && lock ? "hidden" : "";
+        document.body.style.overflow = state.open && state.lock ? "hidden" : "";
       }
       return () => {
         if (typeof document !== "undefined") {
@@ -665,7 +635,7 @@ export const RLContextMenu: Component<RLContextMenuProps> = (props) => {
   };
 
   // Long press touch handling
-  let longPressTimer: ReturnType<typeof setTimeout> | undefined;
+  let longPressTimer: number | undefined;
   let touchStartPos: { x: number; y: number } | null = null;
 
   const handleTouchStart = (e: TouchEvent) => {
@@ -674,7 +644,7 @@ export const RLContextMenu: Component<RLContextMenuProps> = (props) => {
     if (!touch) return;
     touchStartPos = { x: touch.clientX, y: touch.clientY };
 
-    longPressTimer = setTimeout(() => {
+    longPressTimer = window.setTimeout(() => {
       if (touchStartPos) {
         const clamped = clampPosition(touchStartPos.x, touchStartPos.y);
         setOpenState(true, clamped);
@@ -688,35 +658,18 @@ export const RLContextMenu: Component<RLContextMenuProps> = (props) => {
     if (!touch) return;
     const dist = Math.hypot(touch.clientX - touchStartPos.x, touch.clientY - touchStartPos.y);
     if (dist > 10 && longPressTimer) {
-      clearTimeout(longPressTimer);
+      window.clearTimeout(longPressTimer);
       longPressTimer = undefined;
     }
   };
 
   const handleTouchEnd = () => {
-    clearTimeout(longPressTimer);
+    window.clearTimeout(longPressTimer);
     longPressTimer = undefined;
     touchStartPos = null;
   };
 
   const sections = createMemo(() => normalizeMenuSections(props.items));
-
-  const resolveRenderProp = (
-    renderProp: unknown,
-    ctx: { open: boolean; closeMenu: () => void },
-  ) => {
-    if (typeof renderProp === "function") {
-      return (renderProp as (c: typeof ctx) => JSX.Element)(ctx);
-    }
-    return renderProp as JSX.Element;
-  };
-
-  const topRenderContent = () => resolveRenderProp(slots.topSlot(), { open: isOpen(), closeMenu });
-
-  const bottomRenderContent = () =>
-    resolveRenderProp(slots.bottomSlot(), { open: isOpen(), closeMenu });
-
-  const triggerContent = () => slots.triggerSlot() ?? children();
 
   const renderMenuContent = () => (
     <>
@@ -734,7 +687,7 @@ export const RLContextMenu: Component<RLContextMenuProps> = (props) => {
 
       {/* Positioner */}
       <div
-        class={cx("fixed pointer-events-auto", classes().positioner)}
+        class={classes().positioner}
         data-slot="positioner"
         data-side={placement()}
         data-align={align()}
@@ -748,39 +701,29 @@ export const RLContextMenu: Component<RLContextMenuProps> = (props) => {
           role="menu"
           tabindex={-1}
           aria-orientation="vertical"
-          data-slot="content"
+          data-slot="body"
           data-state={isOpen() ? "open" : "closed"}
-          data-expanded={isOpen() ? "" : undefined}
-          data-closed={!isOpen() ? "" : undefined}
           data-side={placement()}
           data-align={align()}
-          class={classes().content}
+          class={classes().body}
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Top custom render */}
-          <Show when={topRenderContent()}>
-            <div data-slot="top-render">{topRenderContent()}</div>
-          </Show>
+          {renderSlot(slots.topSlot(), { open: isOpen(), closeMenu })}
 
-          {/* Menu Items */}
           <Show when={sections().length > 0}>
             <MenuLayer
               sections={sections()}
               menuClasses={classes}
               checkedIcon={checkedIcon}
               submenuIcon={submenuIcon}
-              itemRender={slots.itemSlot()}
+              renderItem={slots.itemSlot()}
               closeRoot={closeMenu}
             />
           </Show>
 
-          {/* Bottom custom render */}
-          <Show when={bottomRenderContent()}>
-            <div data-slot="bottom-render">{bottomRenderContent()}</div>
-          </Show>
+          {renderSlot(slots.bottomSlot(), { open: isOpen(), closeMenu })}
 
-          {/* Body slot */}
-          <Show when={slots.bodySlot()}>{slots.bodySlot()}</Show>
+          {renderSlot(slots.bodySlot())}
         </div>
       </div>
     </>
@@ -794,9 +737,12 @@ export const RLContextMenu: Component<RLContextMenuProps> = (props) => {
         class={classes().trigger}
         data-slot="trigger"
         data-state={isOpen() ? "open" : "closed"}
-        data-expanded={isOpen() ? "" : undefined}
-        data-closed={!isOpen() ? "" : undefined}
         data-disabled={disabled() ? "" : undefined}
+        aria-haspopup="menu"
+        aria-expanded={isOpen() ? "true" : "false"}
+        aria-label={props["aria-label"]}
+        aria-labelledby={props["aria-labelledby"]}
+        aria-describedby={props["aria-describedby"]}
         tabindex={disabled() ? undefined : 0}
         onContextMenu={handleContextMenu}
         onKeyDown={handleTriggerKeyDown}
@@ -805,7 +751,9 @@ export const RLContextMenu: Component<RLContextMenuProps> = (props) => {
         onTouchEnd={handleTouchEnd}
         onTouchCancel={handleTouchEnd}
       >
-        {triggerContent()}
+        <Show when={slots.triggerSlot()} fallback={children()}>
+          {renderSlot(slots.triggerSlot())}
+        </Show>
       </div>
 
       <Show when={isOpen() || !unmountOnHide()}>

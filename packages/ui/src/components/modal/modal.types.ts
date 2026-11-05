@@ -1,177 +1,136 @@
 import type { JSX } from "@solidjs/web";
 import type { InferThemeProps } from "../../resolver";
-import type { OverlaySlot } from "../../slot";
+import type { SlotRenderer } from "../../types";
 import type { RLModalTheme } from "./modal.theme";
 
 export type ModalSize = "xs" | "sm" | "md" | "lg" | "xl";
 
 export type RLModalProps = Omit<
   InferThemeProps<typeof RLModalTheme>,
-  "size" | "overlay" | "scrollable" | "transition" | "fullscreen" | "modal" | "role"
+  "size" | "backdrop" | "scrollable" | "transition" | "fullscreen" | "modal" | "role"
 > & {
   /**
-   * Title text displayed in the modal header. Use `titleSlot` for JSX.
+   * Heading rendered in the default header. Ignored when `titleSlot` or `headerSlot` is set.
    */
   title?: string | undefined;
   /**
-   * Description text displayed below the title. Use `descriptionSlot` for JSX.
+   * Description rendered under the title. Ignored when `descriptionSlot` or `headerSlot` is set.
    */
   description?: string | undefined;
   /**
-   * Controlled open state.
+   * Controlled open state. Pair with `onOpenChange`.
    */
   open?: boolean | undefined;
   /**
    * Initial open state when uncontrolled.
-   *
-   * @default false
    */
   defaultOpen?: boolean | undefined;
   /**
-   * Modal width preset.
-   *
-   * @default "md"
+   * Width of the dialog content.
    */
   size?: ModalSize | undefined;
   /**
-   * Render an overlay / backdrop behind the modal.
-   *
-   * @default true
+   * Renders a scrim behind the dialog. Disable it for a fully transparent overlay.
    */
-  overlay?: boolean | undefined;
+  backdrop?: boolean | undefined;
   /**
-   * Enables scrollable overlay mode where content scrolls within the overlay container.
-   *
-   * @default false
+   * Lets the overlay scroll so tall dialogs stay reachable.
    */
   scrollable?: boolean | undefined;
   /**
-   * Animate the modal when opening or closing.
-   *
-   * @default true
+   * Animates the overlay and content when opening and closing.
    */
   transition?: boolean | undefined;
   /**
-   * Take up the full screen.
-   *
-   * @default false
+   * Stretches the dialog to fill the viewport.
    */
   fullscreen?: boolean | undefined;
   /**
-   * The modality of the dialog. When true, interaction with outside elements is blocked.
-   * When false, the overlay is disabled and outside content remains interactive.
-   *
-   * @default true
+   * When true, the dialog blocks interaction with the page and is announced as modal.
+   * When false, the overlay ignores pointer events so outside content stays interactive.
    */
   modal?: boolean | undefined;
   /**
-   * Render in a portal attached to `document.body` or the given element.
-   * Set to false to render inline.
-   *
-   * @default true
+   * Renders the dialog into a portal. Pass an element to choose the mount target.
    */
   portal?: boolean | HTMLElement | undefined;
   /**
-   * Whether the modal can be dismissed by the close button, Escape, or clicking the backdrop.
-   * Dismissal calls `onOpenChange(false)`.
-   *
-   * @default true
+   * Allows Escape, the close control, and outside clicks to close the dialog.
    */
   dismissible?: boolean | undefined;
   /**
-   * Icon name displayed in the header close button.
-   *
-   * @default "x"
-   */
-  closeIcon?: string | undefined;
-  /**
-   * Prevents body scrolling while open.
-   *
-   * @default true
+   * Locks document scrolling while the modal is open.
    */
   lockScroll?: boolean | undefined;
   /**
-   * Keep content mounted in the DOM while hidden.
-   *
-   * @default true
+   * Removes the dialog from the DOM while closed instead of hiding it.
    */
   unmountOnHide?: boolean | undefined;
   /**
-   * Label of a default trigger button. Rendered only when `triggerSlot` is not set.
+   * Label for the default trigger button. Ignored when `triggerSlot` is set.
    */
   triggerLabel?: string | undefined;
   /**
-   * WAI-ARIA role of the dialog element.
-   *
-   * @default "dialog"
+   * ARIA role of the dialog element.
    */
   role?: "dialog" | "alertdialog" | undefined;
-  /**
-   * Accessible label of the dialog.
-   */
   "aria-label"?: string | undefined;
-  /**
-   * Element id that labels the dialog. Defaults to the title id when a title is shown.
-   */
   "aria-labelledby"?: string | undefined;
-  /**
-   * Element id that describes the dialog. Defaults to the description id when a description is shown.
-   */
   "aria-describedby"?: string | undefined;
   /**
-   * Body content. Takes precedence over `children`.
+   * Body content. Used when `bodySlot` is not set.
    */
   children?: JSX.Element | undefined;
   /**
-   * Trigger element. Always rendered, so it is plain JSX.
+   * Replaces the default trigger button.
    */
-  triggerSlot?: JSX.Element | undefined;
+  triggerSlot?: SlotRenderer | undefined;
   /**
-   * Header override. Replaces the default title, description, and close header.
+   * Replaces the whole header.
    */
-  headerSlot?: OverlaySlot | undefined;
+  headerSlot?: SlotRenderer | undefined;
   /**
-   * Title content. Takes precedence over the `title` string.
+   * Replaces the title.
    */
-  titleSlot?: OverlaySlot | undefined;
+  titleSlot?: SlotRenderer | undefined;
   /**
-   * Description content. Takes precedence over the `description` string.
+   * Replaces the description.
    */
-  descriptionSlot?: OverlaySlot | undefined;
+  descriptionSlot?: SlotRenderer | undefined;
   /**
-   * Actions rendered in the header.
+   * Content rendered on the trailing side of the header, before the close control.
    */
-  actionsSlot?: OverlaySlot | undefined;
+  actionsSlot?: SlotRenderer | undefined;
   /**
-   * Custom close control. Replaces the default close button.
+   * Replaces the default close control.
    */
-  closeSlot?: OverlaySlot | undefined;
+  closeSlot?: SlotRenderer | undefined;
   /**
-   * Body content. Takes precedence over `children`.
+   * Replaces the body content. Takes precedence over `children`.
    */
-  bodySlot?: OverlaySlot | undefined;
+  bodySlot?: SlotRenderer | undefined;
   /**
-   * Footer content.
+   * Footer content rendered below the body.
    */
-  footerSlot?: OverlaySlot | undefined;
+  footerSlot?: SlotRenderer | undefined;
   /**
-   * Called whenever the open state changes. Dismissal calls it with `false`.
+   * Called whenever the open state changes.
    */
   onOpenChange?: ((open: boolean) => void) | undefined;
   /**
-   * Called when the modal opens.
+   * Called when the enter transition starts.
    */
   onEnter?: (() => void) | undefined;
   /**
-   * Called after the modal has opened.
+   * Called when the enter transition ends.
    */
   onAfterEnter?: (() => void) | undefined;
   /**
-   * Called when the modal closes.
+   * Called when the leave transition starts.
    */
   onLeave?: (() => void) | undefined;
   /**
-   * Called after the modal has closed.
+   * Called when the leave transition ends.
    */
   onAfterLeave?: (() => void) | undefined;
 };

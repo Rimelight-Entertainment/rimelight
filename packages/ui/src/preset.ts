@@ -97,7 +97,7 @@ export function rimelightUiPreset({ colors, icons, fonts, presets = {} }: UIConf
         name: "rimelight-theme",
         theme: {
           spacing: { md: "1rem" },
-          colors: themeColors,
+          colors: { ...themeColors, scrim: "#000000", "on-scrim": "#ffffff" },
         },
       },
     ].filter(Boolean) as Preset[],

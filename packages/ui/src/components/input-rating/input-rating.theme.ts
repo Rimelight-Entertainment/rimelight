@@ -9,7 +9,7 @@ export const RLInputRatingTheme = defineTheme("input-rating", {
       "transition-all duration-150",
     ],
     indicator:
-      "absolute inset-y-0 left-0 overflow-hidden outline-none pointer-events-none flex items-center justify-start text-[var(--rl-bg)]",
+      "absolute inset-y-0 left-0 w-[var(--rl-progress)] overflow-hidden outline-none pointer-events-none flex items-center justify-start text-[var(--rl-bg)]",
     icon: "block w-[var(--item-size)] h-[var(--item-size)] max-w-none shrink-0",
     emptyIcon:
       "absolute inset-0 overflow-hidden pointer-events-none flex items-center justify-start text-muted",
@@ -36,14 +36,12 @@ export const RLInputRatingTheme = defineTheme("input-rating", {
         root: "cursor-default",
         item: "cursor-default pointer-events-none",
       },
-      false: {},
     },
     disabled: {
       true: {
         root: "opacity-75 cursor-not-allowed",
         item: "cursor-not-allowed pointer-events-none",
       },
-      false: {},
     },
   },
   defaultVariants: {

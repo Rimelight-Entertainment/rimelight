@@ -1,17 +1,18 @@
 import { defineTheme } from "../../resolver";
 
 export const RLCardTheme = defineTheme("card", {
-  slots: ["root", "header", "title", "description", "body", "footer", "overlay", "media"],
+  slots: ["root", "header", "title", "description", "body", "footer", "overlay", "media", "image"],
   base: {
-    root: "block rounded-lg overflow-hidden",
+    root: "relative block rounded-lg overflow-hidden",
     header: "p-4 sm:px-6",
     title: "text-highlighted font-semibold",
     description: "mt-1 text-muted text-sm",
     body: "p-4 sm:p-6",
     footer: "p-4 sm:px-6",
     overlay:
-      "absolute inset-0 z-10 flex flex-col justify-end p-4 sm:p-6 bg-gradient-to-t from-black/80 to-transparent text-white",
+      "absolute inset-0 z-10 flex flex-col justify-end p-4 sm:p-6 bg-gradient-to-t from-scrim/80 to-transparent text-on-scrim",
     media: "relative overflow-hidden",
+    image: "h-full w-full object-cover",
   },
   variants: {
     variant: {
@@ -30,13 +31,8 @@ export const RLCardTheme = defineTheme("card", {
         root: "bg-elevated/50 ring ring-default divide-y divide-default",
       },
     },
-    overlay: {
-      true: { root: "relative" },
-      false: {},
-    },
   },
   defaultVariants: {
     variant: "outline",
-    overlay: false,
   },
 });

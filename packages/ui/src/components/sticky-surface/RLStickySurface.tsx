@@ -9,18 +9,15 @@ export const RLStickySurface: Component<RLStickySurfaceProps> = (props) => {
     omit: OMIT_KEYS,
   });
 
-  // Runtime offsets are the only inline values; the sticky rules themselves live in the theme.
-  const offsetStyle = () => ({
-    "--rl-sticky-top": `${props.offsetTop ?? 0}px`,
-    "--rl-sticky-z": `${props.zIndex ?? 10}`,
-  });
-
   return (
     <Tag
       data-slot="root"
       data-theme={theme()}
       class={classes().root}
-      style={offsetStyle()}
+      style={{
+        "--rl-sticky-top": `${props.offsetTop ?? 0}px`,
+        "--rl-sticky-z": `${props.zIndex ?? 10}`,
+      }}
       {...rest}
     >
       {children()}

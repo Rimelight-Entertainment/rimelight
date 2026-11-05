@@ -1,11 +1,12 @@
 import type { RLPaginationProps } from "./pagination.types";
 import { RLPaginationTheme } from "./pagination.theme";
-import { createMemo, For, type Component } from "solid-js";
+import { createMemo, For, Show, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
+import { RLButton } from "../button/RLButton";
 import { uiT } from "../../locale";
 import { createControllable } from "../../controllable";
 
-const OMIT_KEYS = ["page", "defaultPage", "totalPages", "onPageChange"] as const;
+const OMIT_KEYS = ["page", "defaultPage", "totalPages", "onValueChange"] as const;
 
 export const RLPagination: Component<RLPaginationProps> = (props) => {
   const { Tag, classes, rest, theme } = RLPaginationTheme.setup(props, {
@@ -16,7 +17,7 @@ export const RLPagination: Component<RLPaginationProps> = (props) => {
   const [currentPage, setCurrentPage] = createControllable(
     () => props.page,
     props.defaultPage ?? 1,
-    props.onPageChange,
+    props.onValueChange,
   );
   const totalPages = () => props.totalPages ?? 1;
 
@@ -41,7 +42,7 @@ export const RLPagination: Component<RLPaginationProps> = (props) => {
     return pages;
   });
 
-  const itemLinkClasses = (isActive: boolean) => RLPaginationTheme({ active: isActive }).link;
+  const activeLinkClass = createMemo(() => RLPaginationTheme({ active: true }).link);
 
   return (
     <Tag
@@ -53,50 +54,53 @@ export const RLPagination: Component<RLPaginationProps> = (props) => {
     >
       <ul class={classes().list} data-slot="list">
         <li class={classes().item} data-slot="item">
-          <button
+          <RLButton
             type="button"
-            class={`${classes().link} ${currentPage() === 1 ? "pointer-events-none opacity-50" : ""}`}
+            class={classes().link}
             aria-label={uiT("pagination.previous")}
-            aria-disabled={currentPage() === 1 ? "true" : "false"}
             disabled={currentPage() === 1}
             onClick={() => setCurrentPage(currentPage() - 1)}
           >
             <RLIcon name="chevron-left" size="sm" aria-hidden="true" />
-          </button>
+          </RLButton>
         </li>
 
         <For each={pageNumbers()}>
           {(p) => (
             <li class={classes().item} data-slot="item">
-              {p === "ellipsis" ? (
-                <span class={classes().ellipsis} data-slot="ellipsis" aria-hidden="true">
-                  &hellip;
-                </span>
-              ) : (
-                <button
-                  type="button"
-                  class={itemLinkClasses(p === currentPage())}
-                  aria-current={p === currentPage() ? "page" : undefined}
-                  onClick={() => setCurrentPage(p)}
-                >
-                  {p}
-                </button>
-              )}
+              <Show
+                when={p !== "ellipsis" ? p : undefined}
+                fallback={
+                  <span class={classes().ellipsis} data-slot="ellipsis" aria-hidden="true">
+                    &hellip;
+                  </span>
+                }
+              >
+                {(page) => (
+                  <RLButton
+                    type="button"
+                    class={page() === currentPage() ? activeLinkClass() : classes().link}
+                    aria-current={page() === currentPage() ? "page" : undefined}
+                    onClick={() => setCurrentPage(page())}
+                  >
+                    {page()}
+                  </RLButton>
+                )}
+              </Show>
             </li>
           )}
         </For>
 
         <li class={classes().item} data-slot="item">
-          <button
+          <RLButton
             type="button"
-            class={`${classes().link} ${currentPage() === totalPages() ? "pointer-events-none opacity-50" : ""}`}
+            class={classes().link}
             aria-label={uiT("pagination.next")}
-            aria-disabled={currentPage() === totalPages() ? "true" : "false"}
             disabled={currentPage() === totalPages()}
             onClick={() => setCurrentPage(currentPage() + 1)}
           >
             <RLIcon name="chevron-right" size="sm" aria-hidden="true" />
-          </button>
+          </RLButton>
         </li>
       </ul>
     </Tag>

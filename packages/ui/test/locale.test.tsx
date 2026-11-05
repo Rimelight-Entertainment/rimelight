@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vite-plus/test";
 import { uiT } from "../src/locale";
-import { localizeHref, resolveLinkAttrs } from "../src/components/link/helpers";
+import { localizeHref, resolveLinkAttrs } from "../src/components/link/link.helpers";
 import { mountComponent } from "./utils/browser-render";
 import { RLPost } from "../src/components/post/RLPost";
 import { RLNavigationMenu } from "../src/components/navigation-menu/RLNavigationMenu";

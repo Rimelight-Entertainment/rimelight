@@ -1,14 +1,13 @@
 import { defineTheme } from "../../resolver";
 
 export const RLAccordionTheme = defineTheme("accordion", {
-  slots: ["root", "item", "trigger", "content", "body", "leadingIcon", "trailingIcon", "label"],
+  slots: ["root", "item", "trigger", "body", "leadingIcon", "trailingIcon", "label"],
   base: {
     root: "w-full",
     item: "border-b border-default last:border-b-0",
     trigger:
       "group flex w-full flex-1 items-center gap-1.5 font-medium text-sm py-3.5 px-4 focus-visible:outline-primary min-w-0 cursor-pointer list-none [&::-webkit-details-marker]:hidden [&::marker]:hidden",
-    content: "overflow-hidden focus:outline-none pt-1 px-4",
-    body: "text-sm pb-3.5 text-muted",
+    body: "overflow-hidden focus:outline-none pt-1 px-4 pb-3.5 text-sm text-muted",
     leadingIcon: "shrink-0 size-5 text-muted",
     trailingIcon:
       "shrink-0 size-5 ms-auto rotate-0 transition-transform duration-200 group-open:rotate-180 text-muted",
@@ -21,5 +20,4 @@ export const RLAccordionTheme = defineTheme("accordion", {
       },
     },
   },
-  defaultVariants: {},
 });

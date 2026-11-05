@@ -1,7 +1,6 @@
 import type { ClassValue, SlotRenderer, ThemeUI } from "../../types";
 import type { InferThemeProps } from "../../resolver";
 import type { RLAccordionTheme } from "./accordion.theme";
-import type { JSX } from "@solidjs/web";
 
 export interface AccordionItem {
   /**
@@ -97,16 +96,11 @@ export type RLAccordionProps = InferThemeProps<typeof RLAccordionTheme> & {
    */
   name?: string | undefined;
   /**
-   * Static element rendered after the label of every item. Overridden by `trailingSlot`.
-   */
-  trailingIconSlot?: JSX.Element;
-  /**
    * Custom leading content per item. Falls back to `item.icon`.
    */
   leadingSlot?: SlotRenderer<{ item: AccordionItem; index: number }>;
   /**
-   * Custom trailing content per item. Falls back to `trailingIconSlot`, then the `trailingIcon`
-   * prop / `item.trailingIcon`.
+   * Custom trailing content per item. Falls back to the `trailingIcon` prop or `item.trailingIcon`.
    */
   trailingSlot?: SlotRenderer<{ item: AccordionItem; index: number }>;
   /**

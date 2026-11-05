@@ -1,20 +1,21 @@
 import { For, Show, type Component } from "solid-js";
-import type { JSX } from "@solidjs/web";
-import type { RLTreeProps, TreeItem } from "./tree.types";
+import type { RLTreeProps, TreeItem, TreeSlotContext } from "./tree.types";
 import { RLTreeTheme } from "./tree.theme";
 import { RLIcon } from "../icon/RLIcon";
+import { RLButton } from "../button/RLButton";
 import { createControllable } from "../../controllable";
+import { renderSlot } from "../../slot";
+import { uiT } from "../../locale";
 
 const OMIT_KEYS = [
   "items",
-  "selected",
-  "onSelect",
+  "value",
+  "onValueChange",
   "expanded",
   "defaultExpanded",
   "onExpandedChange",
   "itemAttrs",
   "itemClass",
-  "itemSlot",
 ] as const;
 
 export const RLTree: Component<RLTreeProps> = (props) => {
@@ -31,46 +32,49 @@ export const RLTree: Component<RLTreeProps> = (props) => {
   const toggle = (id: string) =>
     setExpanded(isOpen(id) ? expanded().filter((x) => x !== id) : [...expanded(), id]);
   const select = (item: TreeItem) => {
-    if (!item.disabled) props.onSelect?.(item);
+    if (!item.disabled) props.onValueChange?.(item.id);
   };
 
-  const Node: Component<{ item: TreeItem; depth: number }> = (node) => {
+  const Node: Component<TreeSlotContext> = (node) => {
     const hasChildren = () => (node.item.children?.length ?? 0) > 0;
-    const selected = () => props.selected === node.item.id;
-    const rowAttrs = () => props.itemAttrs?.(node.item, node.depth) ?? {};
-    const extraClass = () => props.itemClass?.(node.item, node.depth) ?? "";
+    const selected = () => props.value === node.item.id;
     return (
       <div class={classes().item} data-slot="item" role="none">
         <div
-          class={`${classes().row} ${extraClass()}`}
+          class={[classes().row, props.itemClass?.(node.item, node.depth)]
+            .filter(Boolean)
+            .join(" ")}
           style={{ "--rl-tree-indent": `${node.depth * 12 + 4}px` }}
           data-slot="row"
-          data-selected={selected() ? "true" : "false"}
-          data-disabled={node.item.disabled ? "true" : "false"}
+          data-disabled={node.item.disabled ? "" : undefined}
           role="treeitem"
           aria-level={node.depth + 1}
           aria-selected={selected() ? "true" : "false"}
           aria-expanded={hasChildren() ? (isOpen(node.item.id) ? "true" : "false") : undefined}
           aria-disabled={node.item.disabled ? "true" : undefined}
-          {...rowAttrs()}
+          {...(props.itemAttrs?.(node.item, node.depth) ?? {})}
         >
-          <button
+          <RLButton
+            variant="ghost"
+            color="neutral"
             type="button"
             class={classes().toggle}
             data-slot="toggle"
             disabled={!hasChildren()}
-            aria-label={isOpen(node.item.id) ? "Collapse" : "Expand"}
+            aria-label={isOpen(node.item.id) ? uiT("tree.collapse") : uiT("tree.expand")}
             onClick={() => toggle(node.item.id)}
           >
             <RLIcon
               name={isOpen(node.item.id) ? "chevron-down" : "chevron-right"}
               aria-hidden="true"
             />
-          </button>
+          </RLButton>
           <Show
             when={slots.itemSlot()}
             fallback={
-              <button
+              <RLButton
+                variant="ghost"
+                color="neutral"
                 type="button"
                 class={classes().label}
                 data-slot="label"
@@ -78,22 +82,19 @@ export const RLTree: Component<RLTreeProps> = (props) => {
                 onClick={() => select(node.item)}
               >
                 <Show when={node.item.icon}>
-                  <span
-                    class={classes().icon}
-                    data-slot="icon"
-                    data-selected={selected() ? "true" : "false"}
-                  >
-                    <RLIcon name={node.item.icon!} aria-hidden="true" />
-                  </span>
+                  {(icon) => (
+                    <span class={classes().icon} data-slot="icon">
+                      <RLIcon name={icon()} aria-hidden="true" />
+                    </span>
+                  )}
                 </Show>
-                <span class="truncate">{node.item.label}</span>
-              </button>
+                <span class={classes().text} data-slot="text">
+                  {node.item.label}
+                </span>
+              </RLButton>
             }
           >
-            {(slots.itemSlot() as ((item: TreeItem, depth: number) => JSX.Element) | undefined)?.(
-              node.item,
-              node.depth,
-            )}
+            {renderSlot(slots.itemSlot(), { item: node.item, depth: node.depth })}
           </Show>
         </div>
         <Show when={hasChildren() && isOpen(node.item.id)}>

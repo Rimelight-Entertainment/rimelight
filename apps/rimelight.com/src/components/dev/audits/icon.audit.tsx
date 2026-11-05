@@ -148,7 +148,7 @@ export const iconAudit: ComponentAuditDefinition = {
       id: "default-collection",
       title: `Default Icons (${ALL_ICONS.length} Lucide icons)`,
       description:
-        "Every safelisted default icon from the bundled Lucide collection, resolved synchronously to i-lucide-* classes at render time.",
+        "Every safelisted default icon from the bundled Lucide collection, resolved synchronously to Lucide icon classes at render time.",
       render: () => (
         <div class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2">
           <For each={ALL_ICONS}>
@@ -170,11 +170,11 @@ export const iconAudit: ComponentAuditDefinition = {
         return t("app.text.custom-class-name");
       },
       description:
-        "Passing a full UnoCSS/Iconify class name through the name prop passes it through verbatim.",
+        "A bare Lucide name resolves through the bundled collection; a full i-<set>-<name> class name passes through verbatim.",
       render: () => (
         <div class="flex items-center gap-6">
-          <RLIcon name="i-lucide-circle-gauge" size="xl" class="text-primary" />
-          <RLIcon name="i-lucide-compass" size="xl" class="text-secondary" />
+          <RLIcon name="circle-gauge" size="xl" class="text-primary" />
+          <RLIcon name="compass" size="xl" class="text-secondary" />
         </div>
       ),
     },
@@ -232,7 +232,7 @@ export const iconAudit: ComponentAuditDefinition = {
       criterion: "Multi-source icon resolution cascade",
       status: "pass",
       notes:
-        "Resolves custom class -> config overrides -> i- prefixed class names -> i-lucide-<name> for bare lucide names -> empty.",
+        "Resolves custom class -> config overrides -> i- prefixed class names -> bare lucide names via the bundled collection -> empty.",
     },
     {
       criterion: "Deterministic SSR-safe class rendering",

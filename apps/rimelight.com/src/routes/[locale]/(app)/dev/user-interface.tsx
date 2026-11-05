@@ -220,14 +220,14 @@ export default function DevUserInterfacePage() {
       rows: [
         {
           label: t("app.text.lucide-collection-resolution"),
-          code: `presetIcons() // resolves i-lucide-* via @iconify-json/lucide`,
+          code: `presetIcons() // resolves bare lucide names via @iconify-json/lucide`,
           description:
-            "Icons resolve to UnoCSS icon classes backed by the bundled Lucide collection. Bare lucide names (e.g. `check`) are prefixed to `i-lucide-check`; full class names like 'i-lucide-*' or 'i-carbon-*' pass through as-is.",
+            "Icons resolve to UnoCSS icon classes backed by the bundled Lucide collection. Bare lucide names (e.g. `check`) are resolved against the bundled collection; full class names like 'i-<set>-<name>' (e.g. 'i-simple-icons-github') pass through as-is.",
           value: `Default icons: ${iconNames.length} (safelisted)\nConfigured overrides: ${overrideCount}`,
         },
         {
           label: t("app.text.default-icons-lucide"),
-          code: `<RLIcon name="..." /> or class="i-lucide-..."`,
+          code: `<RLIcon name="..." />`,
           description:
             "Click any icon cell to copy its JSX component invocation. Supports searching by keyword.",
           content: (

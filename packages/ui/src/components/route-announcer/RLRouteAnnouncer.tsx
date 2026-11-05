@@ -1,56 +1,44 @@
 import type { Component } from "solid-js";
 import type { RouteAnnouncerProgressOptions, RLRouteAnnouncerProps } from "./route-announcer.types";
 import { RLRouteAnnouncerTheme } from "./route-announcer.theme";
-import { createSignal, onSettled, Show } from "solid-js";
-import { useLocation, useIsRouting } from "@solidjs/router";
+import { createEffect, createMemo, createSignal, Show } from "solid-js";
+import { useInRouter, useIsRouting, useLocation } from "@solidjs/router";
 import { uiT } from "../../locale";
-
-const toProgressOptions = (
-  progress: boolean | RouteAnnouncerProgressOptions | undefined,
-): RouteAnnouncerProgressOptions | undefined =>
-  typeof progress === "object" && progress !== null ? progress : undefined;
 
 const OMIT_KEYS = ["color", "size", "prefix", "progress"] as const;
 
 export const RLRouteAnnouncer: Component<RLRouteAnnouncerProps> = (props) => {
-  let location: ReturnType<typeof useLocation> | undefined;
-  let isRouting = () => false;
-
-  try {
-    location = useLocation();
-  } catch {
-    // Router context not available
-  }
-
-  try {
-    isRouting = useIsRouting();
-  } catch {
-    // Router context not available
-  }
+  const inRouter = useInRouter();
+  const location = inRouter ? useLocation() : undefined;
+  const isRouting = inRouter ? useIsRouting() : () => false;
 
   const [announcement, setAnnouncement] = createSignal("");
 
-  const { Tag, classes, rest, theme } = RLRouteAnnouncerTheme.setup(props, {
+  const progressOptions = createMemo<RouteAnnouncerProgressOptions | undefined>(() =>
+    typeof props.progress === "object" ? props.progress : undefined,
+  );
+
+  const { Tag, classes, rest, theme, children, ui } = RLRouteAnnouncerTheme.setup(props, {
     omit: OMIT_KEYS,
-    variants: () => {
-      const options = toProgressOptions(props.progress);
-      return {
-        color: options?.color ?? props.color,
-        size: options?.size ?? props.size,
-      };
+    variants: () => ({
+      color: progressOptions()?.color ?? props.color,
+      size: progressOptions()?.size ?? props.size,
+    }),
+  });
+
+  createEffect(
+    () => location?.pathname,
+    (pathname) => {
+      const prefix = props.prefix ?? uiT("route-announcer.prefix");
+      setAnnouncement(document.title || `${prefix} ${pathname ?? ""}`.trim());
     },
-  });
+  );
 
-  onSettled(() => {
-    if (typeof document === "undefined") return;
-    const path = location?.pathname ?? "";
-    const prefix = props.prefix ?? uiT("route-announcer.prefix");
-    const title = document.title ? document.title : `${prefix} ${path}`.trim();
-    setAnnouncement(title);
-  });
-
-  const progressEnabled = () => props.progress !== false;
-  const progressOptions = () => toProgressOptions(props.progress);
+  const progressClasses = RLRouteAnnouncerTheme.use(props, () => ({
+    color: progressOptions()?.color ?? props.color,
+    size: progressOptions()?.size ?? props.size,
+    ui: { ...ui(), progressBar: [ui()?.progressBar, progressOptions()?.class] },
+  }));
 
   return (
     <Tag class={classes().root} data-slot="root" data-theme={theme()} {...rest}>
@@ -66,18 +54,20 @@ export const RLRouteAnnouncer: Component<RLRouteAnnouncerProps> = (props) => {
       </div>
 
       {/* 2. Visual indeterminate progress bar during async route transitions */}
-      <Show when={progressEnabled() && isRouting()}>
+      <Show when={props.progress !== false && isRouting()}>
         <div
           role="progressbar"
           aria-label={uiT("route-announcer.loading")}
           aria-valuemin={0}
           aria-valuemax={100}
-          class={`${classes().progressBar} ${progressOptions()?.class ?? ""}`.trim()}
+          class={progressClasses().progressBar}
           data-slot="progress-bar"
         >
           <div class={classes().progressIndicator} data-slot="progress-indicator" />
         </div>
       </Show>
+
+      {children()}
     </Tag>
   );
 };

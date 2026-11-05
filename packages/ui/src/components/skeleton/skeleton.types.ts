@@ -17,3 +17,23 @@ export type RLSkeletonProps = InferThemeProps<typeof RLSkeletonTheme> & {
    */
   fallbackBorderRadius?: number | undefined;
 };
+
+export interface SkeletonRect {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  tag: string;
+  borderRadius: string;
+}
+
+export interface LeafElement {
+  element: Element;
+  borderRadius: string;
+}
+
+export interface WrappedCell {
+  element: HTMLElement;
+  span: HTMLSpanElement;
+  borderRadius: string;
+}

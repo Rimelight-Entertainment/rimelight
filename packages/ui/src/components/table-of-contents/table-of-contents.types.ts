@@ -31,11 +31,6 @@ export type RLTableOfContentsProps = InferThemeProps<typeof RLTableOfContentsThe
    */
   tableOfContents?: false | TableOfContentsConfig | undefined;
   /**
-   * CSS selector for the container element whose headings should be tracked.
-   * @default ".markdown-content"
-   */
-  containerSelector?: string | undefined;
-  /**
    * Render as a collapsible dropdown (`<details>`/`<summary>`) with a scrollable list and a built-in
    * bottom gap. Intended for small-screen / mobile contexts.
    * @default false

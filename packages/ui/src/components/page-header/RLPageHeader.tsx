@@ -6,7 +6,7 @@ export const RLPageHeader: Component<RLPageHeaderProps> = (props) => {
   const { Tag, classes, rest, children, theme } = RLPageHeaderTheme.setup(props);
 
   return (
-    <Tag data-slot="root" data-theme={theme()} class={classes().root} {...rest}>
+    <Tag class={classes().root} data-slot="root" data-theme={theme()} {...rest}>
       {children()}
     </Tag>
   );

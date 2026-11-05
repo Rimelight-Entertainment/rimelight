@@ -23,5 +23,5 @@ export type RLDashboardPanelProps = InferThemeProps<typeof RLDashboardPanelTheme
   /**
    * Replaces the default drag handle. Only rendered when `resizable` is set.
    */
-  resizeHandleSlot?: JSX.Element;
+  handleSlot?: JSX.Element;
 };

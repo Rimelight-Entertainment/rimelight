@@ -426,6 +426,63 @@ const testScenarios: TestScenario[] = [
       </RLContextMenu>
     ),
   },
+  {
+    id: "trigger-slot",
+    title: "Trigger Slot",
+    description: "Replaces the children trigger with a custom element through triggerSlot.",
+    render: () => (
+      <RLContextMenu
+        triggerSlot={
+          <div class="p-4 rounded-xl border border-default bg-surface text-sm font-medium cursor-context-menu">
+            Trigger rendered by triggerSlot
+          </div>
+        }
+        items={[
+          { label: "Duplicate", icon: "copy" },
+          { label: "Archive", icon: "archive" },
+        ]}
+      />
+    ),
+  },
+  {
+    id: "item-slot",
+    title: "Item Slot",
+    description: "Replaces the default markup of every item through itemSlot.",
+    render: () => (
+      <RLContextMenu
+        itemSlot={(args) => (
+          <div class="px-2 py-1.5 text-xs font-mono flex items-center justify-between gap-3 rounded-md hover:bg-accented">
+            <span>{args.item.label}</span>
+            <span class="text-muted">#{args.index + 1}</span>
+          </div>
+        )}
+        items={[{ label: "First" }, { label: "Second" }, { type: "separator" }, { label: "Third" }]}
+      >
+        <div class="p-6 rounded-xl border border-default bg-elevated/10 text-center cursor-context-menu">
+          <span class="text-xs text-muted font-mono">Right-click to see custom item markup</span>
+        </div>
+      </RLContextMenu>
+    ),
+  },
+  {
+    id: "body-slot",
+    title: "Body Slot",
+    description: "Appends free-form content to the menu body after the items through bodySlot.",
+    render: () => (
+      <RLContextMenu
+        bodySlot={
+          <div class="px-2 py-1 text-xs text-muted border-t border-default mt-1 pt-2">
+            Recently used: 3 files
+          </div>
+        }
+        items={[{ label: "Open" }, { label: "Save" }]}
+      >
+        <div class="p-6 rounded-xl border border-default bg-elevated/10 text-center cursor-context-menu">
+          <span class="text-xs text-muted font-mono">Right-click to see body slot content</span>
+        </div>
+      </RLContextMenu>
+    ),
+  },
 ];
 
 export const contextMenuAudit: ComponentAuditDefinition = {
@@ -434,7 +491,7 @@ export const contextMenuAudit: ComponentAuditDefinition = {
   category: "Overlay & Dialog",
   status: "Passed",
   description:
-    "Right-click and long-press context menu supporting grouped items, nested submenus, checkboxes, radios, keyboard navigation, and custom header/footer slots.",
+    "Right-click and long-press context menu supporting grouped items, nested submenus, checkboxes, radios, keyboard navigation, and top, bottom, trigger, item, and body slots.",
   importPath: "@rimelight/ui/components/context-menu/RLContextMenu.tsx",
   renderSandbox: () => <ContextMenuSandbox />,
   testScenarios,

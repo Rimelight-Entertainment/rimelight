@@ -16,6 +16,7 @@ export const RLSpinnerTheme = defineTheme("spinner", {
     color: "auto",
   },
   defaultVariants: {
+    color: "primary",
     size: "md",
   },
 });

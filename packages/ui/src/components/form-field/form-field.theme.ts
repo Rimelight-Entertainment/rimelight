@@ -1,12 +1,17 @@
 import { defineTheme } from "../../resolver";
 
 export const RLFormFieldTheme = defineTheme("form-field", {
-  slots: ["root", "label", "description", "error"],
+  slots: ["root", "header", "label", "required", "description", "control", "error", "help", "hint"],
   base: {
     root: "flex flex-col gap-1.5 w-full",
+    header: "flex items-center justify-between gap-2",
+    hint: "text-xs text-muted",
     label: "font-medium text-highlighted",
+    required: "ml-0.5 text-error",
     description: "text-muted leading-normal",
-    error: "font-medium text-error-500 leading-normal",
+    control: "relative w-full",
+    error: "font-medium text-error leading-normal",
+    help: "mt-1",
   },
   variants: {
     size: {

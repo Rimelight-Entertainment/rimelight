@@ -407,6 +407,35 @@ export const calloutAudit: ComponentAuditDefinition = {
         />
       ),
     },
+    {
+      id: "header-slot",
+      title: "Header slot",
+      description: "`headerSlot` replaces the header row that holds the title and actions.",
+      render: () => (
+        <RLCallout
+          color="info"
+          headerSlot={<span class="text-sm font-bold">{"Custom header content"}</span>}
+        >
+          <p class="text-sm">{"Body text below the custom header."}</p>
+        </RLCallout>
+      ),
+    },
+    {
+      id: "avatar-slot",
+      title: "Avatar slot",
+      description: "`avatarSlot` replaces the avatar rendered beside the title.",
+      render: () => (
+        <RLCallout
+          color="success"
+          title="Avatar slot"
+          avatarSlot={
+            <span class="inline-flex size-6 rounded-full bg-primary" aria-hidden="true" />
+          }
+        >
+          <p class="text-sm">{"Callout with a custom avatar slot."}</p>
+        </RLCallout>
+      ),
+    },
   ],
   checklist: [
     {

@@ -1,6 +1,5 @@
 import type { SlotRenderer } from "../../types";
 import type { InferThemeProps } from "../../resolver";
-import type { JSX } from "@solidjs/web";
 import type { RLTableTheme } from "./table.theme";
 export interface TableColumnMeta {
   class?: {
@@ -34,18 +33,6 @@ export type TableAggregationFn<T = any> =
   | ((values: any[], rows: TableRow<T>[]) => any);
 
 import type { DropdownMenuItem } from "../dropdown-menu/dropdown-menu.types";
-
-/** Context passed to `columnSlots` render functions. */
-export interface TableSlotCtx<T = any> {
-  table: TableApi<T>;
-  column: TableColumn<T>;
-  row?: TableRow<T>;
-  cell?: { value: unknown };
-  getValue?: () => any;
-  renderValue?: () => any;
-  isEditing?: () => boolean;
-  setEditing?: (editing: boolean) => void;
-}
 
 export interface TableColumn<T = any> {
   id?: string;
@@ -438,20 +425,39 @@ export type RLTableProps<T = unknown> = Omit<InferThemeProps<typeof RLTableTheme
     | DropdownMenuItem[][]
     | undefined;
   /**
-   * Solid slot overrides dictionary (e.g. { "name-cell": ({ row }) => ... })
+   * Handler receiving the imperative table API once it is created.
    */
-  columnSlots?: Record<string, SlotRenderer<TableSlotCtx<T>>> | undefined;
   onApi?: (api: TableApi<T>) => void | TableApi<T>;
-  toolbarSlot?: (ctx: { table: TableApi<T> }) => JSX.Element;
-  captionSlot?: (ctx: { table: TableApi<T> }) => JSX.Element;
-  groupHeaderSlot?: (ctx: {
-    group: TableGroup<T>;
-    colSpan: number;
-    table: TableApi<T>;
-  }) => JSX.Element;
-  expandedContentSlot?: (ctx: { row: TableRow<T>; table: TableApi<T> }) => JSX.Element;
-  loadingContentSlot?: (ctx: { table: TableApi<T> }) => JSX.Element;
-  emptyContentSlot?: (ctx: { table: TableApi<T> }) => JSX.Element;
-  bodyTopSlot?: (ctx: { table: TableApi<T> }) => JSX.Element;
-  bodyBottomSlot?: (ctx: { table: TableApi<T> }) => JSX.Element;
+  /**
+   * Content rendered in the toolbar, after the built-in search and menus.
+   */
+  toolbarSlot?: SlotRenderer<{ table: TableApi<T> }>;
+  /**
+   * Caption rendered inside the table element. Overrides `caption`.
+   */
+  captionSlot?: SlotRenderer<{ table: TableApi<T> }>;
+  /**
+   * Header for each group row. Receives the group and the visible column count.
+   */
+  groupHeaderSlot?: SlotRenderer<{ group: TableGroup<T>; colSpan: number; table: TableApi<T> }>;
+  /**
+   * Detail content rendered beneath an expanded row.
+   */
+  expandedContentSlot?: SlotRenderer<{ row: TableRow<T>; table: TableApi<T> }>;
+  /**
+   * Replaces the default loading indicator.
+   */
+  loadingContentSlot?: SlotRenderer<{ table: TableApi<T> }>;
+  /**
+   * Replaces the default empty state.
+   */
+  emptyContentSlot?: SlotRenderer<{ table: TableApi<T> }>;
+  /**
+   * Rendered before the first body row.
+   */
+  bodyTopSlot?: SlotRenderer<{ table: TableApi<T> }>;
+  /**
+   * Rendered after the last body row.
+   */
+  bodyBottomSlot?: SlotRenderer<{ table: TableApi<T> }>;
 };

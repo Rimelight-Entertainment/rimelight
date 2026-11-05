@@ -17,16 +17,19 @@ vi.mock("virtual:rimelight-i18n", () => ({
   },
 }));
 
-const window = new Window();
+// The happy-dom project already gets vitest's own environment; only the node project needs a window.
+if (typeof document === "undefined") {
+  const window = new Window();
 
-globalThis.window = window as any;
-globalThis.document = window.document as any;
-globalThis.KeyboardEvent = window.KeyboardEvent as any;
-globalThis.Event = window.Event as any;
-globalThis.CustomEvent = window.CustomEvent as any;
-globalThis.HTMLElement = window.HTMLElement as any;
-globalThis.Element = window.Element as any;
-globalThis.Node = window.Node as any;
+  globalThis.window = window as any;
+  globalThis.document = window.document as any;
+  globalThis.KeyboardEvent = window.KeyboardEvent as any;
+  globalThis.Event = window.Event as any;
+  globalThis.CustomEvent = window.CustomEvent as any;
+  globalThis.HTMLElement = window.HTMLElement as any;
+  globalThis.Element = window.Element as any;
+  globalThis.Node = window.Node as any;
+}
 
 afterEach(() => {
   if (typeof document !== "undefined") {

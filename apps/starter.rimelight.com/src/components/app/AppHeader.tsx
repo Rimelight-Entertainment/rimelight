@@ -22,7 +22,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
 
   const startLinkGroup = (): RLLinkGroupProps => ({
     label: t("app.header.link-groups.center.start.label"),
-    leadingIcon: "i-lucide-rocket",
+    leadingIcon: "rocket",
     links: [
       {
         label: t("app.header.link-groups.center.start.links.introduction"),
@@ -41,7 +41,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
 
   const customizeLinkGroup = (): RLLinkGroupProps => ({
     label: t("app.header.link-groups.center.customize.label"),
-    leadingIcon: "i-lucide-palette",
+    leadingIcon: "palette",
     links: [
       {
         label: t("app.header.link-groups.center.customize.links.branding"),
@@ -64,12 +64,12 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
 
   const resourcesLinkGroup = (): RLLinkGroupProps => ({
     label: t("app.header.link-groups.right.resources.label"),
-    leadingIcon: "i-lucide-library",
+    leadingIcon: "library",
     links: [
       {
         label: t("app.header.link-groups.right.resources.links.docs"),
         href: getLocaleUrl("/docs"),
-        leadingIcon: "i-lucide-file-text size-4",
+        leadingIcon: "file-text size-4",
       },
       {
         label: t("app.header.link-groups.right.resources.links.github"),
@@ -126,7 +126,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
       leadingSlot={
         <div class="flex items-center gap-md">
           <div class="hidden md:flex flex-row gap-md items-center">
-            <RLLogo href={getLocaleUrl("/")} variant="logomark" class="h-10 w-auto" mode="color" />
+            <RLLogo href="/" variant="logomark" class="h-10 w-auto" mode="color" />
             <RLNavigationMenu
               items={leftLinks()}
               panels={{
@@ -167,56 +167,54 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
                 <RLButton
                   color="neutral"
                   variant="ghost"
-                  rounded={true}
-                  leadingIcon="i-lucide-menu"
+                  shape="pill"
+                  leadingIcon="menu"
                   class="!text-white"
                   aria-label={t("app.header.menu.open")}
                 />
               }
             >
-              {() => (
-                <RLNavigationMenu
-                  items={leftLinks()}
-                  orientation="vertical"
-                  panels={{
-                    features: () => (
-                      <div class="flex flex-col lg:flex-row gap-lg bg-default w-full">
-                        <div class="bg-default flex flex-col lg:flex-row gap-lg p-lg flex-1">
-                          <RLImage
-                            class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded mb-2 lg:mb-0"
-                            src="https://cdn.rimelight.com/images/placeholder.webp"
-                            alt=""
-                            ui={{
-                              trigger: "absolute inset-0 w-full h-full overflow-hidden rounded-lg",
-                              triggerImage: "w-full h-full object-cover",
-                            }}
-                          />
+              <RLNavigationMenu
+                items={leftLinks()}
+                orientation="vertical"
+                panels={{
+                  features: () => (
+                    <div class="flex flex-col lg:flex-row gap-lg bg-default w-full">
+                      <div class="bg-default flex flex-col lg:flex-row gap-lg p-lg flex-1">
+                        <RLImage
+                          class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded mb-2 lg:mb-0"
+                          src="https://cdn.rimelight.com/images/placeholder.webp"
+                          alt=""
+                          ui={{
+                            trigger: "absolute inset-0 w-full h-full overflow-hidden rounded-lg",
+                            triggerImage: "w-full h-full object-cover",
+                          }}
+                        />
 
-                          <div class="flex flex-col gap-sm flex-2">
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-xl gap-y-4">
-                              <RLLinkGroup
-                                {...startLinkGroup()}
-                                ui={{ title: "!text-primary-500" }}
-                              />
-                              <RLLinkGroup
-                                {...customizeLinkGroup()}
-                                ui={{ title: "!text-primary-500" }}
-                              />
-                            </div>
+                        <div class="flex flex-col gap-sm flex-2">
+                          <div class="grid grid-cols-1 sm:grid-cols-2 gap-xl gap-y-4">
+                            <RLLinkGroup
+                              {...startLinkGroup()}
+                              ui={{ title: "!text-primary-500" }}
+                            />
+                            <RLLinkGroup
+                              {...customizeLinkGroup()}
+                              ui={{ title: "!text-primary-500" }}
+                            />
                           </div>
                         </div>
-
-                        <div class="bg-muted p-lg w-64 shrink-0">
-                          <RLLinkGroup
-                            {...resourcesLinkGroup()}
-                            ui={{ title: "!text-primary-500" }}
-                          />
-                        </div>
                       </div>
-                    ),
-                  }}
-                />
-              )}
+
+                      <div class="bg-muted p-lg w-64 shrink-0">
+                        <RLLinkGroup
+                          {...resourcesLinkGroup()}
+                          ui={{ title: "!text-primary-500" }}
+                        />
+                      </div>
+                    </div>
+                  ),
+                }}
+              />
             </RLSlideover>
           </div>
         </div>
@@ -224,7 +222,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
       centerSlot={
         <div class="flex items-center gap-md">
           <div class="block md:hidden">
-            <RLLogo href={getLocaleUrl("/")} variant="logomark" class="h-10 w-auto" mode="color" />
+            <RLLogo href="/" variant="logomark" class="h-10 w-auto" mode="color" />
           </div>
         </div>
       }
@@ -234,7 +232,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
           <RLButton
             variant="ghost"
             color="neutral"
-            leadingIcon="i-lucide-keyboard"
+            leadingIcon="keyboard"
             aria-label={t("app.header.shortcuts.open")}
             onClick={() => useShortcuts().open()}
           />
@@ -250,20 +248,18 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
                 <RLButton
                   color="neutral"
                   variant="ghost"
-                  rounded={true}
-                  leadingIcon="i-lucide-ellipsis-vertical"
+                  shape="pill"
+                  leadingIcon="ellipsis-vertical"
                   class="!text-white"
                   aria-label={t("app.header.actions.open")}
                 />
               }
             >
-              {() => (
-                <div class="flex flex-col gap-md">
-                  <For each={actions()}>
-                    {(buttonProps) => <RLButton {...buttonProps} block={true} />}
-                  </For>
-                </div>
-              )}
+              <div class="flex flex-col gap-md">
+                <For each={actions()}>
+                  {(buttonProps) => <RLButton {...buttonProps} block={true} />}
+                </For>
+              </div>
             </RLSlideover>
           </div>
         </div>

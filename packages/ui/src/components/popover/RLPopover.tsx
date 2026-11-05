@@ -2,16 +2,10 @@ import type { RLPopoverProps } from "./popover.types";
 import { RLPopoverTheme } from "./popover.theme";
 import { createSignal, Show, onSettled, type Component } from "solid-js";
 import { createControllable } from "../../controllable";
+import { renderSlot } from "../../slot";
+import { RLButton } from "../button/RLButton";
 
-const OMIT_KEYS = [
-  "size",
-  "placement",
-  "mode",
-  "open",
-  "defaultOpen",
-  "triggerLabel",
-  "onOpenChange",
-] as const;
+const OMIT_KEYS = ["mode", "open", "defaultOpen", "triggerLabel", "onOpenChange"] as const;
 
 export const RLPopover: Component<RLPopoverProps> = (props) => {
   const { Tag, classes, rest, slots, children, theme } = RLPopoverTheme.setup(props, {
@@ -65,12 +59,10 @@ export const RLPopover: Component<RLPopoverProps> = (props) => {
           if (mode() === "hover" || mode() === "both") setIsHovered(false);
         }}
       >
-        {slots.triggerSlot() ??
-          (props.triggerLabel ? (
-            <button type="button" class="cursor-pointer">
-              {props.triggerLabel}
-            </button>
-          ) : null)}
+        <Show when={slots.triggerSlot()}>{renderSlot(slots.triggerSlot())}</Show>
+        <Show when={!slots.triggerSlot() ? props.triggerLabel : undefined}>
+          {(label) => <RLButton label={label()} />}
+        </Show>
       </div>
 
       <Show when={isVisible()}>

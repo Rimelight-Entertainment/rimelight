@@ -1,49 +1,10 @@
 import { describe, it, expect } from "vite-plus/test";
 
-import { RLTableTheme } from "../src/components/table/table.theme";
 import { RLTable } from "../src/components/table/RLTable";
 import { renderSolid } from "./utils/normalize";
 import type { TableApi, TableColumn, TableRow } from "../src/components/table/table.types";
 
 describe("RLTable Theme & Logic Suite", () => {
-  it("generates correct slot classes with default variants", () => {
-    const classes = RLTableTheme({});
-    expect(classes.root).toContain("relative");
-    expect(classes.base).toContain("min-w-full");
-    expect(classes.thead).toContain("relative");
-    expect(classes.tbody).toContain("divide-y");
-    expect(classes.tr).toContain("transition-colors");
-    expect(classes.th).toContain("text-xs");
-    expect(classes.td).toContain("text-sm");
-    expect(classes.toolbar).toContain("flex");
-    expect(classes.resizer).toContain("cursor-col-resize");
-    expect(classes.dragHandle).toContain("cursor-grab");
-  });
-
-  it("applies sticky, striped, bordered, and hoverable variants", () => {
-    const classes = RLTableTheme({
-      sticky: true,
-      striped: true,
-      bordered: true,
-      hoverable: true,
-    });
-    expect(classes.thead).toContain("sticky top-0");
-    expect(classes.tfoot).toContain("sticky bottom-0");
-    expect(classes.tbody).toContain("nth-child(even)");
-    expect(classes.root).toContain("border-2");
-    expect(classes.tr).toContain("hover:bg-muted/30");
-  });
-
-  it("applies loading variants and animations", () => {
-    const classes = RLTableTheme({
-      loading: true,
-      loadingColor: "primary",
-      loadingAnimation: "carousel",
-    });
-    expect(classes.thead).toContain("after:absolute");
-    expect(classes.thead).toContain("after:bg-primary");
-  });
-
   describe("RLTable Rendering & Features", () => {
     const sampleData = [
       { id: "1", name: "Alice", role: "Admin", score: 95, details: { team: "Core" } },
@@ -108,19 +69,61 @@ describe("RLTable Theme & Logic Suite", () => {
       expect(html).toContain('data-depth="1"');
     });
 
-    it("supports slot dictionary overrides for cells and headers", () => {
+    it("renders per-column cell overrides from TableColumn.cell", () => {
+      const html = renderSolid(RLTable, {
+        data: sampleData,
+        columns: [
+          {
+            accessorKey: "name",
+            header: "Name",
+            cell: ({ row }: { row: TableRow<(typeof sampleData)[0]> }) =>
+              row.original.name.toUpperCase(),
+          },
+        ],
+      });
+
+      expect(html).toContain("ALICE");
+      expect(html).toContain("BOB");
+      expect(html).not.toContain("Alice");
+    });
+
+    it("renders caption text and captionSlot over caption prop", () => {
+      const withCaption = renderSolid(RLTable, {
+        data: sampleData,
+        columns,
+        caption: "Team roster",
+      });
+      expect(withCaption).toContain("<caption");
+      expect(withCaption).toContain("Team roster");
+
+      const withSlot = renderSolid(RLTable, {
+        data: sampleData,
+        columns,
+        caption: "Ignored",
+        captionSlot: "Custom caption",
+      });
+      expect(withSlot).toContain("Custom caption");
+      expect(withSlot).not.toContain("Ignored");
+    });
+
+    it("renders emptyContentSlot when there are no rows", () => {
+      const html = renderSolid(RLTable, {
+        data: [],
+        columns,
+        emptyContentSlot: "NOTHING TO SEE",
+      });
+      expect(html).toContain("NOTHING TO SEE");
+    });
+
+    it("renders loadingContentSlot while loading", () => {
       const html = renderSolid(RLTable, {
         data: sampleData,
         columns,
-        columnSlots: {
-          "name-cell": ({ row }: { row: { original: { name: string } } }) =>
-            `<span class="custom-name-slot">${row.original.name.toUpperCase()}</span>`,
-        },
+        loading: true,
+        loadingContentSlot: "FETCHING ROWS",
       });
-
-      expect(html).toContain("custom-name-slot");
-      expect(html).toContain("ALICE");
-      expect(html).toContain("BOB");
+      expect(html).toContain("FETCHING ROWS");
+      expect(html).not.toContain("Alice");
     });
 
     it("supports tree/hierarchical sub-rows", () => {

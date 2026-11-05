@@ -1,7 +1,7 @@
 import type { RLHeaderProps } from "./header.types";
 import { RLHeaderTheme } from "./header.theme";
-import { createEffect, type Component } from "solid-js";
-import { useHeaderStack } from "./useHeaderStack";
+import { createEffect, Show, type Component } from "solid-js";
+import { useHeaderStack } from "./header.helpers";
 
 const OMIT_KEYS = ["layerType", "stackIndex", "hideOnScroll"] as const;
 
@@ -23,11 +23,9 @@ export const RLHeader: Component<RLHeaderProps> = (props) => {
     }),
   });
 
-  const layerId = id;
-
   const { registerHeader } = useHeaderStack();
   const layer = registerHeader({
-    id: layerId,
+    id,
     order: stackIndex,
     type: layerType,
     sticky: sticky,
@@ -54,17 +52,17 @@ export const RLHeader: Component<RLHeaderProps> = (props) => {
         rootEl = el;
         layer.ref(el);
       }}
-      id={layerId()}
+      id={id()}
       data-slot="root"
       data-theme={theme()}
       class={classes().root}
-      data-contain={contain() ? "true" : "false"}
-      data-collapsed={layer.isCollapsed() ? "true" : "false"}
-      data-rl-header={isBanner() ? undefined : "true"}
-      data-rl-banner={isBanner() ? "true" : undefined}
+      data-contain={contain() ? "" : undefined}
+      data-collapsed={layer.isCollapsed() ? "" : undefined}
+      data-rl-header={isBanner() ? undefined : ""}
+      data-rl-banner={isBanner() ? "" : undefined}
       data-stack-index={stackIndex()}
-      data-hide-on-scroll={String(hideOnScroll())}
-      data-header-layer-id={layerId()}
+      data-hide-on-scroll={hideOnScroll() ? "" : undefined}
+      data-header-layer-id={id()}
       data-layer-type={layerType()}
       {...rest}
     >
@@ -74,7 +72,9 @@ export const RLHeader: Component<RLHeaderProps> = (props) => {
             {slots.leadingSlot()}
           </div>
           <div class={classes().center} data-slot="center">
-            {slots.centerSlot() ?? children()}
+            <Show when={slots.centerSlot()} fallback={children()}>
+              {slots.centerSlot()}
+            </Show>
           </div>
           <div class={classes().trailing} data-slot="trailing">
             {slots.trailingSlot()}

@@ -1,10 +1,11 @@
 import { defineTheme } from "../../resolver";
 
 export const RLChipTheme = defineTheme("chip", {
-  slots: ["root", "base"],
+  slots: ["root", "base", "label"],
   base: {
     root: "relative inline-flex items-center justify-center shrink-0",
-    base: "rounded-full ring-2 ring-bg flex items-center justify-center text-inverted font-medium whitespace-nowrap bg-[var(--rl-bg,var(--rl-primary))] text-[8px]",
+    base: "rounded-full ring-2 ring-default flex items-center justify-center text-inverted font-medium bg-[var(--rl-bg,var(--rl-primary))] text-[8px]",
+    label: "whitespace-nowrap",
   },
   variants: {
     color: "auto",
@@ -21,13 +22,9 @@ export const RLChipTheme = defineTheme("chip", {
       "top-left": { base: "top-0 left-0" },
       "bottom-left": { base: "bottom-0 left-0" },
     },
-    inset: {
-      false: { base: "" },
-      true: { base: "" },
-    },
+    inset: {},
     standalone: {
       false: { base: "absolute" },
-      true: { base: "" },
     },
   },
   compoundVariants: [

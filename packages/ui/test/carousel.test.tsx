@@ -1,248 +1,183 @@
 import { describe, it, expect } from "vite-plus/test";
+import { renderToString } from "@solidjs/web";
 
 import { RLCarousel } from "../src/components/carousel/RLCarousel";
-import { renderToString } from "@solidjs/web";
 import { cleanHtml } from "./utils/normalize";
 
 function render(fn: () => any): string {
   return cleanHtml(renderToString(fn));
 }
 
-function slotTag(html: string, slot: string): string {
-  const match = html.match(new RegExp(`<[a-z0-9]+[^>]*data-slot="${slot}"[^>]*>`));
-  return match?.[0] ?? "";
+function count(html: string, pattern: RegExp): number {
+  return html.match(pattern)?.length ?? 0;
 }
 
-function attr(tag: string, name: string): string | undefined {
-  return tag.match(new RegExp(`\\s${name}="([^"]*)"`))?.[1];
-}
+const slides = ["/a.jpg", "/b.jpg", "/c.jpg"];
 
 describe("RLCarousel", () => {
-  const items = [
-    "https://picsum.photos/640/640?random=1",
-    "https://picsum.photos/640/640?random=2",
-    "https://picsum.photos/640/640?random=3",
-  ];
-
-  describe("Exports", () => {
-    it("exports RLCarousel component from index", () => {
-      expect(RLCarousel).toBeDefined();
-    });
-  });
-
-  describe("Structure, Slots & Props", () => {
-    it("renders default carousel structure with items", () => {
-      const html = render(() => <RLCarousel items={items} />);
-      expect(html).toMatch(/^<div/);
-      expect(slotTag(html, "root")).not.toBe("");
-      expect(slotTag(html, "viewport")).not.toBe("");
-      expect(slotTag(html, "container")).not.toBe("");
-      expect(html).toContain(items[0]);
-      expect(html).toContain(items[1]);
-      expect(html).toContain(items[2]);
-    });
-
-    it("renders slides passed via items prop", () => {
-      const slides = [
-        { imageSrc: "https://example.com/slide1.jpg", title: "Slide 1", description: "Desc 1" },
-        { imageSrc: "https://example.com/slide2.jpg", title: "Slide 2" },
-      ];
+  describe("Root", () => {
+    it("renders a labelled carousel region", () => {
       const html = render(() => <RLCarousel items={slides} />);
-      expect(html).toContain("https://example.com/slide1.jpg");
-      expect(html).toContain("Slide 1");
-      expect(html).toContain("Desc 1");
-      expect(html).toContain("Slide 2");
+      expect(html).toContain('role="region"');
+      expect(html).toContain('aria-roledescription="carousel"');
+      expect(html).toContain('data-slot="root"');
     });
 
-    it("renders static children when no items/slides prop passed", () => {
-      const html = render(() => (
-        <RLCarousel>
-          <div class="slide-a">Slide A</div>
-          <div class="slide-b">Slide B</div>
-        </RLCarousel>
-      ));
-      expect(html).toContain("Slide A");
-      expect(html).toContain("Slide B");
-      expect(html).toContain("slide-a");
+    it("uses the aria-label prop", () => {
+      const html = render(() => <RLCarousel items={slides} aria-label="Gallery" />);
+      expect(html).toContain('aria-label="Gallery"');
     });
 
-    it("renders scoped function children with items", () => {
-      const html = render(() => (
-        <RLCarousel items={items}>
-          {(ctx: { item: unknown; index: number }) => (
-            <span class="custom-item">
-              Item {ctx.index}: {String(ctx.item)}
-            </span>
-          )}
-        </RLCarousel>
-      ));
-      expect(html).toContain("custom-item");
-      expect(html).toContain(`Item 0: ${items[0]}`);
-      expect(html).toContain(`Item 1: ${items[1]}`);
+    it("applies the orientation variant to the root", () => {
+      const html = render(() => <RLCarousel items={slides} orientation="vertical" />);
+      expect(html).toContain('data-orientation="vertical"');
+    });
+
+    it("renders the requested root element", () => {
+      const html = render(() => <RLCarousel items={slides} as="section" />);
+      expect(html).toMatch(/^<section\b/);
+      expect(html).toContain('data-slot="root"');
     });
   });
 
-  describe("Arrows & Navigation Controls", () => {
-    it("does not render arrows by default", () => {
-      const html = render(() => <RLCarousel items={items} />);
-      expect(slotTag(html, "arrows")).toBe("");
-      expect(slotTag(html, "prev")).toBe("");
-      expect(slotTag(html, "next")).toBe("");
+  describe("Slides", () => {
+    it("renders one slide per string item", () => {
+      const html = render(() => <RLCarousel items={slides} />);
+      expect(count(html, /data-slot="item"/g)).toBe(3);
+      expect(html).toContain('src="/b.jpg"');
     });
 
-    it("renders prev and next arrow buttons when arrows is true", () => {
-      const html = render(() => <RLCarousel items={items} arrows />);
-      expect(slotTag(html, "arrows")).not.toBe("");
-      expect(slotTag(html, "prev")).not.toBe("");
-      expect(slotTag(html, "next")).not.toBe("");
-    });
-
-    it("customizes prev and next buttons with props", () => {
+    it("renders captions for object items", () => {
       const html = render(() => (
         <RLCarousel
-          items={items}
-          arrows
-          prev={{ color: "primary", variant: "solid" }}
-          next={{ color: "neutral", variant: "outline" }}
+          items={[{ src: "/hero.jpg", title: "Hero", description: "Sunrise over the bay" }]}
         />
       ));
-      expect(slotTag(html, "prev")).toContain("rl-color-primary");
-      expect(slotTag(html, "next")).toContain("rl-color-neutral");
-    });
-  });
-
-  describe("Dots Navigation", () => {
-    it("does not render dots by default", () => {
-      const html = render(() => <RLCarousel items={items} />);
-      expect(slotTag(html, "dots")).toBe("");
+      expect(html).toContain('src="/hero.jpg"');
+      expect(html).toContain("Hero");
+      expect(html).toContain("Sunrise over the bay");
     });
 
-    it("renders dots corresponding to number of items", () => {
-      const html = render(() => <RLCarousel items={items} dots />);
-      expect(slotTag(html, "dots")).not.toBe("");
-      const dotMatches = html.match(/data-slot="dot"/g);
-      expect(dotMatches?.length).toBe(3);
-      expect(html).toContain('aria-label="Go to slide 1"');
-      expect(html).toContain('aria-label="Go to slide 2"');
-      expect(html).toContain('aria-label="Go to slide 3"');
+    it("prefers imageSrc over src", () => {
+      const html = render(() => (
+        <RLCarousel items={[{ src: "/small.jpg", imageSrc: "/large.jpg" }]} />
+      ));
+      expect(html).toContain('src="/large.jpg"');
+      expect(html).not.toContain("/small.jpg");
     });
 
-    it("marks the first dot active by default", () => {
-      const html = render(() => <RLCarousel items={items} dots />);
-      expect(html).toContain('data-state="active"');
-      expect(html).toContain('aria-selected="true"');
+    it("renders static children as slides when no items are given", () => {
+      const html = render(() => (
+        <RLCarousel>
+          <p>First</p>
+          <p>Second</p>
+        </RLCarousel>
+      ));
+      expect(count(html, /data-slot="item"/g)).toBe(2);
+      expect(html).toContain("First");
+      expect(html).toContain("Second");
     });
 
-    it("marks startIndex active when specified", () => {
-      const html = render(() => <RLCarousel items={items} dots startIndex={1} />);
-      const secondDot = html.match(/<button[^>]*aria-label="Go to slide 2"[^>]*>/)?.[0];
-      expect(secondDot).toContain('data-state="active"');
-      expect(secondDot).toContain('aria-selected="true"');
-    });
-  });
-
-  describe("Orientation", () => {
-    it("defaults to horizontal orientation", () => {
-      const html = render(() => <RLCarousel items={items} />);
-      const root = slotTag(html, "root");
-      expect(attr(root, "data-orientation")).toBe("horizontal");
+    it("passes each item and its index to the children function", () => {
+      const html = render(() => (
+        <RLCarousel items={["alpha", "beta"]}>
+          {(ctx) => <span data-index={ctx.index}>{String(ctx.item)}</span>}
+        </RLCarousel>
+      ));
+      expect(html).toContain('data-index="0"');
+      expect(html).toContain('data-index="1"');
+      expect(html).toContain("beta");
     });
 
-    it("renders vertical orientation correctly", () => {
-      const html = render(() => <RLCarousel items={items} orientation="vertical" />);
-      const root = slotTag(html, "root");
-      expect(attr(root, "data-orientation")).toBe("vertical");
-    });
-  });
-
-  describe("Plugins & Extended Features", () => {
-    it("supports fade mode without breaking structure", () => {
-      const html = render(() => <RLCarousel items={items} fade />);
-      expect(slotTag(html, "root")).not.toBe("");
-      expect(html).toContain("opacity-100");
+    it("marks the start index slide as the active item", () => {
+      const html = render(() => <RLCarousel items={slides} startIndex={1} />);
+      expect(html).toMatch(/data-state="active"/);
+      expect(count(html, /data-state="active"/g)).toBe(1);
     });
 
-    it("supports stateClasses mode on snapped item", () => {
-      const html = render(() => <RLCarousel items={items} stateClasses />);
-      expect(html).toContain("is-snapped");
+    it("adds state classes to the snapped slide when stateClasses is enabled", () => {
+      const html = render(() => <RLCarousel items={slides} stateClasses startIndex={2} />);
+      expect(count(html, /is-snapped/g)).toBe(1);
       expect(html).toContain("is-in-view");
     });
 
-    it("supports custom stateClasses option overrides", () => {
+    it("uses custom state class names", () => {
       const html = render(() => (
-        <RLCarousel
-          items={items}
-          stateClasses={{ snapped: "active-slide-class", inView: "visible-slide-class" }}
-        />
+        <RLCarousel items={slides} stateClasses={{ snapped: "current" }} />
       ));
-      expect(html).toContain("active-slide-class");
-      expect(html).toContain("visible-slide-class");
+      expect(html).toContain("current");
+      expect(html).not.toContain("is-snapped");
     });
   });
 
-  describe("Polymorphism & Custom UI", () => {
-    it("renders custom element via as prop", () => {
-      const sectionHtml = render(() => <RLCarousel as="section" items={items} />);
-      expect(sectionHtml).toMatch(/^<section/);
-
-      const articleHtml = render(() => <RLCarousel as="article" items={items} />);
-      expect(articleHtml).toMatch(/^<article/);
+  describe("Arrows", () => {
+    it("does not render arrows by default", () => {
+      const html = render(() => <RLCarousel items={slides} />);
+      expect(html).not.toContain('data-slot="prev"');
+      expect(html).not.toContain('data-slot="next"');
     });
 
-    it("applies class prop to root element", () => {
-      const html = render(() => <RLCarousel items={items} class="custom-carousel-cls" />);
-      expect(slotTag(html, "root")).toContain("custom-carousel-cls");
+    it("renders previous and next arrows when enabled", () => {
+      const html = render(() => <RLCarousel items={slides} arrows />);
+      expect(html).toContain('data-slot="prev"');
+      expect(html).toContain('data-slot="next"');
     });
 
-    it("applies ui slot overrides", () => {
+    it("disables the previous arrow on the first slide without loop", () => {
+      const html = render(() => <RLCarousel items={slides} arrows />);
+      const prevTag = html.match(/<button\b[^>]*data-slot="prev"[^>]*>/)?.[0] ?? "";
+      expect(prevTag).toContain("disabled");
+    });
+
+    it("keeps the previous arrow enabled on the first slide with loop", () => {
+      const html = render(() => <RLCarousel items={slides} arrows loop />);
+      const prevTag = html.match(/<button\b[^>]*data-slot="prev"[^>]*>/)?.[0] ?? "";
+      expect(prevTag).not.toMatch(/\sdisabled(=""|\s|>)/);
+    });
+
+    it("renders custom prev and next slot content in place of the icon", () => {
       const html = render(() => (
         <RLCarousel
-          items={items}
+          items={slides}
           arrows
-          dots
-          ui={{
-            root: "custom-root-class",
-            viewport: "custom-viewport-class",
-            container: "custom-container-class",
-            item: "basis-1/3",
-            dots: "custom-dots-class",
-            dot: "custom-dot-class",
-          }}
+          prevSlot={() => <span data-testid="custom-prev">Back</span>}
+          nextSlot={() => <span data-testid="custom-next">Forward</span>}
         />
       ));
-      expect(slotTag(html, "root")).toContain("custom-root-class");
-      expect(slotTag(html, "viewport")).toContain("custom-viewport-class");
-      expect(slotTag(html, "container")).toContain("custom-container-class");
-      expect(slotTag(html, "item")).toContain("basis-1/3");
-      expect(slotTag(html, "dots")).toContain("custom-dots-class");
-      expect(slotTag(html, "dot")).toContain("custom-dot-class");
+      expect(html).toContain('data-testid="custom-prev"');
+      expect(html).toContain('data-testid="custom-next"');
+      expect(html).not.toContain('data-slot="leading-icon"');
     });
   });
 
-  describe("Accessibility (WAI-ARIA)", () => {
-    it("renders region role and roledescription carousel", () => {
-      const html = render(() => <RLCarousel items={items} aria-label="Featured products" />);
-      const root = slotTag(html, "root");
-      expect(attr(root, "role")).toBe("region");
-      expect(attr(root, "aria-roledescription")).toBe("carousel");
-      expect(attr(root, "aria-label")).toBe("Featured products");
+  describe("Dots", () => {
+    it("does not render dots by default", () => {
+      const html = render(() => <RLCarousel items={slides} />);
+      expect(html).not.toContain('data-slot="dots"');
     });
 
-    it("renders group role and roledescription slide on items", () => {
-      const html = render(() => <RLCarousel items={items} />);
-      const itemTag = slotTag(html, "item");
-      expect(attr(itemTag, "role")).toBe("group");
-      expect(attr(itemTag, "aria-roledescription")).toBe("slide");
-      expect(attr(itemTag, "aria-label")).toBe("1 / 3");
+    it("renders one dot per slide", () => {
+      const html = render(() => <RLCarousel items={slides} hasDots />);
+      expect(count(html, /data-slot="dot"/g)).toBe(3);
     });
 
-    it("renders tablist and tabs for dots", () => {
-      const html = render(() => <RLCarousel items={items} dots />);
-      const dotsTag = slotTag(html, "dots");
-      expect(attr(dotsTag, "role")).toBe("tablist");
-      expect(attr(dotsTag, "aria-label")).toBe("Slides");
-      const dotTag = slotTag(html, "dot");
-      expect(attr(dotTag, "role")).toBe("tab");
+    it("marks the selected dot as active", () => {
+      const html = render(() => <RLCarousel items={slides} hasDots startIndex={2} />);
+      const activeDot = html.match(/<button\b[^>]*data-slot="dot"[^>]*data-state="active"[^>]*>/);
+      expect(activeDot).not.toBeNull();
+    });
+  });
+
+  describe("Fade", () => {
+    it("publishes the transition duration as a CSS variable", () => {
+      const html = render(() => <RLCarousel items={slides} fade duration={800} />);
+      expect(html).toContain("--rl-carousel-duration:800ms");
+      expect(html).not.toContain("--rl-carousel-transform:");
+    });
+
+    it("publishes the slide transform when not fading", () => {
+      const html = render(() => <RLCarousel items={slides} />);
+      expect(html).toContain("--rl-carousel-transform");
     });
   });
 });

@@ -1,13 +1,13 @@
 import type { JSX } from "@solidjs/web";
 import type { InferThemeProps } from "../../resolver";
-import type { ThemeColor } from "../../types";
+import type { SlotRenderer, ThemeColor } from "../../types";
 import type { RLToastTheme } from "./toast.theme";
 
 export type RLToastProps = Omit<InferThemeProps<typeof RLToastTheme>, "color"> & {
   /**
    * Intent color. Drives the icon and styling.
    *
-   * @default "neutral"
+   * @default "primary"
    */
   color?: ThemeColor | undefined;
   /**
@@ -18,10 +18,6 @@ export type RLToastProps = Omit<InferThemeProps<typeof RLToastTheme>, "color"> &
    * Description or message. Use `descriptionSlot` for JSX.
    */
   description?: string | undefined;
-  /**
-   * Action button label. Rendered only when `actionsSlot` is not set.
-   */
-  actionLabel?: string | undefined;
   /**
    * Duration in milliseconds. `0` keeps the toast open until dismissed.
    *
@@ -39,19 +35,31 @@ export type RLToastProps = Omit<InferThemeProps<typeof RLToastTheme>, "color"> &
    */
   onDismiss?: (() => void) | undefined;
   /**
-   * Toast body content.
+   * Toast body content, rendered below the title and description.
    */
   children?: JSX.Element | undefined;
   /**
    * Title content. Takes precedence over the `title` string.
    */
-  titleSlot?: JSX.Element | undefined;
+  titleSlot?: SlotRenderer | undefined;
   /**
    * Description content. Takes precedence over the `description` string.
    */
-  descriptionSlot?: JSX.Element | undefined;
+  descriptionSlot?: SlotRenderer | undefined;
   /**
-   * Action content. Replaces the default action button.
+   * Action content, rendered below the body.
    */
-  actionsSlot?: JSX.Element | undefined;
+  actionsSlot?: SlotRenderer | undefined;
 };
+
+/**
+ * A toast queued in the global store. Created by `addToast` and removed by `removeToast`.
+ */
+export interface ToastItem {
+  id: string;
+  title: string;
+  description?: string;
+  color?: ThemeColor;
+  duration?: number;
+  onDismiss?: () => void;
+}

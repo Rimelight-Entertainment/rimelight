@@ -1,29 +1,9 @@
 import type { JSX } from "@solidjs/web";
+import type { SlotRenderer } from "../../types";
 import type { InferThemeProps } from "../../resolver";
 import type { RLPopoverTheme } from "./popover.theme";
 
-export type RLPopoverProps = Omit<InferThemeProps<typeof RLPopoverTheme>, "size" | "placement"> & {
-  /**
-   * Popover padding preset.
-   *
-   * @default "md"
-   */
-  size?: "xs" | "sm" | "md" | "lg" | undefined;
-  /**
-   * Placement of the popover relative to the trigger.
-   *
-   * @default "bottom"
-   */
-  placement?:
-    | "top"
-    | "top-start"
-    | "top-end"
-    | "bottom"
-    | "bottom-start"
-    | "bottom-end"
-    | "left"
-    | "right"
-    | undefined;
+export type RLPopoverProps = InferThemeProps<typeof RLPopoverTheme> & {
   /**
    * Which interactions open the popover: `"click"`, `"hover"`, or `"both"`.
    *
@@ -49,9 +29,9 @@ export type RLPopoverProps = Omit<InferThemeProps<typeof RLPopoverTheme>, "size"
    */
   children?: JSX.Element | undefined;
   /**
-   * Trigger element. Always rendered, so it is plain JSX.
+   * Trigger element. Replaces the default trigger button.
    */
-  triggerSlot?: JSX.Element | undefined;
+  triggerSlot?: SlotRenderer | undefined;
   /**
    * Called whenever the open state changes through a click or outside click.
    */

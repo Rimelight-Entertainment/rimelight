@@ -1,25 +1,16 @@
 import { defineTheme } from "../../resolver";
 
 export const RLButtonTheme = defineTheme("button", {
-  slots: [
-    "root",
-    "label",
-    "leadingIcon",
-    "leadingAvatar",
-    "leadingAvatarSize",
-    "trailingIcon",
-    "externalHint",
-  ],
+  slots: ["root", "label", "leadingIcon", "leadingAvatar", "trailingIcon", "externalHint"],
   base: {
     root: [
-      "rounded-md font-medium inline-flex items-center disabled:cursor-not-allowed aria-disabled:cursor-not-allowed disabled:opacity-75 aria-disabled:opacity-75",
+      "font-medium inline-flex items-center disabled:cursor-not-allowed aria-disabled:cursor-not-allowed disabled:opacity-75 aria-disabled:opacity-75",
       "transition-colors outline-none select-none no-underline leading-none",
-      "aria-invalid:border-error-500 aria-invalid:ring-error-500/20",
+      "aria-invalid:border-error aria-invalid:ring-error/20",
     ],
     label: "truncate leading-none",
     leadingIcon: "shrink-0 inline-flex items-center justify-center leading-none",
     leadingAvatar: "shrink-0",
-    leadingAvatarSize: "",
     trailingIcon: "shrink-0 inline-flex items-center justify-center leading-none",
     externalHint: "sr-only",
   },
@@ -54,11 +45,11 @@ export const RLButtonTheme = defineTheme("button", {
     },
     color: "auto",
     size: {
-      xs: { root: "text-xs gap-1 leading-none", leadingAvatarSize: "xs" },
-      sm: { root: "text-xs gap-1.5 leading-none", leadingAvatarSize: "xs" },
-      md: { root: "text-sm gap-1.5 leading-none", leadingAvatarSize: "xs" },
-      lg: { root: "text-sm gap-2 leading-none", leadingAvatarSize: "xs" },
-      xl: { root: "text-base gap-2 leading-none", leadingAvatarSize: "xs" },
+      xs: { root: "text-xs gap-1 leading-none" },
+      sm: { root: "text-xs gap-1.5 leading-none" },
+      md: { root: "text-sm gap-1.5 leading-none" },
+      lg: { root: "text-sm gap-2 leading-none" },
+      xl: { root: "text-base gap-2 leading-none" },
     },
     justify: {
       start: { root: "justify-start" },
@@ -71,20 +62,10 @@ export const RLButtonTheme = defineTheme("button", {
     block: {
       true: { root: "w-full justify-center", trailingIcon: "ms-auto" },
     },
-    square: {
-      true: { root: "aspect-square justify-center" },
-      false: {},
-    },
-    rounded: {
-      true: { root: "rounded-full" },
-      false: { root: "rounded-md" },
-    },
-    leading: { true: {} },
-    trailing: { true: {} },
-    loading: { true: {} },
-    active: {
-      true: { root: "" },
-      false: { root: "" },
+    shape: {
+      square: { root: "aspect-square justify-center rounded-md" },
+      rounded: { root: "rounded-md" },
+      pill: { root: "rounded-full" },
     },
   },
   compoundVariants: [
@@ -130,16 +111,16 @@ export const RLButtonTheme = defineTheme("button", {
         root: "text-muted hover:text-default active:text-default disabled:text-muted aria-disabled:text-muted focus:outline-none focus-visible:ring-inset focus-visible:ring-2 focus-visible:ring-inverted",
       },
     },
-    { square: false, size: "xs", class: { root: "px-2 py-1" } },
-    { square: true, size: "xs", class: { root: "p-1" } },
-    { square: false, size: "sm", class: { root: "px-2.5 py-1.5" } },
-    { square: true, size: "sm", class: { root: "p-1.5" } },
-    { square: false, size: "md", class: { root: "px-2.5 py-1.5" } },
-    { square: true, size: "md", class: { root: "p-1.5" } },
-    { square: false, size: "lg", class: { root: "px-3 py-2" } },
-    { square: true, size: "lg", class: { root: "p-2" } },
-    { square: false, size: "xl", class: { root: "px-3 py-2" } },
-    { square: true, size: "xl", class: { root: "p-2" } },
+    { shape: ["rounded", "pill"], size: "xs", class: { root: "px-2 py-1" } },
+    { shape: "square", size: "xs", class: { root: "p-1" } },
+    { shape: ["rounded", "pill"], size: "sm", class: { root: "px-2.5 py-1.5" } },
+    { shape: "square", size: "sm", class: { root: "p-1.5" } },
+    { shape: ["rounded", "pill"], size: "md", class: { root: "px-2.5 py-1.5" } },
+    { shape: "square", size: "md", class: { root: "p-1.5" } },
+    { shape: ["rounded", "pill"], size: "lg", class: { root: "px-3 py-2" } },
+    { shape: "square", size: "lg", class: { root: "p-2" } },
+    { shape: ["rounded", "pill"], size: "xl", class: { root: "px-3 py-2" } },
+    { shape: "square", size: "xl", class: { root: "p-2" } },
     {
       loading: true,
       leading: true,
@@ -168,6 +149,6 @@ export const RLButtonTheme = defineTheme("button", {
     color: "primary",
     size: "md",
     justify: "center",
-    rounded: false,
+    shape: "rounded",
   },
 });

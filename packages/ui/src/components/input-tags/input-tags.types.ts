@@ -21,7 +21,7 @@ export type RLInputTagsProps = InferThemeProps<typeof RLInputTagsTheme> & {
    * Renders a text input for adding tags.
    * @default false
    */
-  showInput?: boolean;
+  hasInput?: boolean;
   /**
    * Form field name. Each tag is submitted as a hidden input with this name.
    * @default undefined

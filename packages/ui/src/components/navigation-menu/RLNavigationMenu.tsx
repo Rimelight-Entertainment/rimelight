@@ -9,8 +9,10 @@ import { RLNavigationMenuTheme } from "./navigation-menu.theme";
 import { createMemo, createSignal, For, Show, onSettled, type Component } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import { RLIcon } from "../icon/RLIcon";
-import { localizeHref } from "../link/helpers";
-import type { SlotRenderer } from "../../types";
+import { RLButton } from "../button/RLButton";
+import { RLLink } from "../link/RLLink";
+import { localizeHref } from "../link/link.helpers";
+import { renderSlot } from "../../slot";
 
 const OMIT_KEYS = ["items", "panels"] as const;
 
@@ -24,9 +26,6 @@ const resolveHref = (item: NavigationMenuChildItem): string | undefined => {
 };
 
 const hasChildren = (item: NavigationMenuChildItem) => !!item.children && item.children.length > 0;
-
-const renderSlot = <C,>(renderer: SlotRenderer<C>, ctx: C) =>
-  typeof renderer === "function" ? renderer(ctx) : renderer;
 
 export const RLNavigationMenu: Component<RLNavigationMenuProps> = (props) => {
   const { Tag, classes, rest, slots, children, theme } = RLNavigationMenuTheme.setup(props, {
@@ -44,18 +43,15 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (props) => {
   // The theme defaults `orientation` to "horizontal"; any value other than "vertical" is horizontal.
   const isHorizontal = () => props.orientation !== "vertical";
   const orientation = () => (isHorizontal() ? "horizontal" : "vertical");
+  // Trigger carries the `link` slot too, so one `ui.link` override styles both.
+  const triggerClass = createMemo(() => `${classes().link} ${classes().trigger}`);
 
-  /**
-   * Custom panel renderer for an item. `panels[item.panel]` wins, `panelSlot` is the
-   * generic fallback. Returns the renderer without calling it, so checking for a panel
-   * doesn't instantiate the panel's JSX.
-   */
-  const rendererFor = (item: NavigationMenuItem) => {
-    if (item.panel && props.panels?.[item.panel]) return props.panels[item.panel];
-    return slots.panelSlot();
-  };
+  /** `panels[item.panel]` wins over the generic `panelSlot`. Returns the renderer, never calls it. */
+  const customPanel = (item: NavigationMenuItem) =>
+    item.panel ? props.panels?.[item.panel] : undefined;
 
-  const hasPanel = (item: NavigationMenuItem) => hasChildren(item) || !!rendererFor(item);
+  const hasPanel = (item: NavigationMenuItem) =>
+    hasChildren(item) || !!customPanel(item) || !!slots.panelSlot();
 
   const isItemActive = (item: NavigationMenuItem) => {
     if (item.active !== undefined) return !!item.active;
@@ -67,9 +63,9 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (props) => {
     return path === target || path.startsWith(`${target}/`);
   };
 
-  let closeTimer: ReturnType<typeof setTimeout> | undefined;
+  let closeTimer: number | undefined;
   const cancelClose = () => {
-    clearTimeout(closeTimer);
+    window.clearTimeout(closeTimer);
     closeTimer = undefined;
   };
   const openItem = (index: number) => {
@@ -82,7 +78,7 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (props) => {
   };
   const scheduleClose = () => {
     cancelClose();
-    closeTimer = setTimeout(() => setOpenIndex(null), 150);
+    closeTimer = window.setTimeout(() => setOpenIndex(null), 150);
   };
 
   onSettled(() => {
@@ -104,22 +100,23 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (props) => {
     };
   });
 
-  const Icon = (p: { name?: string | undefined; class?: string }) => (
-    <Show when={p.name}>
-      {(name) => <span class={`${name()} ${p.class ?? ""}`} aria-hidden="true" />}
-    </Show>
-  );
-
   const ChildLink = (p: { child: NavigationMenuChildItem }) => (
-    <a href={resolveHref(p.child) ?? "#"} class={classes().childLink} onClick={() => closeAll()}>
-      <Icon name={p.child.icon} class={classes().childIcon} />
+    <RLLink
+      href={resolveHref(p.child) ?? "#"}
+      localize={false}
+      class={classes().childLink}
+      onClick={() => closeAll()}
+    >
+      <Show when={p.child.icon}>
+        {(icon) => <RLIcon name={icon()} class={classes().childIcon} />}
+      </Show>
       <div>
         <div class={classes().childLabel}>{p.child.label}</div>
         <Show when={p.child.description}>
           {(desc) => <p class={classes().childDescription}>{desc()}</p>}
         </Show>
       </div>
-    </a>
+    </RLLink>
   );
 
   /**
@@ -150,9 +147,9 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (props) => {
                 fallback={<div class={classes().groupTitle}>{group.label}</div>}
               >
                 {(href) => (
-                  <a href={href()} class={classes().groupTitle}>
+                  <RLLink href={href()} localize={false} class={classes().groupTitle}>
                     {group.label}
-                  </a>
+                  </RLLink>
                 )}
               </Show>
               <ul role="list" class={classes().childList}>
@@ -175,17 +172,11 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (props) => {
    *  read it does is tracked by the compiled expression's computation. */
   const renderPanel = (item: NavigationMenuItem, index: number): JSX.Element => {
     const context: NavigationMenuPanelContext = { item, index };
-    if (item.panel && props.panels?.[item.panel]) return props.panels[item.panel]!(context);
+    const custom = customPanel(item);
+    if (custom) return custom(context);
     const fallback = slots.panelSlot();
-    return fallback ? renderSlot(fallback, context) : <DefaultPanel item={item} />;
-  };
-
-  /** Custom item renderer, or `undefined` for the default link or trigger. */
-  const renderItemSlot = (item: NavigationMenuItem, index: number, active: boolean) => {
-    const renderer = slots.itemSlot();
-    if (!renderer) return undefined;
-    const context: NavigationMenuItemContext = { item, index, active };
-    return renderSlot(renderer, context);
+    if (fallback) return renderSlot(fallback, context);
+    return <DefaultPanel item={item} />;
   };
 
   return (
@@ -219,57 +210,72 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (props) => {
                   else scheduleClose();
                 }}
               >
-                {renderItemSlot(item, i(), isActive()) ?? (
-                  <Show
-                    when={hasPanel(item)}
-                    fallback={
-                      <a
-                        href={resolveHref(item) ?? "#"}
-                        class={classes().link}
-                        data-slot="link"
-                        aria-current={isActive() ? "page" : undefined}
-                      >
-                        <Icon name={item.icon} class="size-4" />
-                        {item.label}
-                      </a>
-                    }
-                  >
-                    {/* Trigger shares the `link` slot so `ui.link` styles both. */}
-                    <button
-                      type="button"
-                      class={`${classes().link} ${classes().trigger}`}
-                      data-slot="trigger"
-                      data-nav-trigger
-                      aria-expanded={isOpen() ? "true" : "false"}
-                      aria-haspopup="true"
-                      aria-current={isActive() ? "page" : undefined}
-                      data-state={isOpen() ? "open" : "closed"}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (isOpen()) closeAll();
-                        else openItem(i());
-                      }}
+                <Show
+                  when={slots.itemSlot()}
+                  fallback={
+                    <Show
+                      when={hasPanel(item)}
+                      fallback={
+                        <RLLink
+                          href={resolveHref(item) ?? "#"}
+                          localize={false}
+                          class={classes().link}
+                          data-slot="link"
+                          aria-current={isActive() ? "page" : undefined}
+                        >
+                          <Show when={item.icon}>
+                            {(icon) => <RLIcon name={icon()} class={classes().itemIcon} />}
+                          </Show>
+                          {item.label}
+                        </RLLink>
+                      }
                     >
-                      <Icon name={item.icon} class="size-4" />
-                      {item.label}
-                      <RLIcon
-                        name="chevron-down"
-                        class={`size-3.5 transition-transform duration-200 ${isOpen() ? "rotate-180" : ""}`}
-                        aria-hidden="true"
-                        data-chevron
-                      />
-                    </button>
-                  </Show>
-                )}
+                      <RLButton
+                        type="button"
+                        class={triggerClass()}
+                        data-slot="trigger"
+                        data-nav-trigger
+                        aria-expanded={isOpen() ? "true" : "false"}
+                        aria-haspopup="true"
+                        aria-current={isActive() ? "page" : undefined}
+                        data-state={isOpen() ? "open" : "closed"}
+                        onClick={(e: MouseEvent) => {
+                          e.stopPropagation();
+                          if (isOpen()) closeAll();
+                          else openItem(i());
+                        }}
+                      >
+                        <Show when={item.icon}>
+                          {(icon) => <RLIcon name={icon()} class={classes().itemIcon} />}
+                        </Show>
+                        {item.label}
+                        <RLIcon
+                          name="chevron-down"
+                          class={classes().chevron}
+                          data-state={isOpen() ? "open" : "closed"}
+                        />
+                      </RLButton>
+                    </Show>
+                  }
+                >
+                  {(renderer) =>
+                    renderSlot(renderer(), {
+                      item,
+                      index: i(),
+                      active: isActive(),
+                    } satisfies NavigationMenuItemContext)
+                  }
+                </Show>
 
                 {/* Vertical: inline accordion. Uses the item's slot panel when one exists,
                     otherwise the item's own links. */}
                 <Show when={!isHorizontal() && hasChildren(item)}>
                   <div
-                    class={`${classes().content} ${isOpen() ? "" : "hidden"}`}
+                    class={classes().content}
                     data-slot="content"
                     data-nav-content
                     data-item-index={i()}
+                    data-state={isOpen() ? "open" : "closed"}
                     role="region"
                   >
                     {renderPanel(item, i())}
@@ -286,7 +292,7 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (props) => {
       {/* Horizontal: single shared viewport — the ONLY place panels render. */}
       <Show when={isHorizontal()}>
         <div
-          class={`${classes().viewportWrapper} ${openIndex() !== null ? "" : "hidden"}`}
+          class={classes().viewportWrapper}
           data-slot="viewport-wrapper"
           data-nav-viewport-wrapper
           data-state={openIndex() !== null ? "open" : "closed"}
@@ -302,9 +308,11 @@ export const RLNavigationMenu: Component<RLNavigationMenuProps> = (props) => {
               {(item, i) => (
                 <Show when={hasPanel(item)}>
                   <div
-                    class={openIndex() === i() ? "w-full" : "hidden"}
+                    class={classes().viewportItem}
+                    data-slot="viewport-item"
                     data-nav-viewport-content
                     data-index={i()}
+                    data-state={openIndex() === i() ? "open" : "closed"}
                   >
                     {renderPanel(item, i())}
                   </div>

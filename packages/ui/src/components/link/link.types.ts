@@ -82,6 +82,12 @@ export type RLLinkProps = InferThemeProps<typeof RLLinkTheme> & {
   rel?: string | null | undefined;
 
   /**
+   * Suppress the `rel` attribute entirely, including the default external-link value.
+   * @default false
+   */
+  noRel?: boolean | undefined;
+
+  /**
    * Value of `aria-current` when the link is active.
    * @default "page"
    */
@@ -93,4 +99,16 @@ export type RLLinkProps = InferThemeProps<typeof RLLinkTheme> & {
    * @default undefined
    */
   "aria-label"?: string | undefined;
+
+  /**
+   * Marks the link as the current location. Applies active styling and `aria-current`.
+   * @default false
+   */
+  active?: boolean | undefined;
+
+  /**
+   * Disables the link. Removes `href` and applies disabled styling and `aria-disabled`.
+   * @default false
+   */
+  disabled?: boolean | undefined;
 };

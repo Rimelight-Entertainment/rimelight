@@ -1,25 +1,5 @@
 import { defineTheme } from "../../resolver";
 
-export type SidebarSlot =
-  | "root"
-  | "header"
-  | "content"
-  | "footer"
-  | "item"
-  | "itemLink"
-  | "itemIcon"
-  | "itemBadge"
-  | "itemsContainer"
-  | "itemText"
-  | "itemSummary"
-  | "itemChevron"
-  | "subItemLink"
-  | "subItemIcon"
-  | "logoWrapper"
-  | "toggleButton";
-
-export type SidebarClasses = Record<SidebarSlot, string>;
-
 export const RLSidebarTheme = defineTheme("sidebar", {
   slots: [
     "root",
@@ -34,10 +14,16 @@ export const RLSidebarTheme = defineTheme("sidebar", {
     "itemText",
     "itemSummary",
     "itemChevron",
+    "itemDetails",
+    "itemChildren",
     "subItemLink",
     "subItemIcon",
+    "subItemChildren",
     "logoWrapper",
+    "logoIcon",
+    "logoText",
     "toggleButton",
+    "toggleIcon",
   ],
   base: {
     root: "flex flex-col h-full w-64 bg-default border-r border-default shadow-sm transition-all duration-300",
@@ -47,21 +33,26 @@ export const RLSidebarTheme = defineTheme("sidebar", {
     footer: "p-4 border-t border-default flex items-center justify-between",
     item: "relative",
     itemLink:
-      "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-muted hover:bg-muted hover:text-highlighted transition-colors cursor-pointer",
+      "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-muted hover:bg-muted hover:text-highlighted data-[active]:bg-muted data-[active]:text-highlighted transition-colors cursor-pointer",
     itemIcon: "size-4 text-current",
-    itemBadge:
-      "ml-auto flex size-5 items-center justify-center rounded-full bg-primary/10 text-primary text-[10px] font-bold",
+    itemBadge: "ml-auto select-none",
     itemsContainer: "flex flex-col gap-0.5",
     itemText: "truncate flex-1",
     itemSummary:
-      "list-none cursor-pointer flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-muted hover:bg-muted hover:text-highlighted transition-colors",
+      "list-none cursor-pointer flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-muted hover:bg-muted hover:text-highlighted data-[active]:bg-muted data-[active]:text-highlighted transition-colors",
     itemChevron: "size-3 ml-auto transition-transform group-open/details:rotate-90",
+    itemDetails: "group/details",
+    itemChildren: "mt-0.5 ml-4 flex flex-col gap-0.5",
     subItemLink:
-      "flex items-center gap-1.5 w-full px-2 py-1 rounded-md text-muted hover:text-highlighted hover:bg-muted transition-colors text-xs",
+      "flex items-center gap-1.5 w-full px-2 py-1 rounded-md text-muted hover:text-highlighted hover:bg-muted data-[active]:bg-muted data-[active]:text-highlighted transition-colors text-xs",
     subItemIcon: "size-3.5 shrink-0",
+    subItemChildren: "mt-0.5 ml-3 flex flex-col gap-0.5",
     logoWrapper: "flex items-center gap-2",
+    logoIcon: "size-5 text-primary",
+    logoText: "truncate",
     toggleButton:
       "fixed top-4 left-4 z-50 flex size-9 items-center justify-center rounded-md bg-default border border-default shadow-sm hover:bg-muted transition-colors",
+    toggleIcon: "size-4",
   },
   variants: {
     side: {
@@ -70,9 +61,9 @@ export const RLSidebarTheme = defineTheme("sidebar", {
     },
     collapsible: {
       icon: {
-        root: "w-16 [&_[data-slot=item-text]]:hidden [&_[data-slot=item-badge]]:hidden [&_[data-slot=sidebar-logo]]:hidden",
+        root: "w-16 [&_[data-slot=item-text]]:hidden [&_[data-slot=item-badge]]:hidden [&_[data-slot=logo-wrapper]]:hidden",
       },
-      offcanvas: { root: "-translate-x-full" },
+      offcanvas: { root: "-translate-x-full data-[open]:translate-x-0" },
       none: {},
     },
     layout: {

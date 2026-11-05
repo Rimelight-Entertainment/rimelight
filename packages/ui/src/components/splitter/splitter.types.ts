@@ -216,7 +216,7 @@ export type RLSplitterProps = InferThemeProps<typeof RLSplitterTheme> & {
   /**
    * Custom handle grip content, or a render function receiving `{ collapsed, dragging, active, index, orientation }`.
    */
-  handleSlot?: SlotRenderer<SplitterHandleState>;
+  handleControlSlot?: SlotRenderer<SplitterHandleState>;
 
   /**
    * Icon name rendered inside the default handle control, or `false` to hide the default icon.
@@ -249,3 +249,24 @@ export type RLSplitterProps = InferThemeProps<typeof RLSplitterTheme> & {
    */
   onHandleKeyDown?: (event: KeyboardEvent, index: number) => void;
 };
+
+export interface CrossDragHook {
+  orientation: SplitterOrientation;
+  start: (e: PointerEvent) => void;
+  move: (e: PointerEvent) => void;
+  end: (e: PointerEvent) => void;
+}
+
+export type HandleElement = HTMLDivElement & {
+  __rlCrossDrag?: CrossDragHook;
+};
+
+export interface PanelBounds {
+  minPx: number;
+  maxPx: number;
+  rawMinPx: number;
+  rawMaxPx: number;
+  collapsible: boolean;
+  collapsibleMinPx: number;
+  resizable: boolean;
+}

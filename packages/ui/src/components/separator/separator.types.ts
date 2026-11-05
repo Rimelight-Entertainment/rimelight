@@ -1,4 +1,4 @@
-import type { JSX } from "@solidjs/web";
+import type { SlotRenderer } from "../../types";
 import type { InferThemeProps } from "../../resolver";
 import type { RLAvatarProps } from "../avatar/avatar.types";
 import type { RLSeparatorTheme } from "./separator.theme";
@@ -35,11 +35,11 @@ export type RLSeparatorProps = InferThemeProps<typeof RLSeparatorTheme> & {
    * Replaces the avatar with custom JSX.
    * @default undefined
    */
-  avatarSlot?: JSX.Element;
+  avatarSlot?: SlotRenderer;
 
   /**
    * Replaces the icon with custom JSX.
    * @default undefined
    */
-  iconSlot?: JSX.Element;
+  iconSlot?: SlotRenderer;
 };

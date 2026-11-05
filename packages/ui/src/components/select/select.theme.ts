@@ -1,7 +1,7 @@
 import { defineTheme } from "../../resolver";
 
 export const RLSelectTheme = defineTheme("select", {
-  slots: ["root", "select", "trigger", "leading", "label"],
+  slots: ["root", "select", "trigger", "leading", "icon", "label", "option"],
   base: {
     root: "relative inline-flex items-center",
     select:
@@ -9,6 +9,8 @@ export const RLSelectTheme = defineTheme("select", {
     trigger: "flex items-center gap-2 w-full min-w-0 cursor-pointer",
     label: "truncate",
     leading: "flex items-center text-current shrink-0 pointer-events-none",
+    icon: "shrink-0",
+    option: "bg-default text-highlighted",
   },
   variants: {
     variant: {
@@ -50,11 +52,11 @@ export const RLSelectTheme = defineTheme("select", {
     },
     color: "auto",
     size: {
-      xs: { select: "text-xs", label: "text-xs" },
-      sm: { select: "text-xs", label: "text-xs" },
-      md: { select: "text-sm", label: "text-sm" },
-      lg: { select: "text-sm", label: "text-sm" },
-      xl: { select: "text-base", label: "text-base" },
+      xs: { select: "text-xs", label: "text-xs", icon: "size-3.5" },
+      sm: { select: "text-xs", label: "text-xs", icon: "size-4" },
+      md: { select: "text-sm", label: "text-sm", icon: "size-4" },
+      lg: { select: "text-sm", label: "text-sm", icon: "size-5" },
+      xl: { select: "text-base", label: "text-base", icon: "size-6" },
     },
   },
   compoundVariants: [
@@ -63,7 +65,7 @@ export const RLSelectTheme = defineTheme("select", {
       variant: "solid",
       class: {
         select:
-          "border-default bg-default text-highlighted hover:bg-accented/50 hover:border-accented focus-within:ring-2 focus-within:ring-ring",
+          "border-default bg-default text-highlighted hover:bg-accented/50 hover:border-accented focus-within:ring-2 focus-within:ring-default",
       },
     },
     {
@@ -71,7 +73,7 @@ export const RLSelectTheme = defineTheme("select", {
       layout: "icon",
       class: {
         select:
-          "border-default bg-default text-highlighted hover:bg-accented/50 hover:border-accented focus-within:ring-2 focus-within:ring-ring",
+          "border-default bg-default text-highlighted hover:bg-accented/50 hover:border-accented focus-within:ring-2 focus-within:ring-default",
       },
     },
     { layout: "default", size: "xs", class: { select: "px-2 py-1 leading-none" } },

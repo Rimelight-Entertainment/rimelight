@@ -2,17 +2,12 @@ import type { RLChartProps, ChartDataPoint } from "./chart.types";
 import { RLChartTheme } from "./chart.theme";
 import { createMemo, For, Show, type Component } from "solid-js";
 import { uiT } from "../../locale";
+import { CHART_DEFAULT_HEIGHT, CHART_PALETTE } from "../../constants/chart";
+import { COLOR_BLACK_HEX } from "../../constants/color";
 
 const OMIT_KEYS = ["type", "data", "title", "height", "style"] as const;
 
-const palette = [
-  "hsl(221 83% 53%)",
-  "hsl(262 83% 58%)",
-  "hsl(142 76% 36%)",
-  "hsl(32 95% 44%)",
-  "hsl(0 84% 60%)",
-  "hsl(187 85% 43%)",
-];
+const PRIMARY_SERIES_COLOR = CHART_PALETTE[0] ?? "currentColor";
 
 const PIE_R = 80;
 const PIE_CX = 100;
@@ -41,6 +36,7 @@ export const RLChart: Component<RLChartProps> = (props) => {
 
   const data = createMemo(() => props.data ?? []);
   const chartType = () => props.type ?? "bar";
+  const height = () => props.height ?? CHART_DEFAULT_HEIGHT;
 
   const max = createMemo(() => {
     const items = data();
@@ -49,10 +45,8 @@ export const RLChart: Component<RLChartProps> = (props) => {
 
   const total = createMemo(() => data().reduce((sum, d) => sum + d.value, 0));
 
-  const getColor = (item: ChartDataPoint, index: number) => {
-    const res = item.color ?? palette[index % palette.length];
-    return res ?? "#000000";
-  };
+  const getColor = (item: ChartDataPoint, index: number) =>
+    item.color ?? CHART_PALETTE[index % CHART_PALETTE.length] ?? COLOR_BLACK_HEX;
 
   const pieSlices = createMemo(() => {
     let cursor = 0;
@@ -84,17 +78,15 @@ export const RLChart: Component<RLChartProps> = (props) => {
 
   const areaPath = createMemo(() => {
     const pts = linePoints();
-    if (pts.length === 0) return "";
-    const last = pts[pts.length - 1]!;
-    const first = pts[0]!;
+    const first = pts[0];
+    const last = pts[pts.length - 1];
+    if (first === undefined || last === undefined) return "";
     return (
       linePath() + ` L ${last.x} ${LINE_H - LINE_PAD}` + ` L ${first.x} ${LINE_H - LINE_PAD} Z`
     );
   });
 
   const gridLines = [0, 0.25, 0.5, 0.75, 1];
-
-  const height = () => props.height ?? 280;
 
   return (
     <>
@@ -119,16 +111,18 @@ export const RLChart: Component<RLChartProps> = (props) => {
               {(item, i) => {
                 const pct = max() > 0 ? (item.value / max()) * 100 : 0;
                 return (
-                  <div class="flex flex-col items-center gap-1 flex-1 group">
-                    <span class="text-[10px] text-muted font-mono opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div class={classes().barItem} data-slot="bar-item">
+                    <span class={classes().barValue} data-slot="bar-value">
                       {item.value}
                     </span>
                     <div
-                      class={`${classes().bar} h-full w-full overflow-hidden !bg-transparent`}
+                      class={classes().bar}
+                      data-slot="bar"
                       title={`${item.label}: ${item.value}`}
                     >
                       <svg
-                        class="h-full w-full overflow-visible"
+                        class={classes().barSvg}
+                        data-slot="bar-svg"
                         viewBox="0 0 20 100"
                         preserveAspectRatio="none"
                       >
@@ -151,9 +145,10 @@ export const RLChart: Component<RLChartProps> = (props) => {
         </Show>
 
         <Show when={chartType() === "line" || chartType() === "area"}>
-          <div class="relative w-full rl-chart-line-wrap h-[calc(var(--rl-chart-height)-60px)]">
+          <div class={classes().lineWrap} data-slot="line-wrap">
             <svg
               class={classes().svg}
+              data-slot="svg"
               viewBox={`0 0 ${LINE_W} ${LINE_H}`}
               preserveAspectRatio="none"
               aria-label={props.title ?? uiT("chart.lineLabel")}
@@ -175,13 +170,14 @@ export const RLChart: Component<RLChartProps> = (props) => {
               </For>
 
               <Show when={chartType() === "area"}>
-                <path d={areaPath()} fill={palette[0] ?? "currentColor"} fill-opacity={0.15} />
+                <path d={areaPath()} fill={PRIMARY_SERIES_COLOR} fill-opacity={0.15} />
               </Show>
 
               <path
                 d={linePath()}
                 class={classes().line}
-                stroke={palette[0] ?? "currentColor"}
+                data-slot="line"
+                stroke={PRIMARY_SERIES_COLOR}
                 stroke-width={2.5}
               />
 
@@ -192,7 +188,7 @@ export const RLChart: Component<RLChartProps> = (props) => {
                     cy={p.y}
                     r={4}
                     fill={getColor(p.d, p.i)}
-                    stroke="white"
+                    stroke="var(--rl-bg)"
                     stroke-width={1.5}
                   >
                     {/* textContent, not children: dynamic children inside an SVG <title> break SSR
@@ -214,24 +210,22 @@ export const RLChart: Component<RLChartProps> = (props) => {
         </Show>
 
         <Show when={chartType() === "pie" || chartType() === "donut"}>
-          <div class="flex items-center gap-6 justify-center rl-chart-pie-wrap h-[calc(var(--rl-chart-height)-60px)]">
+          <div class={classes().pieWrap} data-slot="pie-wrap">
             <svg
+              class={classes().pieSvg}
+              data-slot="pie-svg"
               viewBox="0 0 200 200"
-              class="h-full w-auto max-h-48"
               aria-label={props.title ?? uiT("chart.pieLabel")}
             >
               <For each={pieSlices()}>
-                {({ item, i, start, end }) => {
+                {(slice) => {
+                  const { item, i, start, end } = slice;
                   const isFullCircle = Math.abs(end - start - 360) < 0.01;
                   const d = isFullCircle
                     ? `M ${PIE_CX} ${PIE_CY - PIE_R} A ${PIE_R} ${PIE_R} 0 1 1 ${PIE_CX - 0.001} ${PIE_CY - PIE_R} Z`
                     : describeArc(PIE_CX, PIE_CY, PIE_R, start, end) + ` L ${PIE_CX} ${PIE_CY} Z`;
                   return (
-                    <path
-                      d={d}
-                      fill={getColor(item, i)}
-                      class="transition-opacity hover:opacity-85 cursor-pointer"
-                    >
+                    <path d={d} fill={getColor(item, i)} class={classes().slice} data-slot="slice">
                       {/* textContent, not children: dynamic children inside an SVG <title> break SSR
                           (the fragment is parsed as an HTML <title>, which can't hold hydration markers). */}
                       <title textContent={`${item.label}: ${item.value}`} />
@@ -240,19 +234,21 @@ export const RLChart: Component<RLChartProps> = (props) => {
                 }}
               </For>
               <Show when={chartType() === "donut"}>
-                <circle cx={PIE_CX} cy={PIE_CY} r={DONUT_INNER_R} fill="var(--rl-neutral-50)" />
+                <circle cx={PIE_CX} cy={PIE_CY} r={DONUT_INNER_R} fill="var(--rl-bg)" />
               </Show>
             </svg>
 
-            <div class="flex flex-col gap-1.5">
+            <div class={classes().pieLegend} data-slot="pie-legend">
               <For each={data()}>
                 {(item, i) => (
-                  <div class="flex items-center gap-2 text-xs text-muted">
-                    <svg class="size-3 shrink-0" viewBox="0 0 10 10">
+                  <div class={classes().pieLegendItem} data-slot="pie-legend-item">
+                    <svg class={classes().pieSwatch} data-slot="pie-swatch" viewBox="0 0 10 10">
                       <rect width="10" height="10" rx="2" fill={getColor(item, i())} />
                     </svg>
                     <span>{item.label}</span>
-                    <span class="ml-1 font-mono text-highlighted">{item.value}</span>
+                    <span class={classes().pieLegendValue} data-slot="pie-legend-value">
+                      {item.value}
+                    </span>
                   </div>
                 )}
               </For>
@@ -271,8 +267,8 @@ export const RLChart: Component<RLChartProps> = (props) => {
           <div class={classes().legend} data-slot="legend">
             <For each={data()}>
               {(item, i) => (
-                <div class="flex items-center gap-1.5">
-                  <svg class="size-2.5 shrink-0" viewBox="0 0 10 10">
+                <div class={classes().legendItem} data-slot="legend-item">
+                  <svg class={classes().legendSwatch} data-slot="legend-swatch" viewBox="0 0 10 10">
                     <circle cx="5" cy="5" r="5" fill={getColor(item, i())} />
                   </svg>
                   <span>{item.label}</span>

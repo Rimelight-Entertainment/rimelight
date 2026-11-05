@@ -1,5 +1,5 @@
-import type { JSX } from "@solidjs/web";
 import type { InferThemeProps } from "../../resolver";
+import type { SlotRenderer } from "../../types";
 import type { RLAudioTheme } from "./audio.theme";
 
 export interface AudioSource {
@@ -29,7 +29,6 @@ export interface AudioTrackItem {
 }
 
 export type AudioProgressVariant = "bar" | "waveform";
-export type AudioOrientation = "horizontal" | "vertical";
 export type AudioRepeatMode = "off" | "all" | "one";
 
 export interface AudioIconOverrides {
@@ -42,11 +41,9 @@ export interface AudioIconOverrides {
   repeat?: string | undefined;
   repeatOne?: string | undefined;
   repeatOff?: string | undefined;
-  shuffle?: string | undefined;
   volumeHigh?: string | undefined;
   volumeLow?: string | undefined;
   volumeMuted?: string | undefined;
-  speed?: string | undefined;
   download?: string | undefined;
   externalLink?: string | undefined;
 }
@@ -144,7 +141,7 @@ export type RLAudioProps = Omit<
    */
   tracks?: AudioTextTrack[] | undefined;
   /**
-   * Custom icon overrides for all player control buttons.
+   * Custom icon overrides for the player control buttons.
    */
   icons?: AudioIconOverrides | undefined;
   /**
@@ -179,7 +176,7 @@ export type RLAudioProps = Omit<
    */
   showSpeed?: boolean | undefined;
   /**
-   * Whether to show or hide skip back/forward buttons (15s default).
+   * Whether to show or hide skip back/forward buttons.
    *
    * @default true
    */
@@ -231,23 +228,23 @@ export type RLAudioProps = Omit<
   /**
    * Custom header content replacing the artwork / details / actions row.
    */
-  headerSlot?: JSX.Element | undefined;
+  headerSlot?: SlotRenderer | undefined;
   /**
    * Custom timeline content replacing the progress bar and time display.
    */
-  timelineSlot?: JSX.Element | undefined;
+  timelineSlot?: SlotRenderer | undefined;
   /**
    * Custom controls content replacing the default playback controls row.
    */
-  controlsSlot?: JSX.Element | undefined;
+  controlsSlot?: SlotRenderer | undefined;
   /**
    * Custom artwork content replacing the default album artwork.
    */
-  artworkSlot?: JSX.Element | undefined;
+  artworkSlot?: SlotRenderer | undefined;
   /**
    * Custom transcript content replacing the transcript string.
    */
-  transcriptSlot?: JSX.Element | undefined;
+  transcriptSlot?: SlotRenderer | undefined;
   /**
    * Called when playback starts.
    */

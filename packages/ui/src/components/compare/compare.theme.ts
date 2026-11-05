@@ -14,7 +14,7 @@ export const RLCompareTheme = defineTheme("compare", {
     "handleIcon",
   ],
   base: {
-    root: "relative select-none overflow-hidden touch-none group isolate",
+    root: "relative select-none overflow-hidden touch-none group isolate data-[disabled]:opacity-60 data-[disabled]:cursor-not-allowed",
     container: "relative w-full h-full overflow-hidden",
     after: "w-full h-full block select-none",
     before:
@@ -26,7 +26,7 @@ export const RLCompareTheme = defineTheme("compare", {
       "absolute z-2 pointer-events-none transition-opacity font-medium tracking-wide inline-flex items-center justify-center select-none",
     divider: "absolute z-1 pointer-events-none transition-colors",
     handle:
-      "absolute z-3 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center rounded-full border shadow-md transition-shadow cursor-grab active:cursor-grabbing focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 select-none touch-none",
+      "absolute z-3 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center rounded-full border shadow-md transition-shadow cursor-grab active:cursor-grabbing focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 select-none touch-none group-data-[disabled]:cursor-not-allowed group-data-[disabled]:shadow-none",
     handleIcon:
       "shrink-0 transition-transform text-current pointer-events-none select-none inline-flex items-center justify-center",
   },
@@ -82,60 +82,64 @@ export const RLCompareTheme = defineTheme("compare", {
       solid: {
         handle:
           "bg-default text-highlighted border-default shadow-lg hover:border-[var(--rl-border)] focus-visible:ring-[var(--rl-ring)]",
-        divider: "bg-white/90 dark:bg-white/80 shadow-sm",
+        divider: "bg-on-scrim/90 shadow-sm",
         beforeLabel:
-          "bg-background/80 backdrop-blur-sm text-highlighted border border-default/50 shadow-sm",
+          "bg-default/80 backdrop-blur-sm text-highlighted border border-default/50 shadow-sm",
         afterLabel:
-          "bg-background/80 backdrop-blur-sm text-highlighted border border-default/50 shadow-sm",
+          "bg-default/80 backdrop-blur-sm text-highlighted border border-default/50 shadow-sm",
       },
       outline: {
         handle:
-          "bg-background text-[var(--rl-text)] border-2 border-[var(--rl-border)] shadow focus-visible:ring-[var(--rl-ring)]",
+          "bg-default text-[var(--rl-text)] border-2 border-[var(--rl-border)] shadow focus-visible:ring-[var(--rl-ring)]",
         divider: "bg-[var(--rl-bg)] shadow-sm",
         beforeLabel:
-          "bg-background/90 backdrop-blur-sm text-[var(--rl-text)] border border-[var(--rl-border)]/50 shadow-sm",
+          "bg-default/90 backdrop-blur-sm text-[var(--rl-text)] border border-[var(--rl-border)]/50 shadow-sm",
         afterLabel:
-          "bg-background/90 backdrop-blur-sm text-[var(--rl-text)] border border-[var(--rl-border)]/50 shadow-sm",
+          "bg-default/90 backdrop-blur-sm text-[var(--rl-text)] border border-[var(--rl-border)]/50 shadow-sm",
       },
       subtle: {
         handle:
           "bg-elevated text-muted hover:text-highlighted border border-default/60 shadow focus-visible:ring-[var(--rl-ring)]",
-        divider: "bg-border/80 shadow-xs",
+        divider: "bg-accented/80 shadow-xs",
         beforeLabel:
           "bg-elevated/80 backdrop-blur-sm text-muted border border-default/40 shadow-xs",
         afterLabel: "bg-elevated/80 backdrop-blur-sm text-muted border border-default/40 shadow-xs",
       },
       ghost: {
         handle:
-          "bg-white/20 dark:bg-black/30 backdrop-blur-md text-white border border-white/30 shadow-lg hover:bg-white/30 focus-visible:ring-white",
-        divider: "bg-white/70 backdrop-blur-xs",
-        beforeLabel: "bg-black/40 backdrop-blur-md text-white border border-white/20 shadow-sm",
-        afterLabel: "bg-black/40 backdrop-blur-md text-white border border-white/20 shadow-sm",
+          "bg-on-scrim/20 backdrop-blur-md text-on-scrim border border-on-scrim/30 shadow-lg hover:bg-on-scrim/30 focus-visible:ring-on-scrim",
+        divider: "bg-on-scrim/70 backdrop-blur-xs",
+        beforeLabel:
+          "bg-scrim/40 backdrop-blur-md text-on-scrim border border-on-scrim/20 shadow-sm",
+        afterLabel:
+          "bg-scrim/40 backdrop-blur-md text-on-scrim border border-on-scrim/20 shadow-sm",
       },
     },
-    color: "auto",
-    disabled: {
-      true: {
-        root: "opacity-60 cursor-not-allowed",
-        handle: "cursor-not-allowed shadow-none hover:border-default",
-      },
+    beforeLabelPosition: {
+      "top-left": { beforeLabel: "top-3 left-3" },
+      "top-right": { beforeLabel: "top-3 right-3" },
+      "bottom-left": { beforeLabel: "bottom-3 left-3" },
+      "bottom-right": { beforeLabel: "bottom-3 right-3" },
+      "top-start": { beforeLabel: "top-3 start-3" },
+      "top-end": { beforeLabel: "top-3 end-3" },
+      "bottom-start": { beforeLabel: "bottom-3 start-3" },
+      "bottom-end": { beforeLabel: "bottom-3 end-3" },
+    },
+    afterLabelPosition: {
+      "top-left": { afterLabel: "top-3 left-3" },
+      "top-right": { afterLabel: "top-3 right-3" },
+      "bottom-left": { afterLabel: "bottom-3 left-3" },
+      "bottom-right": { afterLabel: "bottom-3 right-3" },
+      "top-start": { afterLabel: "top-3 start-3" },
+      "top-end": { afterLabel: "top-3 end-3" },
+      "bottom-start": { afterLabel: "bottom-3 start-3" },
+      "bottom-end": { afterLabel: "bottom-3 end-3" },
     },
   },
   defaultVariants: {
     orientation: "horizontal",
     size: "md",
     variant: "solid",
-    color: "primary",
+    beforeLabelPosition: "top-left",
   },
 });
-
-export const LABEL_PLACEMENT_CLASSES: Record<string, string> = {
-  "top-left": "top-3 left-3",
-  "top-right": "top-3 right-3",
-  "bottom-left": "bottom-3 left-3",
-  "bottom-right": "bottom-3 right-3",
-  "top-start": "top-3 start-3",
-  "top-end": "top-3 end-3",
-  "bottom-start": "bottom-3 start-3",
-  "bottom-end": "bottom-3 end-3",
-};

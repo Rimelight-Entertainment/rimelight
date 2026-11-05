@@ -6,5 +6,4 @@ export const RLFormTheme = defineTheme("form", {
     root: "space-y-6",
   },
   variants: {},
-  defaultVariants: {},
 });

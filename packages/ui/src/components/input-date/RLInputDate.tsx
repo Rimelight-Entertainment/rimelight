@@ -3,9 +3,9 @@ import type { RLInputDateProps } from "./input-date.types";
 import { RLInputDateTheme } from "./input-date.theme";
 import { createMemo } from "solid-js";
 import { RLInputTheme } from "../input/input.theme";
-import { cx } from "../../resolver";
 
 const OMIT_KEYS = [
+  "size",
   "value",
   "defaultValue",
   "name",
@@ -16,6 +16,9 @@ const OMIT_KEYS = [
   "min",
   "max",
   "step",
+  "aria-label",
+  "aria-labelledby",
+  "aria-describedby",
   "onInput",
   "onValueChange",
   "onBlur",
@@ -25,18 +28,19 @@ const OMIT_KEYS = [
 ] as const;
 
 export const RLInputDate: Component<RLInputDateProps> = (props) => {
-  const { Tag, classes, rest, children, theme, ui } = RLInputDateTheme.setup(props, {
+  const { Tag, classes, rest, children, theme } = RLInputDateTheme.setup(props, {
     omit: OMIT_KEYS,
   });
 
-  const inputClasses = createMemo(() => RLInputTheme({ size: props.size, ui: ui() }));
+  const inputUi = () => ({ root: classes().root, input: classes().input });
+  const inputClasses = createMemo(() => RLInputTheme({ size: props.size, ui: inputUi() }));
 
   return (
-    <Tag data-slot="root" data-theme={theme()} class={cx(classes().root, inputClasses().root)}>
+    <Tag data-slot="root" data-theme={theme()} class={inputClasses().root}>
       <input
         type="date"
         name={props.name}
-        value={props.value !== undefined ? props.value : (props.defaultValue ?? "")}
+        value={props.value ?? props.defaultValue ?? ""}
         placeholder={props.placeholder}
         disabled={props.disabled}
         readonly={props.readonly}
@@ -44,7 +48,10 @@ export const RLInputDate: Component<RLInputDateProps> = (props) => {
         min={props.min}
         max={props.max}
         step={props.step}
-        class={cx(inputClasses().input, classes().input)}
+        aria-label={props["aria-label"]}
+        aria-labelledby={props["aria-labelledby"]}
+        aria-describedby={props["aria-describedby"]}
+        class={inputClasses().input}
         data-slot="input"
         onInput={props.onInput}
         onBlur={props.onBlur}

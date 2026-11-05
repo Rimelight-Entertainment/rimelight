@@ -144,7 +144,9 @@ export const CardSandbox = (): JSX.Element => {
           title={hasTitle() ? title() : undefined}
           description={hasDescription() ? description() : undefined}
           mediaSrc={hasMedia() ? "https://picsum.photos/seed/rimelight/600/300" : undefined}
-          overlay={isOverlay()}
+          overlaySlot={
+            isOverlay() ? <span class="text-sm">{t("app.text.overlay")}</span> : undefined
+          }
           href={isLink() ? "#card-action" : undefined}
           footerSlot={
             hasFooter() ? (
@@ -299,12 +301,25 @@ export const cardAudit: ComponentAuditDefinition = {
           </RLCard>
           <RLCard
             mediaSrc="https://picsum.photos/seed/cardoverlay/600/350"
-            overlay
-            title={"Overlay Title"}
-            description="Text content layered directly over the background image."
-            footerSlot={<span class="text-xs text-white/80">{"Overlay Footer Action"}</span>}
+            overlaySlot={
+              <div class="flex flex-col justify-end h-full p-4 text-on-scrim">
+                <h3 class="text-base font-bold">{"Overlay Title"}</h3>
+                <p class="text-sm text-on-scrim/90">
+                  {"Text content layered directly over the background image."}
+                </p>
+              </div>
+            }
+          />
+          <RLCard
+            mediaSlot={
+              <div class="h-24 bg-elevated flex items-center justify-center text-sm text-muted">
+                {"Custom media slot"}
+              </div>
+            }
+            title={"Custom Media Slot"}
+            description="Media area replaced by mediaSlot."
           >
-            <p class="text-sm text-white/90">{"Card body in overlay mode."}</p>
+            <p class="text-sm text-muted">{"Body content beside the custom media."}</p>
           </RLCard>
         </div>
       ),

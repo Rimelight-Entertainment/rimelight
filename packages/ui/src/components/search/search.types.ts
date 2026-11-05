@@ -1,5 +1,5 @@
-import type { JSX } from "@solidjs/web";
 import type { InferThemeProps } from "../../resolver";
+import type { SlotRenderer } from "../../types";
 import type { RLSearchTheme } from "./search.theme";
 
 export interface SearchResultItem {
@@ -61,8 +61,7 @@ export type RLSearchProps = InferThemeProps<typeof RLSearchTheme> & {
    */
   onOpenChange?: (open: boolean) => void;
   /**
-   * Replaces the default trigger button.
+   * Replaces the default trigger button. Falls back to `children`, then the search icon button.
    */
-  triggerSlot?: JSX.Element;
-  children?: JSX.Element;
+  triggerSlot?: SlotRenderer;
 };

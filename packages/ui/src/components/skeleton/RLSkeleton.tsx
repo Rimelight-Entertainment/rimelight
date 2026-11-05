@@ -1,8 +1,8 @@
 import type { Component } from "solid-js";
-import { createEffect, createSignal, For, Show } from "solid-js";
-import type { RLSkeletonProps } from "./skeleton.types";
+import { createEffect, createMemo, createSignal, For, Show } from "solid-js";
+import type { RLSkeletonProps, SkeletonRect } from "./skeleton.types";
 import { RLSkeletonTheme } from "./skeleton.theme";
-import { createResizeObserver, extractSkeletonRects, type SkeletonRect } from "./skeleton.dom";
+import { createResizeObserver, extractSkeletonRects } from "./skeleton.helpers";
 
 const OMIT_KEYS = ["loading", "fallbackBorderRadius"] as const;
 
@@ -11,26 +11,21 @@ export const RLSkeleton: Component<RLSkeletonProps> = (props) => {
     omit: OMIT_KEYS,
   });
 
-  const isLoading = () => props.loading ?? true;
-  const hasChildren = () => children() !== undefined && children() !== null;
+  const hasChildren = createMemo(() => children() !== undefined && children() !== null);
+  const isMasking = createMemo(() => hasChildren() && (props.loading ?? true));
+  const rootClass = createMemo(() => (hasChildren() ? classes().container : classes().root));
 
   const [rects, setRects] = createSignal<SkeletonRect[]>([]);
   let measureRef: HTMLDivElement | undefined = undefined;
 
-  const resolveBorderRadius = (rect: SkeletonRect) => {
-    if (rect.borderRadius && rect.borderRadius !== "0px") {
-      return rect.borderRadius;
-    }
-    if (props.fallbackBorderRadius !== undefined) {
-      return `${props.fallbackBorderRadius}px`;
-    }
-    if (props.shape === "circle") return "9999px";
-    if (props.shape === "rectangle") return "0px";
-    return "6px";
+  const borderRadiusOf = (rect: SkeletonRect): string | undefined => {
+    if (rect.borderRadius && rect.borderRadius !== "0px") return rect.borderRadius;
+    if (props.fallbackBorderRadius !== undefined) return `${props.fallbackBorderRadius}px`;
+    return undefined;
   };
 
   createEffect(
-    () => hasChildren() && isLoading(),
+    () => isMasking(),
     (active) => {
       if (!active || !measureRef) {
         setRects([]);
@@ -40,30 +35,21 @@ export const RLSkeleton: Component<RLSkeletonProps> = (props) => {
       const measure = () => {
         if (!measureRef) return;
         try {
-          const extracted = extractSkeletonRects(measureRef);
-          setRects(extracted);
+          setRects(extractSkeletonRects(measureRef));
         } catch {
           // Safe fallback in SSR or detached DOM environments
         }
       };
 
-      // Initial synchronous measurement
       measure();
 
-      // Subscribe to resize / layout changes
       return createResizeObserver(measureRef, measure);
     },
   );
 
   return (
-    <Tag
-      class={hasChildren() ? classes().container : classes().root}
-      data-slot="root"
-      data-theme={theme()}
-      {...rest}
-    >
-      <Show when={hasChildren() && isLoading()} fallback={children()}>
-        {/* Render actual child structure with invisible text / hidden media */}
+    <Tag class={rootClass()} data-slot="root" data-theme={theme()} {...rest}>
+      <Show when={isMasking()} fallback={children()}>
         <div
           ref={(el) => {
             measureRef = el;
@@ -74,8 +60,6 @@ export const RLSkeleton: Component<RLSkeletonProps> = (props) => {
         >
           {children()}
         </div>
-
-        {/* Shimmer overlay based on extracted child geometry */}
         <div class={classes().overlay} data-slot="overlay">
           <For each={rects()}>
             {(rect) => (
@@ -87,7 +71,7 @@ export const RLSkeleton: Component<RLSkeletonProps> = (props) => {
                   "--rl-skel-y": `${rect.y}px`,
                   "--rl-skel-w": `${rect.width}px`,
                   "--rl-skel-h": `${rect.height}px`,
-                  "--rl-skel-r": resolveBorderRadius(rect),
+                  "--rl-skel-r": borderRadiusOf(rect),
                 }}
               >
                 <div class={classes().highlight} data-slot="highlight" />

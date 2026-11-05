@@ -1,11 +1,13 @@
 import type { RLAudioProps, AudioTextTrack, AudioTrackItem, AudioRepeatMode } from "./audio.types";
 import { RLAudioTheme } from "./audio.theme";
 import { children, createMemo, createSignal, For, onSettled, Show, type Component } from "solid-js";
+import { RLButton } from "../button/RLButton";
 import { RLIcon } from "../icon/RLIcon";
+import { RLLink } from "../link/RLLink";
 import { RLImage } from "../image/RLImage";
-import { RLAspectRatio } from "../aspect-ratio/RLAspectRatio";
 import { RLPopover } from "../popover/RLPopover";
 import { uiT } from "../../locale";
+import { renderSlot } from "../../slot";
 
 const OMIT_KEYS = [
   "transcript",
@@ -209,19 +211,27 @@ export const RLAudio: Component<RLAudioProps> = (props) => {
   const trackTitle = () => currentTrack()?.title ?? props.title;
   const trackDescription = () => currentTrack()?.description ?? props.description;
   const trackArtwork = () => currentTrack()?.artwork ?? props.artwork;
-  const trackTranscript = () =>
-    currentTrack()?.transcript ?? props.transcript ?? slots.transcriptSlot();
+  const trackTranscript = () => currentTrack()?.transcript ?? props.transcript;
   const trackFormat = () => currentTrack()?.format ?? props.format;
   const trackFileSize = () => currentTrack()?.fileSize ?? props.fileSize;
   const trackBitrate = () => currentTrack()?.bitrate ?? props.bitrate;
   const activeExternalUrl = () => props.externalLink ?? currentMediaSrc();
+
+  const hasArtwork = () => Boolean(trackArtwork()) || slots.artworkSlot() !== undefined;
+  const hasDetails = () =>
+    Boolean(
+      trackTitle() || trackDescription() || trackFormat() || trackFileSize() || trackBitrate(),
+    );
+  const hasMeta = () => Boolean(trackFormat() || trackFileSize() || trackBitrate());
+  const hasTranscript = () => Boolean(trackTranscript()) || slots.transcriptSlot() !== undefined;
 
   const selectTrack = (index: number) => {
     const list = playlist();
     if (index < 0 || index >= list.length) return;
     setActiveTrackIndex(index);
     setCurrentTime(0);
-    const target = list[index]!;
+    const target = list[index];
+    if (!target) return;
     if (target.duration) {
       setDuration(target.duration);
     }
@@ -334,19 +344,22 @@ export const RLAudio: Component<RLAudioProps> = (props) => {
     }
   };
 
+  const applyVolume = (v: number) => {
+    setVolume(v);
+    if (audioRef) {
+      audioRef.volume = v;
+      if (v > 0 && isMuted()) {
+        audioRef.muted = false;
+        setIsMuted(false);
+      }
+    }
+    props.onVolumeChange?.(v, isMuted());
+  };
+
   const handleVolumeChange = (e: Event & { currentTarget: HTMLInputElement }) => {
     const val = parseFloat(e.currentTarget.value);
     if (!isNaN(val)) {
-      const v = Math.min(1, Math.max(0, val / 100));
-      setVolume(v);
-      if (audioRef) {
-        audioRef.volume = v;
-        if (v > 0 && isMuted()) {
-          audioRef.muted = false;
-          setIsMuted(false);
-        }
-      }
-      props.onVolumeChange?.(v, isMuted());
+      applyVolume(Math.min(1, Math.max(0, val / 100)));
     }
   };
 
@@ -475,52 +488,490 @@ export const RLAudio: Component<RLAudioProps> = (props) => {
     };
   });
 
-  const renderArtwork = () => {
-    const art = trackArtwork();
-    if (!art && !slots.artworkSlot()) return null;
+  const artworkUi = createMemo(() => ({
+    root: classes().artworkItem,
+    trigger: classes().artworkItem,
+    triggerImage: classes().artworkItem,
+  }));
 
-    const imageElement = () =>
-      slots.artworkSlot() ? (
-        slots.artworkSlot()
-      ) : artworkZoomable() && art ? (
-        <RLImage
-          src={art}
-          alt={trackTitle() ?? uiT("audio.artwork")}
-          fit="cover"
-          class="!size-full !h-full !w-full"
-          ui={{
-            root: "!size-full !h-full !w-full !block",
-            trigger: "!size-full !h-full !w-full !block",
-            triggerImage: "!size-full !h-full !w-full !max-w-none !object-cover",
-          }}
-          lightbox
-        />
-      ) : (
-        <img
-          src={art}
-          alt={trackTitle() ?? uiT("audio.artwork")}
-          class="!size-full !h-full !w-full !object-cover"
-          data-slot="artwork-item"
-          loading="lazy"
-        />
-      );
+  const renderArtwork = () => (
+    <div class={classes().artwork} data-slot="artwork">
+      <Show
+        when={slots.artworkSlot() !== undefined}
+        fallback={
+          <Show when={trackArtwork()}>
+            {(art) => (
+              <RLImage
+                src={art()}
+                alt={trackTitle() ?? uiT("audio.artwork")}
+                fit="cover"
+                lightbox={artworkZoomable()}
+                loading="lazy"
+                ui={artworkUi()}
+              />
+            )}
+          </Show>
+        }
+      >
+        {renderSlot(slots.artworkSlot())}
+      </Show>
+    </div>
+  );
 
-    if (props.orientation === "vertical") {
-      return (
-        <div class={classes().artwork} data-slot="artwork">
-          <RLAspectRatio ratio={1} class="w-full">
-            {imageElement()}
-          </RLAspectRatio>
+  const downloadAttrs = (): { download: string } => ({
+    download: trackTitle() ? `${trackTitle()}.mp3` : "audio.mp3",
+  });
+
+  const renderDefaultHeader = () => (
+    <div class={classes().header} data-slot="header">
+      <Show when={hasArtwork()}>{renderArtwork()}</Show>
+
+      <Show when={hasDetails()}>
+        <div class={classes().details} data-slot="details">
+          <Show when={trackTitle()}>
+            <span id={titleId()} class={classes().title} data-slot="title">
+              {trackTitle()}
+            </span>
+          </Show>
+          <Show when={trackDescription()}>
+            <span id={descId()} class={classes().description} data-slot="description">
+              {trackDescription()}
+            </span>
+          </Show>
+          <Show when={hasMeta()}>
+            <div class={classes().metaBadge} data-slot="meta-badge">
+              <Show when={trackFormat()}>
+                <span>{trackFormat()}</span>
+              </Show>
+              <Show when={trackBitrate()}>
+                <Show when={trackFormat()}>
+                  <span class={classes().metaDivider}>•</span>
+                </Show>
+                <span>{trackBitrate()}</span>
+              </Show>
+              <Show when={trackFileSize()}>
+                <Show when={trackFormat() || trackBitrate()}>
+                  <span class={classes().metaDivider}>•</span>
+                </Show>
+                <span>
+                  {typeof trackFileSize() === "number"
+                    ? formatFileSize(trackFileSize() as number)
+                    : trackFileSize()}
+                </span>
+              </Show>
+            </div>
+          </Show>
         </div>
-      );
-    }
+      </Show>
 
-    return (
-      <div class={classes().artwork} data-slot="artwork">
-        {imageElement()}
+      <Show when={showDownload() || showExternalLink()}>
+        <div class={classes().actions} data-slot="actions">
+          <Show when={showDownload() && currentMediaSrc()}>
+            <RLLink
+              href={currentMediaSrc()}
+              localize={false}
+              noExternalIcon
+              target="_blank"
+              rel="noopener noreferrer"
+              class={classes().actionButton}
+              data-slot="action-button"
+              aria-label={uiT("audio.download-track")}
+              title={uiT("audio.download-track")}
+              {...downloadAttrs()}
+            >
+              <RLIcon name={downloadIconName()} class={classes().actionIcon} aria-hidden="true" />
+            </RLLink>
+          </Show>
+
+          <Show when={showExternalLink() && activeExternalUrl()}>
+            <RLLink
+              href={activeExternalUrl()}
+              localize={false}
+              noExternalIcon
+              target="_blank"
+              rel="noopener noreferrer"
+              class={classes().actionButton}
+              data-slot="action-button"
+              aria-label={uiT("audio.open-source")}
+            >
+              <RLIcon
+                name={externalLinkIconName()}
+                class={classes().actionIcon}
+                aria-hidden="true"
+              />
+            </RLLink>
+          </Show>
+        </div>
+      </Show>
+    </div>
+  );
+
+  const progressColorVar = (shade: string) =>
+    props.progressColor ? `var(--rl-${props.progressColor}-${shade})` : undefined;
+
+  const renderDefaultTimeline = () => (
+    <div class={classes().timeline} data-slot="timeline">
+      <div
+        class={classes().progressContainer}
+        style={{
+          "--rl-bg": progressColorVar("500"),
+          "--rl-ring": progressColorVar("500"),
+          "--rl-border": progressColorVar("500"),
+          "--rl-bg-hover": progressColorVar("600"),
+          "--rl-text": progressColorVar("600"),
+        }}
+        data-slot="progress-container"
+      >
+        <Show
+          when={progressVariant() === "waveform"}
+          fallback={
+            <div class={classes().progressTrack} data-slot="progress-track">
+              <svg class={classes().progressSvg} aria-hidden="true">
+                <rect
+                  class={classes().progressRange}
+                  data-slot="progress-range"
+                  width={`${progressPercent()}%`}
+                  fill="currentColor"
+                  rx="4"
+                />
+              </svg>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                step="0.1"
+                value={progressPercent()}
+                onInput={handleProgressChange}
+                onChange={handleProgressChange}
+                class={classes().progressInput}
+                aria-label={uiT("audio.seek")}
+                aria-valuemin={0}
+                aria-valuemax={Math.round(getDuration())}
+                aria-valuenow={Math.round(currentTime())}
+                aria-valuetext={`${formatTime(currentTime())} / ${formatTime(getDuration())}`}
+              />
+            </div>
+          }
+        >
+          <div
+            class={classes().waveformContainer}
+            data-slot="waveform-container"
+            role="slider"
+            tabindex={0}
+            aria-label={uiT("audio.seek")}
+            aria-valuemin={0}
+            aria-valuemax={Math.round(getDuration())}
+            aria-valuenow={Math.round(currentTime())}
+            aria-valuetext={`${formatTime(currentTime())} / ${formatTime(getDuration())}`}
+            onClick={(e) => {
+              const rect = e.currentTarget.getBoundingClientRect();
+              const clickX = e.clientX - rect.left;
+              const pct = Math.max(0, Math.min(100, (clickX / rect.width) * 100));
+              handleWaveformClick(pct);
+            }}
+          >
+            <svg
+              class={classes().waveformSvg}
+              viewBox={`0 0 ${peaks().length * 6} 100`}
+              preserveAspectRatio="none"
+              aria-hidden="true"
+            >
+              <For each={peaks()}>
+                {(peak, idx) => {
+                  const isActive = () => {
+                    const total = peaks().length;
+                    const barPct = total > 1 ? (idx() / (total - 1)) * 100 : 0;
+                    return barPct <= progressPercent();
+                  };
+                  const height = () => Math.max(16, peak);
+                  const y = () => (100 - height()) / 2;
+                  return (
+                    <rect
+                      x={idx() * 6 + 1.5}
+                      y={y()}
+                      width="3"
+                      height={height()}
+                      rx="1.5"
+                      class={
+                        isActive()
+                          ? `${classes().waveformBar} ${classes().waveformBarActive}`
+                          : classes().waveformBar
+                      }
+                      fill="currentColor"
+                    />
+                  );
+                }}
+              </For>
+            </svg>
+          </div>
+        </Show>
       </div>
-    );
-  };
+
+      <Show when={showTime()}>
+        <div class={classes().timeDisplay} data-slot="time-display" aria-live="off">
+          <span class={classes().timeCurrent} data-slot="time-current">
+            {formatTime(currentTime())}
+          </span>
+          <span class={classes().timeDuration} data-slot="time-duration">
+            {formatTime(duration())}
+          </span>
+        </div>
+      </Show>
+    </div>
+  );
+
+  const renderVolumePopover = () => (
+    <div class={classes().volumePopover} data-slot="volume-popover">
+      <Show when={showVolumeNumber()}>
+        <span class={classes().volumeText} data-slot="volume-text">
+          {Math.round(volumePercent())}%
+        </span>
+      </Show>
+
+      <div
+        class={classes().volumeSlider}
+        data-slot="volume-slider"
+        onClick={(e) => {
+          const rect = e.currentTarget.getBoundingClientRect();
+          const clickY = rect.bottom - e.clientY;
+          const pct = Math.max(0, Math.min(100, (clickY / rect.height) * 100));
+          applyVolume(pct / 100);
+        }}
+      >
+        <div class={classes().volumeTrack} data-slot="volume-track">
+          <svg
+            class={classes().volumeSvg}
+            viewBox="0 0 6 100"
+            preserveAspectRatio="none"
+            aria-hidden="true"
+          >
+            <rect
+              x="0"
+              y={100 - volumePercent()}
+              width="6"
+              height={volumePercent()}
+              rx="3"
+              fill="currentColor"
+              class={classes().volumeRange}
+            />
+          </svg>
+          <input
+            type="range"
+            min="0"
+            max="100"
+            step="1"
+            value={volumePercent()}
+            onInput={handleVolumeChange}
+            class={classes().volumeInput}
+            aria-label={uiT("audio.volume-level")}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={Math.round(volumePercent())}
+          />
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderDefaultControls = () => (
+    <div class={classes().controls} data-slot="controls">
+      {/* Bottom-Left: Vertical Volume Popover & Mute */}
+      <div class={classes().controlsLeft} data-slot="controls-left">
+        <Show when={showVolume()}>
+          <div
+            class={classes().volumeContainer}
+            data-slot="volume-container"
+            title={uiT("audio.volume-hint")}
+            onContextMenu={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              toggleMute();
+            }}
+          >
+            <RLPopover
+              placement="top"
+              mode="click"
+              triggerSlot={
+                <RLButton
+                  variant="ghost"
+                  size="xs"
+                  shape="square"
+                  class={classes().volumeButton}
+                  data-slot="volume-button"
+                  aria-label={isMuted() ? uiT("audio.unmute") : uiT("audio.mute")}
+                >
+                  <RLIcon name={volumeIconName()} class={classes().volumeIcon} aria-hidden="true" />
+                </RLButton>
+              }
+            >
+              {renderVolumePopover()}
+            </RLPopover>
+          </div>
+        </Show>
+      </div>
+
+      {/* Center: Prev Track, Skip Back, Play/Pause, Skip Forward, Next Track */}
+      <div class={classes().controlsCenter} data-slot="controls-center">
+        <Show when={playlist().length > 1}>
+          <RLButton
+            variant="ghost"
+            size="xs"
+            shape="square"
+            onClick={prevTrack}
+            class={classes().navButton}
+            data-slot="nav-button"
+            aria-label={uiT("audio.previous")}
+            disabled={activeTrackIndex() === 0 && repeatMode() !== "all"}
+          >
+            <RLIcon name={prevTrackIconName()} class={classes().navIcon} aria-hidden="true" />
+          </RLButton>
+        </Show>
+
+        <Show when={showSkip()}>
+          <RLButton
+            variant="ghost"
+            size="xs"
+            shape="square"
+            onClick={() => handleSkip(-skipSecs())}
+            class={classes().skipButton}
+            data-slot="skip-button"
+            aria-label={uiT("audio.skip-back")}
+          >
+            <RLIcon name={skipBackIconName()} class={classes().skipIcon} aria-hidden="true" />
+            <span class={classes().skipBadge} data-slot="skip-badge">
+              {skipSecs()}
+            </span>
+          </RLButton>
+        </Show>
+
+        <RLButton
+          variant="ghost"
+          size="md"
+          shape="square"
+          onClick={togglePlay}
+          class={classes().playButton}
+          data-slot="play-button"
+          aria-label={isPlaying() ? uiT("audio.pause") : uiT("audio.play")}
+        >
+          <RLIcon
+            name={isPlaying() ? pauseIconName() : playIconName()}
+            class={classes().playIcon}
+            aria-hidden="true"
+          />
+        </RLButton>
+
+        <Show when={showSkip()}>
+          <RLButton
+            variant="ghost"
+            size="xs"
+            shape="square"
+            onClick={() => handleSkip(skipSecs())}
+            class={classes().skipButton}
+            data-slot="skip-button"
+            aria-label={uiT("audio.skip-forward")}
+          >
+            <RLIcon name={skipForwardIconName()} class={classes().skipIcon} aria-hidden="true" />
+            <span class={classes().skipBadge} data-slot="skip-badge">
+              {skipSecs()}
+            </span>
+          </RLButton>
+        </Show>
+
+        <Show when={playlist().length > 1}>
+          <RLButton
+            variant="ghost"
+            size="xs"
+            shape="square"
+            onClick={nextTrack}
+            class={classes().navButton}
+            data-slot="nav-button"
+            aria-label={uiT("audio.next")}
+            disabled={activeTrackIndex() === playlist().length - 1 && repeatMode() !== "all"}
+          >
+            <RLIcon name={nextTrackIconName()} class={classes().navIcon} aria-hidden="true" />
+          </RLButton>
+        </Show>
+      </div>
+
+      {/* Bottom-Right: Repeat Mode & Playback Speed */}
+      <div class={classes().controlsRight} data-slot="controls-right">
+        <Show when={showRepeat()}>
+          <RLButton
+            variant="ghost"
+            size="xs"
+            shape="square"
+            onClick={cycleRepeatMode}
+            class={
+              repeatMode() !== "off"
+                ? `${classes().repeatButton} ${classes().repeatButtonActive}`
+                : classes().repeatButton
+            }
+            data-slot="repeat-button"
+            aria-label={
+              repeatMode() === "one"
+                ? uiT("audio.repeat-one")
+                : repeatMode() === "all"
+                  ? uiT("audio.repeat-all")
+                  : uiT("audio.repeat-off")
+            }
+          >
+            <RLIcon name={repeatIconName()} class={classes().repeatIcon} aria-hidden="true" />
+          </RLButton>
+        </Show>
+
+        <Show when={showSpeed()}>
+          <div
+            class={classes().speedContainer}
+            data-slot="speed-container"
+            title={uiT("audio.speed-hint")}
+            onContextMenu={(e) => {
+              e.preventDefault();
+              setIsEditingSpeed(true);
+            }}
+          >
+            <Show
+              when={isEditingSpeed()}
+              fallback={
+                <RLButton
+                  variant="ghost"
+                  size="xs"
+                  shape="square"
+                  onClick={cycleSpeed}
+                  class={classes().speedButton}
+                  data-slot="speed-button"
+                  aria-label={uiT("audio.speed-button")}
+                >
+                  {playbackRate()}x
+                </RLButton>
+              }
+            >
+              <input
+                type="number"
+                min="0.1"
+                step="0.05"
+                value={playbackRate()}
+                class={classes().speedInput}
+                data-slot="speed-input"
+                aria-label={uiT("audio.playback-speed")}
+                onBlur={(e) => {
+                  setCustomSpeed(parseFloat(e.currentTarget.value));
+                  setIsEditingSpeed(false);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    setCustomSpeed(parseFloat(e.currentTarget.value));
+                    setIsEditingSpeed(false);
+                  } else if (e.key === "Escape") {
+                    setIsEditingSpeed(false);
+                  }
+                }}
+              />
+            </Show>
+          </div>
+        </Show>
+      </div>
+    </div>
+  );
 
   return (
     <Tag
@@ -555,488 +1006,19 @@ export const RLAudio: Component<RLAudioProps> = (props) => {
       </audio>
 
       <div class={classes().container} data-slot="container">
-        {/* 1. Header with Artwork, Track Details & Top Actions */}
-        <Show
-          when={slots.headerSlot()}
-          fallback={
-            <div class={classes().header} data-slot="header">
-              {renderArtwork()}
-
-              <Show
-                when={
-                  trackTitle() ||
-                  trackDescription() ||
-                  trackFormat() ||
-                  trackFileSize() ||
-                  trackBitrate()
-                }
-              >
-                <div class={classes().details} data-slot="details">
-                  <Show when={trackTitle()}>
-                    <span id={titleId()} class={classes().title} data-slot="title">
-                      {trackTitle()}
-                    </span>
-                  </Show>
-                  <Show when={trackDescription()}>
-                    <span id={descId()} class={classes().description} data-slot="description">
-                      {trackDescription()}
-                    </span>
-                  </Show>
-                  <Show when={trackFormat() || trackFileSize() || trackBitrate()}>
-                    <div class={classes().metaBadge} data-slot="meta-badge">
-                      <Show when={trackFormat()}>
-                        <span>{trackFormat()}</span>
-                      </Show>
-                      <Show when={trackBitrate()}>
-                        <Show when={trackFormat()}>
-                          <span class="opacity-40">•</span>
-                        </Show>
-                        <span>{trackBitrate()}</span>
-                      </Show>
-                      <Show when={trackFileSize()}>
-                        <Show when={trackFormat() || trackBitrate()}>
-                          <span class="opacity-40">•</span>
-                        </Show>
-                        <span>
-                          {typeof trackFileSize() === "number"
-                            ? formatFileSize(trackFileSize() as number)
-                            : trackFileSize()}
-                        </span>
-                      </Show>
-                    </div>
-                  </Show>
-                </div>
-              </Show>
-
-              {/* Optional Top Right Download & External Link Actions */}
-              <Show when={showDownload() || showExternalLink()}>
-                <div class={classes().actions} data-slot="actions">
-                  <Show when={showDownload() && currentMediaSrc()}>
-                    <a
-                      href={currentMediaSrc()}
-                      download={trackTitle() ? `${trackTitle()}.mp3` : "audio.mp3"}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      class={classes().actionButton}
-                      data-slot="action-button"
-                      aria-label={uiT("audio.download-track")}
-                      title={uiT("audio.download-track")}
-                    >
-                      <RLIcon name={downloadIconName()} class="size-4" aria-hidden="true" />
-                    </a>
-                  </Show>
-
-                  <Show when={showExternalLink() && activeExternalUrl()}>
-                    <a
-                      href={activeExternalUrl()}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      class={classes().actionButton}
-                      data-slot="action-button"
-                      aria-label={uiT("audio.open-source")}
-                      title={uiT("audio.open-source")}
-                    >
-                      <RLIcon name={externalLinkIconName()} class="size-4" aria-hidden="true" />
-                    </a>
-                  </Show>
-                </div>
-              </Show>
-            </div>
-          }
-        >
-          {slots.headerSlot()}
+        <Show when={slots.headerSlot() !== undefined} fallback={renderDefaultHeader()}>
+          {renderSlot(slots.headerSlot())}
         </Show>
 
-        {/* 2. Timeline Section (Progress Scrub Bar or Waveform + Time) */}
-        <Show
-          when={slots.timelineSlot()}
-          fallback={
-            <div class={classes().timeline} data-slot="timeline">
-              <div
-                class={`${classes().progressContainer} ${props.progressColor ? `rl-color-${props.progressColor}` : ""}`}
-                data-slot="progress-container"
-              >
-                <Show
-                  when={progressVariant() === "waveform"}
-                  fallback={
-                    <div class={classes().progressTrack} data-slot="progress-track">
-                      <svg
-                        class="h-full w-full overflow-visible pointer-events-none"
-                        aria-hidden="true"
-                      >
-                        <rect
-                          class={classes().progressRange}
-                          data-slot="progress-range"
-                          width={`${progressPercent()}%`}
-                          fill="currentColor"
-                          rx="4"
-                        />
-                      </svg>
-                      <input
-                        type="range"
-                        min="0"
-                        max="100"
-                        step="0.1"
-                        value={progressPercent()}
-                        onInput={handleProgressChange}
-                        onChange={handleProgressChange}
-                        class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                        aria-label={uiT("audio.seek")}
-                        aria-valuemin={0}
-                        aria-valuemax={Math.round(getDuration())}
-                        aria-valuenow={Math.round(currentTime())}
-                        aria-valuetext={`${formatTime(currentTime())} / ${formatTime(getDuration())}`}
-                      />
-                    </div>
-                  }
-                >
-                  <div
-                    class={classes().waveformContainer}
-                    data-slot="waveform-container"
-                    role="slider"
-                    tabindex={0}
-                    aria-label={uiT("audio.seek")}
-                    aria-valuemin={0}
-                    aria-valuemax={Math.round(getDuration())}
-                    aria-valuenow={Math.round(currentTime())}
-                    aria-valuetext={`${formatTime(currentTime())} / ${formatTime(getDuration())}`}
-                    onClick={(e) => {
-                      const rect = e.currentTarget.getBoundingClientRect();
-                      const clickX = e.clientX - rect.left;
-                      const pct = Math.max(0, Math.min(100, (clickX / rect.width) * 100));
-                      handleWaveformClick(pct);
-                    }}
-                  >
-                    <svg
-                      class={classes().waveformSvg}
-                      viewBox={`0 0 ${peaks().length * 6} 100`}
-                      preserveAspectRatio="none"
-                      aria-hidden="true"
-                    >
-                      <For each={peaks()}>
-                        {(peak, idx) => {
-                          const isActive = () => {
-                            const total = peaks().length;
-                            const barPct = total > 1 ? (idx() / (total - 1)) * 100 : 0;
-                            return barPct <= progressPercent();
-                          };
-                          const height = () => Math.max(16, peak);
-                          const y = () => (100 - height()) / 2;
-                          return (
-                            <rect
-                              x={idx() * 6 + 1.5}
-                              y={y()}
-                              width="3"
-                              height={height()}
-                              rx="1.5"
-                              class={`${classes().waveformBar} ${
-                                isActive() ? classes().waveformBarActive : ""
-                              }`}
-                              fill="currentColor"
-                            />
-                          );
-                        }}
-                      </For>
-                    </svg>
-                  </div>
-                </Show>
-              </div>
-
-              {/* Time Display */}
-              <Show when={showTime()}>
-                <div class={classes().timeDisplay} data-slot="time-display" aria-live="off">
-                  <span class={classes().timeCurrent} data-slot="time-current">
-                    {formatTime(currentTime())}
-                  </span>
-                  <span class={classes().timeDuration} data-slot="time-duration">
-                    {formatTime(duration())}
-                  </span>
-                </div>
-              </Show>
-            </div>
-          }
-        >
-          {slots.timelineSlot()}
+        <Show when={slots.timelineSlot() !== undefined} fallback={renderDefaultTimeline()}>
+          {renderSlot(slots.timelineSlot())}
         </Show>
 
-        {/* 3. Controls Section: Left (Volume), Center (Playback), Right (Repeat & Speed) */}
-        <Show
-          when={slots.controlsSlot()}
-          fallback={
-            <div class={classes().controls} data-slot="controls">
-              {/* Bottom-Left: Vertical Volume Popover & Mute */}
-              <div class={classes().controlsLeft} data-slot="controls-left">
-                <Show when={showVolume()}>
-                  <div class={classes().volumeContainer} data-slot="volume-container">
-                    <RLPopover
-                      placement="top"
-                      mode="click"
-                      ui={{
-                        root: () => "relative inline-flex items-center justify-center",
-                        trigger: () => "inline-flex items-center justify-center",
-                      }}
-                      triggerSlot={
-                        <button
-                          type="button"
-                          onContextMenu={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            toggleMute();
-                          }}
-                          class={classes().volumeButton}
-                          data-slot="volume-button"
-                          aria-label={isMuted() ? uiT("audio.unmute") : uiT("audio.mute")}
-                          title={uiT("audio.volume-hint")}
-                        >
-                          <RLIcon
-                            name={volumeIconName()}
-                            class={classes().volumeIcon}
-                            aria-hidden="true"
-                          />
-                        </button>
-                      }
-                    >
-                      <div class={classes().volumePopover} data-slot="volume-popover">
-                        <Show when={showVolumeNumber()}>
-                          <span class={classes().volumeText} data-slot="volume-text">
-                            {Math.round(volumePercent())}%
-                          </span>
-                        </Show>
-
-                        <div
-                          class={classes().volumeSlider}
-                          data-slot="volume-slider"
-                          onClick={(e) => {
-                            const rect = e.currentTarget.getBoundingClientRect();
-                            const clickY = rect.bottom - e.clientY;
-                            const pct = Math.max(0, Math.min(100, (clickY / rect.height) * 100));
-                            const v = pct / 100;
-                            setVolume(v);
-                            if (audioRef) {
-                              audioRef.volume = v;
-                              if (v > 0 && isMuted()) {
-                                audioRef.muted = false;
-                                setIsMuted(false);
-                              }
-                            }
-                            props.onVolumeChange?.(v, isMuted());
-                          }}
-                        >
-                          <div class={classes().volumeTrack} data-slot="volume-track">
-                            <svg
-                              class="h-full w-full overflow-visible pointer-events-none"
-                              viewBox="0 0 6 100"
-                              preserveAspectRatio="none"
-                              aria-hidden="true"
-                            >
-                              <rect
-                                x="0"
-                                y={100 - volumePercent()}
-                                width="6"
-                                height={volumePercent()}
-                                rx="3"
-                                fill="currentColor"
-                                class={classes().volumeRange}
-                              />
-                            </svg>
-                            <input
-                              type="range"
-                              min="0"
-                              max="100"
-                              step="1"
-                              value={volumePercent()}
-                              onInput={handleVolumeChange}
-                              class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 [writing-mode:vertical-lr] [direction:rtl]"
-                              aria-label={uiT("audio.volume-level")}
-                              aria-valuemin={0}
-                              aria-valuemax={100}
-                              aria-valuenow={Math.round(volumePercent())}
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </RLPopover>
-                  </div>
-                </Show>
-              </div>
-
-              {/* Center: Prev Track, Skip Back (>> double triangle), Play/Pause, Skip Fwd (>> double triangle), Next Track */}
-              <div class={classes().controlsCenter} data-slot="controls-center">
-                {/* Previous Track Button (for playlists) */}
-                <Show when={playlist().length > 1}>
-                  <button
-                    type="button"
-                    onClick={prevTrack}
-                    class={classes().navButton}
-                    data-slot="nav-button"
-                    aria-label={uiT("audio.previous")}
-                    disabled={activeTrackIndex() === 0 && repeatMode() !== "all"}
-                  >
-                    <RLIcon
-                      name={prevTrackIconName()}
-                      class={classes().navIcon}
-                      aria-hidden="true"
-                    />
-                  </button>
-                </Show>
-
-                {/* Skip Back Button with double triangle icons & second amount badge */}
-                <Show when={showSkip()}>
-                  <button
-                    type="button"
-                    onClick={() => handleSkip(-skipSecs())}
-                    class={classes().skipButton}
-                    data-slot="skip-button"
-                    aria-label={uiT("audio.skip-back")}
-                  >
-                    <RLIcon
-                      name={skipBackIconName()}
-                      class={classes().skipIcon}
-                      aria-hidden="true"
-                    />
-                    <span class={classes().skipBadge} data-slot="skip-badge">
-                      {skipSecs()}
-                    </span>
-                  </button>
-                </Show>
-
-                {/* Play / Pause Primary Button */}
-                <button
-                  type="button"
-                  onClick={togglePlay}
-                  class={classes().playButton}
-                  data-slot="play-button"
-                  aria-label={isPlaying() ? uiT("audio.pause") : uiT("audio.play")}
-                >
-                  <RLIcon
-                    name={isPlaying() ? pauseIconName() : playIconName()}
-                    class={classes().playIcon}
-                    aria-hidden="true"
-                  />
-                </button>
-
-                {/* Skip Forward Button with double triangle icons & second amount badge */}
-                <Show when={showSkip()}>
-                  <button
-                    type="button"
-                    onClick={() => handleSkip(skipSecs())}
-                    class={classes().skipButton}
-                    data-slot="skip-button"
-                    aria-label={uiT("audio.skip-forward")}
-                  >
-                    <RLIcon
-                      name={skipForwardIconName()}
-                      class={classes().skipIcon}
-                      aria-hidden="true"
-                    />
-                    <span class={classes().skipBadge} data-slot="skip-badge">
-                      {skipSecs()}
-                    </span>
-                  </button>
-                </Show>
-
-                {/* Next Track Button (for playlists) */}
-                <Show when={playlist().length > 1}>
-                  <button
-                    type="button"
-                    onClick={nextTrack}
-                    class={classes().navButton}
-                    data-slot="nav-button"
-                    aria-label={uiT("audio.next")}
-                    disabled={
-                      activeTrackIndex() === playlist().length - 1 && repeatMode() !== "all"
-                    }
-                  >
-                    <RLIcon
-                      name={nextTrackIconName()}
-                      class={classes().navIcon}
-                      aria-hidden="true"
-                    />
-                  </button>
-                </Show>
-              </div>
-
-              {/* Bottom-Right: Repeat Mode & Playback Speed */}
-              <div class={classes().controlsRight} data-slot="controls-right">
-                {/* Repeat Mode Toggle Button */}
-                <Show when={showRepeat()}>
-                  <button
-                    type="button"
-                    onClick={cycleRepeatMode}
-                    class={`${classes().repeatButton} ${
-                      repeatMode() !== "off" ? "text-primary bg-primary/10" : "text-muted"
-                    }`}
-                    data-slot="repeat-button"
-                    aria-label={
-                      repeatMode() === "one"
-                        ? uiT("audio.repeat-one")
-                        : repeatMode() === "all"
-                          ? uiT("audio.repeat-all")
-                          : uiT("audio.repeat-off")
-                    }
-                  >
-                    <RLIcon
-                      name={repeatIconName()}
-                      class={classes().repeatIcon}
-                      aria-hidden="true"
-                    />
-                  </button>
-                </Show>
-
-                {/* Playback Speed Selector */}
-                <Show when={showSpeed()}>
-                  <div class={classes().speedContainer} data-slot="speed-container">
-                    <Show
-                      when={isEditingSpeed()}
-                      fallback={
-                        <button
-                          type="button"
-                          onClick={cycleSpeed}
-                          onContextMenu={(e) => {
-                            e.preventDefault();
-                            setIsEditingSpeed(true);
-                          }}
-                          class={classes().speedButton}
-                          data-slot="speed-button"
-                          aria-label={uiT("audio.speed-button")}
-                          title={uiT("audio.speed-hint")}
-                        >
-                          {playbackRate()}x
-                        </button>
-                      }
-                    >
-                      <input
-                        type="number"
-                        min="0.1"
-                        step="0.05"
-                        value={playbackRate()}
-                        class={classes().speedInput}
-                        data-slot="speed-input"
-                        aria-label={uiT("audio.playback-speed")}
-                        onBlur={(e) => {
-                          setCustomSpeed(parseFloat(e.currentTarget.value));
-                          setIsEditingSpeed(false);
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") {
-                            setCustomSpeed(parseFloat(e.currentTarget.value));
-                            setIsEditingSpeed(false);
-                          } else if (e.key === "Escape") {
-                            setIsEditingSpeed(false);
-                          }
-                        }}
-                      />
-                    </Show>
-                  </div>
-                </Show>
-              </div>
-            </div>
-          }
-        >
-          {slots.controlsSlot()}
+        <Show when={slots.controlsSlot() !== undefined} fallback={renderDefaultControls()}>
+          {renderSlot(slots.controlsSlot())}
         </Show>
 
-        {/* 4. Playlist / Queue View */}
+        {/* Playlist / Queue View */}
         <Show when={showPlaylist() && playlist().length > 1}>
           <div class={classes().playlistContainer} data-slot="playlist-container">
             <div class={classes().playlistHeader} data-slot="playlist-header">
@@ -1053,14 +1035,16 @@ export const RLAudio: Component<RLAudioProps> = (props) => {
                       role="option"
                       aria-selected={isActive() ? "true" : "false"}
                       onClick={() => selectTrack(idx())}
-                      class={`${classes().playlistItem} ${
-                        isActive() ? classes().playlistItemActive : ""
-                      }`}
+                      class={
+                        isActive()
+                          ? `${classes().playlistItem} ${classes().playlistItemActive}`
+                          : classes().playlistItem
+                      }
                       data-slot="playlist-item"
                     >
-                      <div class="flex items-center gap-2 min-w-0">
-                        <span class="text-[10px] font-mono opacity-60 w-4">{idx() + 1}.</span>
-                        <div class="min-w-0">
+                      <div class={classes().playlistItemMain}>
+                        <span class={classes().playlistItemIndex}>{idx() + 1}.</span>
+                        <div class={classes().playlistItemInfo}>
                           <p class={classes().playlistItemTitle}>
                             {item.title || `${uiT("audio.track")} ${idx() + 1}`}
                           </p>
@@ -1070,9 +1054,11 @@ export const RLAudio: Component<RLAudioProps> = (props) => {
                         </div>
                       </div>
                       <Show when={item.duration}>
-                        <span class={classes().playlistItemDuration}>
-                          {formatTime(item.duration!)}
-                        </span>
+                        {(seconds) => (
+                          <span class={classes().playlistItemDuration}>
+                            {formatTime(seconds())}
+                          </span>
+                        )}
                       </Show>
                     </div>
                   );
@@ -1082,14 +1068,14 @@ export const RLAudio: Component<RLAudioProps> = (props) => {
           </div>
         </Show>
 
-        {/* 5. Children Slot */}
         {resolvedChildren()}
 
-        {/* 6. Transcript Collapsible Section */}
-        <Show when={trackTranscript() !== undefined}>
+        {/* Transcript Collapsible Section */}
+        <Show when={hasTranscript()}>
           <div class={classes().transcript} data-slot="transcript">
-            <button
-              type="button"
+            <RLButton
+              variant="ghost"
+              size="xs"
               onClick={() => setIsTranscriptOpen(!isTranscriptOpen())}
               class={classes().transcriptToggle}
               data-slot="transcript-toggle"
@@ -1097,16 +1083,18 @@ export const RLAudio: Component<RLAudioProps> = (props) => {
             >
               <RLIcon
                 name={isTranscriptOpen() ? "chevron-down" : "chevron-right"}
-                class="size-3.5"
+                class={classes().transcriptIcon}
                 aria-hidden="true"
               />
               <span>
                 {isTranscriptOpen() ? uiT("audio.hide-transcript") : uiT("audio.show-transcript")}
               </span>
-            </button>
+            </RLButton>
             <Show when={isTranscriptOpen()}>
               <div class={classes().transcriptContent} data-slot="transcript-content">
-                {trackTranscript()}
+                <Show when={slots.transcriptSlot() !== undefined} fallback={trackTranscript()}>
+                  {renderSlot(slots.transcriptSlot())}
+                </Show>
               </div>
             </Show>
           </div>

@@ -10,5 +10,4 @@ export const RLQuoteTheme = defineTheme("quote", {
     caption: "font-mono mt-4 text-right text-muted",
   },
   variants: {},
-  defaultVariants: {},
 });

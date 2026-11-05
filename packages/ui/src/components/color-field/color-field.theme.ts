@@ -1,15 +1,5 @@
 import { defineTheme } from "../../resolver";
 
-/**
- * Fallbacks for non-style color-field props. The resolver exposes no accessor for
- * `defaultVariants`, so props that are not theme variants read their default from here.
- */
-export const COLOR_FIELD_DEFAULTS = {
-  colorSpace: "hsl",
-  defaultValue: "#000000",
-  step: 1,
-} as const;
-
 export const RLColorFieldTheme = defineTheme("color-field", {
   slots: ["root", "swatch", "input"],
   base: {
@@ -17,7 +7,7 @@ export const RLColorFieldTheme = defineTheme("color-field", {
     swatch:
       "w-5 h-5 rounded border border-default mr-2 shrink-0 shadow-sm [background-color:var(--rl-swatch)]",
     input:
-      "w-full bg-transparent border-0 p-0 text-sm focus:outline-none focus:ring-0 text-highlighted placeholder-muted-foreground",
+      "w-full bg-transparent border-0 p-0 text-sm focus:outline-none focus:ring-0 text-highlighted placeholder:text-muted",
   },
   variants: {
     color: "auto",

@@ -6,10 +6,13 @@ export const RLNavigationMenuTheme = defineTheme("navigation-menu", {
     "list",
     "item",
     "link",
+    "itemIcon",
     "trigger",
+    "chevron",
     "content",
     "viewport",
     "viewportWrapper",
+    "viewportItem",
     "panel",
     "group",
     "groupTitle",
@@ -24,14 +27,18 @@ export const RLNavigationMenuTheme = defineTheme("navigation-menu", {
     list: "flex flex-1 list-none",
     item: "relative",
     // Shared by plain links AND dropdown triggers, so one `ui.link` override styles both.
-    link: "text-highlighted inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50",
+    link: "text-highlighted inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium transition-colors hover:text-[var(--rl-bg)] focus-visible:text-[var(--rl-bg)] aria-[current]:text-[var(--rl-bg)] data-[state=open]:text-[var(--rl-bg)] focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50",
+    itemIcon: "size-4",
     // Trigger-only extras on top of `link`.
     trigger: "cursor-pointer select-none bg-transparent",
-    content: "w-full ps-4",
+    chevron: "size-3.5 transition-transform duration-200 data-[state=open]:rotate-180",
+    content: "w-full ps-4 data-[state=closed]:hidden",
     // Full-bleed mega-menu anchored to the bottom of the header stack.
-    viewportWrapper: "fixed inset-x-0 top-[var(--rl-header-height,4rem)] z-40 overflow-hidden",
+    viewportWrapper:
+      "fixed inset-x-0 top-[var(--rl-header-height,4rem)] z-40 overflow-hidden data-[state=closed]:hidden",
     viewport:
       "w-full border-b border-default bg-default text-highlighted shadow-xl data-[state=open]:animate-in data-[state=open]:slide-in-from-top-4 data-[state=open]:fade-in-0 duration-200",
+    viewportItem: "w-full data-[state=closed]:hidden",
     panel:
       "mx-auto flex w-full max-w-90rem flex-col gap-4 p-4 sm:flex-row sm:gap-10 sm:px-xl sm:py-lg",
     group: "flex min-w-40 flex-col gap-1",
@@ -44,15 +51,7 @@ export const RLNavigationMenuTheme = defineTheme("navigation-menu", {
     childDescription: "mt-1 text-xs text-muted line-clamp-2",
   },
   variants: {
-    // Hover, focus, current and open colour. Set `accent` rather than overriding the classes.
-    accent: {
-      primary: {
-        link: "hover:text-primary focus-visible:text-primary aria-[current]:text-primary data-[state=open]:text-primary",
-      },
-      secondary: {
-        link: "hover:text-secondary-400 focus-visible:text-secondary-400 aria-[current]:text-secondary-400 data-[state=open]:text-secondary-400",
-      },
-    },
+    color: "auto",
     orientation: {
       horizontal: {
         root: "items-center",
@@ -69,7 +68,7 @@ export const RLNavigationMenuTheme = defineTheme("navigation-menu", {
     },
   },
   defaultVariants: {
-    accent: "primary",
+    color: "primary",
     orientation: "horizontal",
   },
 });

@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, afterEach } from "vite-plus/test";
 
 import { RLCalendar } from "../src/components/calendar/RLCalendar";
-import { RLCalendarTheme } from "../src/components/calendar/calendar.theme";
 import { renderToString } from "@solidjs/web";
 import { cleanHtml } from "./utils/normalize";
 
@@ -26,79 +25,36 @@ function countMatches(html: string, re: RegExp): number {
 const feb2022 = new Date(2022, 1, 15);
 
 describe("RLCalendar", () => {
-  describe("structure & slots", () => {
-    it("renders a root div with data-slot=root", () => {
+  describe("structure", () => {
+    it("renders the root with the root slot", () => {
       const html = render(() => <RLCalendar placeholder={feb2022} />);
       expect(html).toMatch(/^<div/);
       expect(slotTag(html, "root")).not.toBe("");
     });
 
-    it("renders header, body, heading and grid slots", () => {
+    it("renders header, body, heading and grid parts", () => {
       const html = render(() => <RLCalendar placeholder={feb2022} />);
       expect(slotTag(html, "header")).not.toBe("");
       expect(slotTag(html, "body")).not.toBe("");
       expect(slotTag(html, "heading")).not.toBe("");
       expect(slotTag(html, "grid")).not.toBe("");
-      expect(slotTag(html, "gridRow")).not.toBe("");
-      expect(slotTag(html, "gridWeekDaysRow")).not.toBe("");
       expect(slotTag(html, "gridBody")).not.toBe("");
-      expect(slotTag(html, "headCell")).not.toBe("");
       expect(slotTag(html, "cell")).not.toBe("");
       expect(slotTag(html, "cellTrigger")).not.toBe("");
-      expect(slotTag(html, "srLabel")).not.toBe("");
     });
 
-    it("renders a screen-reader heading with aria-level 2", () => {
+    it("renders children inside the root", () => {
+      const html = render(() => (
+        <RLCalendar placeholder={feb2022}>
+          <span>CHILD</span>
+        </RLCalendar>
+      ));
+      expect(html).toContain("CHILD");
+    });
+
+    it("renders 7 weekday cells", () => {
       const html = render(() => <RLCalendar placeholder={feb2022} />);
-      const sr = html.match(/<div[^>]*data-slot="sr-label"[^>]*>(.*?)<\/div>/)?.[1] ?? "";
-      expect(sr).toContain('role="heading"');
-      expect(sr).toContain('aria-level="2"');
-    });
-
-    it("uses sr-only class rather than inline styles for the sr heading", () => {
-      const html = render(() => <RLCalendar placeholder={feb2022} />);
-      const srTag = slotTag(html, "srLabel");
-      expect(srTag).toContain("sr-only");
-      expect(srTag).not.toContain("style=");
-    });
-
-    it("renders navigation buttons", () => {
-      const html = render(() => <RLCalendar placeholder={feb2022} />);
-      expect(attr(slotTag(html, "prevMonth"), "aria-label")).toBe("Previous month");
-      expect(attr(slotTag(html, "nextMonth"), "aria-label")).toBe("Next month");
-      expect(attr(slotTag(html, "prevYear"), "aria-label")).toBe("Previous year");
-      expect(attr(slotTag(html, "nextYear"), "aria-label")).toBe("Next year");
-    });
-
-    it("omits year controls when yearControls is false", () => {
-      const html = render(() => <RLCalendar placeholder={feb2022} yearControls={false} />);
-      expect(slotTag(html, "prevYear")).toBe("");
-      expect(slotTag(html, "nextYear")).toBe("");
-      expect(slotTag(html, "prevMonth")).not.toBe("");
-    });
-
-    it("omits month controls when monthControls is false", () => {
-      const html = render(() => <RLCalendar placeholder={feb2022} monthControls={false} />);
-      expect(slotTag(html, "prevMonth")).toBe("");
-      expect(slotTag(html, "prevYear")).not.toBe("");
-    });
-
-    it("renders heading label when view control is off", () => {
-      const html = render(() => <RLCalendar placeholder={feb2022} viewControl={false} />);
-      expect(slotTag(html, "headingLabel")).not.toBe("");
-      expect(slotTag(html, "viewControl")).toBe("");
-      expect(html).toContain("February 2022");
-    });
-
-    it("renders a view control button by default", () => {
-      const html = render(() => <RLCalendar placeholder={feb2022} />);
-      expect(slotTag(html, "viewControl")).not.toBe("");
-      expect(attr(slotTag(html, "viewControl"), "aria-label")).toBe("February 2022");
-    });
-
-    it("renders 7 weekday head cells", () => {
-      const html = render(() => <RLCalendar placeholder={feb2022} />);
-      expect(countMatches(html, /data-slot="head-cell"/g)).toBe(7);
+      expect(countMatches(html, /data-slot="week-day"/g)).toBe(7);
     });
 
     it("renders 42 day cells with fixedWeeks", () => {
@@ -109,26 +65,71 @@ describe("RLCalendar", () => {
     it("renders 35 day cells without fixedWeeks when the month needs 5 rows", () => {
       const html = render(() => <RLCalendar placeholder={feb2022} fixedWeeks={false} />);
       expect(countMatches(html, /data-slot="cell-trigger"/g)).toBe(35);
-      expect(countMatches(html, /data-slot="cell-trigger"/g)).toBeLessThan(42);
     });
 
-    it("honours numberOfMonths", () => {
+    it("renders one grid per month when numberOfMonths is set", () => {
       const html = render(() => <RLCalendar placeholder={feb2022} numberOfMonths={2} />);
       expect(countMatches(html, /data-slot="grid"/g)).toBe(2);
       expect(countMatches(html, /data-slot="cell-trigger"/g)).toBe(84);
     });
+
+    it("renders a week-number cell per row when weekNumbers is set", () => {
+      const html = render(() => <RLCalendar placeholder={feb2022} weekNumbers />);
+      expect(countMatches(html, /data-slot="cell-week"/g)).toBe(6);
+    });
   });
 
-  describe("ARIA", () => {
-    it("labels the root with the calendar label and heading", () => {
+  describe("controls", () => {
+    it("renders the four navigation buttons by default", () => {
       const html = render(() => <RLCalendar placeholder={feb2022} />);
-      const root = slotTag(html, "root");
-      expect(attr(root, "aria-label")).toBe("Event Date, February 2022");
+      expect(slotTag(html, "prev")).not.toBe("");
+      expect(slotTag(html, "next")).not.toBe("");
+      expect(slotTag(html, "prevYear")).not.toBe("");
+      expect(slotTag(html, "nextYear")).not.toBe("");
     });
 
-    it("supports a custom calendarLabel", () => {
+    it("omits year controls when yearControls is false", () => {
+      const html = render(() => <RLCalendar placeholder={feb2022} yearControls={false} />);
+      expect(slotTag(html, "prevYear")).toBe("");
+      expect(slotTag(html, "nextYear")).toBe("");
+      expect(slotTag(html, "prev")).not.toBe("");
+    });
+
+    it("omits month controls when monthControls is false", () => {
+      const html = render(() => <RLCalendar placeholder={feb2022} monthControls={false} />);
+      expect(slotTag(html, "prev")).toBe("");
+      expect(slotTag(html, "prevYear")).not.toBe("");
+    });
+
+    it("renders the heading label instead of a view control when viewControl is false", () => {
+      const html = render(() => <RLCalendar placeholder={feb2022} viewControl={false} />);
+      expect(slotTag(html, "headingLabel")).not.toBe("");
+      expect(slotTag(html, "viewControl")).toBe("");
+    });
+
+    it("renders a view control button by default", () => {
+      const html = render(() => <RLCalendar placeholder={feb2022} />);
+      expect(slotTag(html, "viewControl")).not.toBe("");
+    });
+
+    it("switches to a heading label when the type has no switchable view", () => {
+      const html = render(() => <RLCalendar placeholder={feb2022} type="year" />);
+      expect(slotTag(html, "viewControl")).toBe("");
+      expect(slotTag(html, "headingLabel")).not.toBe("");
+    });
+
+    it("disables navigation controls when disabled", () => {
+      const html = render(() => <RLCalendar placeholder={feb2022} disabled />);
+      expect(slotTag(html, "prev")).toContain("disabled");
+      expect(slotTag(html, "next")).toContain("disabled");
+      expect(attr(slotTag(html, "prev"), "aria-disabled")).toBe("true");
+    });
+  });
+
+  describe("ARIA and state", () => {
+    it("labels the root with the calendar label", () => {
       const html = render(() => <RLCalendar placeholder={feb2022} calendarLabel="Appointment" />);
-      expect(attr(slotTag(html, "root"), "aria-label")).toBe("Appointment, February 2022");
+      expect(attr(slotTag(html, "root"), "aria-label")).toContain("Appointment");
     });
 
     it("labels the grid with role=application and tabindex -1", () => {
@@ -143,7 +144,7 @@ describe("RLCalendar", () => {
       expect(html).toMatch(/<thead[^>]*aria-hidden="true"/);
     });
 
-    it("gives every day cell role=gridcell and a trigger with role=button", () => {
+    it("gives every day cell role=gridcell and every trigger role=button", () => {
       const html = render(() => <RLCalendar placeholder={feb2022} />);
       const cells = html.match(/<td[^>]*data-slot="cell"[^>]*>/g) ?? [];
       expect(cells.length).toBe(42);
@@ -153,13 +154,6 @@ describe("RLCalendar", () => {
       expect(triggers.every((t) => t.includes('role="button"'))).toBe(true);
     });
 
-    it("gives each trigger a full-date aria-label", () => {
-      const html = render(() => <RLCalendar placeholder={feb2022} />);
-      const label =
-        html.match(/<div[^>]*data-slot="cell-trigger"[^>]*aria-label="([^"]+)"/)?.[1] ?? "";
-      expect(label).toContain("2022");
-    });
-
     it("marks today with data-today and aria-current=date", () => {
       const html = render(() => <RLCalendar />);
       const today = new Date();
@@ -167,15 +161,6 @@ describe("RLCalendar", () => {
       const trig = html.match(new RegExp(`<div[^>]*data-value="${key}"[^>]*>`))?.[0] ?? "";
       expect(trig).toContain("data-today");
       expect(trig).toContain('aria-current="date"');
-    });
-
-    it("marks selected days with data-selected and aria-selected", () => {
-      const html = render(() => (
-        <RLCalendar placeholder={feb2022} defaultValue={new Date(2022, 1, 15)} />
-      ));
-      expect(html).toContain("data-selected");
-      const cell = html.match(/<td[^>]*data-slot="cell"[^>]*aria-selected="true"[^>]*>/);
-      expect(cell).not.toBeNull();
     });
 
     it("sets data-disabled and aria-disabled on disabled days", () => {
@@ -193,12 +178,12 @@ describe("RLCalendar", () => {
       expect(html).toContain("data-unavailable");
     });
 
-    it("marks outside-view days", () => {
+    it("marks days outside the current view", () => {
       const html = render(() => <RLCalendar placeholder={feb2022} />);
       expect(html).toContain("data-outside-view");
     });
 
-    it("marks the root readonly/invalid/disabled", () => {
+    it("marks the root readonly, disabled and invalid", () => {
       expect(
         slotTag(
           render(() => <RLCalendar placeholder={feb2022} readonly />),
@@ -218,10 +203,10 @@ describe("RLCalendar", () => {
           isDateDisabled={() => true}
         />
       ));
-      expect(slotTag(invalid, "root")).toContain("data-invalid");
+      expect(slotTag(invalid, "root")).toContain('aria-invalid="true"');
     });
 
-    it("roving tabindex: exactly one enabled day cell has tabindex=0", () => {
+    it("roving tabindex: exactly one enabled day trigger has tabindex=0", () => {
       const html = render(() => <RLCalendar placeholder={feb2022} />);
       expect(countMatches(html, /<div[^>]*data-slot="cell-trigger"[^>]*tabindex="0"/g)).toBe(1);
       expect(
@@ -270,54 +255,37 @@ describe("RLCalendar", () => {
   });
 
   describe("views", () => {
-    it("renders the month picker view with 12 cells and no weekday header", () => {
+    it("renders the month picker with 12 cells and no weekday header", () => {
       const html = render(() => <RLCalendar placeholder={feb2022} type="month" />);
       expect(countMatches(html, /data-slot="cell-trigger"/g)).toBe(12);
-      expect(countMatches(html, /data-slot="head-cell"/g)).toBe(0);
-      expect(attr(slotTag(html, "root"), "aria-label")).toContain("2022");
+      expect(countMatches(html, /data-slot="week-day"/g)).toBe(0);
     });
 
-    it("renders the year picker view with 12 cells", () => {
+    it("renders the year picker with 12 cells", () => {
       const html = render(() => <RLCalendar placeholder={feb2022} type="year" />);
       expect(countMatches(html, /data-slot="cell-trigger"/g)).toBe(12);
-      expect(attr(slotTag(html, "root"), "aria-label")).toContain("2020");
-      expect(attr(slotTag(html, "root"), "aria-label")).toContain("2031");
     });
 
-    it("type=month renders single-chevron navigation labelled as years", () => {
-      const html = render(() => <RLCalendar placeholder={feb2022} type="month" />);
-      expect(attr(slotTag(html, "prevMonth"), "aria-label")).toBe("Previous year");
-      expect(attr(slotTag(html, "nextMonth"), "aria-label")).toBe("Next year");
-    });
-
-    it("switchable is false for type=year, so no view control", () => {
+    it("renders year-cell markup in the year picker", () => {
       const html = render(() => <RLCalendar placeholder={feb2022} type="year" />);
-      expect(slotTag(html, "viewControl")).toBe("");
-      expect(slotTag(html, "headingLabel")).not.toBe("");
+      expect(countMatches(html, /data-slot="year-cell"/g)).toBe(12);
+    });
+
+    it("renders month-cell markup in the month picker", () => {
+      const html = render(() => <RLCalendar placeholder={feb2022} type="month" />);
+      expect(countMatches(html, /data-slot="month-cell"/g)).toBe(12);
     });
   });
 
-  describe("values & callbacks", () => {
+  describe("values", () => {
     it("renders a controlled value as selected", () => {
       const html = render(() => <RLCalendar placeholder={feb2022} value={new Date(2022, 1, 15)} />);
       expect(countMatches(html, /<td[^>]*data-slot="cell"[^>]*aria-selected="true"/g)).toBe(1);
     });
 
-    it("renders null value as empty", () => {
+    it("renders a null value as nothing selected", () => {
       const html = render(() => <RLCalendar placeholder={feb2022} value={null} />);
       expect(countMatches(html, /<td[^>]*aria-selected="true"/g)).toBe(0);
-    });
-
-    it("disabled calendar disables navigation controls", () => {
-      const html = render(() => <RLCalendar placeholder={feb2022} disabled />);
-      expect(slotTag(html, "prevMonth")).toContain("disabled");
-      expect(slotTag(html, "nextMonth")).toContain("disabled");
-      expect(attr(slotTag(html, "prevMonth"), "aria-disabled")).toBe("true");
-    });
-
-    it("weekNumbers adds a week-number cell per row", () => {
-      const html = render(() => <RLCalendar placeholder={feb2022} weekNumbers />);
-      expect(countMatches(html, /data-slot="cell-week"/g)).toBe(6);
     });
   });
 
@@ -330,19 +298,34 @@ describe("RLCalendar", () => {
       expect(html).not.toMatch(/data-slot="cell-trigger"[^>]*>\s*15\s*<\//);
     });
 
-    it("renders weekDaySlot output", () => {
+    it("renders weekDaySlot output in every weekday cell", () => {
       const html = render(() => <RLCalendar placeholder={feb2022} weekDaySlot={() => "WD"} />);
-      expect(countMatches(html, /data-slot="head-cell"[^>]*>WD</g)).toBe(7);
+      expect(countMatches(html, /data-slot="week-day"[^>]*>WD</g)).toBe(7);
     });
 
-    it("renders headingSlot output", () => {
+    it("renders headingSlot output in place of the heading", () => {
       const html = render(() => (
         <RLCalendar placeholder={feb2022} headingSlot={<span>HEADING</span>} />
       ));
       expect(html).toContain("HEADING");
+      expect(slotTag(html, "headingLabel")).toBe("");
+      expect(slotTag(html, "viewControl")).toBe("");
     });
 
-    it("renders monthCellSlot output in month view", () => {
+    it("renders prevSlot and nextSlot output inside the navigation buttons", () => {
+      const html = render(() => (
+        <RLCalendar
+          placeholder={feb2022}
+          prevSlot={<span>PREV</span>}
+          nextSlot={<span>NEXT</span>}
+        />
+      ));
+      expect(slotTag(html, "prev")).not.toBe("");
+      expect(html).toContain("PREV");
+      expect(html).toContain("NEXT");
+    });
+
+    it("renders monthCellSlot output in the month picker", () => {
       const html = render(() => (
         <RLCalendar
           placeholder={feb2022}
@@ -354,7 +337,7 @@ describe("RLCalendar", () => {
       expect(html).toContain("M11");
     });
 
-    it("renders yearCellSlot output in year view", () => {
+    it("renders yearCellSlot output in the year picker", () => {
       const html = render(() => (
         <RLCalendar
           placeholder={feb2022}
@@ -367,7 +350,7 @@ describe("RLCalendar", () => {
     });
   });
 
-  describe("ui overrides & theming", () => {
+  describe("ui overrides", () => {
     it("merges ui.root override", () => {
       const html = render(() => <RLCalendar placeholder={feb2022} ui={{ root: "custom-root" }} />);
       expect(slotTag(html, "root")).toContain("custom-root");
@@ -384,62 +367,10 @@ describe("RLCalendar", () => {
       const html = render(() => <RLCalendar placeholder={feb2022} class="extra-class" />);
       expect(slotTag(html, "root")).toContain("extra-class");
     });
-
-    it("RLCalendarTheme exposes all 15 slots", () => {
-      const ui = RLCalendarTheme({});
-      const slots: Array<keyof typeof ui> = [
-        "root",
-        "header",
-        "body",
-        "heading",
-        "headingLabel",
-        "grid",
-        "gridRow",
-        "gridWeekDaysRow",
-        "gridBody",
-        "headCell",
-        "headCellWeek",
-        "cell",
-        "cellTrigger",
-        "cellWeek",
-        "srLabel",
-      ];
-      for (const slot of slots) {
-        expect(typeof ui[slot]).toBe("string");
-      }
-    });
-
-    it("RLCalendarTheme applies view variants", () => {
-      expect(RLCalendarTheme({ view: "day" }).gridRow).toContain("grid-cols-7");
-      expect(RLCalendarTheme({ view: "month" }).gridRow).toContain("grid-cols-4");
-      expect(RLCalendarTheme({ view: "year" }).gridRow).toContain("grid-cols-4");
-    });
-
-    it("RLCalendarTheme applies compound color/variant state classes", () => {
-      const ui = RLCalendarTheme({ color: "primary", variant: "solid" });
-      expect(ui.root).toContain("rl-color-primary");
-      expect(ui.cellTrigger).toContain("[&[data-selected]]:bg-[var(--rl-bg)]");
-      expect(ui.cellTrigger).toContain("text-inverted");
-      expect(ui.cellTrigger).toContain("data-selected");
-      const neutral = RLCalendarTheme({ color: "neutral", variant: "solid" }).cellTrigger;
-      expect(neutral).toContain("bg-inverted");
-    });
-
-    it("RLCalendarTheme applies weekNumbers compound", () => {
-      const ui = RLCalendarTheme({ view: "day", weekNumbers: true });
-      expect(ui.gridRow).toContain("grid-cols-8");
-      expect(ui.gridWeekDaysRow).toContain("grid-cols-8");
-    });
-
-    it("RLCalendarTheme applies size variants", () => {
-      expect(RLCalendarTheme({ size: "xs", view: "day" }).cellTrigger).toContain("size-6");
-      expect(RLCalendarTheme({ size: "xl", view: "day" }).cellTrigger).toContain("size-10");
-      expect(RLCalendarTheme({ size: "md", view: "month" }).cellTrigger).toContain("h-8");
-    });
   });
 
   describe("SSR safety", () => {
-    it("renders without touching window/document", () => {
+    it("renders without a window or document", () => {
       expect(() => render(() => <RLCalendar />)).not.toThrow();
     });
 

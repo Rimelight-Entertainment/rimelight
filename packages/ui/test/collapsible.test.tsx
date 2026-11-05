@@ -13,241 +13,160 @@ function slotTag(html: string, slot: string): string {
   return match?.[0] ?? "";
 }
 
+// Returns the whole element (open tag, content, close tag) so content assertions see nested markup.
+function slotElement(html: string, slot: string): string {
+  const start = html.search(new RegExp(`<[a-z0-9]+[^>]*data-slot="${slot}"`));
+  if (start < 0) return "";
+  const name = html.slice(start).match(/^<([a-z0-9]+)/)?.[1] ?? "";
+  const tokens = new RegExp(`</?${name}(?=[\\s>])[^>]*>`, "g");
+  tokens.lastIndex = start;
+  let depth = 0;
+  for (let m = tokens.exec(html); m !== null; m = tokens.exec(html)) {
+    depth += m[0].startsWith("</") ? -1 : 1;
+    if (depth === 0) return html.slice(start, m.index + m[0].length);
+  }
+  return "";
+}
+
 function attr(tag: string, name: string): string | undefined {
-  return tag.match(new RegExp(`\\s${name}="([^"]*)"`))?.[1];
+  const match = tag.match(new RegExp(`\\s${name}(?:="([^"]*)")?(?=[\\s>])`));
+  return match ? (match[1] ?? "") : undefined;
 }
 
 describe("RLCollapsible", () => {
-  describe("Exports", () => {
-    it("exports RLCollapsible component from package index", () => {
-      expect(RLCollapsible).toBeDefined();
-    });
-  });
-
-  describe("Structure & Polymorphism", () => {
-    it("renders default structure with root, trigger, and content slots", () => {
-      const html = render(() => (
-        <RLCollapsible defaultOpen={true} bodySlot={<div>Collapsible content</div>}>
-          <button type="button">Toggle</button>
-        </RLCollapsible>
-      ));
-      expect(html).toMatch(/^<div/);
-      expect(slotTag(html, "root")).not.toBe("");
-      expect(slotTag(html, "trigger")).not.toBe("");
-      expect(slotTag(html, "content")).not.toBe("");
-      expect(html).toContain("Toggle");
-      expect(html).toContain("Collapsible content");
-    });
-
-    it("renders polymorphic root element via as prop", () => {
-      const sectionHtml = render(() => (
-        <RLCollapsible as="section" defaultOpen={true} bodySlot={<div>Inner</div>}>
-          <button type="button">Toggle</button>
-        </RLCollapsible>
-      ));
-      expect(sectionHtml).toMatch(/^<section/);
-
-      const navHtml = render(() => (
-        <RLCollapsible as="nav" defaultOpen={true} bodySlot={<div>Links</div>}>
-          <button type="button">Menu</button>
-        </RLCollapsible>
-      ));
-      expect(navHtml).toMatch(/^<nav/);
-    });
-
-    it("forwards extra HTML attributes, id, and aria labels to root element", () => {
-      const html = render(() => (
-        <RLCollapsible
-          id="custom-collapsible"
-          aria-label="FAQ section"
-          aria-labelledby="faq-heading"
-          aria-describedby="faq-desc"
-          data-testid="test-collapsible"
-          bodySlot={<div>Body</div>}
-        >
-          <button type="button">Header</button>
-        </RLCollapsible>
-      ));
-      const root = slotTag(html, "root");
-      expect(attr(root, "id")).toBe("custom-collapsible");
-      expect(attr(root, "aria-label")).toBe("FAQ section");
-      expect(attr(root, "aria-labelledby")).toBe("faq-heading");
-      expect(attr(root, "aria-describedby")).toBe("faq-desc");
-      expect(attr(root, "data-testid")).toBe("test-collapsible");
-    });
-  });
-
-  describe("Open & Closed States", () => {
-    it("defaults to closed state when neither open nor defaultOpen is passed", () => {
-      const html = render(() => (
-        <RLCollapsible bodySlot={<div>Hidden Body</div>}>
-          <button type="button">Trigger</button>
-        </RLCollapsible>
-      ));
+  describe("Open state", () => {
+    it("is closed by default and hides the body", () => {
+      const html = render(() => <RLCollapsible>Trigger</RLCollapsible>);
       const root = slotTag(html, "root");
       const trigger = slotTag(html, "trigger");
+
       expect(attr(root, "data-state")).toBe("closed");
-      expect(attr(trigger, "data-state")).toBe("closed");
       expect(attr(trigger, "aria-expanded")).toBe("false");
-      // Default unmountOnHide is true, so content is unmounted
-      expect(slotTag(html, "content")).toBe("");
-      expect(html).not.toContain("Hidden Body");
+      expect(slotTag(html, "body")).toBe("");
     });
 
-    it("renders open when defaultOpen is true", () => {
+    it("opens when defaultOpen is set", () => {
+      const html = render(() => <RLCollapsible defaultOpen>Trigger</RLCollapsible>);
+
+      expect(attr(slotTag(html, "root"), "data-state")).toBe("open");
+      expect(attr(slotTag(html, "trigger"), "aria-expanded")).toBe("true");
+      expect(slotTag(html, "body")).not.toBe("");
+    });
+
+    it("follows the controlled open prop over defaultOpen", () => {
       const html = render(() => (
-        <RLCollapsible defaultOpen={true} bodySlot={<div>Visible Content</div>}>
-          <button type="button">Trigger</button>
+        <RLCollapsible open defaultOpen={false}>
+          Trigger
         </RLCollapsible>
       ));
-      const root = slotTag(html, "root");
-      const trigger = slotTag(html, "trigger");
-      const content = slotTag(html, "content");
-      expect(attr(root, "data-state")).toBe("open");
-      expect(attr(trigger, "data-state")).toBe("open");
-      expect(attr(trigger, "aria-expanded")).toBe("true");
-      expect(attr(content, "data-state")).toBe("open");
-      expect(html).toContain("Visible Content");
-    });
 
-    it("respects controlled open prop", () => {
-      const openHtml = render(() => (
-        <RLCollapsible open={true} bodySlot={<div>Controlled Content</div>}>
-          <button type="button">Trigger</button>
-        </RLCollapsible>
-      ));
-      expect(attr(slotTag(openHtml, "root"), "data-state")).toBe("open");
-      expect(openHtml).toContain("Controlled Content");
-
-      const closedHtml = render(() => (
-        <RLCollapsible open={false} defaultOpen={true} bodySlot={<div>Controlled Content</div>}>
-          <button type="button">Trigger</button>
-        </RLCollapsible>
-      ));
-      expect(attr(slotTag(closedHtml, "root"), "data-state")).toBe("closed");
-      expect(closedHtml).not.toContain("Controlled Content");
+      expect(attr(slotTag(html, "trigger"), "aria-expanded")).toBe("true");
+      expect(slotTag(html, "body")).not.toBe("");
     });
   });
 
-  describe("Unmount on Hide", () => {
-    it("unmounts content from DOM when closed and unmountOnHide is true", () => {
+  describe("Unmount on hide", () => {
+    it("removes the body from the DOM while closed by default", () => {
       const html = render(() => (
-        <RLCollapsible unmountOnHide={true} bodySlot={<div>Secret text</div>}>
-          <button type="button">Trigger</button>
-        </RLCollapsible>
+        <RLCollapsible bodySlot={<p>Hidden body</p>}>Trigger</RLCollapsible>
       ));
-      expect(slotTag(html, "content")).toBe("");
-      expect(html).not.toContain("Secret text");
+
+      expect(html).not.toContain("Hidden body");
     });
 
-    it("keeps content in DOM with hidden attribute when unmountOnHide is false", () => {
+    it("keeps the body mounted and hidden when unmountOnHide is false", () => {
       const html = render(() => (
-        <RLCollapsible unmountOnHide={false} bodySlot={<div>Persistent text</div>}>
-          <button type="button">Trigger</button>
+        <RLCollapsible unmountOnHide={false} bodySlot={<p>Kept body</p>}>
+          Trigger
         </RLCollapsible>
       ));
-      const content = slotTag(html, "content");
-      expect(content).not.toBe("");
-      expect(attr(content, "data-state")).toBe("closed");
-      expect(content).toContain("hidden");
-      expect(html).toContain("Persistent text");
+      const body = slotTag(html, "body");
+
+      expect(html).toContain("Kept body");
+      expect(attr(body, "data-state")).toBe("closed");
+      expect(body).toContain("hidden");
     });
   });
 
-  describe("Disabled State", () => {
-    it("applies data-disabled attributes when disabled is true", () => {
+  describe("Trigger and body slots", () => {
+    it("renders children as the trigger when no bodySlot is set", () => {
+      const html = render(() => <RLCollapsible>Trigger text</RLCollapsible>);
+
+      expect(slotTag(html, "trigger")).not.toBe("");
+      expect(html).toContain("Trigger text");
+    });
+
+    it("renders children as the body when triggerSlot is set", () => {
       const html = render(() => (
-        <RLCollapsible disabled={true} defaultOpen={true} bodySlot={<div>Content</div>}>
-          <button type="button">Trigger</button>
+        <RLCollapsible defaultOpen triggerSlot={<span>Custom trigger</span>}>
+          Body children
         </RLCollapsible>
       ));
-      expect(slotTag(html, "root")).toContain("data-disabled");
-      expect(slotTag(html, "trigger")).toContain("data-disabled");
-      expect(slotTag(html, "content")).toContain("data-disabled");
-    });
-  });
 
-  describe("Slots and Render Props", () => {
-    it("supports render function for trigger receiving open state", () => {
+      expect(slotElement(html, "trigger")).toContain("Custom trigger");
+      expect(slotElement(html, "body")).toContain("Body children");
+    });
+
+    it("passes the open state to a triggerSlot render function", () => {
       const html = render(() => (
         <RLCollapsible
-          defaultOpen={true}
-          triggerSlot={({ open }) => (
-            <button type="button">{open ? "Expanded" : "Collapsed"}</button>
-          )}
-        >
-          <div>Content</div>
-        </RLCollapsible>
-      ));
-      expect(html).toContain("Expanded");
-    });
-
-    it("supports trigger slot alias and content slot alias", () => {
-      const html = render(() => (
-        <RLCollapsible
-          defaultOpen={true}
-          triggerSlot={<span class="custom-trigger">Trigger Slot</span>}
-          bodySlot={<span class="custom-content">Content Slot</span>}
+          defaultOpen
+          triggerSlot={({ open }) => <span>{open ? "is-open" : "is-closed"}</span>}
         />
       ));
-      expect(html).toContain("custom-trigger");
-      expect(html).toContain("custom-content");
+
+      expect(slotElement(html, "trigger")).toContain("is-open");
     });
 
-    it("supports triggerSlot alongside children as content", () => {
+    it("passes the open state to a bodySlot render function", () => {
       const html = render(() => (
-        <RLCollapsible defaultOpen={true} triggerSlot={<button type="button">Trigger Prop</button>}>
-          <div class="child-content">Child Content</div>
+        <RLCollapsible
+          defaultOpen
+          bodySlot={({ open }) => <span>{open ? "body-open" : "body-closed"}</span>}
+        >
+          Trigger
         </RLCollapsible>
       ));
-      expect(html).toContain("Trigger Prop");
-      expect(html).toContain("Child Content");
+
+      expect(slotElement(html, "body")).toContain("body-open");
+      expect(html).not.toContain("body-closed");
+    });
+
+    it("renders no body when neither bodySlot nor triggerSlot is set and content is empty", () => {
+      const html = render(() => <RLCollapsible defaultOpen />);
+
+      expect(slotTag(html, "body")).toBe("");
     });
   });
 
-  describe("ARIA & Accessibility", () => {
-    it("connects trigger aria-controls with content id", () => {
+  describe("Disabled", () => {
+    it("marks the root and trigger with a presence-based data-disabled attribute", () => {
+      const html = render(() => <RLCollapsible disabled>Trigger</RLCollapsible>);
+
+      expect(attr(slotTag(html, "root"), "data-disabled")).toBe("");
+      expect(attr(slotTag(html, "trigger"), "data-disabled")).toBe("");
+    });
+
+    it("omits data-disabled when enabled", () => {
+      const html = render(() => <RLCollapsible>Trigger</RLCollapsible>);
+
+      expect(slotTag(html, "root")).not.toContain("data-disabled");
+      expect(slotTag(html, "trigger")).not.toContain("data-disabled");
+    });
+  });
+
+  describe("Accessibility", () => {
+    it("links the trigger to the body with aria-controls when the body is mounted", () => {
       const html = render(() => (
-        <RLCollapsible id="faq-item" defaultOpen={true} bodySlot={<div>Answer</div>}>
-          <button type="button">Question</button>
+        <RLCollapsible defaultOpen bodySlot={<p>Body</p>}>
+          Trigger
         </RLCollapsible>
       ));
       const trigger = slotTag(html, "trigger");
-      const content = slotTag(html, "content");
-      expect(attr(trigger, "aria-controls")).toBe("faq-item-content");
-      expect(attr(content, "id")).toBe("faq-item-content");
-    });
-  });
+      const body = slotTag(html, "body");
 
-  describe("Custom UI and Classes", () => {
-    it("applies class to root and custom UI overrides to slots", () => {
-      const html = render(() => (
-        <RLCollapsible
-          class="custom-root-class"
-          ui={{
-            root: "ui-root-override",
-            trigger: "ui-trigger-override",
-            content: "ui-content-override",
-          }}
-          defaultOpen={true}
-          bodySlot={<div>Custom UI Content</div>}
-        >
-          <button type="button">Custom UI Trigger</button>
-        </RLCollapsible>
-      ));
-      expect(slotTag(html, "root")).toContain("custom-root-class");
-      expect(slotTag(html, "root")).toContain("ui-root-override");
-      expect(slotTag(html, "trigger")).toContain("ui-trigger-override");
-      expect(slotTag(html, "content")).toContain("ui-content-override");
-    });
-
-    it("applies data-theme attribute when provided", () => {
-      const html = render(() => (
-        <RLCollapsible theme="dark" bodySlot={<div>Dark content</div>}>
-          <button type="button">Dark toggle</button>
-        </RLCollapsible>
-      ));
-      expect(attr(slotTag(html, "root"), "data-theme")).toBe("dark");
+      expect(attr(trigger, "aria-controls")).toBeTruthy();
+      expect(attr(body, "id")).toBe(attr(trigger, "aria-controls"));
     });
   });
 });

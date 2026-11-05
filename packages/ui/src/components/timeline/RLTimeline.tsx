@@ -1,27 +1,12 @@
 import type { Component } from "solid-js";
-import { For, Show } from "solid-js";
+import { createMemo, For, Show } from "solid-js";
 import type { RLTimelineProps, TimelineItem, TimelineSlotContext } from "./timeline.types";
 import { RLTimelineTheme } from "./timeline.theme";
-import type { SlotRenderer } from "../../types";
+import { renderSlot } from "../../slot";
 import { RLAvatar } from "../avatar/RLAvatar";
 import { RLIcon } from "../icon/RLIcon";
 
-const OMIT_KEYS = [
-  "items",
-  "size",
-  "orientation",
-  "value",
-  "defaultValue",
-  "reverse",
-  "indicatorSlot",
-  "wrapperSlot",
-  "dateSlot",
-  "titleSlot",
-  "descriptionSlot",
-] as const;
-
-const resolveSlot = <Ctx,>(renderer: SlotRenderer<Ctx> | undefined, ctx: Ctx) =>
-  typeof renderer === "function" ? renderer(ctx) : renderer;
+const OMIT_KEYS = ["items", "size", "orientation", "value", "defaultValue", "reverse"] as const;
 
 export const RLTimeline: Component<RLTimelineProps> = (props) => {
   const reverse = (): boolean => props.reverse === true;
@@ -33,6 +18,11 @@ export const RLTimeline: Component<RLTimelineProps> = (props) => {
       reverse: reverse(),
     }),
   });
+
+  const indicatorUi = createMemo(() => ({
+    icon: classes().indicatorIcon,
+    fallback: classes().indicatorFallback,
+  }));
 
   const items = (): TimelineItem[] => props.items ?? [];
   const orientation = (): "horizontal" | "vertical" =>
@@ -72,28 +62,30 @@ export const RLTimeline: Component<RLTimelineProps> = (props) => {
       <Show when={items().length > 0} fallback={children()}>
         <For each={items()}>
           {(item, index) => {
-            const ctx = (): TimelineSlotContext => ({ item, index: index() });
+            const slotCtx = (): TimelineSlotContext => ({ item, index: index() });
             const state = () => getItemState(index());
             const isLast = () => index() === items().length - 1;
 
             return (
               <div data-slot="item" class={classes().item} data-state={state()}>
                 <div data-slot="container" class={classes().container}>
-                  <RLAvatar
-                    size={props.size ?? "md"}
-                    src={item.avatar?.src}
-                    alt={item.avatar?.alt}
-                    data-slot="indicator"
-                    class={classes().indicator}
-                    ui={{
-                      icon: "text-highlighted group-data-[state=completed]:text-inverted group-data-[state=active]:text-inverted",
-                      fallback:
-                        "text-highlighted group-data-[state=completed]:text-inverted group-data-[state=active]:text-inverted",
-                    }}
-                  >
-                    {resolveSlot(slots.indicatorSlot(), ctx()) ??
-                      (item.icon ? <RLIcon name={item.icon} class="text-inherit" /> : null)}
-                  </RLAvatar>
+                  <span data-slot="indicator" class={classes().indicator}>
+                    <RLAvatar
+                      size={props.size ?? "md"}
+                      src={item.avatar?.src}
+                      alt={item.avatar?.alt}
+                      ui={indicatorUi()}
+                    >
+                      <Show
+                        when={slots.indicatorSlot()}
+                        fallback={
+                          <Show when={item.icon}>{(icon) => <RLIcon name={icon()} />}</Show>
+                        }
+                      >
+                        {renderSlot(slots.indicatorSlot(), slotCtx())}
+                      </Show>
+                    </RLAvatar>
+                  </span>
 
                   <Show when={!isLast()}>
                     <div
@@ -105,25 +97,36 @@ export const RLTimeline: Component<RLTimelineProps> = (props) => {
                 </div>
 
                 <div data-slot="wrapper" class={classes().wrapper}>
-                  {resolveSlot(slots.wrapperSlot(), ctx()) ?? (
-                    <>
-                      <Show when={item.date || slots.dateSlot()}>
-                        <div data-slot="date" class={classes().date}>
-                          {resolveSlot(slots.dateSlot(), ctx()) ?? item.date}
-                        </div>
-                      </Show>
-                      <Show when={item.title || slots.titleSlot()}>
-                        <div data-slot="title" class={classes().title}>
-                          {resolveSlot(slots.titleSlot(), ctx()) ?? item.title}
-                        </div>
-                      </Show>
-                      <Show when={item.description || slots.descriptionSlot()}>
-                        <div data-slot="description" class={classes().description}>
-                          {resolveSlot(slots.descriptionSlot(), ctx()) ?? item.description}
-                        </div>
-                      </Show>
-                    </>
-                  )}
+                  <Show
+                    when={slots.wrapperSlot()}
+                    fallback={
+                      <>
+                        <Show when={slots.dateSlot() || item.date}>
+                          <div data-slot="date" class={classes().date}>
+                            <Show when={slots.dateSlot()} fallback={item.date}>
+                              {renderSlot(slots.dateSlot(), slotCtx())}
+                            </Show>
+                          </div>
+                        </Show>
+                        <Show when={slots.titleSlot() || item.title}>
+                          <div data-slot="title" class={classes().title}>
+                            <Show when={slots.titleSlot()} fallback={item.title}>
+                              {renderSlot(slots.titleSlot(), slotCtx())}
+                            </Show>
+                          </div>
+                        </Show>
+                        <Show when={slots.descriptionSlot() || item.description}>
+                          <div data-slot="description" class={classes().description}>
+                            <Show when={slots.descriptionSlot()} fallback={item.description}>
+                              {renderSlot(slots.descriptionSlot(), slotCtx())}
+                            </Show>
+                          </div>
+                        </Show>
+                      </>
+                    }
+                  >
+                    {renderSlot(slots.wrapperSlot(), slotCtx())}
+                  </Show>
                 </div>
               </div>
             );

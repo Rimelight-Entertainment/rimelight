@@ -1,5 +1,7 @@
 import type { JSX } from "@solidjs/web";
 import type { InferThemeProps } from "../../resolver";
+import type { SlotRenderer } from "../../types";
+import type { RLSelectProps } from "../select/select.types";
 import type { RLLocaleSelectorTheme } from "./locale-selector.theme";
 
 export interface LocaleItem {
@@ -43,16 +45,28 @@ export type RLLocaleSelectorProps = InferThemeProps<typeof RLLocaleSelectorTheme
   onValueChange?: (item: LocaleItem) => void;
 
   /**
-   * Icon shown in the trigger.
-   * @default "i-lucide-globe"
+   * Icon name shown in the trigger.
+   * @default "globe"
    */
   leadingIcon?: string;
 
   /**
-   * Content rendered before the select.
+   * Custom leading content, rendered in place of `leadingIcon` when present.
    * @default undefined
    */
-  leadingSlot?: JSX.Element;
+  leadingSlot?: SlotRenderer;
+
+  /**
+   * Size scale, forwarded to the select.
+   * @default "md"
+   */
+  size?: RLSelectProps["size"];
+
+  /**
+   * Visual style, forwarded to the select. `icon` mode defaults to `ghost`.
+   * @default "solid"
+   */
+  variant?: RLSelectProps["variant"];
 
   /**
    * Content rendered after the select.

@@ -3,7 +3,7 @@ import { defineTheme } from "../../resolver";
 export const RLInputTheme = defineTheme("input", {
   slots: ["root", "input", "leading", "trailing"],
   base: {
-    root: "relative flex items-center w-full rounded-md border border-default bg-default shadow-sm focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
+    root: "relative flex items-center w-full rounded-md border border-default bg-default shadow-sm focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2",
     input:
       "w-full bg-transparent outline-none placeholder:text-muted disabled:cursor-not-allowed disabled:opacity-50",
     leading: "absolute flex items-center justify-center text-muted",
@@ -11,7 +11,6 @@ export const RLInputTheme = defineTheme("input", {
   },
   variants: {
     variant: {
-      outline: {},
       ghost: {
         root: "bg-transparent border-none shadow-none focus-within:ring-0",
       },
@@ -38,11 +37,10 @@ export const RLInputTheme = defineTheme("input", {
       true: { input: "pr-9" },
     },
     invalid: {
-      true: { root: "border-error-500 focus-within:ring-error-500/50" },
+      true: { root: "border-error focus-within:ring-error/50" },
     },
   },
   defaultVariants: {
-    variant: "outline",
     size: "md",
     hasLeading: false,
     hasTrailing: false,
