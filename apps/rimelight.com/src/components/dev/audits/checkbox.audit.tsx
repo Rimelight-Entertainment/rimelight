@@ -2,7 +2,7 @@ import { createSignal, For } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import { RLCheckbox } from "@rimelight/ui/components/checkbox/RLCheckbox.tsx";
 import { RLCheckboxGroup } from "@rimelight/ui/components/checkbox-group/RLCheckboxGroup.tsx";
-import type { RLCheckboxGroupItemValue } from "@rimelight/ui/components/checkbox-group/checkbox-group.types.ts";
+import type { CheckboxGroupItemValue } from "@rimelight/ui/components/checkbox-group/checkbox-group.types.ts";
 import { AUDIT_COLORS, type ComponentAuditDefinition } from "./types";
 import { t } from "@rimelight/i18n";
 
@@ -446,8 +446,8 @@ export const checkboxAudit: ComponentAuditDefinition = {
       description:
         "Multi-select checkbox groups with array models, string/object items, horizontal/vertical layouts, and max selection limits.",
       render: () => {
-        const [groupVal, setGroupVal] = createSignal<RLCheckboxGroupItemValue[]>(["System"]);
-        const [tableVal, setTableVal] = createSignal<RLCheckboxGroupItemValue[]>(["light"]);
+        const [groupVal, setGroupVal] = createSignal<CheckboxGroupItemValue[]>(["System"]);
+        const [tableVal, setTableVal] = createSignal<CheckboxGroupItemValue[]>(["light"]);
 
         const themeItems = [
           {
@@ -485,7 +485,7 @@ export const checkboxAudit: ComponentAuditDefinition = {
               legend="Select Themes (Vertical List)"
               items={["System", "Light", "Dark"]}
               value={groupVal()}
-              onValueChange={(v: RLCheckboxGroupItemValue[]) => {
+              onValueChange={(v: CheckboxGroupItemValue[]) => {
                 setGroupVal(v);
               }}
             />
@@ -505,7 +505,7 @@ export const checkboxAudit: ComponentAuditDefinition = {
               layout="table"
               items={themeItems}
               value={tableVal()}
-              onValueChange={(v: RLCheckboxGroupItemValue[]) => {
+              onValueChange={(v: CheckboxGroupItemValue[]) => {
                 setTableVal(v);
               }}
             />

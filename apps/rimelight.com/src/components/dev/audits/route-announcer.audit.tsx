@@ -1,11 +1,11 @@
 import { createSignal, For, Show } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import { RLRouteAnnouncer } from "@rimelight/ui/components/route-announcer/RLRouteAnnouncer.tsx";
-import type { RLRouteAnnouncerProgressSize } from "@rimelight/ui/components/route-announcer/route-announcer.types.ts";
+import type { RouteAnnouncerProgressSize } from "@rimelight/ui/components/route-announcer/route-announcer.types.ts";
 import { AUDIT_COLORS, type ComponentAuditDefinition } from "./types";
 import { t } from "@rimelight/i18n";
 
-const SIZES: RLRouteAnnouncerProgressSize[] = ["xs", "sm", "md", "lg"];
+const SIZES: RouteAnnouncerProgressSize[] = ["xs", "sm", "md", "lg"];
 const COLORS = AUDIT_COLORS;
 
 export const RouteAnnouncerSandbox = (): JSX.Element => {
@@ -13,7 +13,7 @@ export const RouteAnnouncerSandbox = (): JSX.Element => {
   const [lastAnnouncement, setLastAnnouncement] = createSignal("");
   const [progressEnabled, setProgressEnabled] = createSignal(true);
   const [selectedColor, setSelectedColor] = createSignal<string>("primary");
-  const [selectedSize, setSelectedSize] = createSignal<RLRouteAnnouncerProgressSize>("sm");
+  const [selectedSize, setSelectedSize] = createSignal<RouteAnnouncerProgressSize>("sm");
   const [isSimulatedRouting, setIsSimulatedRouting] = createSignal(true);
 
   const triggerSimulation = (title: string, path: string) => {

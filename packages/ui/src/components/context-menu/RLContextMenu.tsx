@@ -11,7 +11,7 @@ import { Portal, type JSX } from "@solidjs/web";
 import { cx } from "../../resolver";
 import { createControllable } from "../../controllable";
 import { RLIcon } from "../icon/RLIcon";
-import { RLContextMenuTheme, type RLContextMenuClasses } from "./context-menu.theme";
+import { RLContextMenuTheme, type ContextMenuClasses } from "./context-menu.theme";
 import type {
   ContextMenuActionItem,
   ContextMenuCheckboxItem,
@@ -117,7 +117,7 @@ function normalizeMenuSections(items: ContextMenuItems | undefined): ResolvedMen
  */
 interface MenuLayerProps {
   sections: ResolvedMenuSection[];
-  menuClasses: () => RLContextMenuClasses;
+  menuClasses: () => ContextMenuClasses;
   checkedIcon: () => string;
   submenuIcon: () => string;
   itemRender?: ((props: ItemRenderArgs) => JSX.Element) | undefined;

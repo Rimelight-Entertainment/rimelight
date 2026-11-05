@@ -3725,28 +3725,28 @@ export const componentMeta: ComponentMetaMap = {
       },
       {
         name: "color",
-        type: "RLCheckboxColor | undefined",
+        type: "CheckboxColor | undefined",
         required: false,
         description: "Color theme variant.",
         default: "'primary'",
       },
       {
         name: "layout",
-        type: "RLCheckboxLayout | undefined",
+        type: "CheckboxLayout | undefined",
         required: false,
         description: "Layout preset of the checkbox container.",
         default: "'list'",
       },
       {
         name: "size",
-        type: "RLCheckboxSize | undefined",
+        type: "CheckboxSize | undefined",
         required: false,
         description: "Size scale of the checkbox.",
         default: "'md'",
       },
       {
         name: "indicator",
-        type: "RLCheckboxIndicator | undefined",
+        type: "CheckboxIndicator | undefined",
         required: false,
         description: "Position of the indicator checkbox box.",
         default: "'start'",
@@ -3773,7 +3773,7 @@ export const componentMeta: ComponentMetaMap = {
       },
       {
         name: "ui",
-        type: "RLCheckboxUi | undefined",
+        type: "CheckboxUi | undefined",
         required: false,
         description: "Slot-specific CSS class overrides.",
       },
@@ -5309,7 +5309,7 @@ export const componentMeta: ComponentMetaMap = {
       },
       {
         name: "size",
-        type: "RLModalSize | undefined",
+        type: "ModalSize | undefined",
         required: false,
         description: 'Dialog width preset. Forwarded to the modal, which defaults to `"md"`.',
       },
@@ -6625,7 +6625,7 @@ export const componentMeta: ComponentMetaMap = {
       },
       {
         name: "actions",
-        type: "RLEmptyAction[]",
+        type: "EmptyAction[]",
         required: false,
         description: "Buttons rendered in the actions area.",
         default: "undefined",
@@ -6800,7 +6800,7 @@ export const componentMeta: ComponentMetaMap = {
       },
       {
         name: "actions",
-        type: "RLErrorAction[]",
+        type: "ErrorAction[]",
         required: false,
         description: "Buttons below the text.",
         default: 'a single "Go home" link to `/` (localized automatically); pass `[]` for none.',
@@ -9971,7 +9971,7 @@ export const componentMeta: ComponentMetaMap = {
       },
       {
         name: "size",
-        type: "RLModalSize | undefined",
+        type: "ModalSize | undefined",
         required: false,
         description: "Modal width preset.",
         default: '"md"',
@@ -11460,7 +11460,7 @@ export const componentMeta: ComponentMetaMap = {
       },
       {
         name: "progress",
-        type: "boolean | RLRouteAnnouncerProgressOptions",
+        type: "boolean | RouteAnnouncerProgressOptions",
         required: false,
         description:
           "Whether to display the visual top navigation progress bar during async route transitions. Pass an options object to set the progress bar color, size and class.",
@@ -11787,14 +11787,14 @@ export const componentMeta: ComponentMetaMap = {
       },
       {
         name: "variant",
-        type: "RLSelectVariant | undefined",
+        type: "SelectVariant | undefined",
         required: false,
         description: "Visual style.",
         default: "'solid'",
       },
       {
         name: "layout",
-        type: "RLSelectLayout | undefined",
+        type: "SelectLayout | undefined",
         required: false,
         description: "Layout preset. `icon` renders a compact icon-only control.",
         default: "'default'",
@@ -12780,7 +12780,7 @@ export const componentMeta: ComponentMetaMap = {
     props: [
       {
         name: "panels",
-        type: "readonly (RLSplitterPanelItem | JSX.Element)[]",
+        type: "readonly (SplitterPanelItem | JSX.Element)[]",
         required: false,
         description:
           "Declarative panel configurations (constraints, collapse settings, content, and per-panel handle overrides).",
@@ -12808,7 +12808,7 @@ export const componentMeta: ComponentMetaMap = {
       },
       {
         name: "handles",
-        type: "readonly RLSplitterHandleConfig[]",
+        type: "readonly SplitterHandleConfig[]",
         required: false,
         description: "Optional per-handle configurations indexed by separator position.",
       },
@@ -12838,7 +12838,7 @@ export const componentMeta: ComponentMetaMap = {
       },
       {
         name: "translations",
-        type: "RLSplitterTranslations",
+        type: "SplitterTranslations",
         required: false,
         description: "Localized strings override for handle accessibility labels.",
       },
@@ -13301,14 +13301,14 @@ export const componentMeta: ComponentMetaMap = {
     props: [
       {
         name: "prev",
-        type: "RLSurroundItem | null",
+        type: "SurroundItem | null",
         required: false,
         description: "The previous item. Omit or pass `null` to hide the previous link.",
         default: "undefined",
       },
       {
         name: "next",
-        type: "RLSurroundItem | null",
+        type: "SurroundItem | null",
         required: false,
         description: "The next item. Omit or pass `null` to hide the next link.",
         default: "undefined",

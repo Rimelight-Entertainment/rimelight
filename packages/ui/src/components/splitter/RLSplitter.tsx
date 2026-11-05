@@ -1,7 +1,7 @@
 import type {
   DragState,
-  RLSplitterHandleConfig,
-  RLSplitterPanelItem,
+  SplitterHandleConfig,
+  SplitterPanelItem,
   RLSplitterProps,
   SplitterHandleAction,
   SplitterHandleState,
@@ -71,7 +71,7 @@ type HandleElement = HTMLDivElement & {
   __rlCrossDrag?: CrossDragHook;
 };
 
-export function isPanelItem(val: unknown): val is RLSplitterPanelItem {
+export function isPanelItem(val: unknown): val is SplitterPanelItem {
   if (!val || typeof val !== "object" || Array.isArray(val)) return false;
   if ("nodeType" in val || "t" in val) return false;
   for (const key of Object.keys(val)) {
@@ -204,7 +204,7 @@ export const RLSplitter: Component<RLSplitterProps> = (props) => {
     }),
   });
 
-  const normalizedPanels = createMemo<RLSplitterPanelItem[]>(() => {
+  const normalizedPanels = createMemo<SplitterPanelItem[]>(() => {
     const kids = [children()]
       .flat()
       .filter((kid) => kid !== undefined && kid !== null && kid !== false);
@@ -268,7 +268,7 @@ export const RLSplitter: Component<RLSplitterProps> = (props) => {
     }
   };
 
-  const isPanelCollapsed = (idx: number, panel: RLSplitterPanelItem): boolean => {
+  const isPanelCollapsed = (idx: number, panel: SplitterPanelItem): boolean => {
     if (!panel.collapsible) return false;
     if (panel.collapsed !== undefined) return panel.collapsed;
     const map = internalCollapsed();
@@ -470,7 +470,7 @@ export const RLSplitter: Component<RLSplitterProps> = (props) => {
     }
   };
 
-  const getHandleConfig = (i: number): RLSplitterHandleConfig => {
+  const getHandleConfig = (i: number): SplitterHandleConfig => {
     const fromHandles = props.handles?.[i];
     const fromPanel = normalizedPanels()[i]?.handle;
     return {
@@ -909,7 +909,7 @@ export const RLSplitter: Component<RLSplitterProps> = (props) => {
     return props.translations?.resize ?? uiT("splitter.resize");
   };
 
-  const renderPanelContent = (panel: RLSplitterPanelItem, idx: number) => {
+  const renderPanelContent = (panel: SplitterPanelItem, idx: number) => {
     const raw = panel.children;
     if (typeof raw === "function") {
       const state: SplitterPanelState = {

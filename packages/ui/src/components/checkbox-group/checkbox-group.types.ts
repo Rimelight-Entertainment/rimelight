@@ -2,21 +2,21 @@ import type { ValidComponent } from "@solidjs/web";
 import type { JSX } from "@solidjs/web";
 import type { Theme } from "../../types";
 import type {
-  RLCheckboxColor,
-  RLCheckboxIndicator,
-  RLCheckboxSize,
-  RLCheckboxUi,
+  CheckboxColor,
+  CheckboxIndicator,
+  CheckboxSize,
+  CheckboxUi,
 } from "../checkbox/checkbox.types";
 import type { InferThemeProps } from "../../resolver";
 import type { RLCheckboxGroupTheme } from "./checkbox-group.theme";
 
-export type RLCheckboxGroupItemValue = string | number;
+export type CheckboxGroupItemValue = string | number;
 
-export interface RLCheckboxGroupItemObject {
+export interface CheckboxGroupItemObject {
   label?: string | undefined;
   description?: string | undefined;
   disabled?: boolean | undefined;
-  value?: RLCheckboxGroupItemValue | undefined;
+  value?: CheckboxGroupItemValue | undefined;
   id?: string | undefined;
   icon?: string | undefined;
   class?: string | undefined;
@@ -24,17 +24,17 @@ export interface RLCheckboxGroupItemObject {
     | (Partial<{
         item?: string | undefined;
       }> &
-        Omit<RLCheckboxUi, "root">)
+        Omit<CheckboxUi, "root">)
     | undefined;
   [key: string]: any;
 }
 
-export type RLCheckboxGroupItem = RLCheckboxGroupItemValue | RLCheckboxGroupItemObject;
+export type CheckboxGroupItem = CheckboxGroupItemValue | CheckboxGroupItemObject;
 
-export type RLCheckboxGroupOrientation = "horizontal" | "vertical";
-export type RLCheckboxGroupLayout = "list" | "card" | "table";
+export type CheckboxGroupOrientation = "horizontal" | "vertical";
+export type CheckboxGroupLayout = "list" | "card" | "table";
 
-export interface RLCheckboxGroupUi {
+export interface CheckboxGroupUi {
   root?: string | undefined;
   fieldset?: string | undefined;
   legend?: string | undefined;
@@ -42,8 +42,8 @@ export interface RLCheckboxGroupUi {
 }
 
 export type RLCheckboxGroupProps<
-  T extends RLCheckboxGroupItem = RLCheckboxGroupItem,
-  V = RLCheckboxGroupItemValue,
+  T extends CheckboxGroupItem = CheckboxGroupItem,
+  V = CheckboxGroupItemValue,
 > = Omit<InferThemeProps<typeof RLCheckboxGroupTheme>, "onChange"> & {
   /**
    * The element or component this component should render as.
@@ -93,25 +93,25 @@ export type RLCheckboxGroupProps<
    * Size scale for all checkboxes in the group.
    * @default 'md'
    */
-  size?: RLCheckboxSize | undefined;
+  size?: CheckboxSize | undefined;
 
   /**
    * Layout preset of the group. `table` renders items as a joined bordered table; `card` renders each item as a tile.
    * @default 'list'
    */
-  layout?: RLCheckboxGroupLayout | undefined;
+  layout?: CheckboxGroupLayout | undefined;
 
   /**
    * Layout orientation of the items.
    * @default 'vertical'
    */
-  orientation?: RLCheckboxGroupOrientation | undefined;
+  orientation?: CheckboxGroupOrientation | undefined;
 
   /**
    * Color theme variant for child checkboxes.
    * @default 'primary'
    */
-  color?: RLCheckboxColor | undefined;
+  color?: CheckboxColor | undefined;
 
   /**
    * Highlight focus state ring.
@@ -123,7 +123,7 @@ export type RLCheckboxGroupProps<
    * Indicator position.
    * @default 'start'
    */
-  indicator?: RLCheckboxIndicator | undefined;
+  indicator?: CheckboxIndicator | undefined;
 
   /**
    * Checkbox icon.
@@ -165,7 +165,7 @@ export type RLCheckboxGroupProps<
   /**
    * Slot-specific CSS class overrides.
    */
-  ui?: (RLCheckboxGroupUi & RLCheckboxUi) | undefined;
+  ui?: (CheckboxGroupUi & CheckboxUi) | undefined;
 
   /**
    * Additional CSS classes to apply to the root element.
@@ -196,7 +196,7 @@ export type RLCheckboxGroupProps<
           id: string;
           label?: string;
           description?: string;
-          value?: RLCheckboxGroupItemValue;
+          value?: CheckboxGroupItemValue;
         };
       }) => JSX.Element)
     | undefined;
@@ -210,7 +210,7 @@ export type RLCheckboxGroupProps<
           id: string;
           label?: string;
           description?: string;
-          value?: RLCheckboxGroupItemValue;
+          value?: CheckboxGroupItemValue;
         };
       }) => JSX.Element)
     | undefined;

@@ -1,7 +1,7 @@
 import type { JSX } from "@solidjs/web";
 import { For, Show } from "solid-js";
 import type { RLSidebarProps, SidebarBadge, SidebarItem } from "./sidebar.types";
-import { RLSidebarTheme, type RLSidebarClasses } from "./sidebar.theme";
+import { RLSidebarTheme, type SidebarClasses } from "./sidebar.theme";
 import { RLBadge } from "../badge/RLBadge";
 import { RLIcon } from "../icon/RLIcon";
 import { uiT } from "../../locale";
@@ -26,7 +26,7 @@ function normalizeBadge(badge: SidebarItem["badge"]): Required<SidebarBadge> | n
 interface SidebarItemListProps {
   items: SidebarItem[];
   depth: number;
-  itemClasses: RLSidebarClasses;
+  itemClasses: SidebarClasses;
 }
 
 const SidebarItemList = (props: SidebarItemListProps): JSX.Element => {

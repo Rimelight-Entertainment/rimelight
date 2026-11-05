@@ -4,12 +4,12 @@ import type { Theme, ThemeColor } from "../../types";
 import type { InferThemeProps } from "../../resolver";
 import type { RLCheckboxTheme } from "./checkbox.theme";
 
-export type RLCheckboxColor = ThemeColor;
-export type RLCheckboxLayout = "list" | "card";
-export type RLCheckboxSize = "xs" | "sm" | "md" | "lg" | "xl";
-export type RLCheckboxIndicator = "start" | "end" | "hidden";
+export type CheckboxColor = ThemeColor;
+export type CheckboxLayout = "list" | "card";
+export type CheckboxSize = "xs" | "sm" | "md" | "lg" | "xl";
+export type CheckboxIndicator = "start" | "end" | "hidden";
 
-export interface RLCheckboxUi {
+export interface CheckboxUi {
   root?: string | undefined;
   container?: string | undefined;
   base?: string | undefined;
@@ -48,25 +48,25 @@ export type RLCheckboxProps = Omit<
    * Color theme variant.
    * @default 'primary'
    */
-  color?: RLCheckboxColor | undefined;
+  color?: CheckboxColor | undefined;
 
   /**
    * Layout preset of the checkbox container.
    * @default 'list'
    */
-  layout?: RLCheckboxLayout | undefined;
+  layout?: CheckboxLayout | undefined;
 
   /**
    * Size scale of the checkbox.
    * @default 'md'
    */
-  size?: RLCheckboxSize | undefined;
+  size?: CheckboxSize | undefined;
 
   /**
    * Position of the indicator checkbox box.
    * @default 'start'
    */
-  indicator?: RLCheckboxIndicator | undefined;
+  indicator?: CheckboxIndicator | undefined;
 
   /**
    * Highlight the ring color like a focus state.
@@ -89,7 +89,7 @@ export type RLCheckboxProps = Omit<
   /**
    * Slot-specific CSS class overrides.
    */
-  ui?: RLCheckboxUi | undefined;
+  ui?: CheckboxUi | undefined;
 
   /**
    * Additional CSS classes to apply to the root element.

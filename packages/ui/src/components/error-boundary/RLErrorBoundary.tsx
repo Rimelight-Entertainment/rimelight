@@ -2,7 +2,7 @@ import type { Component } from "solid-js";
 import { Errored, createEffect, untrack } from "solid-js";
 import type { RLErrorBoundaryProps } from "./error-boundary.types";
 import { RLErrorBoundaryTheme } from "./error-boundary.theme";
-import type { RLErrorAction } from "../error/error.types";
+import type { ErrorAction } from "../error/error.types";
 import { RLError } from "../error/RLError";
 import { getErrorStatus } from "../error/http-error";
 import { uiT } from "../../locale";
@@ -54,8 +54,8 @@ export const RLErrorBoundary: Component<RLErrorBoundaryProps> = (props) => {
             return typeof fallback === "function" ? fallback(context) : fallback;
           }
 
-          const actions = (): RLErrorAction[] => {
-            const home: RLErrorAction = {
+          const actions = (): ErrorAction[] => {
+            const home: ErrorAction = {
               label: props.homeLabel ?? uiT("error.home"),
               href: props.homeHref ?? "/",
               icon: "i-lucide-house",

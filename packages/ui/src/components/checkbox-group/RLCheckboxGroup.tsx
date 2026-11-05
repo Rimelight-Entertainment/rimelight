@@ -1,13 +1,13 @@
 import type {
-  RLCheckboxGroupItem,
-  RLCheckboxGroupItemValue,
-  RLCheckboxGroupItemObject,
+  CheckboxGroupItem,
+  CheckboxGroupItemValue,
+  CheckboxGroupItemObject,
   RLCheckboxGroupProps,
 } from "./checkbox-group.types";
 import { RLCheckboxGroupTheme } from "./checkbox-group.theme";
 import { createMemo, createSignal, For, omit, Show, type Component } from "solid-js";
 import { RLCheckbox } from "../checkbox/RLCheckbox";
-import type { RLCheckboxLayout } from "../checkbox/checkbox.types";
+import type { CheckboxLayout } from "../checkbox/checkbox.types";
 
 const OMIT_KEYS = [
   "id",
@@ -43,7 +43,7 @@ export const RLCheckboxGroup: Component<RLCheckboxGroupProps> = (props) => {
   const disabled = () => Boolean(props.disabled);
 
   // `table` is a group-level preset; its items are plain list checkboxes.
-  const childLayout = (): RLCheckboxLayout | undefined =>
+  const childLayout = (): CheckboxLayout | undefined =>
     props.layout === "table" ? "list" : props.layout;
 
   const [internalValue, setInternalValue] = createSignal<any[]>(
@@ -64,7 +64,7 @@ export const RLCheckboxGroup: Component<RLCheckboxGroupProps> = (props) => {
     return selectedValues().length >= props.max;
   };
 
-  const normalizeItem = (item: RLCheckboxGroupItem, index: number): RLCheckboxGroupItemObject => {
+  const normalizeItem = (item: CheckboxGroupItem, index: number): CheckboxGroupItemObject => {
     if (item === null || item === undefined) {
       return {
         id: `${id()}:null:${index}`,
@@ -107,7 +107,7 @@ export const RLCheckboxGroup: Component<RLCheckboxGroupProps> = (props) => {
     return props.items.map((item, index) => normalizeItem(item, index));
   });
 
-  const toggleValue = (itemVal: RLCheckboxGroupItemValue | undefined, checked: boolean) => {
+  const toggleValue = (itemVal: CheckboxGroupItemValue | undefined, checked: boolean) => {
     const current = selectedValues();
     let next: any[];
 

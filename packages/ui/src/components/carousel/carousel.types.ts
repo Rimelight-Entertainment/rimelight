@@ -255,10 +255,10 @@ export type RLCarouselProps<T = unknown> = Omit<
   /**
    * Ref handle callback.
    */
-  ref?: ((handle: RLCarouselHandle) => void) | undefined;
+  ref?: ((handle: CarouselHandle) => void) | undefined;
 };
 
-export interface RLCarouselHandle {
+export interface CarouselHandle {
   scrollTo: (index: number) => void;
   next: () => void;
   prev: () => void;

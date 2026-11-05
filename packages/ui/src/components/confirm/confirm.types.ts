@@ -2,7 +2,7 @@ import type { JSX } from "@solidjs/web";
 import type { InferThemeProps } from "../../resolver";
 import type { ThemeColor } from "../../types";
 import type { OverlaySlot } from "../../slot";
-import type { RLModalSize } from "../modal/modal.types";
+import type { ModalSize } from "../modal/modal.types";
 import type { RLConfirmTheme } from "./confirm.theme";
 
 export type RLConfirmProps = Omit<
@@ -64,7 +64,7 @@ export type RLConfirmProps = Omit<
   /**
    * Dialog width preset. Forwarded to the modal, which defaults to `"md"`.
    */
-  size?: RLModalSize | undefined;
+  size?: ModalSize | undefined;
   /**
    * Whether the dialog can be dismissed by the close button, Escape, or clicking the backdrop.
    * Dismissal is reported as a cancel.

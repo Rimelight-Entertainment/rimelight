@@ -1,16 +1,13 @@
 import type { Component } from "solid-js";
-import type {
-  RLRouteAnnouncerProgressOptions,
-  RLRouteAnnouncerProps,
-} from "./route-announcer.types";
+import type { RouteAnnouncerProgressOptions, RLRouteAnnouncerProps } from "./route-announcer.types";
 import { RLRouteAnnouncerTheme } from "./route-announcer.theme";
 import { createSignal, onSettled, Show } from "solid-js";
 import { useLocation, useIsRouting } from "@solidjs/router";
 import { uiT } from "../../locale";
 
 const toProgressOptions = (
-  progress: boolean | RLRouteAnnouncerProgressOptions | undefined,
-): RLRouteAnnouncerProgressOptions | undefined =>
+  progress: boolean | RouteAnnouncerProgressOptions | undefined,
+): RouteAnnouncerProgressOptions | undefined =>
   typeof progress === "object" && progress !== null ? progress : undefined;
 
 const OMIT_KEYS = ["color", "size", "prefix", "progress"] as const;

@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export type RLBreadcrumbSlot =
+export type BreadcrumbSlot =
   | "root"
   | "list"
   | "item"
@@ -14,7 +14,7 @@ export type RLBreadcrumbSlot =
   | "overflowEllipsis"
   | "overflowCount";
 
-export type RLBreadcrumbClasses = Record<RLBreadcrumbSlot, string>;
+export type BreadcrumbClasses = Record<BreadcrumbSlot, string>;
 
 export const RLBreadcrumbTheme = defineTheme("breadcrumb", {
   slots: [

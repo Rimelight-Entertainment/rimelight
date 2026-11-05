@@ -7,7 +7,7 @@ import type { RLErrorTheme } from "./error.theme";
 /**
  * Button shown below the error text. Takes `href` or `onClick`.
  */
-export type RLErrorAction = {
+export type ErrorAction = {
   /**
    * Button text.
    */
@@ -95,7 +95,7 @@ export type RLErrorProps = InferThemeProps<typeof RLErrorTheme> & {
    * Buttons below the text.
    * @default a single "Go home" link to `/` (localized automatically); pass `[]` for none.
    */
-  actions?: RLErrorAction[];
+  actions?: ErrorAction[];
 
   /**
    * Show the error message and stack.

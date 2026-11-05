@@ -63,7 +63,7 @@ export interface SplitterPanelState {
   index: number;
 }
 
-export interface RLSplitterTranslations {
+export interface SplitterTranslations {
   /**
    * Accessible label for a resize handle.
    * @default uiT("splitter.resize")
@@ -79,7 +79,7 @@ export interface RLSplitterTranslations {
   expand?: string;
 }
 
-export interface RLSplitterHandleConfig {
+export interface SplitterHandleConfig {
   /**
    * Handle interaction mode. Set `"collapse"` so clicking the grip or pressing Enter/Space toggles the nearest collapsible panel.
    * @default "resize"
@@ -113,7 +113,7 @@ export interface RLSplitterHandleConfig {
   "aria-label"?: string;
 }
 
-export interface RLSplitterPanelItem {
+export interface SplitterPanelItem {
   /**
    * Optional HTML id for the panel element.
    */
@@ -171,7 +171,7 @@ export interface RLSplitterPanelItem {
   /**
    * Optional handle configuration for the separator immediately following this panel.
    */
-  handle?: RLSplitterHandleConfig;
+  handle?: SplitterHandleConfig;
   /**
    * Additional CSS classes applied to this panel element.
    */
@@ -186,7 +186,7 @@ export type RLSplitterProps = InferThemeProps<typeof RLSplitterTheme> & {
   /**
    * Declarative panel configurations (constraints, collapse settings, content, and per-panel handle overrides).
    */
-  panels?: readonly (RLSplitterPanelItem | JSX.Element)[];
+  panels?: readonly (SplitterPanelItem | JSX.Element)[];
 
   /**
    * Controlled panel sizes (pixel numbers like `280` or percentage strings like `'30%'`).
@@ -207,7 +207,7 @@ export type RLSplitterProps = InferThemeProps<typeof RLSplitterTheme> & {
   /**
    * Optional per-handle configurations indexed by separator position.
    */
-  handles?: readonly RLSplitterHandleConfig[];
+  handles?: readonly SplitterHandleConfig[];
 
   /**
    * Default action for all handles unless overridden in `handles` or `panels[i].handle`.
@@ -235,7 +235,7 @@ export type RLSplitterProps = InferThemeProps<typeof RLSplitterTheme> & {
   /**
    * Localized strings override for handle accessibility labels.
    */
-  translations?: RLSplitterTranslations;
+  translations?: SplitterTranslations;
 
   /**
    * Callback fired with exact pixel sizes whenever panel sizes change.

@@ -3,7 +3,7 @@ import type { InferThemeProps, InferThemeUI } from "../../resolver";
 import type { RLBreadcrumbTheme } from "./breadcrumb.theme";
 import type { RLAvatarProps } from "../avatar/avatar.types";
 
-export type RLBreadcrumbUi = InferThemeUI<typeof RLBreadcrumbTheme>;
+export type BreadcrumbUi = InferThemeUI<typeof RLBreadcrumbTheme>;
 
 export interface BreadcrumbItem {
   /**
@@ -25,7 +25,7 @@ export interface BreadcrumbItem {
   /**
    * Per-item slot class overrides.
    */
-  ui?: RLBreadcrumbUi | undefined;
+  ui?: BreadcrumbUi | undefined;
   /**
    * Link target. Items without `href` render as plain text.
    */

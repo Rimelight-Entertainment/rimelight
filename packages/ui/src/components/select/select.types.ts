@@ -11,8 +11,8 @@ export interface SelectItem {
   avatar?: string;
 }
 
-export type RLSelectVariant = "solid" | "outline" | "soft" | "subtle" | "ghost" | "link";
-export type RLSelectLayout = "default" | "icon";
+export type SelectVariant = "solid" | "outline" | "soft" | "subtle" | "ghost" | "link";
+export type SelectLayout = "default" | "icon";
 
 export interface RLSelectProps extends Omit<
   InferThemeProps<typeof RLSelectTheme>,
@@ -74,13 +74,13 @@ export interface RLSelectProps extends Omit<
    * Visual style.
    * @default 'solid'
    */
-  variant?: RLSelectVariant | undefined;
+  variant?: SelectVariant | undefined;
 
   /**
    * Layout preset. `icon` renders a compact icon-only control.
    * @default 'default'
    */
-  layout?: RLSelectLayout | undefined;
+  layout?: SelectLayout | undefined;
 
   /**
    * Option items. Strings or objects with label/value.

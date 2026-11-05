@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export type RLContextMenuSlot =
+export type ContextMenuSlot =
   | "root"
   | "trigger"
   | "overlay"
@@ -21,7 +21,7 @@ export type RLContextMenuSlot =
   | "itemSubIndicator"
   | "separator";
 
-export type RLContextMenuClasses = Record<RLContextMenuSlot, string>;
+export type ContextMenuClasses = Record<ContextMenuSlot, string>;
 
 export const RLContextMenuTheme = defineTheme("context-menu", {
   slots: [

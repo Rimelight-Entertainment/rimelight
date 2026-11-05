@@ -7,7 +7,7 @@ import type { RLEmptyTheme } from "./empty.theme";
 /**
  * Action rendered as a button in the empty state. Extends the button props.
  */
-export type RLEmptyAction = Omit<RLButtonProps, "children" | "label" | "leadingIcon" | "size"> & {
+export type EmptyAction = Omit<RLButtonProps, "children" | "label" | "leadingIcon" | "size"> & {
   /**
    * Button text.
    */
@@ -58,7 +58,7 @@ export type RLEmptyProps = InferThemeProps<typeof RLEmptyTheme> & {
    * Buttons rendered in the actions area.
    * @default undefined
    */
-  actions?: RLEmptyAction[];
+  actions?: EmptyAction[];
 
   /**
    * Replaces the header.

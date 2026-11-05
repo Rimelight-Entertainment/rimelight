@@ -1,7 +1,7 @@
 import type { Component } from "solid-js";
 import { For, Show } from "solid-js";
 import type { ThemeColor } from "../../types";
-import type { RLErrorAction, RLErrorProps } from "./error.types";
+import type { ErrorAction, RLErrorProps } from "./error.types";
 import { RLErrorTheme } from "./error.theme";
 import { getErrorStatus, isDevEnvironment, isHttpError } from "./http-error";
 import { uiT } from "../../locale";
@@ -92,7 +92,7 @@ export const RLError: Component<RLErrorProps> = (props) => {
   const showDetails = () =>
     (props.showDetails ?? isDevEnvironment()) && props.error !== undefined && props.error !== null;
 
-  const actionList = (): RLErrorAction[] =>
+  const actionList = (): ErrorAction[] =>
     props.actions ?? [{ label: uiT("error.home"), href: "/", icon: "i-lucide-house" }];
 
   const statusLabel = () => `${uiT("error.status")} ${status()}`;

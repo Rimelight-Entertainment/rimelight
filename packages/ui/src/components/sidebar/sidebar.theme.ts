@@ -1,6 +1,6 @@
 import { defineTheme } from "../../resolver";
 
-export type RLSidebarSlot =
+export type SidebarSlot =
   | "root"
   | "header"
   | "content"
@@ -18,7 +18,7 @@ export type RLSidebarSlot =
   | "logoWrapper"
   | "toggleButton";
 
-export type RLSidebarClasses = Record<RLSidebarSlot, string>;
+export type SidebarClasses = Record<SidebarSlot, string>;
 
 export const RLSidebarTheme = defineTheme("sidebar", {
   slots: [

@@ -1,5 +1,5 @@
-import type { BreadcrumbItem, RLBreadcrumbUi, RLBreadcrumbProps } from "./breadcrumb.types";
-import { RLBreadcrumbTheme, type RLBreadcrumbClasses } from "./breadcrumb.theme";
+import type { BreadcrumbItem, BreadcrumbUi, RLBreadcrumbProps } from "./breadcrumb.types";
+import { RLBreadcrumbTheme, type BreadcrumbClasses } from "./breadcrumb.theme";
 import { createMemo, For, type Accessor, type Component } from "solid-js";
 import { RLIcon } from "../icon/RLIcon";
 import { RLAvatar } from "../avatar/RLAvatar";
@@ -21,7 +21,7 @@ interface ItemTheme {
   active: boolean;
   disabled: boolean;
   hasTo: boolean;
-  classes: Accessor<RLBreadcrumbClasses>;
+  classes: Accessor<BreadcrumbClasses>;
 }
 
 const renderSlot = <C,>(renderer: SlotRenderer<C>, ctx: C) =>
@@ -116,7 +116,7 @@ export const RLBreadcrumb: Component<RLBreadcrumbProps> = (props) => {
   });
 
   // Per-item slot overrides: the item's own `ui` and `class` extend the component `ui`.
-  const itemUi = (item: BreadcrumbItem): RLBreadcrumbUi | undefined => {
+  const itemUi = (item: BreadcrumbItem): BreadcrumbUi | undefined => {
     const base = ui();
     if (!item.ui && !item.class) return base;
     return {

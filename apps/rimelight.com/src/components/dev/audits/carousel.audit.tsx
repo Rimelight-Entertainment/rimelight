@@ -1,7 +1,7 @@
 import { createSignal, For } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import { RLCarousel } from "@rimelight/ui/components/carousel/RLCarousel.tsx";
-import type { RLCarouselHandle } from "@rimelight/ui/components/carousel/carousel.types.ts";
+import type { CarouselHandle } from "@rimelight/ui/components/carousel/carousel.types.ts";
 import type { ComponentAuditDefinition } from "./types";
 import { t } from "@rimelight/i18n";
 
@@ -191,7 +191,7 @@ export const CarouselSandbox = (): JSX.Element => {
 };
 
 export const ThumbnailsScenario = (): JSX.Element => {
-  let carouselRef: RLCarouselHandle | undefined;
+  let carouselRef: CarouselHandle | undefined;
   const [activeIndex, setActiveIndex] = createSignal(0);
 
   return (

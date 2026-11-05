@@ -3,7 +3,7 @@ import type { InferThemeProps } from "../../resolver";
 import type { OverlaySlot } from "../../slot";
 import type { RLModalTheme } from "./modal.theme";
 
-export type RLModalSize = "xs" | "sm" | "md" | "lg" | "xl";
+export type ModalSize = "xs" | "sm" | "md" | "lg" | "xl";
 
 export type RLModalProps = Omit<
   InferThemeProps<typeof RLModalTheme>,
@@ -32,7 +32,7 @@ export type RLModalProps = Omit<
    *
    * @default "md"
    */
-  size?: RLModalSize | undefined;
+  size?: ModalSize | undefined;
   /**
    * Render an overlay / backdrop behind the modal.
    *

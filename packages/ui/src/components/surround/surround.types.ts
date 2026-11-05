@@ -1,7 +1,7 @@
 import type { InferThemeProps } from "../../resolver";
 import type { RLSurroundTheme } from "./surround.theme";
 
-export interface RLSurroundItem {
+export interface SurroundItem {
   label: string;
   href: string;
 }
@@ -12,11 +12,11 @@ export type RLSurroundProps = Omit<InferThemeProps<typeof RLSurroundTheme>, "sid
    *
    * @default undefined
    */
-  prev?: RLSurroundItem | null;
+  prev?: SurroundItem | null;
   /**
    * The next item. Omit or pass `null` to hide the next link.
    *
    * @default undefined
    */
-  next?: RLSurroundItem | null;
+  next?: SurroundItem | null;
 };
