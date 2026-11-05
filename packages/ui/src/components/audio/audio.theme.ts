@@ -97,7 +97,7 @@ export const RLAudioTheme = defineTheme("audio", {
     controlsCenter: "flex items-center gap-1.5 sm:gap-2 justify-center shrink-0",
     controlsRight: "flex items-center gap-1.5 sm:gap-2 justify-end min-w-0",
     playButton:
-      "inline-flex items-center justify-center shrink-0 rounded-full bg-[var(--rl-bg)] text-white hover:bg-[var(--rl-bg-hover)] active:bg-[var(--rl-bg-hover)] transition-all cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--rl-ring)] disabled:opacity-50 disabled:cursor-not-allowed shadow-sm",
+      "inline-flex items-center justify-center shrink-0 rounded-full bg-[var(--rl-bg)] text-inverted hover:bg-[var(--rl-bg-hover)] active:bg-[var(--rl-bg-hover)] transition-all cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--rl-ring)] disabled:opacity-50 disabled:cursor-not-allowed shadow-sm",
     playIcon: "size-5",
     skipButton:
       "relative inline-flex items-center justify-center shrink-0 rounded-lg p-2 text-muted hover:text-highlighted hover:bg-elevated/60 active:bg-elevated transition-colors cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-[var(--rl-ring)] disabled:opacity-50 disabled:cursor-not-allowed",

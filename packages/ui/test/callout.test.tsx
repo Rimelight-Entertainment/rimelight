@@ -111,7 +111,7 @@ describe("RLCallout", () => {
 
     it("applies neutral compound variant classes", () => {
       const solidHtml = render(() => <RLCallout color="neutral" variant="solid" title="N" />);
-      expect(slotTag(solidHtml, "root")).toContain("text-white bg-inverted");
+      expect(slotTag(solidHtml, "root")).toContain("text-default bg-inverted");
 
       const outlineHtml = render(() => <RLCallout color="neutral" variant="outline" title="N" />);
       expect(slotTag(outlineHtml, "root")).toContain("ring-default");
@@ -127,7 +127,7 @@ describe("RLCallout", () => {
   describe("Variants", () => {
     it("renders solid variant by default", () => {
       const html = render(() => <RLCallout title="Solid" />);
-      expect(slotTag(html, "root")).toContain("bg-[var(--rl-bg)] text-white");
+      expect(slotTag(html, "root")).toContain("bg-[var(--rl-bg)] text-inverted");
     });
 
     it("renders outline variant", () => {

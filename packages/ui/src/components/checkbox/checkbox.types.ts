@@ -9,7 +9,7 @@ export type RLCheckboxLayout = "list" | "card";
 export type RLCheckboxSize = "xs" | "sm" | "md" | "lg" | "xl";
 export type RLCheckboxIndicator = "start" | "end" | "hidden";
 
-export interface RLCheckboxUiSlots {
+export interface RLCheckboxUi {
   root?: string | undefined;
   container?: string | undefined;
   base?: string | undefined;
@@ -89,7 +89,7 @@ export type RLCheckboxProps = Omit<
   /**
    * Slot-specific CSS class overrides.
    */
-  ui?: RLCheckboxUiSlots | undefined;
+  ui?: RLCheckboxUi | undefined;
 
   /**
    * Additional CSS classes to apply to the root element.

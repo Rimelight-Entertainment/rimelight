@@ -65,22 +65,24 @@ const commands: Record<Manager, Partial<Record<CommandType, string>> & { dev: st
   },
 };
 
+const OMIT_KEYS = ["pkg", "type", "dev", "args", "comment", "prefix", "managers"] as const;
+
 export const RLPackageManagers: Component<RLPackageManagersProps> = (props) => {
-  const { Tag, classes, rest, slots, theme } = RLPackageManagersTheme.setup(props, {
-    slots: ["pkg", "type", "dev", "args", "comment", "prefix", "managers"] as const,
+  const { Tag, classes, rest, theme } = RLPackageManagersTheme.setup(props, {
+    omit: OMIT_KEYS,
   });
 
   const getCommand = (mgr: Manager, cmdType: CommandType): string | undefined => {
     let cmd = commands[mgr][cmdType];
     if (cmd === undefined) return undefined;
 
-    const prefix = slots.prefix();
-    const comment = slots.comment();
-    const pkg = slots.pkg();
-    const args = slots.args();
+    const prefix = props.prefix;
+    const comment = props.comment;
+    const pkg = props.pkg;
+    const args = props.args;
     if (prefix) cmd = `${prefix} ${cmd}`;
     if (comment) cmd = `# ${comment.replaceAll("{PKG}", mgr)}\n${cmd}`;
-    if (slots.dev() && cmdType === "add") cmd += ` ${commands[mgr].dev}`;
+    if (props.dev && cmdType === "add") cmd += ` ${commands[mgr].dev}`;
 
     if (pkg) {
       const processedPkg =
@@ -97,8 +99,8 @@ export const RLPackageManagers: Component<RLPackageManagersProps> = (props) => {
   };
 
   const tabs = createMemo(() =>
-    (slots.managers() ?? ["npm", "pnpm", "yarn", "deno", "bun", "vp"])
-      .map((mgr) => ({ mgr, cmd: getCommand(mgr, slots.type() ?? "add") }))
+    (props.managers ?? ["npm", "pnpm", "yarn", "deno", "bun", "vp"])
+      .map((mgr) => ({ mgr, cmd: getCommand(mgr, props.type ?? "add") }))
       .filter((tab): tab is { mgr: Manager; cmd: string } => tab.cmd !== undefined),
   );
 

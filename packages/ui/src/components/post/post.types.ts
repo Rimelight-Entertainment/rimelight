@@ -21,7 +21,7 @@ export type RLPostProps = InferThemeProps<typeof RLPostTheme> & {
    *
    * @default undefined
    */
-  date?: string | Date | undefined;
+  date?: string | Date | null | undefined;
   /**
    * The image of the post, as a URL or an object with a `src`.
    *

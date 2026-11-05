@@ -8,7 +8,7 @@ export const RLPackageManagersTheme = defineTheme("package-managers", {
     trigger: "px-3 py-1.5 text-sm font-semibold rounded-t-lg transition-colors",
     content: "",
     codeBlock:
-      "overflow-x-auto bg-[#0a0a0f] px-4 py-3 pr-16 text-sm font-mono leading-6 text-[#e4e4e7] whitespace-pre",
+      "overflow-x-auto bg-muted px-4 py-3 pr-16 text-sm font-mono leading-6 text-highlighted whitespace-pre",
     copyButton: "absolute right-2 top-2",
   },
   variants: {},

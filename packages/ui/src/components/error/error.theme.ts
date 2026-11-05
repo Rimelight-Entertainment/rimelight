@@ -18,7 +18,7 @@ export const RLErrorTheme = defineTheme("error", {
   ],
   base: {
     root: "relative w-full flex items-center justify-center overflow-hidden",
-    card: "relative w-full max-w-lg backdrop-blur-2xl bg-neutral-50/80 dark:bg-neutral-900/80 border border-default shadow-2xl rounded-3xl p-6 sm:p-8 flex flex-col items-center text-center gap-6 overflow-hidden",
+    card: "relative w-full max-w-lg backdrop-blur-2xl bg-default/80 border border-default shadow-2xl rounded-3xl p-6 sm:p-8 flex flex-col items-center text-center gap-6 overflow-hidden",
     badge:
       "inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-default bg-muted/40 backdrop-blur-md",
     dot: "inline-flex rounded-full size-2 bg-[var(--rl-bg)]",

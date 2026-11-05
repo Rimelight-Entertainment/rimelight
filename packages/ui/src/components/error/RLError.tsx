@@ -45,64 +45,62 @@ function errorDetails(error: unknown): string {
   }
 }
 
+const OMIT_KEYS = [
+  "status",
+  "error",
+  "title",
+  "description",
+  "icon",
+  "color",
+  "hideStatus",
+  "actions",
+  "showDetails",
+] as const;
+
 /**
  * Generic error page/card. One layout for every status; only the text, icon,
  * color and actions change. Pair it with `RLErrorBoundary` to catch render errors.
  */
 export const RLError: Component<RLErrorProps> = (props) => {
   const { Tag, classes, rest, slots, children, theme } = RLErrorTheme.setup(props, {
-    slots: [
-      "status",
-      "error",
-      "title",
-      "description",
-      "icon",
-      "color",
-      "hideStatus",
-      "actions",
-      "showDetails",
-      "iconSlot",
-      "actionsSlot",
-      "footerSlot",
-    ] as const,
-    variants: (s) => ({
-      color: s.color() ?? styleFor(s.status() ?? getErrorStatus(s.error())).color,
+    omit: OMIT_KEYS,
+    slots: ["iconSlot", "actionsSlot", "footerSlot"] as const,
+    variants: () => ({
+      color: props.color ?? styleFor(props.status ?? getErrorStatus(props.error)).color,
     }),
   });
 
-  const status = () => slots.status() ?? getErrorStatus(slots.error());
+  const status = () => props.status ?? getErrorStatus(props.error);
   const style = () => styleFor(status());
 
   const title = () => {
-    const explicit = slots.title();
+    const explicit = props.title;
     if (explicit !== undefined) return explicit;
-    const err = slots.error();
+    const err = props.error;
     if (isHttpError(err)) return err.title;
     return statusText("titles", status());
   };
 
   const description = () => {
-    const explicit = slots.description();
+    const explicit = props.description;
     if (explicit !== undefined) return explicit;
-    const err = slots.error();
+    const err = props.error;
     if (isHttpError(err) && err.expose && err.message) return err.message;
     return statusText("descriptions", status());
   };
 
   const showDetails = () =>
-    (slots.showDetails() ?? isDevEnvironment()) &&
-    slots.error() !== undefined &&
-    slots.error() !== null;
+    (props.showDetails ?? isDevEnvironment()) && props.error !== undefined && props.error !== null;
 
   const actionList = (): RLErrorAction[] =>
-    slots.actions() ?? [{ label: uiT("error.home"), href: "/", icon: "i-lucide-house" }];
+    props.actions ?? [{ label: uiT("error.home"), href: "/", icon: "i-lucide-house" }];
 
   const statusLabel = () => `${uiT("error.status")} ${status()}`;
 
   return (
     <Tag class={classes().root} data-slot="root" data-theme={theme()} {...rest}>
       <div class={classes().card} data-slot="card" role="alert">
-        <Show when={!slots.hideStatus()}>
+        <Show when={!props.hideStatus}>
           <div class={classes().badge} data-slot="badge">
             <span class={classes().dot} data-slot="dot" aria-hidden="true" />
             <span class={classes().badgeLabel} data-slot="badge-label">
@@ -115,7 +113,7 @@ export const RLError: Component<RLErrorProps> = (props) => {
           when={slots.iconSlot()}
           fallback={
             <div class={classes().icon} data-slot="icon">
-              <RLIcon name={slots.icon() ?? style().icon} class="size-8" aria-hidden="true" />
+              <RLIcon name={props.icon ?? style().icon} class="size-8" aria-hidden="true" />
             </div>
           }
         >
@@ -142,7 +140,7 @@ export const RLError: Component<RLErrorProps> = (props) => {
         <Show when={showDetails()}>
           <details class={classes().details} data-slot="details">
             <summary>{uiT("error.details")}</summary>
-            <pre>{errorDetails(slots.error())}</pre>
+            <pre>{errorDetails(props.error)}</pre>
           </details>
         </Show>
 

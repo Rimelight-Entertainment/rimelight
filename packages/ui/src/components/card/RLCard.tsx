@@ -2,19 +2,23 @@ import { Show, type Component } from "solid-js";
 import type { RLCardProps } from "./card.types";
 import { RLCardTheme } from "./card.theme";
 
+const OMIT_KEYS = [
+  "title",
+  "description",
+  "mediaSrc",
+  "href",
+  "target",
+  "rel",
+  "aria-labelledby",
+  "aria-describedby",
+] as const;
+
 export const RLCard: Component<RLCardProps> = (props) => {
   const { Tag, classes, rest, id, slots, children, theme } = RLCardTheme.setup(props, {
     as: (): "a" | "div" => (props.href ? "a" : "div"),
     idPrefix: "rl-card",
+    omit: OMIT_KEYS,
     slots: [
-      "title",
-      "description",
-      "mediaSrc",
-      "href",
-      "target",
-      "rel",
-      "aria-labelledby",
-      "aria-describedby",
       "headerSlot",
       "titleSlot",
       "descriptionSlot",
@@ -27,9 +31,9 @@ export const RLCard: Component<RLCardProps> = (props) => {
 
   const titleId = () => `${id()}-title`;
   const descriptionId = () => `${id()}-description`;
-  const hasTitle = () => slots.titleSlot() !== undefined || slots.title() !== undefined;
+  const hasTitle = () => slots.titleSlot() !== undefined || props.title !== undefined;
   const hasDescription = () =>
-    slots.descriptionSlot() !== undefined || slots.description() !== undefined;
+    slots.descriptionSlot() !== undefined || props.description !== undefined;
   const hasBody = () => slots.bodySlot() !== undefined || children() !== undefined;
 
   return (
@@ -38,26 +42,26 @@ export const RLCard: Component<RLCardProps> = (props) => {
       class={classes().root}
       data-slot="root"
       data-theme={theme()}
-      href={slots.href()}
-      target={slots.target()}
-      rel={slots.rel() ?? (slots.target() === "_blank" ? "noopener noreferrer" : undefined)}
-      aria-labelledby={slots["aria-labelledby"]() ?? (hasTitle() ? titleId() : undefined)}
+      href={props.href}
+      target={props.target}
+      rel={props.rel ?? (props.target === "_blank" ? "noopener noreferrer" : undefined)}
+      aria-labelledby={props["aria-labelledby"] ?? (hasTitle() ? titleId() : undefined)}
       aria-describedby={
-        slots["aria-describedby"]() ?? (hasDescription() ? descriptionId() : undefined)
+        props["aria-describedby"] ?? (hasDescription() ? descriptionId() : undefined)
       }
       {...rest}
     >
       {/* Media */}
-      <Show when={slots.mediaSlot() ?? slots.mediaSrc()}>
+      <Show when={slots.mediaSlot() ?? props.mediaSrc}>
         <Show
           when={slots.mediaSlot()}
           fallback={
-            <Show when={slots.mediaSrc()}>
+            <Show when={props.mediaSrc}>
               {(src) => (
                 <div class={classes().media} data-slot="media">
                   <img
                     src={src()}
-                    alt={typeof slots.title() === "string" ? (slots.title() as string) : ""}
+                    alt={typeof props.title === "string" ? props.title : ""}
                     class="h-full w-full object-cover"
                   />
                 </div>
@@ -82,7 +86,7 @@ export const RLCard: Component<RLCardProps> = (props) => {
                     <>
                       <Show when={hasTitle()}>
                         <div id={titleId()} class={classes().title} data-slot="title">
-                          {slots.titleSlot() ?? slots.title()}
+                          {slots.titleSlot() ?? props.title}
                         </div>
                       </Show>
                       <Show when={hasDescription()}>
@@ -91,7 +95,7 @@ export const RLCard: Component<RLCardProps> = (props) => {
                           class={classes().description}
                           data-slot="description"
                         >
-                          {slots.descriptionSlot() ?? slots.description()}
+                          {slots.descriptionSlot() ?? props.description}
                         </div>
                       </Show>
                     </>
@@ -125,12 +129,12 @@ export const RLCard: Component<RLCardProps> = (props) => {
               <>
                 <Show when={hasTitle()}>
                   <div id={titleId()} class={classes().title} data-slot="title">
-                    {slots.titleSlot() ?? slots.title()}
+                    {slots.titleSlot() ?? props.title}
                   </div>
                 </Show>
                 <Show when={hasDescription()}>
                   <div id={descriptionId()} class={classes().description} data-slot="description">
-                    {slots.descriptionSlot() ?? slots.description()}
+                    {slots.descriptionSlot() ?? props.description}
                   </div>
                 </Show>
                 <Show when={hasBody()}>

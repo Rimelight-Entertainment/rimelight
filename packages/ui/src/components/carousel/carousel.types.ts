@@ -45,7 +45,7 @@ export interface CarouselAutoHeightOptions {
   active?: boolean | undefined;
 }
 
-export interface CarouselClassNamesOptions {
+export interface CarouselStateClassesOptions {
   /** Class name applied to snapped slide. */
   snapped?: string | undefined;
   /** Class name applied to in-view slides. */
@@ -126,10 +126,11 @@ export type RLCarouselProps<T = unknown> = Omit<
   autoHeight?: boolean | CarouselAutoHeightOptions | undefined;
 
   /**
-   * Enable Class Names plugin or configuration object.
+   * Add state classes to slides: `snapped` on the active slide, `inView` on visible slides.
+   * Pass an object to rename the classes.
    * @default false
    */
-  classNames?: boolean | CarouselClassNamesOptions | undefined;
+  stateClasses?: boolean | CarouselStateClassesOptions | undefined;
 
   /**
    * Enable Fade plugin or configuration object.

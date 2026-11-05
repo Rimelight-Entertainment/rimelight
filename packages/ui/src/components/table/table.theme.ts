@@ -36,7 +36,7 @@ export const RLTableTheme = defineTheme("table", {
     tr: "relative transition-colors data-[selected=true]:bg-primary/10 data-[expanded=true]:bg-muted/40 data-[drop-position=top]:after:absolute data-[drop-position=top]:after:inset-x-0 data-[drop-position=top]:after:top-0 data-[drop-position=top]:after:h-0.5 data-[drop-position=top]:after:bg-primary data-[drop-position=top]:after:z-30 data-[drop-position=bottom]:after:absolute data-[drop-position=bottom]:after:inset-x-0 data-[drop-position=bottom]:after:bottom-0 data-[drop-position=bottom]:after:h-0.5 data-[drop-position=bottom]:after:bg-primary data-[drop-position=bottom]:after:z-30",
     th: "relative group/th px-4 py-3.5 text-xs font-semibold text-muted text-left uppercase tracking-wider border-b border-default [&:has([role=checkbox])]:pe-0 data-[drop-position=left]:after:absolute data-[drop-position=left]:after:inset-y-0 data-[drop-position=left]:after:start-0 data-[drop-position=left]:after:w-0.5 data-[drop-position=left]:after:bg-primary data-[drop-position=left]:after:z-30 data-[drop-position=right]:after:absolute data-[drop-position=right]:after:inset-y-0 data-[drop-position=right]:after:end-0 data-[drop-position=right]:after:w-0.5 data-[drop-position=right]:after:bg-primary data-[drop-position=right]:after:z-30",
     td: "p-4 text-sm text-highlighted align-middle whitespace-nowrap border-b border-default/40 [&:has([role=checkbox])]:pe-0",
-    separator: "absolute z-10 start-0 w-full h-px bg-neutral-200",
+    separator: "absolute z-10 start-0 w-full h-px bg-accented",
     empty: "py-8 text-center text-sm text-muted",
     loading: "py-8 text-center text-sm text-muted",
     trGroup: "bg-muted/40",

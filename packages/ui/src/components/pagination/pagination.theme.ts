@@ -14,7 +14,7 @@ export const RLPaginationTheme = defineTheme("pagination", {
   },
   variants: {
     active: {
-      true: { link: "border-primary bg-primary text-neutral-50 hover:bg-primary/95" },
+      true: { link: "border-primary bg-primary text-inverted hover:bg-primary/95" },
       false: { link: "" },
     },
   },

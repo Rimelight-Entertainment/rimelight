@@ -11,9 +11,11 @@ import {
   type ThemePreference,
 } from "../../theme";
 
+const OMIT_KEYS = ["mode", "onValueChange", "color", "size"] as const;
+
 export const RLThemeSelector: Component<RLThemeSelectorProps> = (props) => {
-  const { Tag, children, classes, rest, slots, theme } = RLThemeSelectorTheme.setup(props, {
-    slots: ["mode", "onValueChange", "color", "size"] as const,
+  const { Tag, children, classes, rest, theme } = RLThemeSelectorTheme.setup(props, {
+    omit: OMIT_KEYS,
   });
 
   const [currentPreference, setCurrentPreference] = createSignal<ThemePreference>(
@@ -37,7 +39,7 @@ export const RLThemeSelector: Component<RLThemeSelectorProps> = (props) => {
       }
       document.cookie = serializeThemePreference(preference);
     }
-    slots.onValueChange()?.(preference);
+    props.onValueChange?.(preference);
   };
 
   onSettled(() => {
@@ -68,7 +70,7 @@ export const RLThemeSelector: Component<RLThemeSelectorProps> = (props) => {
     };
   });
 
-  const mode = () => slots.mode() ?? "select";
+  const mode = () => props.mode ?? "select";
 
   const activeIcon = () => {
     const pref = currentPreference();
@@ -93,9 +95,9 @@ export const RLThemeSelector: Component<RLThemeSelectorProps> = (props) => {
           items={themeItems()}
           value={currentPreference()}
           onChange={(e) => applyTheme(e.currentTarget.value)}
-          size={slots.size() ?? "md"}
+          size={props.size ?? "md"}
           layout={mode() === "icon" ? "icon" : "default"}
-          color={slots.color() === "auto" ? undefined : slots.color()}
+          color={props.color === "auto" ? undefined : props.color}
           aria-label={uiT("theme.toggle")}
           class={classes().select}
           leadingIcon={activeIcon()}

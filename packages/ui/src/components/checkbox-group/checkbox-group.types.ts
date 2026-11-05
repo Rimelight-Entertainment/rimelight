@@ -5,7 +5,7 @@ import type {
   RLCheckboxColor,
   RLCheckboxIndicator,
   RLCheckboxSize,
-  RLCheckboxUiSlots,
+  RLCheckboxUi,
 } from "../checkbox/checkbox.types";
 import type { InferThemeProps } from "../../resolver";
 import type { RLCheckboxGroupTheme } from "./checkbox-group.theme";
@@ -24,7 +24,7 @@ export interface RLCheckboxGroupItemObject {
     | (Partial<{
         item?: string | undefined;
       }> &
-        Omit<RLCheckboxUiSlots, "root">)
+        Omit<RLCheckboxUi, "root">)
     | undefined;
   [key: string]: any;
 }
@@ -34,7 +34,7 @@ export type RLCheckboxGroupItem = RLCheckboxGroupItemValue | RLCheckboxGroupItem
 export type RLCheckboxGroupOrientation = "horizontal" | "vertical";
 export type RLCheckboxGroupLayout = "list" | "card" | "table";
 
-export interface RLCheckboxGroupUiSlots {
+export interface RLCheckboxGroupUi {
   root?: string | undefined;
   fieldset?: string | undefined;
   legend?: string | undefined;
@@ -165,7 +165,7 @@ export type RLCheckboxGroupProps<
   /**
    * Slot-specific CSS class overrides.
    */
-  ui?: (RLCheckboxGroupUiSlots & RLCheckboxUiSlots) | undefined;
+  ui?: (RLCheckboxGroupUi & RLCheckboxUi) | undefined;
 
   /**
    * Additional CSS classes to apply to the root element.

@@ -7,6 +7,15 @@ import { RLError } from "../error/RLError";
 import { getErrorStatus } from "../error/http-error";
 import { uiT } from "../../locale";
 
+const OMIT_KEYS = [
+  "resetKey",
+  "onError",
+  "errorProps",
+  "retryLabel",
+  "homeLabel",
+  "homeHref",
+] as const;
+
 /**
  * Catches errors thrown below it and renders `RLError` (or a custom `fallbackSlot`).
  * 5xx errors get a "Try again" button wired to Solid's `reset`.
@@ -14,15 +23,8 @@ import { uiT } from "../../locale";
  */
 export const RLErrorBoundary: Component<RLErrorBoundaryProps> = (props) => {
   const { Tag, classes, rest, slots, children, theme } = RLErrorBoundaryTheme.setup(props, {
-    slots: [
-      "fallbackSlot",
-      "resetKey",
-      "onError",
-      "errorProps",
-      "retryLabel",
-      "homeLabel",
-      "homeHref",
-    ] as const,
+    omit: OMIT_KEYS,
+    slots: ["fallbackSlot"] as const,
   });
 
   return (
@@ -31,16 +33,16 @@ export const RLErrorBoundary: Component<RLErrorBoundaryProps> = (props) => {
         fallback={(err, reset) => {
           const error = untrack(err);
           untrack(() => {
-            const report = slots.onError();
+            const report = props.onError;
             if (report) report(error);
             else console.error(error);
           });
 
           // Clear the error when resetKey changes (e.g. the route pathname), so navigating
           // away from a broken page doesn't keep showing its error.
-          const initialKey = untrack(() => slots.resetKey());
+          const initialKey = untrack(() => props.resetKey);
           createEffect(
-            () => slots.resetKey(),
+            () => props.resetKey,
             (key) => {
               if (key !== initialKey) reset();
             },
@@ -54,14 +56,14 @@ export const RLErrorBoundary: Component<RLErrorBoundaryProps> = (props) => {
 
           const actions = (): RLErrorAction[] => {
             const home: RLErrorAction = {
-              label: slots.homeLabel() ?? uiT("error.home"),
-              href: slots.homeHref() ?? "/",
+              label: props.homeLabel ?? uiT("error.home"),
+              href: props.homeHref ?? "/",
               icon: "i-lucide-house",
             };
             if (getErrorStatus(error) < 500) return [home];
             return [
               {
-                label: slots.retryLabel() ?? uiT("error.retry"),
+                label: props.retryLabel ?? uiT("error.retry"),
                 icon: "i-lucide-rotate-ccw",
                 onClick: () => reset(),
               },
@@ -69,7 +71,7 @@ export const RLErrorBoundary: Component<RLErrorBoundaryProps> = (props) => {
             ];
           };
 
-          const errorProps = slots.errorProps() ?? {};
+          const errorProps = props.errorProps ?? {};
           return <RLError actions={actions()} theme={theme()} {...errorProps} error={error} />;
         }}
       >

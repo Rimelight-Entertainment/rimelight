@@ -16,7 +16,7 @@ export const RLCalloutTheme = defineTheme("callout", {
     color: "auto",
     variant: {
       solid: {
-        root: "bg-[var(--rl-bg)] text-white",
+        root: "bg-[var(--rl-bg)] text-inverted",
       },
       outline: {
         root: "text-[var(--rl-text)] ring ring-inset ring-[var(--rl-border)]/25",
@@ -50,7 +50,7 @@ export const RLCalloutTheme = defineTheme("callout", {
       color: "neutral",
       variant: "solid",
       class: {
-        root: "text-white bg-inverted",
+        root: "text-default bg-inverted",
       },
     },
     {

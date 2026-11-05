@@ -8,7 +8,7 @@ export const RLKbdTheme = defineTheme("kbd", {
   variants: {
     color: "auto",
     variant: {
-      solid: { root: "bg-[var(--rl-bg)] text-white" },
+      solid: { root: "bg-[var(--rl-bg)] text-inverted" },
       outline: { root: "ring ring-inset ring-[var(--rl-border)]/50 text-[var(--rl-text)]" },
       soft: { root: "text-[var(--rl-text)] bg-[var(--rl-bg)]/10" },
       subtle: {

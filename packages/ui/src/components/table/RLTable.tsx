@@ -1177,6 +1177,7 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
       "emptyContentSlot",
       "bodyTopSlot",
       "bodyBottomSlot",
+      "columnSlots",
     ] as const,
     variants: () => ({ externalScroll: false, pinned: false }),
   });
@@ -1227,7 +1228,7 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
       (col) =>
         typeof col.footer === "function" ||
         col.footer ||
-        props.columnSlots?.[`${String(col.id || col.accessorKey || "")}-footer`],
+        slots.columnSlots()?.[`${String(col.id || col.accessorKey || "")}-footer`],
     ),
   );
 
@@ -1367,7 +1368,7 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
                     const sortDir = () =>
                       activeSort() ? (activeSort()!.desc ? "desc" : "asc") : "none";
 
-                    const slotHeader = props.columnSlots?.[`${colId()}-header`];
+                    const slotHeader = slots.columnSlots()?.[`${colId()}-header`];
 
                     const isDropTarget = () =>
                       dropTargetCol()?.id === colId() && draggedColId() !== colId();
@@ -1792,7 +1793,7 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
                                 );
                               };
 
-                              const cellSlot = props.columnSlots?.[`${colId()}-cell`];
+                              const cellSlot = slots.columnSlots()?.[`${colId()}-cell`];
 
                               return (
                                 <td
@@ -1949,7 +1950,7 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
                                         );
                                       };
 
-                                      const cellSlot = props.columnSlots?.[`${colId()}-cell`];
+                                      const cellSlot = slots.columnSlots()?.[`${colId()}-cell`];
 
                                       return (
                                         <td
@@ -2021,7 +2022,7 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
                 <For each={visibleColumns()}>
                   {(col) => {
                     const colId = () => String(col.id || col.accessorKey || "");
-                    const footerSlot = props.columnSlots?.[`${colId()}-footer`];
+                    const footerSlot = slots.columnSlots()?.[`${colId()}-footer`];
 
                     return (
                       <td class={classes().td} data-slot="td">

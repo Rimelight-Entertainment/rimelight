@@ -558,7 +558,7 @@ export const componentMeta: ComponentMetaMap = {
         controlsCenter: "flex items-center gap-1.5 sm:gap-2 justify-center shrink-0",
         controlsRight: "flex items-center gap-1.5 sm:gap-2 justify-end min-w-0",
         playButton:
-          "inline-flex items-center justify-center shrink-0 rounded-full bg-[var(--rl-bg)] text-white hover:bg-[var(--rl-bg-hover)] active:bg-[var(--rl-bg-hover)] transition-all cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--rl-ring)] disabled:opacity-50 disabled:cursor-not-allowed shadow-sm",
+          "inline-flex items-center justify-center shrink-0 rounded-full bg-[var(--rl-bg)] text-inverted hover:bg-[var(--rl-bg-hover)] active:bg-[var(--rl-bg-hover)] transition-all cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--rl-ring)] disabled:opacity-50 disabled:cursor-not-allowed shadow-sm",
         playIcon: "size-5",
         skipButton:
           "relative inline-flex items-center justify-center shrink-0 rounded-lg p-2 text-muted hover:text-highlighted hover:bg-elevated/60 active:bg-elevated transition-colors cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-[var(--rl-ring)] disabled:opacity-50 disabled:cursor-not-allowed",
@@ -1437,7 +1437,7 @@ export const componentMeta: ComponentMetaMap = {
         "close",
       ],
       base: {
-        root: "relative z-10 w-full transition-colors text-white bg-[var(--rl-bg)]",
+        root: "relative z-10 w-full transition-colors text-inverted bg-[var(--rl-bg)]",
         link: "absolute inset-0 focus:outline-none",
         content: "w-full",
         container:
@@ -1445,11 +1445,11 @@ export const componentMeta: ComponentMetaMap = {
         left: "flex min-w-0 items-center justify-start max-lg:invisible",
         center: "flex min-w-0 items-center justify-center gap-1.5",
         right: "flex min-w-0 items-center justify-end gap-1.5",
-        icon: "size-5 shrink-0 inline-flex items-center justify-center text-white pointer-events-none",
-        title: "text-sm text-white font-medium truncate",
+        icon: "size-5 shrink-0 inline-flex items-center justify-center text-inverted pointer-events-none",
+        title: "text-sm text-inverted font-medium truncate",
         actions: "relative flex items-center gap-1.5 shrink-0 isolate",
         close:
-          "relative isolate text-white hover:bg-black/10 dark:hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-current -me-1.5 lg:me-0 transition-colors",
+          "relative isolate text-inverted hover:bg-black/10 dark:hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-current -me-1.5 lg:me-0 transition-colors",
       },
       variants: {
         contain: {
@@ -1797,9 +1797,9 @@ export const componentMeta: ComponentMetaMap = {
             dotMaximize: "bg-emerald-500 hover:opacity-80",
           },
           monochrome: {
-            dotClose: "bg-neutral-600 dark:bg-neutral-400 opacity-60 hover:opacity-100",
-            dotMinimize: "bg-neutral-600 dark:bg-neutral-400 opacity-60 hover:opacity-100",
-            dotMaximize: "bg-neutral-600 dark:bg-neutral-400 opacity-60 hover:opacity-100",
+            dotClose: "bg-inverted opacity-60 hover:opacity-100",
+            dotMinimize: "bg-inverted opacity-60 hover:opacity-100",
+            dotMaximize: "bg-inverted opacity-60 hover:opacity-100",
           },
           none: {
             controls: "hidden",
@@ -3125,7 +3125,7 @@ export const componentMeta: ComponentMetaMap = {
       variants: {
         variant: {
           solid: {
-            root: "bg-[var(--rl-bg)] text-white",
+            root: "bg-[var(--rl-bg)] text-inverted",
           },
           outline: {
             root: "text-[var(--rl-text)] ring ring-inset ring-[var(--rl-border)]/25",
@@ -3158,7 +3158,7 @@ export const componentMeta: ComponentMetaMap = {
           color: "neutral",
           variant: "solid",
           class: {
-            root: "text-white bg-inverted",
+            root: "text-default bg-inverted",
           },
         },
         {
@@ -3773,7 +3773,7 @@ export const componentMeta: ComponentMetaMap = {
       },
       {
         name: "ui",
-        type: "RLCheckboxUiSlots | undefined",
+        type: "RLCheckboxUi | undefined",
         required: false,
         description: "Slot-specific CSS class overrides.",
       },
@@ -6675,8 +6675,8 @@ export const componentMeta: ComponentMetaMap = {
         root: "relative flex flex-col items-center justify-center gap-4 rounded-lg p-4 sm:p-6 lg:p-8 min-w-0 text-center",
         header: "flex flex-col items-center gap-2 max-w-sm text-center",
         avatar: "shrink-0 mb-2 flex items-center justify-center",
-        title: "text-gray-100 font-medium text-pretty",
-        description: "text-gray-400 text-balance text-center text-sm",
+        title: "text-highlighted font-medium text-pretty",
+        description: "text-muted text-balance text-center text-sm",
         body: "flex flex-col items-center gap-4 max-w-sm w-full",
         actions: "flex flex-wrap justify-center gap-2 shrink-0 mt-1",
         footer: "flex flex-col items-center gap-2 max-w-sm w-full",
@@ -6716,25 +6716,25 @@ export const componentMeta: ComponentMetaMap = {
         },
         variant: {
           solid: {
-            root: "bg-gray-900 border border-gray-800 text-gray-100",
-            title: "text-white",
-            description: "text-gray-400",
+            root: "bg-elevated border border-default text-highlighted",
+            title: "text-highlighted",
+            description: "text-muted",
           },
           outline: {
-            root: "bg-gray-900/50 border border-gray-800/80 rounded-lg",
-            description: "text-gray-400",
+            root: "bg-elevated/50 border border-default/80 rounded-lg",
+            description: "text-muted",
           },
           soft: {
-            root: "bg-gray-800/40 border border-transparent",
-            description: "text-gray-400",
+            root: "bg-muted/40 border border-transparent",
+            description: "text-muted",
           },
           subtle: {
-            root: "bg-gray-800/30 border border-gray-700/50",
-            description: "text-gray-400",
+            root: "bg-muted/30 border border-accented/50",
+            description: "text-muted",
           },
           ghost: {
             root: "bg-transparent border border-transparent p-0",
-            description: "text-gray-400",
+            description: "text-muted",
           },
         },
         loading: {
@@ -6849,7 +6849,7 @@ export const componentMeta: ComponentMetaMap = {
       ],
       base: {
         root: "relative w-full flex items-center justify-center overflow-hidden",
-        card: "relative w-full max-w-lg backdrop-blur-2xl bg-neutral-50/80 dark:bg-neutral-900/80 border border-default shadow-2xl rounded-3xl p-6 sm:p-8 flex flex-col items-center text-center gap-6 overflow-hidden",
+        card: "relative w-full max-w-lg backdrop-blur-2xl bg-default/80 border border-default shadow-2xl rounded-3xl p-6 sm:p-8 flex flex-col items-center text-center gap-6 overflow-hidden",
         badge:
           "inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-default bg-muted/40 backdrop-blur-md",
         dot: "inline-flex rounded-full size-2 bg-[var(--rl-bg)]",
@@ -7364,7 +7364,7 @@ export const componentMeta: ComponentMetaMap = {
         "legendDot",
       ],
       base: {
-        root: "flex flex-col items-center w-full max-w-full my-6 p-12 box-border rounded-[1.5rem] border border-[#1a1a2e] [container-type:inline-size]",
+        root: "flex flex-col items-center w-full max-w-full my-6 p-12 box-border rounded-[1.5rem] border border-default [container-type:inline-size]",
         container: "w-full max-w-[27.5rem]",
         svg: "w-full h-auto",
         button: "",
@@ -7373,7 +7373,7 @@ export const componentMeta: ComponentMetaMap = {
         label: "text-[10px] font-sans font-extrabold leading-none pointer-events-none",
         legend: "flex flex-wrap justify-center gap-x-6 gap-y-3 mt-10 w-full",
         legendItem:
-          "flex items-center gap-2 m-0 p-0 h-[10px] text-[10px] text-[#777790] uppercase tracking-[0.1em] font-bold leading-[10px]",
+          "flex items-center gap-2 m-0 p-0 h-[10px] text-[10px] text-muted uppercase tracking-[0.1em] font-bold leading-[10px]",
         legendDot: "flex-shrink-0 block",
       },
       variants: {},
@@ -9045,7 +9045,7 @@ export const componentMeta: ComponentMetaMap = {
       variants: {
         variant: {
           solid: {
-            root: "bg-[var(--rl-bg)] text-white",
+            root: "bg-[var(--rl-bg)] text-inverted",
           },
           outline: {
             root: "ring ring-inset ring-[var(--rl-border)]/50 text-[var(--rl-text)]",
@@ -9441,10 +9441,10 @@ export const componentMeta: ComponentMetaMap = {
         outerColumn: "rl-outer-column absolute top-0 h-full box-border",
         indicator:
           "fixed bottom-5 right-5 bg-black/85 text-white px-3 py-1.5 rounded-md font-mono text-[11px] font-bold pointer-events-none border border-white/15 shadow-lg tracking-wider flex items-center gap-2",
-        indicatorBreakpoint: "text-[#3b82f6]",
+        indicatorBreakpoint: "text-info",
         indicatorDivider: "opacity-[0.35]",
         indicatorWidth: "",
-        indicatorColumns: "text-[#ef4444]",
+        indicatorColumns: "text-error",
       },
       variants: {},
       compoundVariants: [],
@@ -10439,7 +10439,7 @@ export const componentMeta: ComponentMetaMap = {
         trigger: "px-3 py-1.5 text-sm font-semibold rounded-t-lg transition-colors",
         content: "",
         codeBlock:
-          "overflow-x-auto bg-[#0a0a0f] px-4 py-3 pr-16 text-sm font-mono leading-6 text-[#e4e4e7] whitespace-pre",
+          "overflow-x-auto bg-muted px-4 py-3 pr-16 text-sm font-mono leading-6 text-highlighted whitespace-pre",
         copyButton: "absolute right-2 top-2",
       },
       variants: {},
@@ -10928,7 +10928,7 @@ export const componentMeta: ComponentMetaMap = {
       variants: {
         active: {
           true: {
-            link: "border-primary bg-primary text-neutral-50 hover:bg-primary/95",
+            link: "border-primary bg-primary text-inverted hover:bg-primary/95",
           },
           false: {
             link: "",
@@ -11138,7 +11138,7 @@ export const componentMeta: ComponentMetaMap = {
       },
       {
         name: "date",
-        type: "string | Date | undefined",
+        type: "string | Date | null | undefined",
         required: false,
         description: "The date of the post.",
         default: "undefined",
@@ -13030,7 +13030,7 @@ export const componentMeta: ComponentMetaMap = {
         item: "group flex-1 flex flex-col items-center text-center relative",
         container: "flex items-center justify-center relative w-full",
         trigger:
-          "rounded-full font-medium text-center align-middle flex items-center justify-center font-semibold group-data-[state=completed]:bg-primary group-data-[state=completed]:border-primary group-data-[state=completed]:!text-white group-data-[state=active]:bg-primary group-data-[state=active]:border-primary group-data-[state=active]:!text-white text-muted bg-muted border border-default transition-all cursor-pointer z-10",
+          "rounded-full font-medium text-center align-middle flex items-center justify-center font-semibold group-data-[state=completed]:bg-primary group-data-[state=completed]:border-primary group-data-[state=completed]:!text-inverted group-data-[state=active]:bg-primary group-data-[state=active]:border-primary group-data-[state=active]:!text-inverted text-muted bg-muted border border-default transition-all cursor-pointer z-10",
         indicator: "flex items-center justify-center size-full text-current",
         icon: "shrink-0 size-4 text-current transition-colors",
         separator: "flex-1 h-0.5 mx-2 self-start mt-4 transition-colors rounded-full",
@@ -13097,37 +13097,37 @@ export const componentMeta: ComponentMetaMap = {
           primary: {
             trigger:
               "group-data-[state=completed]:bg-primary-600 group-data-[state=completed]:border-primary-600 group-data-[state=active]:bg-primary-600 group-data-[state=active]:border-primary-600 group-data-[state=active]:shadow-sm",
-            icon: "group-data-[state=completed]:text-white group-data-[state=active]:text-white",
+            icon: "group-data-[state=completed]:text-inverted group-data-[state=active]:text-inverted",
             separator: "group-data-[state=completed]:bg-primary-600",
           },
           secondary: {
             trigger:
               "group-data-[state=completed]:bg-secondary-600 group-data-[state=completed]:border-secondary-600 group-data-[state=active]:bg-secondary-600 group-data-[state=active]:border-secondary-600",
-            icon: "group-data-[state=completed]:text-white group-data-[state=active]:text-white",
+            icon: "group-data-[state=completed]:text-inverted group-data-[state=active]:text-inverted",
             separator: "group-data-[state=completed]:bg-secondary-600",
           },
           success: {
             trigger:
               "group-data-[state=completed]:bg-success-500 group-data-[state=completed]:border-success-500 group-data-[state=active]:bg-success-500 group-data-[state=active]:border-success-500",
-            icon: "group-data-[state=completed]:text-white group-data-[state=active]:text-white",
+            icon: "group-data-[state=completed]:text-inverted group-data-[state=active]:text-inverted",
             separator: "group-data-[state=completed]:bg-success-500",
           },
           info: {
             trigger:
               "group-data-[state=completed]:bg-info-500 group-data-[state=completed]:border-info-500 group-data-[state=active]:bg-info-500 group-data-[state=active]:border-info-500",
-            icon: "group-data-[state=completed]:text-white group-data-[state=active]:text-white",
+            icon: "group-data-[state=completed]:text-inverted group-data-[state=active]:text-inverted",
             separator: "group-data-[state=completed]:bg-info-500",
           },
           warning: {
             trigger:
               "group-data-[state=completed]:bg-warning-500 group-data-[state=completed]:border-warning-500 group-data-[state=active]:bg-warning-500 group-data-[state=active]:border-warning-500",
-            icon: "group-data-[state=completed]:text-white group-data-[state=active]:text-white",
+            icon: "group-data-[state=completed]:text-inverted group-data-[state=active]:text-inverted",
             separator: "group-data-[state=completed]:bg-warning-500",
           },
           error: {
             trigger:
               "group-data-[state=completed]:bg-error-500 group-data-[state=completed]:border-error-500 group-data-[state=active]:bg-error-500 group-data-[state=active]:border-error-500",
-            icon: "group-data-[state=completed]:text-white group-data-[state=active]:text-white",
+            icon: "group-data-[state=completed]:text-inverted group-data-[state=active]:text-inverted",
             separator: "group-data-[state=completed]:bg-error-500",
           },
           neutral: {
@@ -13518,7 +13518,7 @@ export const componentMeta: ComponentMetaMap = {
         tr: "relative transition-colors data-[selected=true]:bg-primary/10 data-[expanded=true]:bg-muted/40 data-[drop-position=top]:after:absolute data-[drop-position=top]:after:inset-x-0 data-[drop-position=top]:after:top-0 data-[drop-position=top]:after:h-0.5 data-[drop-position=top]:after:bg-primary data-[drop-position=top]:after:z-30 data-[drop-position=bottom]:after:absolute data-[drop-position=bottom]:after:inset-x-0 data-[drop-position=bottom]:after:bottom-0 data-[drop-position=bottom]:after:h-0.5 data-[drop-position=bottom]:after:bg-primary data-[drop-position=bottom]:after:z-30",
         th: "relative group/th px-4 py-3.5 text-xs font-semibold text-muted text-left uppercase tracking-wider border-b border-default [&:has([role=checkbox])]:pe-0 data-[drop-position=left]:after:absolute data-[drop-position=left]:after:inset-y-0 data-[drop-position=left]:after:start-0 data-[drop-position=left]:after:w-0.5 data-[drop-position=left]:after:bg-primary data-[drop-position=left]:after:z-30 data-[drop-position=right]:after:absolute data-[drop-position=right]:after:inset-y-0 data-[drop-position=right]:after:end-0 data-[drop-position=right]:after:w-0.5 data-[drop-position=right]:after:bg-primary data-[drop-position=right]:after:z-30",
         td: "p-4 text-sm text-highlighted align-middle whitespace-nowrap border-b border-default/40 [&:has([role=checkbox])]:pe-0",
-        separator: "absolute z-10 start-0 w-full h-px bg-neutral-200",
+        separator: "absolute z-10 start-0 w-full h-px bg-accented",
         empty: "py-8 text-center text-sm text-muted",
         loading: "py-8 text-center text-sm text-muted",
         trGroup: "bg-muted/40",
@@ -14480,7 +14480,7 @@ export const componentMeta: ComponentMetaMap = {
         title: "text-sm font-semibold",
         description: "text-xs opacity-90",
         action:
-          "inline-flex h-8 shrink-0 items-center justify-center rounded-md border bg-transparent px-3 text-xs font-medium ring-offset-background transition-colors hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 group-[.error]:border-muted/40 group-[.error]:hover:border-error-500/30 group-[.error]:hover:bg-error-500 group-[.error]:hover:text-white group-[.error]:focus:ring-error-500",
+          "inline-flex h-8 shrink-0 items-center justify-center rounded-md border bg-transparent px-3 text-xs font-medium ring-offset-background transition-colors hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 group-[.error]:border-muted/40 group-[.error]:hover:border-error-500/30 group-[.error]:hover:bg-error-500 group-[.error]:hover:text-inverted group-[.error]:focus:ring-error-500",
         close:
           "absolute right-2 top-2 rounded-md p-1 text-highlighted/50 opacity-0 transition-opacity hover:text-highlighted focus:opacity-100 focus:outline-none focus:ring-2 group-hover:opacity-100",
       },

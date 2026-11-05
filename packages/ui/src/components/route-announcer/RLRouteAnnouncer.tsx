@@ -13,6 +13,8 @@ const toProgressOptions = (
 ): RLRouteAnnouncerProgressOptions | undefined =>
   typeof progress === "object" && progress !== null ? progress : undefined;
 
+const OMIT_KEYS = ["color", "size", "prefix", "progress"] as const;
+
 export const RLRouteAnnouncer: Component<RLRouteAnnouncerProps> = (props) => {
   let location: ReturnType<typeof useLocation> | undefined;
   let isRouting = () => false;
@@ -31,13 +33,13 @@ export const RLRouteAnnouncer: Component<RLRouteAnnouncerProps> = (props) => {
 
   const [announcement, setAnnouncement] = createSignal("");
 
-  const { Tag, classes, rest, slots, theme } = RLRouteAnnouncerTheme.setup(props, {
-    slots: ["prefix", "progress", "color", "size"] as const,
-    variants: (s) => {
-      const options = toProgressOptions(s.progress());
+  const { Tag, classes, rest, theme } = RLRouteAnnouncerTheme.setup(props, {
+    omit: OMIT_KEYS,
+    variants: () => {
+      const options = toProgressOptions(props.progress);
       return {
-        color: options?.color ?? s.color(),
-        size: options?.size ?? s.size(),
+        color: options?.color ?? props.color,
+        size: options?.size ?? props.size,
       };
     },
   });
@@ -45,13 +47,13 @@ export const RLRouteAnnouncer: Component<RLRouteAnnouncerProps> = (props) => {
   onSettled(() => {
     if (typeof document === "undefined") return;
     const path = location?.pathname ?? "";
-    const prefix = slots.prefix() ?? uiT("route-announcer.prefix");
+    const prefix = props.prefix ?? uiT("route-announcer.prefix");
     const title = document.title ? document.title : `${prefix} ${path}`.trim();
     setAnnouncement(title);
   });
 
-  const progressEnabled = () => slots.progress() !== false;
-  const progressOptions = () => toProgressOptions(slots.progress());
+  const progressEnabled = () => props.progress !== false;
+  const progressOptions = () => toProgressOptions(props.progress);
 
   return (
     <Tag class={classes().root} data-slot="root" data-theme={theme()} {...rest}>

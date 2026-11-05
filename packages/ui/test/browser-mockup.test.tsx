@@ -92,7 +92,7 @@ describe("RLBrowserMockup", () => {
     it("supports monochrome controlsVariant", () => {
       const html = render(() => <RLBrowserMockup controlsVariant="monochrome" />);
       expect(slotTag(html, "controls")).not.toBe("");
-      expect(slotTag(html, "dot-close")).toContain("bg-neutral-600");
+      expect(slotTag(html, "dot-close")).toContain("bg-inverted");
     });
 
     it("supports custom controlsSlot override", () => {

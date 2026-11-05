@@ -140,9 +140,9 @@ export const RLBrowserMockupTheme = defineTheme("browser-mockup", {
         dotMaximize: "bg-emerald-500 hover:opacity-80",
       },
       monochrome: {
-        dotClose: "bg-neutral-600 dark:bg-neutral-400 opacity-60 hover:opacity-100",
-        dotMinimize: "bg-neutral-600 dark:bg-neutral-400 opacity-60 hover:opacity-100",
-        dotMaximize: "bg-neutral-600 dark:bg-neutral-400 opacity-60 hover:opacity-100",
+        dotClose: "bg-inverted opacity-60 hover:opacity-100",
+        dotMinimize: "bg-inverted opacity-60 hover:opacity-100",
+        dotMaximize: "bg-inverted opacity-60 hover:opacity-100",
       },
       none: {
         controls: "hidden",

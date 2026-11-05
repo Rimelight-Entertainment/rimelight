@@ -24,10 +24,10 @@ export const RLLayoutGridTheme = defineTheme("layout-grid", {
     outerColumn: "rl-outer-column absolute top-0 h-full box-border",
     indicator:
       "fixed bottom-5 right-5 bg-black/85 text-white px-3 py-1.5 rounded-md font-mono text-[11px] font-bold pointer-events-none border border-white/15 shadow-lg tracking-wider flex items-center gap-2",
-    indicatorBreakpoint: "text-[#3b82f6]",
+    indicatorBreakpoint: "text-info",
     indicatorDivider: "opacity-[0.35]",
     indicatorWidth: "",
-    indicatorColumns: "text-[#ef4444]",
+    indicatorColumns: "text-error",
   },
   variants: {},
   defaultVariants: {},

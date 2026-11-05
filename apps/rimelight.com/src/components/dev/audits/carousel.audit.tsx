@@ -415,7 +415,7 @@ export const carouselAudit: ComponentAuditDefinition = {
         <div class="max-w-md mx-auto">
           <RLCarousel
             items={SAMPLE_ITEMS}
-            classNames
+            stateClasses
             arrows
             ui={{
               item: "basis-[70%] transition-opacity [&:not(.is-snapped)]:opacity-25 ps-2",
@@ -450,7 +450,7 @@ export const carouselAudit: ComponentAuditDefinition = {
       criterion: "API and slot pattern parity",
       status: "pass",
       notes:
-        "Supports items, arrows, prev, prevIcon, next, nextIcon, dots, orientation, autoplay, autoScroll, autoHeight, classNames, fade, wheelGestures, align, loop, slidesToScroll, and ref handle.",
+        "Supports items, arrows, prev, prevIcon, next, nextIcon, dots, orientation, autoplay, autoScroll, autoHeight, stateClasses, fade, wheelGestures, align, loop, slidesToScroll, and ref handle.",
     },
     {
       criterion: "Gestures, keyboard & motion",

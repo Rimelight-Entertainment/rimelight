@@ -509,6 +509,7 @@ export const RLContextMenu: Component<RLContextMenuProps> = (props) => {
     Tag,
     classes,
     id: menuId,
+    rest,
     slots,
     children,
     theme,
@@ -787,7 +788,7 @@ export const RLContextMenu: Component<RLContextMenuProps> = (props) => {
   );
 
   return (
-    <Tag data-slot="root" data-theme={theme()} class={classes().root}>
+    <Tag data-slot="root" data-theme={theme()} class={classes().root} {...rest}>
       <div
         ref={(el: HTMLElement) => (triggerRef = el)}
         id={menuId()}

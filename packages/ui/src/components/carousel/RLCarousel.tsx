@@ -27,7 +27,7 @@ const OMIT_KEYS = [
   "autoplay",
   "autoScroll",
   "autoHeight",
-  "classNames",
+  "stateClasses",
   "fade",
   "wheelGestures",
   "align",
@@ -461,8 +461,8 @@ export const RLCarousel: Component<RLCarouselProps> = (props) => {
 
     let itemClasses = baseItemClass;
 
-    if (props.classNames) {
-      const opt = typeof props.classNames === "object" ? props.classNames : {};
+    if (props.stateClasses) {
+      const opt = typeof props.stateClasses === "object" ? props.stateClasses : {};
       const snappedCls = opt.snapped || "is-snapped";
       const inViewCls = opt.inView || "is-in-view";
       if (isSnapped) {

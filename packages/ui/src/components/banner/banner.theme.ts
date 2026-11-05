@@ -15,7 +15,7 @@ export const RLBannerTheme = defineTheme("banner", {
     "close",
   ],
   base: {
-    root: "relative z-10 w-full transition-colors text-white bg-[var(--rl-bg)]",
+    root: "relative z-10 w-full transition-colors text-inverted bg-[var(--rl-bg)]",
     link: "absolute inset-0 focus:outline-none",
     content: "w-full",
     container:
@@ -23,11 +23,11 @@ export const RLBannerTheme = defineTheme("banner", {
     left: "flex min-w-0 items-center justify-start max-lg:invisible",
     center: "flex min-w-0 items-center justify-center gap-1.5",
     right: "flex min-w-0 items-center justify-end gap-1.5",
-    icon: "size-5 shrink-0 inline-flex items-center justify-center text-white pointer-events-none",
-    title: "text-sm text-white font-medium truncate",
+    icon: "size-5 shrink-0 inline-flex items-center justify-center text-inverted pointer-events-none",
+    title: "text-sm text-inverted font-medium truncate",
     actions: "relative flex items-center gap-1.5 shrink-0 isolate",
     close:
-      "relative isolate text-white hover:bg-black/10 dark:hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-current -me-1.5 lg:me-0 transition-colors",
+      "relative isolate text-inverted hover:bg-black/10 dark:hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-current -me-1.5 lg:me-0 transition-colors",
   },
   variants: {
     color: "auto",

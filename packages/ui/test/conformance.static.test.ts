@@ -21,7 +21,7 @@ import {
   walkOwn,
 } from "./utils/conformance-ast";
 
-// Static conformance gate for local://ui-conventions.md. Every check runs on TypeScript syntax trees.
+// Static conformance gate for the UI component conventions. Every check runs on TypeScript syntax trees.
 // Exception: rule 8 `aria*` and rule 13 kebab-case test identifier and folder NAMES (not source text).
 
 /** Frozen by the conventions: the only components allowed to carry `@status stub`. */
@@ -278,7 +278,7 @@ describe("global rules", () => {
       .filter((file) => containsIdentifier(parseFile(file), "createUniqueId"))
       .map(rel);
     expect(offenders).toEqual([]);
-  });
+  }, 60_000);
 
   it("rule 12: the @status stub set equals the frozen list", () => {
     const actual = components

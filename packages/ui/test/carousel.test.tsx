@@ -162,17 +162,17 @@ describe("RLCarousel", () => {
       expect(html).toContain("opacity-100");
     });
 
-    it("supports classNames mode on snapped item", () => {
-      const html = render(() => <RLCarousel items={items} classNames />);
+    it("supports stateClasses mode on snapped item", () => {
+      const html = render(() => <RLCarousel items={items} stateClasses />);
       expect(html).toContain("is-snapped");
       expect(html).toContain("is-in-view");
     });
 
-    it("supports custom classNames option overrides", () => {
+    it("supports custom stateClasses option overrides", () => {
       const html = render(() => (
         <RLCarousel
           items={items}
-          classNames={{ snapped: "active-slide-class", inView: "visible-slide-class" }}
+          stateClasses={{ snapped: "active-slide-class", inView: "visible-slide-class" }}
         />
       ));
       expect(html).toContain("active-slide-class");

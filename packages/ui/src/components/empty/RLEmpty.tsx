@@ -6,17 +6,21 @@ import { RLButton } from "../button/RLButton";
 import { RLAvatar } from "../avatar/RLAvatar";
 import { RLIcon } from "../icon/RLIcon";
 
+const OMIT_KEYS = [
+  "icon",
+  "avatar",
+  "loading",
+  "loadingIcon",
+  "title",
+  "description",
+  "actions",
+  "size",
+] as const;
+
 export const RLEmpty: Component<RLEmptyProps> = (props) => {
   const { Tag, classes, rest, slots, children, theme } = RLEmptyTheme.setup(props, {
+    omit: OMIT_KEYS,
     slots: [
-      "icon",
-      "avatar",
-      "loading",
-      "loadingIcon",
-      "title",
-      "description",
-      "actions",
-      "size",
       "headerSlot",
       "leadingSlot",
       "titleSlot",
@@ -28,7 +32,7 @@ export const RLEmpty: Component<RLEmptyProps> = (props) => {
   });
 
   const activeIcon = () =>
-    slots.loading() ? (slots.loadingIcon() ?? "i-lucide-loader-circle") : slots.icon();
+    props.loading ? (props.loadingIcon ?? "i-lucide-loader-circle") : props.icon;
 
   return (
     <Tag class={classes().root} data-slot="root" data-theme={theme()} {...rest}>
@@ -42,7 +46,7 @@ export const RLEmpty: Component<RLEmptyProps> = (props) => {
                 <Show
                   when={activeIcon()}
                   fallback={
-                    <Show when={slots.avatar()}>
+                    <Show when={props.avatar}>
                       {(avatar) => (
                         <div class={classes().avatar} data-slot="avatar">
                           <RLAvatar {...avatar()} />
@@ -55,7 +59,7 @@ export const RLEmpty: Component<RLEmptyProps> = (props) => {
                     <div class={classes().avatar} data-slot="avatar">
                       <RLIcon
                         name={icon()}
-                        class={`size-full ${slots.loading() ? "animate-spin" : ""}`}
+                        class={`size-full ${props.loading ? "animate-spin" : ""}`}
                         aria-hidden="true"
                       />
                     </div>
@@ -66,17 +70,17 @@ export const RLEmpty: Component<RLEmptyProps> = (props) => {
               {slots.leadingSlot()}
             </Show>
 
-            <Show when={slots.title() || slots.titleSlot()}>
+            <Show when={props.title || slots.titleSlot()}>
               <div class={classes().title} data-slot="title">
-                <Show when={slots.titleSlot()} fallback={slots.title()}>
+                <Show when={slots.titleSlot()} fallback={props.title}>
                   {slots.titleSlot()}
                 </Show>
               </div>
             </Show>
 
-            <Show when={slots.description() || slots.descriptionSlot()}>
+            <Show when={props.description || slots.descriptionSlot()}>
               <div class={classes().description} data-slot="description">
-                <Show when={slots.descriptionSlot()} fallback={slots.description()}>
+                <Show when={slots.descriptionSlot()} fallback={props.description}>
                   {slots.descriptionSlot()}
                 </Show>
               </div>
@@ -95,17 +99,17 @@ export const RLEmpty: Component<RLEmptyProps> = (props) => {
         </div>
       </Show>
 
-      <Show when={(slots.actions() ?? []).length > 0 || slots.actionsSlot()}>
+      <Show when={(props.actions ?? []).length > 0 || slots.actionsSlot()}>
         <div class={classes().actions} data-slot="actions">
           <Show
             when={slots.actionsSlot()}
             fallback={
-              <For each={slots.actions() ?? []}>
+              <For each={props.actions ?? []}>
                 {(action) => {
                   const { icon, label, ...buttonProps } = action;
                   return (
                     <RLButton
-                      size={slots.size() === "xs" || slots.size() === "sm" ? "xs" : "sm"}
+                      size={props.size === "xs" || props.size === "sm" ? "xs" : "sm"}
                       {...(icon ? { leadingIcon: icon } : {})}
                       {...buttonProps}
                     >
