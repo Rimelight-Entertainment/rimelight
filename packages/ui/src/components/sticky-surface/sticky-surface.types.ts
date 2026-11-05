@@ -23,4 +23,6 @@ export type RLStickySurfaceProps = Omit<
    * @default 10
    */
   zIndex?: number;
+  /** The root element owns its styling; `style` is not accepted. */
+  style?: never;
 };

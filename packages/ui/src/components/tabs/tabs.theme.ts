@@ -52,26 +52,11 @@ export const RLTabsTheme = defineTheme("tabs", {
       },
     },
     size: {
-      xs: {
-        trigger: "px-2 py-1 text-xs gap-1",
-        leadingIcon: "size-3.5",
-      },
-      sm: {
-        trigger: "px-2.5 py-1.5 text-xs gap-1.5",
-        leadingIcon: "size-4",
-      },
-      md: {
-        trigger: "px-3 py-1.5 text-sm gap-1.5",
-        leadingIcon: "size-4",
-      },
-      lg: {
-        trigger: "px-3.5 py-2 text-sm gap-2",
-        leadingIcon: "size-5",
-      },
-      xl: {
-        trigger: "px-4 py-2.5 text-base gap-2",
-        leadingIcon: "size-5",
-      },
+      xs: { trigger: "text-xs leading-none px-2 py-1 gap-1", leadingIcon: "size-3.5" },
+      sm: { trigger: "text-xs leading-none px-2.5 py-1.5 gap-1.5", leadingIcon: "size-4" },
+      md: { trigger: "text-sm leading-none px-2.5 py-1.5 gap-1.5", leadingIcon: "size-4" },
+      lg: { trigger: "text-sm leading-none px-3 py-2 gap-2", leadingIcon: "size-5" },
+      xl: { trigger: "text-base leading-none px-3 py-2 gap-2", leadingIcon: "size-5" },
     },
   },
   defaultVariants: {

@@ -7,10 +7,6 @@ export interface TableColumnMeta {
     td?: string | ((row: TableRow) => string);
     th?: string | ((column: TableColumn) => string);
   };
-  style?: {
-    td?: string | ((row: TableRow) => string);
-    th?: string | ((column: TableColumn) => string);
-  };
   colspan?: {
     td?: number | string | ((row: TableRow) => number | string);
   };
@@ -125,9 +121,6 @@ export interface TableGroup<T = any> {
 
 export interface TableMeta<T = any> {
   class?: {
-    tr?: string | ((row: TableRow<T>) => string);
-  };
-  style?: {
     tr?: string | ((row: TableRow<T>) => string);
   };
 }

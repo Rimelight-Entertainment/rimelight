@@ -28,6 +28,6 @@ export const RLToastTheme = defineTheme("toast", {
     { color: "source", class: { root: COLORED } },
   ],
   defaultVariants: {
-    color: "neutral",
+    color: "primary",
   },
 });

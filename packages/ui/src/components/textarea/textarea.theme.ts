@@ -5,13 +5,15 @@ export const RLTextareaTheme = defineTheme("textarea", {
   base: {
     root: "relative flex items-center w-full rounded-md border border-default bg-default shadow-sm focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
     textarea:
-      "w-full bg-transparent px-3 py-2 text-sm outline-none placeholder:text-muted disabled:cursor-not-allowed disabled:opacity-50 min-h-[80px]",
+      "w-full bg-transparent outline-none placeholder:text-muted disabled:cursor-not-allowed disabled:opacity-50",
   },
   variants: {
     size: {
-      sm: { textarea: "py-1.5 text-xs min-h-[60px]" },
-      md: { textarea: "py-2 text-sm min-h-[80px]" },
-      lg: { textarea: "py-2.5 text-base min-h-[100px]" },
+      xs: { textarea: "text-xs px-2 py-1 min-h-[60px]" },
+      sm: { textarea: "text-xs px-2.5 py-1.5 min-h-[60px]" },
+      md: { textarea: "text-sm px-2.5 py-1.5 min-h-[80px]" },
+      lg: { textarea: "text-sm px-3 py-2 min-h-[100px]" },
+      xl: { textarea: "text-base px-3 py-2 min-h-[120px]" },
     },
     invalid: {
       true: { root: "border-error-500 focus-within:ring-error-500/50" },

@@ -37,30 +37,7 @@ export const RLTimelineTheme = defineTheme("timeline", {
         separator: "w-0.5",
       },
     },
-    color: {
-      primary: {
-        indicator: "group-data-[state=completed]:bg-primary group-data-[state=active]:bg-primary",
-      },
-      secondary: {
-        indicator:
-          "group-data-[state=completed]:bg-secondary group-data-[state=active]:bg-secondary",
-      },
-      success: {
-        indicator: "group-data-[state=completed]:bg-success group-data-[state=active]:bg-success",
-      },
-      info: {
-        indicator: "group-data-[state=completed]:bg-info group-data-[state=active]:bg-info",
-      },
-      warning: {
-        indicator: "group-data-[state=completed]:bg-warning group-data-[state=active]:bg-warning",
-      },
-      error: {
-        indicator: "group-data-[state=completed]:bg-error group-data-[state=active]:bg-error",
-      },
-      neutral: {
-        indicator: "group-data-[state=completed]:bg-inverted group-data-[state=active]:bg-inverted",
-      },
-    },
+    color: "auto",
     size: {
       xs: {},
       sm: {},
@@ -75,102 +52,18 @@ export const RLTimelineTheme = defineTheme("timeline", {
   },
   compoundVariants: [
     {
-      color: "primary",
       reverse: false,
       class: {
-        separator: "group-data-[state=completed]:bg-primary",
+        indicator:
+          "group-data-[state=completed]:bg-[var(--rl-bg)] group-data-[state=active]:bg-[var(--rl-bg)]",
+        separator: "group-data-[state=completed]:bg-[var(--rl-bg)]",
       },
     },
     {
-      color: "secondary",
-      reverse: false,
-      class: {
-        separator: "group-data-[state=completed]:bg-secondary",
-      },
-    },
-    {
-      color: "success",
-      reverse: false,
-      class: {
-        separator: "group-data-[state=completed]:bg-success",
-      },
-    },
-    {
-      color: "info",
-      reverse: false,
-      class: {
-        separator: "group-data-[state=completed]:bg-info",
-      },
-    },
-    {
-      color: "warning",
-      reverse: false,
-      class: {
-        separator: "group-data-[state=completed]:bg-warning",
-      },
-    },
-    {
-      color: "error",
-      reverse: false,
-      class: {
-        separator: "group-data-[state=completed]:bg-error",
-      },
-    },
-    {
-      color: "primary",
-      reverse: true,
-      class: {
-        separator: "group-data-[state=active]:bg-primary group-data-[state=completed]:bg-primary",
-      },
-    },
-    {
-      color: "secondary",
       reverse: true,
       class: {
         separator:
-          "group-data-[state=active]:bg-secondary group-data-[state=completed]:bg-secondary",
-      },
-    },
-    {
-      color: "success",
-      reverse: true,
-      class: {
-        separator: "group-data-[state=active]:bg-success group-data-[state=completed]:bg-success",
-      },
-    },
-    {
-      color: "info",
-      reverse: true,
-      class: {
-        separator: "group-data-[state=active]:bg-info group-data-[state=completed]:bg-info",
-      },
-    },
-    {
-      color: "warning",
-      reverse: true,
-      class: {
-        separator: "group-data-[state=active]:bg-warning group-data-[state=completed]:bg-warning",
-      },
-    },
-    {
-      color: "error",
-      reverse: true,
-      class: {
-        separator: "group-data-[state=active]:bg-error group-data-[state=completed]:bg-error",
-      },
-    },
-    {
-      color: "neutral",
-      reverse: false,
-      class: {
-        separator: "group-data-[state=completed]:bg-inverted",
-      },
-    },
-    {
-      color: "neutral",
-      reverse: true,
-      class: {
-        separator: "group-data-[state=active]:bg-inverted group-data-[state=completed]:bg-inverted",
+          "group-data-[state=active]:bg-[var(--rl-bg)] group-data-[state=completed]:bg-[var(--rl-bg)]",
       },
     },
     {
