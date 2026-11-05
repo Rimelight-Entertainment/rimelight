@@ -45,7 +45,7 @@
     "check": "cf workers types && rimelight-i18n types --config vite.config.ts && vp check --fix"
   },
   "dependencies": {
-    "@cloudflare/vite-plugin": "2.0.0-beta.v.10",
+    "@cloudflare/vite-plugin": "2.0.0-beta.v.11",
     "@neondatabase/serverless": "1.2.0",
     "@rimelight/auth": "workspace:*",
     "@rimelight/cms": "workspace:*",
@@ -53,18 +53,18 @@
     "@rimelight/security": "workspace:*",
     "@rimelight/seo": "workspace:*",
     "@rimelight/ui": "workspace:*",
-    "@solidjs/router": "2.0.0-next.43",
-    "@solidjs/vite-plugin": "3.0.0-next.55",
-    "@solidjs/web": "2.0.0-rc.20",
+    "@solidjs/router": "2.0.0-next.44",
+    "@solidjs/vite-plugin": "3.0.0-next.56",
+    "@solidjs/web": "2.0.0-rc.21",
     "drizzle-orm": "1.0.0-rc.5",
     "hono": "5.0.0-rc.1",
     "postgres": "4.0.0",
-    "solid-js": "2.0.0-rc.20",
+    "solid-js": "2.0.0-rc.21",
     "zod": "4.6.7"
   },
   "devDependencies": {
-    "@iconify-json/logos": "1.2.18",
-    "@iconify-json/lucide": "1.2.150",
+    "@iconify-json/logos": "1.2.19",
+    "@iconify-json/lucide": "1.2.151",
     "@rimelight/config": "workspace:*",
     "cf": "1.0.0-beta.27",
     "drizzle-kit": "1.0.0-rc.5",
@@ -72,7 +72,7 @@
     "happy-dom": "21.0.4",
     "typescript": "7.1.0-beta",
     "unocss": "66.12.0",
-    "vite-plus": "1.4.0"
+    "vite-plus": "1.5.0"
   },
   "packageManager": "pnpm@12.16.1"
 }
