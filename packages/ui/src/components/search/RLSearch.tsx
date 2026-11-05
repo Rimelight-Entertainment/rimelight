@@ -36,7 +36,6 @@ export const RLSearch: Component<RLSearchProps> = (props) => {
       "onOpenChange",
     ] as const,
     slots: ["triggerSlot"] as const,
-    idPrefix: "rl-search",
   });
 
   const endpoint = () => props.endpoint ?? "/api/search";

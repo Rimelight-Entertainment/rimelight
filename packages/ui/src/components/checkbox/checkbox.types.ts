@@ -4,7 +4,6 @@ import type { Theme, ThemeColor } from "../../types";
 import type { InferThemeProps } from "../../resolver";
 import type { RLCheckboxTheme } from "./checkbox.theme";
 
-export type CheckboxColor = ThemeColor;
 export type CheckboxLayout = "list" | "card";
 export type CheckboxSize = "xs" | "sm" | "md" | "lg" | "xl";
 export type CheckboxIndicator = "start" | "end" | "hidden";
@@ -48,7 +47,7 @@ export type RLCheckboxProps = Omit<
    * Color theme variant.
    * @default 'primary'
    */
-  color?: CheckboxColor | undefined;
+  color?: ThemeColor | undefined;
 
   /**
    * Layout preset of the checkbox container.

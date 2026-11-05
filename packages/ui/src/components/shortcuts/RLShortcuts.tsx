@@ -34,7 +34,6 @@ export const RLShortcuts: Component<RLShortcutsProps> = (props) => {
     id: modalId,
   } = RLShortcutsTheme.setup(props, {
     omit: OMIT_KEYS,
-    idPrefix: "rl-shortcuts",
   });
 
   const [openState, setOpenState] = createControllable(

@@ -16,7 +16,6 @@ const OMIT_KEYS = [
 export const RLCard: Component<RLCardProps> = (props) => {
   const { Tag, classes, rest, id, slots, children, theme } = RLCardTheme.setup(props, {
     as: (): "a" | "div" => (props.href ? "a" : "div"),
-    idPrefix: "rl-card",
     omit: OMIT_KEYS,
     slots: [
       "headerSlot",

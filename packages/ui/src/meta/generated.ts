@@ -3690,7 +3690,7 @@ export const componentMeta: ComponentMetaMap = {
       },
       {
         name: "color",
-        type: "CheckboxColor | undefined",
+        type: "ThemeColor | undefined",
         required: false,
         description: "Color theme variant.",
         default: "'primary'",

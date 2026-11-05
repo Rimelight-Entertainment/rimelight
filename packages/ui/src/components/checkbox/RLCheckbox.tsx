@@ -64,7 +64,6 @@ export const RLCheckbox: Component<RLCheckboxProps> = (props) => {
     slots: ["labelSlot", "descriptionSlot"] as const,
     as: "label",
     omit: OMIT_KEYS,
-    idPrefix: "rl-checkbox",
     variants: () => ({
       color: color(),
       layout: props.layout,

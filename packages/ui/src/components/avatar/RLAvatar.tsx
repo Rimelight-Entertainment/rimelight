@@ -175,7 +175,7 @@ export const RLAvatar: Component<RLAvatarProps> = (props) => {
         </Chipped>
       }
     >
-      <div class={classes().wrapper} data-slot="profile-wrapper">
+      <div class={classes().wrapper} data-slot="wrapper">
         <Chipped>
           <Tag
             data-slot="root"

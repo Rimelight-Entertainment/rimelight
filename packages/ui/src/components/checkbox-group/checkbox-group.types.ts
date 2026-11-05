@@ -1,12 +1,7 @@
 import type { ValidComponent } from "@solidjs/web";
 import type { JSX } from "@solidjs/web";
-import type { Theme } from "../../types";
-import type {
-  CheckboxColor,
-  CheckboxIndicator,
-  CheckboxSize,
-  CheckboxUi,
-} from "../checkbox/checkbox.types";
+import type { Theme, ThemeColor } from "../../types";
+import type { CheckboxIndicator, CheckboxSize, CheckboxUi } from "../checkbox/checkbox.types";
 import type { InferThemeProps } from "../../resolver";
 import type { RLCheckboxGroupTheme } from "./checkbox-group.theme";
 
@@ -111,7 +106,7 @@ export type RLCheckboxGroupProps<
    * Color theme variant for child checkboxes.
    * @default 'primary'
    */
-  color?: CheckboxColor | undefined;
+  color?: ThemeColor | undefined;
 
   /**
    * Highlight focus state ring.

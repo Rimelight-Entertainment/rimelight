@@ -383,7 +383,7 @@ const MenuLayer: Component<MenuLayerProps> = (props) => {
         >
           {/* Leading Icon / Check Indicator */}
           <Show when={leadingIcon() || item.type === "checkbox" || item.type === "radio"}>
-            <span class={props.menuClasses().itemLeading} data-slot="itemLeading">
+            <span class={props.menuClasses().itemLeading} data-slot="item-leading">
               <Show
                 when={leadingIcon()}
                 fallback={
@@ -391,7 +391,7 @@ const MenuLayer: Component<MenuLayerProps> = (props) => {
                     <RLIcon
                       name={props.checkedIcon()}
                       class={props.menuClasses().itemIndicator}
-                      data-slot="itemIndicator"
+                      data-slot="item-indicator"
                     />
                   </Show>
                 }
@@ -400,7 +400,7 @@ const MenuLayer: Component<MenuLayerProps> = (props) => {
                   <RLIcon
                     name={leadingIcon() as string}
                     class={props.menuClasses().itemLeadingIcon}
-                    data-slot="itemLeadingIcon"
+                    data-slot="item-leading-icon"
                   />
                 ) : (
                   (leadingIcon() as JSX.Element)
@@ -410,14 +410,14 @@ const MenuLayer: Component<MenuLayerProps> = (props) => {
           </Show>
 
           {/* Label + Description wrapper */}
-          <div class={props.menuClasses().itemWrapper} data-slot="itemWrapper">
+          <div class={props.menuClasses().itemWrapper} data-slot="item-wrapper">
             <Show when={item.label}>
-              <span class={props.menuClasses().itemLabel} data-slot="itemLabel">
+              <span class={props.menuClasses().itemLabel} data-slot="item-label">
                 {item.label}
               </span>
             </Show>
             <Show when={item.description}>
-              <span class={props.menuClasses().itemDescription} data-slot="itemDescription">
+              <span class={props.menuClasses().itemDescription} data-slot="item-description">
                 {item.description}
               </span>
             </Show>
@@ -425,12 +425,12 @@ const MenuLayer: Component<MenuLayerProps> = (props) => {
 
           {/* Trailing: Kbds + Submenu indicator */}
           <Show when={(item.kbds && item.kbds.length > 0) || isSubmenu()}>
-            <span class={props.menuClasses().itemTrailing} data-slot="itemTrailing">
+            <span class={props.menuClasses().itemTrailing} data-slot="item-trailing">
               <Show when={item.kbds && item.kbds.length > 0}>
-                <span class={props.menuClasses().itemKbds} data-slot="itemKbds">
+                <span class={props.menuClasses().itemKbds} data-slot="item-kbds">
                   <For each={item.kbds}>
                     {(kbd) => (
-                      <kbd class={props.menuClasses().itemKbd} data-slot="itemKbd">
+                      <kbd class={props.menuClasses().itemKbd} data-slot="item-kbd">
                         {kbd}
                       </kbd>
                     )}
@@ -442,7 +442,7 @@ const MenuLayer: Component<MenuLayerProps> = (props) => {
                 <RLIcon
                   name={props.submenuIcon()}
                   class={props.menuClasses().itemSubIndicator}
-                  data-slot="itemSubIndicator"
+                  data-slot="item-sub-indicator"
                 />
               </Show>
             </span>
@@ -486,7 +486,7 @@ const MenuLayer: Component<MenuLayerProps> = (props) => {
           >
             <div role="group" data-slot="group" class={props.menuClasses().group}>
               <Show when={section.label}>
-                <div data-slot="groupLabel" class={props.menuClasses().groupLabel}>
+                <div data-slot="group-label" class={props.menuClasses().groupLabel}>
                   {section.label}
                 </div>
               </Show>
@@ -516,7 +516,6 @@ export const RLContextMenu: Component<RLContextMenuProps> = (props) => {
   } = RLContextMenuTheme.setup(props, {
     omit: OMIT_KEYS,
     slots: ["topSlot", "bottomSlot", "itemSlot", "triggerSlot", "bodySlot"] as const,
-    idPrefix: "rl-context-menu",
     variants: () => ({
       size: props.size ?? "md",
       disabled: Boolean(props.disabled),
@@ -760,7 +759,7 @@ export const RLContextMenu: Component<RLContextMenuProps> = (props) => {
         >
           {/* Top custom render */}
           <Show when={topRenderContent()}>
-            <div data-slot="topRender">{topRenderContent()}</div>
+            <div data-slot="top-render">{topRenderContent()}</div>
           </Show>
 
           {/* Menu Items */}
@@ -777,7 +776,7 @@ export const RLContextMenu: Component<RLContextMenuProps> = (props) => {
 
           {/* Bottom custom render */}
           <Show when={bottomRenderContent()}>
-            <div data-slot="bottomRender">{bottomRenderContent()}</div>
+            <div data-slot="bottom-render">{bottomRenderContent()}</div>
           </Show>
 
           {/* Body slot */}

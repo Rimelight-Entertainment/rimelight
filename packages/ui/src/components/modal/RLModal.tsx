@@ -42,7 +42,6 @@ export const RLModal: Component<RLModalProps> = (props) => {
       "bodySlot",
       "footerSlot",
     ] as const,
-    idPrefix: "rl-modal",
   });
 
   const titleId = () => `${id()}-title`;

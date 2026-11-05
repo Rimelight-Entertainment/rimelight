@@ -177,11 +177,9 @@ export const RLDropdownMenu: Component<RLDropdownMenuProps> = (props) => {
                         }
 
                         const itemColor = () =>
-                          item.color === "error"
-                            ? "text-destructive hover:bg-destructive/10"
-                            : item.color === "primary"
-                              ? "text-primary hover:bg-primary/10"
-                              : "";
+                          item.color
+                            ? `rl-color-${item.color} text-[var(--rl-text)] hover:bg-[var(--rl-bg)]/10`
+                            : "";
 
                         const renderLeadingContent = () => {
                           if (item.avatar) {

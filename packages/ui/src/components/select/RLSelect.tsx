@@ -27,7 +27,6 @@ export const RLSelect: Component<RLSelectProps> = (props) => {
   const { Tag, classes, rest, slots, id, children, theme } = RLSelectTheme.setup(props, {
     slots: ["leadingSlot"] as const,
     omit: OMIT_KEYS,
-    idPrefix: "rl-select",
   });
 
   const normalizedItems = createMemo(() => {

@@ -5,7 +5,6 @@ import { RLFormFieldTheme } from "./form-field.theme";
 
 export const RLFormField: Component<RLFormFieldProps> = (props) => {
   const { Tag, classes, rest, children, id, slots, theme } = RLFormFieldTheme.setup(props, {
-    idPrefix: "rl-form-field",
     omit: ["id", "label", "description", "error", "required"] as const,
     slots: ["labelSlot", "descriptionSlot", "errorSlot", "helpSlot", "hintSlot"] as const,
   });

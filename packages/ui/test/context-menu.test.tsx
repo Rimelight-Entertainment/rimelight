@@ -102,12 +102,12 @@ describe("RLContextMenu", () => {
 
       expect(slotTag(html, "group")).not.toBe("");
       expect(slotTag(html, "item")).not.toBe("");
-      expect(slotTag(html, "itemLeading")).not.toBe("");
-      expect(slotTag(html, "itemWrapper")).not.toBe("");
-      expect(slotTag(html, "itemLabel")).not.toBe("");
-      expect(slotTag(html, "itemDescription")).not.toBe("");
-      expect(slotTag(html, "itemTrailing")).not.toBe("");
-      expect(slotTag(html, "itemKbds")).not.toBe("");
+      expect(slotTag(html, "item-leading")).not.toBe("");
+      expect(slotTag(html, "item-wrapper")).not.toBe("");
+      expect(slotTag(html, "item-label")).not.toBe("");
+      expect(slotTag(html, "item-description")).not.toBe("");
+      expect(slotTag(html, "item-trailing")).not.toBe("");
+      expect(slotTag(html, "item-kbds")).not.toBe("");
       expect(slotTag(html, "separator")).not.toBe("");
 
       expect(html).toContain("Copy");
@@ -166,7 +166,7 @@ describe("RLContextMenu", () => {
         </RLContextMenu>
       ));
 
-      expect(slotTag(html, "groupLabel")).not.toBe("");
+      expect(slotTag(html, "group-label")).not.toBe("");
       expect(html).toContain("Project brief.pdf");
       expect(html).toContain("Open preview");
       expect(html).toContain("Rename");
@@ -193,7 +193,7 @@ describe("RLContextMenu", () => {
         </RLContextMenu>
       ));
 
-      expect(slotTag(html, "groupLabel")).not.toBe("");
+      expect(slotTag(html, "group-label")).not.toBe("");
       expect(html).toContain("Actions");
       expect(html).toContain("Copy path");
       expect(html).toContain("Rename file");
@@ -250,7 +250,7 @@ describe("RLContextMenu", () => {
       expect(html).toContain('role="menuitemcheckbox"');
       expect(html).toContain('role="menuitemradio"');
       expect(html).toContain("data-selected");
-      expect(slotTag(html, "itemIndicator")).not.toBe("");
+      expect(slotTag(html, "item-indicator")).not.toBe("");
     });
 
     it("renders submenu items with itemSubIndicator and open submenu content", () => {
@@ -272,7 +272,7 @@ describe("RLContextMenu", () => {
         </RLContextMenu>
       ));
 
-      expect(slotTag(html, "itemSubIndicator")).not.toBe("");
+      expect(slotTag(html, "item-sub-indicator")).not.toBe("");
       expect(html).toContain("Sort by");
       expect(html).toContain("Name");
       expect(html).toContain("Modified date");

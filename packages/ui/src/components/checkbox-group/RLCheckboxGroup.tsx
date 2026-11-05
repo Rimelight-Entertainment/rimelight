@@ -30,7 +30,6 @@ export const RLCheckboxGroup: Component<RLCheckboxGroupProps> = (props) => {
   const { Tag, classes, rest, id, slots, children, theme, ui } = RLCheckboxGroupTheme.setup(props, {
     slots: ["legendSlot", "labelSlot", "descriptionSlot"] as const,
     omit: OMIT_KEYS,
-    idPrefix: "rl-checkbox-group",
   });
 
   const valueKey = () => props.valueKey ?? "value";

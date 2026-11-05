@@ -23,7 +23,6 @@ export const RLCollapsible: Component<RLCollapsibleProps> = (props) => {
   const { Tag, classes, rest, id, slots, children, theme } = RLCollapsibleTheme.setup(props, {
     omit: OMIT_KEYS,
     slots: ["triggerSlot", "bodySlot"] as const,
-    idPrefix: "rl-collapsible",
     variants: () => ({ disabled: props.disabled === true }),
   });
 

@@ -176,7 +176,6 @@ export const RLSplitter: Component<RLSplitterProps> = (props) => {
   const { Tag, classes, rest, id, slots, children, theme } = RLSplitterTheme.setup(props, {
     omit: OMIT_KEYS,
     slots: ["handleSlot"] as const,
-    idPrefix: "rl-splitter",
     variants: () => ({
       orientation: effectiveOrientation(),
       disabled: isDisabled(),

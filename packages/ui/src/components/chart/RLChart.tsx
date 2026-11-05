@@ -37,7 +37,6 @@ const describeArc = (cx: number, cy: number, r: number, start: number, end: numb
 export const RLChart: Component<RLChartProps> = (props) => {
   const { Tag, classes, rest, children, theme } = RLChartTheme.setup(props, {
     omit: OMIT_KEYS,
-    idPrefix: "rl-chart",
   });
 
   const data = createMemo(() => props.data ?? []);

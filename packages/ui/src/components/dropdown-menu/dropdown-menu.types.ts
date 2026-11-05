@@ -16,15 +16,7 @@ export interface DropdownMenuItem {
   shortcut?: string | undefined;
   kbds?: string[] | undefined;
   type?: "link" | "label" | "separator" | "checkbox" | "item" | undefined;
-  color?:
-    | "primary"
-    | "secondary"
-    | "success"
-    | "info"
-    | "warning"
-    | "error"
-    | "neutral"
-    | undefined;
+  color?: ThemeColor | undefined;
   checked?: boolean | undefined;
   disabled?: boolean | undefined;
   slot?: string | undefined;

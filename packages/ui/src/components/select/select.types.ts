@@ -14,10 +14,10 @@ export interface SelectItem {
 export type SelectVariant = "solid" | "outline" | "soft" | "subtle" | "ghost" | "link";
 export type SelectLayout = "default" | "icon";
 
-export interface RLSelectProps extends Omit<
+export type RLSelectProps = Omit<
   InferThemeProps<typeof RLSelectTheme>,
   "color" | "size" | "variant" | "layout" | "onChange" | "onBlur" | "ref"
-> {
+> & {
   /**
    * Unique ID for the select element.
    */
@@ -111,4 +111,4 @@ export interface RLSelectProps extends Omit<
    * Ref to the native select element.
    */
   ref?: HTMLSelectElement | ((el: HTMLSelectElement) => void) | undefined;
-}
+};

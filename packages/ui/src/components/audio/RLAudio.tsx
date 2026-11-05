@@ -105,7 +105,6 @@ export const RLAudio: Component<RLAudioProps> = (props) => {
   } = RLAudioTheme.setup(props, {
     slots: ["headerSlot", "timelineSlot", "controlsSlot", "artworkSlot", "transcriptSlot"] as const,
     omit: OMIT_KEYS,
-    idPrefix: "rl-audio",
   });
 
   const resolvedChildren = children(childNodes);

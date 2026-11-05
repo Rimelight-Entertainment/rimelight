@@ -166,7 +166,7 @@ describe("RLAvatar Solid Component Suite", () => {
         subtitle: "Lead Developer",
       });
 
-      expect(html).toContain('data-slot="profile-wrapper"');
+      expect(html).toContain('data-slot="wrapper"');
       expect(html).toContain('data-slot="title"');
       expect(html).toContain("Daniel Marchi");
       expect(html).toContain('data-slot="subtitle"');
