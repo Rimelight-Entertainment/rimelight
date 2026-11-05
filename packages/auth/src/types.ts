@@ -66,6 +66,20 @@ export interface UserSessionContext {
   metadata?: Record<string, any> | undefined;
 }
 
+/**
+ * A credential the identity provider has verified: signature, issuer, audience and expiry checked.
+ */
+export interface AccessIdentity {
+  /** Provider-stable subject: Auth0 `sub`, CF Access `sub`. */
+  subject: string;
+  email: string;
+  /** Auth0: the `email_verified` claim. CF Access: always true, since Access admits only IdP-authenticated identities. */
+  emailVerified: boolean;
+  name?: string | undefined;
+  /** Unmapped provider groups (CF Access) or the roles claim (Auth0). */
+  groups: string[];
+}
+
 export interface AuthAdapter {
   /**
    * Unique name of the auth adapter
@@ -82,6 +96,13 @@ export interface AuthAdapter {
    * or invalid.
    */
   getSession(request: Request): Promise<UserSessionContext | null>;
+
+  /**
+   * Verifies the request's credential and returns the verified identity, or `null` when no valid
+   * credential is present. Throws when the provider cannot be reached, so callers can tell
+   * "anonymous" apart from "unavailable".
+   */
+  identify?(request: Request): Promise<AccessIdentity | null>;
 
   /**
    * Optional hook for handling unauthorized page loads / redirects
@@ -179,17 +200,10 @@ export interface AuthMiddlewareOptions {
 
 export interface AuthConfig extends AuthMiddlewareOptions {
   /**
-   * Auth adapter to initialize: "cf-access" (default), "auth0", "mock", or "custom".
-   *
-   * @default "cf-access"
+   * Identity provider for this deployment, set via the `auth()` Vite plugin's `provider` option.
+   * Unset or unknown means every request is anonymous.
    */
-  adapter?: "cf-access" | "auth0" | "mock" | "custom" | (string & {});
-
-  /**
-   * Path to custom auth module if adapter is set to "custom".
-   */
-  customModule?: string;
-
+  provider?: "cf-access" | "auth0";
   /**
    * Additional adapter-specific configuration overrides.
    */

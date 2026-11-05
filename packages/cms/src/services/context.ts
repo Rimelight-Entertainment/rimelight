@@ -53,14 +53,19 @@ export function createCmsContext(input: CmsContextInput): CmsContext {
 /** Error with an HTTP status. Routers and MCP translate it into a response. */
 export class CmsError extends Error {
   constructor(
-    public status: 400 | 401 | 403 | 404 | 409 | 422 | 500,
+    public status: 400 | 401 | 403 | 404 | 409 | 422 | 500 | 503,
     message: string,
     public details?: unknown,
+    public headers?: Record<string, string>,
   ) {
     super(message);
     this.name = "CmsError";
   }
 }
+
+/** Transient backend failure; the client should retry after a minute. */
+export const serviceUnavailable = (): CmsError =>
+  new CmsError(503, "Service temporarily unavailable", undefined, { "Retry-After": "60" });
 
 export const notFound = (what: string): CmsError => new CmsError(404, `${what} not found`);
 

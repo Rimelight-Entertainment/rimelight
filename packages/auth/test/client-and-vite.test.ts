@@ -62,7 +62,6 @@ describe("Auth Client", () => {
 describe("Auth Vite Plugin", () => {
   it("resolves and loads virtual modules", async () => {
     const plugin: Plugin = authPlugin({
-      adapter: "cf-access",
       roleGuards: {
         "/admin": ["admin", "owner"],
       },

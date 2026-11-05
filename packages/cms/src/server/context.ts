@@ -1,15 +1,19 @@
-import { auth as defaultAuth } from "@rimelight/auth";
+import { auth as defaultAuth, type AccessIdentity } from "@rimelight/auth";
+import type { CmsAccessConfig } from "../auth/access";
+import { provisionCmsUser } from "../auth/provision";
 import { getCmsDb } from "../db/index";
 import { createCms, type Cms } from "../services/index";
-import { createCmsContext, CmsError, type CmsActor } from "../services/context";
+import { createCmsContext, CmsError, serviceUnavailable, type CmsActor } from "../services/context";
 import type { CmsConfig } from "../types";
 
 export interface CmsServerOptions {
   /** Drizzle instance / D1 binding. Defaults to `c.env.DB` or `DATABASE_URL`/Hyperdrive. */
   db?: any;
   config?: CmsConfig;
-  /** Custom session resolver. Defaults to `@rimelight/auth`. */
-  getSession?: (req: Request, c: any) => Promise<any>;
+  /** Resolves the verified identity behind a request. Defaults to `@rimelight/auth`'s `identify`. */
+  identify?: (req: Request) => Promise<AccessIdentity | null>;
+  /** How verified identities map onto CMS accounts: provisioning and role mapping. */
+  access?: CmsAccessConfig;
   /** Treat unauthenticated requests as an admin. Only honoured when `import.meta.env.DEV`. */
   devBypassAuth?: boolean;
   previewSecret?: string;
@@ -56,14 +60,33 @@ export function cmsForRequest(c: any, options: CmsServerOptions): Cms {
   );
 }
 
+/**
+ * Verified identity for a request, or `null`. Identity-service failures become 503, never anonymous.
+ */
+export async function resolveIdentity(
+  req: Request,
+  options: CmsServerOptions,
+): Promise<AccessIdentity | null> {
+  const identify =
+    options.identify ?? ((r: Request) => defaultAuth.identify?.(r) ?? Promise.resolve(null));
+  try {
+    return await identify(req);
+  } catch (err) {
+    console.error("[@rimelight/cms] identity lookup failed", err);
+    throw serviceUnavailable();
+  }
+}
+
 export async function resolveActor(c: any, options: CmsServerOptions): Promise<CmsActor | null> {
   const fromContext = toActor(c.get?.("user") ?? c.get?.("session"));
   if (fromContext) return fromContext;
-  const session = options.getSession
-    ? await options.getSession(c.req.raw, c)
-    : await defaultAuth.getSession(c.req.raw).catch(() => null);
-  const actor = toActor(session);
-  if (actor) return actor;
+  const identity = await resolveIdentity(c.req.raw, options);
+  if (identity) {
+    if (!identity.emailVerified) return null;
+    const { db, dialect } = getCmsDb({ db: options.db }, c);
+    const user = await provisionCmsUser(db, dialect, identity, options.access);
+    return { userId: user.id, name: user.name, roles: [user.role], permissions: [] };
+  }
   if (options.devBypassAuth && isDev()) return DEV_ACTOR;
   return null;
 }

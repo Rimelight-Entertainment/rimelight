@@ -14,6 +14,8 @@ describe("migrator", () => {
       "0009_drop_legacy_schema_column",
       "0010_media_library",
       "0011_byline_fields",
+      "0012_cms_users",
+      "0013_cms_users_managed_fields",
     ]);
   });
 

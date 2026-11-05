@@ -312,6 +312,32 @@ CREATE TABLE IF NOT EXISTS "byline_fields" (
 CREATE UNIQUE INDEX IF NOT EXISTS "byline_fields_slug_idx" ON "byline_fields" ("slug");
 `,
   },
+  {
+    name: "0012_cms_users",
+    sql: `CREATE TABLE IF NOT EXISTS "cms_users" (
+	"id" text PRIMARY KEY NOT NULL,
+	"email" text NOT NULL,
+	"name" text,
+	"role" text NOT NULL,
+	"subject" text,
+	"disabled" integer DEFAULT 0 NOT NULL,
+	"created_at" integer NOT NULL,
+	"updated_at" integer NOT NULL
+);
+--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS "cms_users_email_idx" ON "cms_users" ("email");
+`,
+  },
+  {
+    name: "0013_cms_users_managed_fields",
+    sql: `ALTER TABLE "cms_users" ADD COLUMN "name_managed" integer DEFAULT 0 NOT NULL;
+--> statement-breakpoint
+ALTER TABLE "cms_users" ADD COLUMN "role_managed" integer DEFAULT 0 NOT NULL;
+--> statement-breakpoint
+-- Accounts without a subject were pre-created by an admin invite: their role (and any name) is admin-set.
+UPDATE "cms_users" SET "role_managed" = 1, "name_managed" = CASE WHEN "name" IS NULL THEN 0 ELSE 1 END WHERE "subject" IS NULL;
+`,
+  },
 ];
 
 export const PG_CMS_MIGRATIONS = [
@@ -650,6 +676,32 @@ CREATE TABLE IF NOT EXISTS "byline_fields" (
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX IF NOT EXISTS "byline_fields_slug_idx" ON "byline_fields" ("slug");
+`,
+  },
+  {
+    name: "0012_cms_users",
+    sql: `CREATE TABLE IF NOT EXISTS "cms_users" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"email" text NOT NULL,
+	"name" text,
+	"role" text NOT NULL,
+	"subject" text,
+	"disabled" boolean DEFAULT false NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS "cms_users_email_idx" ON "cms_users" ("email");
+`,
+  },
+  {
+    name: "0013_cms_users_managed_fields",
+    sql: `ALTER TABLE "cms_users" ADD COLUMN "name_managed" boolean DEFAULT false NOT NULL;
+--> statement-breakpoint
+ALTER TABLE "cms_users" ADD COLUMN "role_managed" boolean DEFAULT false NOT NULL;
+--> statement-breakpoint
+-- Accounts without a subject were pre-created by an admin invite: their role (and any name) is admin-set.
+UPDATE "cms_users" SET "role_managed" = true, "name_managed" = ("name" IS NOT NULL) WHERE "subject" IS NULL;
 `,
   },
 ];

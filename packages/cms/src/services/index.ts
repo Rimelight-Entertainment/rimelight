@@ -9,6 +9,7 @@ import * as bylines from "./bylines";
 import * as search from "./search";
 import * as settings from "./site-settings";
 import * as mentions from "./mentions";
+import * as users from "./users";
 
 export * from "./context";
 export * from "./collections";
@@ -19,6 +20,7 @@ export * from "./bylines";
 export * from "./search";
 export * from "./site-settings";
 export * from "./mentions";
+export * from "./users";
 
 type Bound<F> = F extends (ctx: CmsContext, ...args: infer A) => infer R
   ? (...args: A) => R
@@ -89,6 +91,7 @@ export interface Cms {
   search: BindAll<typeof search>;
   mentions: BindAll<typeof mentions>;
   settings: BindAll<typeof settings>;
+  users: BindAll<typeof users>;
   stats: () => ReturnType<typeof stats>;
 }
 
@@ -105,6 +108,7 @@ export function createCms(input: CmsContextInput | CmsContext): Cms {
     search: bind(ctx, search),
     mentions: bind(ctx, mentions),
     settings: bind(ctx, settings),
+    users: bind(ctx, users),
     stats: () => stats(ctx),
   };
 }

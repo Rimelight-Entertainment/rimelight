@@ -99,12 +99,12 @@ Set these for local development in `apps/rimelight.com/.dev.vars`:
 | `AUTH0_CLIENT_ID`     | The `rimelight.com` application's Client ID.                                                           |
 | `AUTH0_CLIENT_SECRET` | The `rimelight.com` application's Client Secret.                                                       |
 | `AUTH0_AUDIENCE`      | `https://api.rimelight.com`                                                                            |
-| `AUTH0_SECRET`        | A random 32-byte hex string, for example `openssl rand -hex 32`. Used to sign website session cookies. |
+| `AUTH0_SECRET`        | Required. A random 32-byte hex string, for example `openssl rand -hex 32`. Signs website session cookies; sign-in fails when it is unset. |
 
 Production uses the same names. They're declared as secrets in `cloudflare.config.ts`, so set them
 in the Cloudflare dashboard or with `wrangler secret put`, not in a file.
 
-Changing `AUTH0_SECRET` signs out every existing website session.
+Changing `AUTH0_SECRET` signs out every existing website session. There is no fallback value.
 
 ## 7. Test account
 

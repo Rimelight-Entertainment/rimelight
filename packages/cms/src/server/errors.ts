@@ -7,6 +7,7 @@ import { CmsError } from "../services/context";
 export function handleCmsError(a: any, b: any): Response {
   const [c, err] = typeof a?.json === "function" ? [a, a.error] : [b, a];
   if (err instanceof CmsError) {
+    for (const [name, value] of Object.entries(err.headers ?? {})) c.header(name, value);
     return c.json({ error: err.message, details: err.details }, err.status);
   }
   console.error("[@rimelight/cms]", err);

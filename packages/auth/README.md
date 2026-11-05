@@ -7,7 +7,7 @@ Universal authentication and identity for Rimelight sites. It verifies sessions 
 
 ## Features
 
-- **Pluggable adapters**: Auth0, Cloudflare Access (`cf-access`), and a mock adapter for development and tests.
+- **Pluggable adapters**: Auth0 and Cloudflare Access (`cf-access`). One is selected per deployment by the `auth()` Vite plugin's `provider` option; the other is never consulted. Plus a mock adapter for development and tests.
 - **Hono middleware**: resolves the session on each request and exposes it to route handlers.
 - **JWT utilities**: verification helpers for signed tokens.
 - **Permissions**: a role and user-type permission matrix, shared with `@rimelight/cms` for filtering content.

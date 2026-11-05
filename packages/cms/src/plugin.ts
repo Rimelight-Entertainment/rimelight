@@ -41,9 +41,8 @@ export const cms = (options: CmsPluginOptions = {}): Plugin => {
     },
     load(id) {
       if (id !== RESOLVED_ID) return undefined;
-      const { auth: _auth, ...serializable } = options;
       const opts = JSON.stringify({
-        ...serializable,
+        ...options,
         dashboardPath,
         apiPath: options.apiPath ?? "/api/cms",
       });

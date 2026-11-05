@@ -12,3 +12,4 @@ export * from "./bylines";
 export * from "./byline_fields";
 export * from "./content_types";
 export * from "./media";
+export * from "./cms_users";
