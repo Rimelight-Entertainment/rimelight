@@ -11,22 +11,15 @@ export const RLRouteAnnouncerTheme = defineTheme("route-announcer", {
   variants: {
     color: "auto",
     size: {
-      xs: {
-        progressBar: "h-0.5",
-      },
-      sm: {
-        progressBar: "h-1",
-      },
-      md: {
-        progressBar: "h-1.5",
-      },
-      lg: {
-        progressBar: "h-2",
-      },
+      xs: { progressBar: "h-0.5" },
+      sm: { progressBar: "h-1" },
+      md: { progressBar: "h-1.5" },
+      lg: { progressBar: "h-2" },
+      xl: { progressBar: "h-2.5" },
     },
   },
   defaultVariants: {
     color: "primary",
-    size: "sm",
+    size: "md",
   },
 });

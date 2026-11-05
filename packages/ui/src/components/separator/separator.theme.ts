@@ -136,8 +136,8 @@ export const RLSeparatorTheme = defineTheme("separator", {
     },
   ],
   defaultVariants: {
-    color: "neutral",
-    size: "xs",
+    color: "primary",
+    size: "md",
     type: "solid",
     orientation: "horizontal",
   },

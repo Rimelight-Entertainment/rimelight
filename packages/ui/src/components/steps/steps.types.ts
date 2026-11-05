@@ -6,5 +6,5 @@ export type RLStepsProps = InferThemeProps<typeof RLStepsTheme> & {
    * Controls the size of the step indicators and spacing.
    * @default "md"
    */
-  size?: "sm" | "md" | "lg" | undefined;
+  size?: "xs" | "sm" | "md" | "lg" | "xl" | undefined;
 };

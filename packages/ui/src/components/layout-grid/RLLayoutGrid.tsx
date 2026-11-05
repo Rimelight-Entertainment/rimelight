@@ -226,8 +226,8 @@ export const RLLayoutGrid: Component<RLLayoutGridProps> = (props) => {
       const opacity = isInner ? innerGridOpacity : gridOpacity;
       const bg = isInner ? showInnerBackground : showBackground;
       innerColumns.push({
-        "border-inline": `1px solid ${color}`,
-        "background-color": bg ? hexToRgba(color, opacity) : "transparent",
+        "--rl-col-border": `1px solid ${color}`,
+        "--rl-col-bg": bg ? hexToRgba(color, opacity) : "transparent",
       });
     }
 
@@ -241,10 +241,10 @@ export const RLLayoutGrid: Component<RLLayoutGridProps> = (props) => {
       let leftX = marginPx;
       while (leftX + colWidth < containerLeft) {
         outerColumns.push({
-          left: `${leftX}px`,
-          width: `${colWidth}px`,
-          "border-inline": outerBorder,
-          "background-color": outerBg,
+          "--rl-col-left": `${leftX}px`,
+          "--rl-col-width": `${colWidth}px`,
+          "--rl-col-border": outerBorder,
+          "--rl-col-bg": outerBg,
         });
         leftX += step;
       }
@@ -252,10 +252,10 @@ export const RLLayoutGrid: Component<RLLayoutGridProps> = (props) => {
       let rightX = width - marginPx - colWidth;
       while (rightX > containerRight) {
         outerColumns.push({
-          left: `${rightX}px`,
-          width: `${colWidth}px`,
-          "border-inline": outerBorder,
-          "background-color": outerBg,
+          "--rl-col-left": `${rightX}px`,
+          "--rl-col-width": `${colWidth}px`,
+          "--rl-col-border": outerBorder,
+          "--rl-col-bg": outerBg,
         });
         rightX -= step;
       }

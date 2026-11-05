@@ -133,10 +133,9 @@ export const RLModal: Component<RLModalProps> = (props) => {
 
     return (
       <div
-        class={classes().overlay}
+        class={`${classes().overlay}${isOpen() || !unmountOnHide() ? "" : " hidden!"}`}
         data-slot="overlay"
         data-state={isOpen() ? "open" : "closed"}
-        style={{ display: isOpen() || !unmountOnHide() ? undefined : "none" }}
         onClick={(e) => {
           if (e.target === e.currentTarget) {
             handleDismiss();

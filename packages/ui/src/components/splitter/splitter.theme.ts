@@ -43,6 +43,6 @@ export const RLSplitterTheme = defineTheme("splitter", {
   defaultVariants: {
     orientation: "horizontal",
     disabled: false,
-    color: "auto",
+    color: "primary",
   },
 });

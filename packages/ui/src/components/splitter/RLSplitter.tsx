@@ -158,27 +158,6 @@ export function inferFallbackTotalPx(
   return 1000;
 }
 
-function mergeInlineStyles(
-  ...styles: Array<JSX.CSSProperties | string | undefined>
-): JSX.CSSProperties | string | undefined {
-  const valid = styles.filter(Boolean);
-  if (valid.length === 0) return undefined;
-  if (valid.length === 1) return valid[0];
-  if (valid.some((s) => typeof s === "string")) {
-    return valid
-      .map((s) => {
-        if (typeof s === "string") return s.replace(/;+\s*$/, "");
-        return Object.entries(s as Record<string, unknown>)
-          .filter(([, v]) => v !== undefined && v !== null)
-          .map(([k, v]) => `${k}: ${String(v)}`)
-          .join("; ");
-      })
-      .filter(Boolean)
-      .join("; ");
-  }
-  return Object.assign({}, ...valid) as JSX.CSSProperties;
-}
-
 interface PanelBounds {
   minPx: number;
   maxPx: number;
@@ -964,12 +943,10 @@ export const RLSplitter: Component<RLSplitterProps> = (props) => {
           const transitioning = () => Boolean(transitioningPanels()[i()]);
           const panelId = () => panel.id ?? `${id()}-panel-${i()}`;
 
-          const panelSizeStyle = (): JSX.CSSProperties => {
-            const basis = `${pct()}%`;
-            return isHorizontal()
-              ? { "flex-basis": basis, width: basis }
-              : { "flex-basis": basis, height: basis };
-          };
+          // Runtime size only; the flex-basis and orientation axis are applied by the panel classes.
+          const panelSizeStyle = (): JSX.CSSProperties => ({
+            "--rl-panel-size": `${pct()}%`,
+          });
 
           const hasNextPanel = () => i() < normalizedPanels().length - 1;
           const handleDragging = () => drag()?.i === i();
@@ -1018,10 +995,12 @@ export const RLSplitter: Component<RLSplitterProps> = (props) => {
                 id={panelId()}
                 class={cx(
                   classes().panel,
-                  isHorizontal() ? `w-[${pct()}%]` : `h-[${pct()}%]`,
+                  isHorizontal()
+                    ? "[flex-basis:var(--rl-panel-size)] [width:var(--rl-panel-size)]"
+                    : "[flex-basis:var(--rl-panel-size)] [height:var(--rl-panel-size)]",
                   panel.class,
                 )}
-                style={mergeInlineStyles(panelSizeStyle(), panel.style)}
+                style={panelSizeStyle()}
                 data-slot="panel"
                 data-resizable-panel={i()}
                 data-collapsed={collapsed() ? "" : undefined}
@@ -1043,7 +1022,6 @@ export const RLSplitter: Component<RLSplitterProps> = (props) => {
                     };
                   }}
                   class={cx(classes().handle, getHandleConfig(i()).class)}
-                  style={getHandleConfig(i()).style}
                   data-slot="handle"
                   data-resizable-handle={i()}
                   data-orientation={effectiveOrientation()}

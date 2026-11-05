@@ -103,9 +103,8 @@ export const RLTabs: Component<RLTabsProps> = (props) => {
       <div ref={(el) => (listRef = el)} class={classes().list} data-slot="list" role="tablist">
         <div
           ref={(el) => (indicatorRef = el)}
-          class={classes().indicator}
+          class={`${classes().indicator} hidden!`}
           data-slot="indicator"
-          style={{ display: "none" }}
         />
 
         <For each={renderedListItems()}>
@@ -207,11 +206,10 @@ export const RLTabs: Component<RLTabsProps> = (props) => {
                   return (
                     <Show when={props.unmountOnHide === false || active()}>
                       <div
-                        class={classes().content}
+                        class={`${classes().content}${active() ? "" : " hidden!"}`}
                         data-slot="content"
                         role="tabpanel"
                         data-value={itemVal()}
-                        style={{ display: active() ? undefined : "none" }}
                       >
                         {item.content}
                       </div>

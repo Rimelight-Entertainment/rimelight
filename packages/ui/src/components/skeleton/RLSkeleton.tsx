@@ -83,12 +83,11 @@ export const RLSkeleton: Component<RLSkeletonProps> = (props) => {
                 class={classes().shimmer}
                 data-slot="shimmer"
                 style={{
-                  position: "absolute",
-                  left: `${rect.x}px`,
-                  top: `${rect.y}px`,
-                  width: `${rect.width}px`,
-                  height: `${rect.height}px`,
-                  "border-radius": resolveBorderRadius(rect),
+                  "--rl-skel-x": `${rect.x}px`,
+                  "--rl-skel-y": `${rect.y}px`,
+                  "--rl-skel-w": `${rect.width}px`,
+                  "--rl-skel-h": `${rect.height}px`,
+                  "--rl-skel-r": resolveBorderRadius(rect),
                 }}
               >
                 <div class={classes().highlight} data-slot="highlight" />

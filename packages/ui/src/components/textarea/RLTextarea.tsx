@@ -37,13 +37,12 @@ export const RLTextarea: Component<RLTextareaProps> = (props) => {
         ref={props.ref}
         name={props.name}
         rows={props.autoGrow ? undefined : (props.rows ?? 4)}
-        style={props.autoGrow ? "field-sizing: content; min-height: unset;" : undefined}
         value={value()}
         placeholder={props.placeholder}
         disabled={props.disabled}
         readonly={props.readonly}
         required={props.required}
-        class={classes().textarea}
+        class={`${classes().textarea}${props.autoGrow ? " [field-sizing:content] min-h-0" : ""}`}
         data-slot="textarea"
         onInput={(event) => {
           setValue(event.currentTarget.value);

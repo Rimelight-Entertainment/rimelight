@@ -21,13 +21,14 @@ export const RLStepperTheme = defineTheme("stepper", {
     item: "group flex-1 flex flex-col items-center text-center relative",
     container: "flex items-center justify-center relative w-full",
     trigger:
-      "rounded-full font-medium text-center align-middle flex items-center justify-center font-semibold group-data-[state=completed]:bg-primary group-data-[state=completed]:border-primary group-data-[state=completed]:!text-inverted group-data-[state=active]:bg-primary group-data-[state=active]:border-primary group-data-[state=active]:!text-inverted text-muted bg-muted border border-default transition-all cursor-pointer z-10",
+      "rounded-full font-medium text-center align-middle flex items-center justify-center font-semibold group-data-[state=completed]:bg-[var(--rl-bg)] group-data-[state=completed]:border-[var(--rl-bg)] group-data-[state=completed]:!text-inverted group-data-[state=active]:bg-[var(--rl-bg)] group-data-[state=active]:border-[var(--rl-bg)] group-data-[state=active]:!text-inverted text-muted bg-muted border border-default transition-all cursor-pointer z-10",
     indicator: "flex items-center justify-center size-full text-current",
     icon: "shrink-0 size-4 text-current transition-colors",
-    separator: "flex-1 h-0.5 mx-2 self-start mt-4 transition-colors rounded-full",
+    separator:
+      "flex-1 h-0.5 mx-2 self-start mt-4 transition-colors rounded-full group-data-[state=completed]:bg-[var(--rl-bg)]",
     wrapper: "mt-2 text-center",
     title:
-      "text-xs font-semibold group-data-[state=active]:font-bold group-data-[state=active]:text-primary group-data-[state=completed]:text-primary text-muted transition-colors",
+      "text-xs font-semibold group-data-[state=active]:font-bold group-data-[state=active]:text-[var(--rl-text)] group-data-[state=completed]:text-[var(--rl-text)] text-muted transition-colors",
     description: "text-dimmed text-wrap text-xs",
     content: "size-full",
   },
@@ -84,50 +85,7 @@ export const RLStepperTheme = defineTheme("stepper", {
         wrapper: "mt-3",
       },
     },
-    color: {
-      primary: {
-        trigger:
-          "group-data-[state=completed]:bg-primary-600 group-data-[state=completed]:border-primary-600 group-data-[state=active]:bg-primary-600 group-data-[state=active]:border-primary-600 group-data-[state=active]:shadow-sm",
-        icon: "group-data-[state=completed]:text-inverted group-data-[state=active]:text-inverted",
-        separator: "group-data-[state=completed]:bg-primary-600",
-      },
-      secondary: {
-        trigger:
-          "group-data-[state=completed]:bg-secondary-600 group-data-[state=completed]:border-secondary-600 group-data-[state=active]:bg-secondary-600 group-data-[state=active]:border-secondary-600",
-        icon: "group-data-[state=completed]:text-inverted group-data-[state=active]:text-inverted",
-        separator: "group-data-[state=completed]:bg-secondary-600",
-      },
-      success: {
-        trigger:
-          "group-data-[state=completed]:bg-success-500 group-data-[state=completed]:border-success-500 group-data-[state=active]:bg-success-500 group-data-[state=active]:border-success-500",
-        icon: "group-data-[state=completed]:text-inverted group-data-[state=active]:text-inverted",
-        separator: "group-data-[state=completed]:bg-success-500",
-      },
-      info: {
-        trigger:
-          "group-data-[state=completed]:bg-info-500 group-data-[state=completed]:border-info-500 group-data-[state=active]:bg-info-500 group-data-[state=active]:border-info-500",
-        icon: "group-data-[state=completed]:text-inverted group-data-[state=active]:text-inverted",
-        separator: "group-data-[state=completed]:bg-info-500",
-      },
-      warning: {
-        trigger:
-          "group-data-[state=completed]:bg-warning-500 group-data-[state=completed]:border-warning-500 group-data-[state=active]:bg-warning-500 group-data-[state=active]:border-warning-500",
-        icon: "group-data-[state=completed]:text-inverted group-data-[state=active]:text-inverted",
-        separator: "group-data-[state=completed]:bg-warning-500",
-      },
-      error: {
-        trigger:
-          "group-data-[state=completed]:bg-error-500 group-data-[state=completed]:border-error-500 group-data-[state=active]:bg-error-500 group-data-[state=active]:border-error-500",
-        icon: "group-data-[state=completed]:text-inverted group-data-[state=active]:text-inverted",
-        separator: "group-data-[state=completed]:bg-error-500",
-      },
-      neutral: {
-        trigger:
-          "group-data-[state=completed]:bg-inverted group-data-[state=completed]:border-inverted group-data-[state=active]:bg-inverted group-data-[state=active]:border-inverted",
-        icon: "group-data-[state=completed]:text-inverted group-data-[state=active]:text-inverted",
-        separator: "group-data-[state=completed]:bg-inverted",
-      },
-    },
+    color: "auto",
   },
   compoundVariants: [
     {
@@ -207,7 +165,7 @@ export const RLStepperTheme = defineTheme("stepper", {
     },
   ],
   defaultVariants: {
-    size: "sm",
+    size: "md",
     color: "primary",
     orientation: "horizontal",
   },

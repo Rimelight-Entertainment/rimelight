@@ -431,65 +431,6 @@ export const RLImage: Component<RLImageProps> = (props) => {
           </div>
         </dialog>
       )}
-
-      <style>{`
-        :root[data-theme="dark"] .rl-img-light,
-        [data-theme="dark"] .rl-img-light,
-        [data-theme="dark"] .rl-image-color-mode .rl-img-light,
-        .rl-image-color-mode[data-theme="dark"] .rl-img-light {
-          display: none !important;
-        }
-
-        :root[data-theme="dark"] .rl-img-dark,
-        [data-theme="dark"] .rl-img-dark,
-        [data-theme="dark"] .rl-image-color-mode .rl-img-dark,
-        .rl-image-color-mode[data-theme="dark"] .rl-img-dark {
-          display: block !important;
-        }
-
-        :root[data-theme="light"] .rl-img-light,
-        [data-theme="light"] .rl-img-light,
-        [data-theme="light"] .rl-image-color-mode .rl-img-light,
-        .rl-image-color-mode[data-theme="light"] .rl-img-light {
-          display: block !important;
-        }
-
-        :root[data-theme="light"] .rl-img-dark,
-        [data-theme="light"] .rl-img-dark,
-        [data-theme="light"] .rl-image-color-mode .rl-img-dark,
-        .rl-image-color-mode[data-theme="light"] .rl-img-dark {
-          display: none !important;
-        }
-
-        @media (prefers-color-scheme: dark) {
-          :root:not([data-theme="light"]) .rl-img-light {
-            display: none !important;
-          }
-          :root:not([data-theme="light"]) .rl-img-dark {
-            display: block !important;
-          }
-          :root:not([data-theme="light"]) [data-theme="light"] .rl-img-light {
-            display: block !important;
-          }
-          :root:not([data-theme="light"]) [data-theme="light"] .rl-img-dark {
-            display: none !important;
-          }
-        }
-
-        @supports (background-image: light-dark(none, none)) {
-          .rl-image-color-mode {
-            background-image: light-dark(var(--rl-img-light), var(--rl-img-dark));
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-          }
-          .rl-image-color-mode > .rl-img-light,
-          .rl-image-color-mode > .rl-img-dark {
-            opacity: 0 !important;
-            visibility: hidden !important;
-          }
-        }
-      `}</style>
     </Tag>
   );
 };

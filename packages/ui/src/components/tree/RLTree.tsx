@@ -43,7 +43,7 @@ export const RLTree: Component<RLTreeProps> = (props) => {
       <div class={classes().item} data-slot="item" role="none">
         <div
           class={`${classes().row} ${extraClass()}`}
-          style={{ "padding-left": `${node.depth * 12 + 4}px` }}
+          style={{ "--rl-tree-indent": `${node.depth * 12 + 4}px` }}
           data-slot="row"
           data-selected={selected() ? "true" : "false"}
           data-disabled={node.item.disabled ? "true" : "false"}

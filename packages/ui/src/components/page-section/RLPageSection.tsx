@@ -15,6 +15,7 @@ const OMIT_KEYS = [
   "reverse",
   "contentVisibility",
   "containIntrinsicSize",
+  "style",
 ] as const;
 
 export const RLPageSection: Component<RLPageSectionProps> = (props) => {

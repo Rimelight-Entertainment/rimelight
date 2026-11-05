@@ -150,13 +150,9 @@ export const RLDropdownMenu: Component<RLDropdownMenuProps> = (props) => {
             }}
             class={classes().content}
             style={{
-              position: "fixed",
-              "z-index": "99999",
-              top: `${coords().top}px`,
-              ...(coords().right !== undefined
-                ? { right: `${coords().right}px`, left: "auto" }
-                : {}),
-              ...(coords().left !== undefined ? { left: `${coords().left}px` } : {}),
+              "--rl-dd-top": `${coords().top}px`,
+              "--rl-dd-left": coords().left !== undefined ? `${coords().left}px` : undefined,
+              "--rl-dd-right": coords().right !== undefined ? `${coords().right}px` : undefined,
             }}
             data-slot="content"
             role="menu"

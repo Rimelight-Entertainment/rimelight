@@ -83,12 +83,6 @@ export const RLTableOfContents: Component<RLTableOfContentsProps> = (props) => {
         when={collapsible()}
         fallback={
           <>
-            <style>{`
-  .toc-active {
-    color: var(--rl-primary-500);
-    font-weight: 600;
-  }
-`}</style>
             <Tag
               ref={(el: HTMLElement) => (rootRef = el)}
               class={classes().root}
@@ -110,7 +104,7 @@ export const RLTableOfContents: Component<RLTableOfContentsProps> = (props) => {
                         <a
                           href={`#${heading.slug}`}
                           class={`toc-link ${classes().link} ${
-                            activeId() === heading.slug ? "toc-active" : ""
+                            activeId() === heading.slug ? classes().linkActive : ""
                           }`}
                           data-slot="link"
                         >

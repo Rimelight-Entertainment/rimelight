@@ -486,16 +486,12 @@ export const RLCarousel: Component<RLCarouselProps> = (props) => {
     const transition = `transform ${duration}ms cubic-bezier(0.16, 1, 0.3, 1)`;
     const offset = -index() * basisPercent();
 
-    if (isVertical()) {
-      return {
-        transform: `translate3d(0px, ${offset}%, 0px)`,
-        transition,
-      };
-    }
-
+    // Runtime slide offset only; the transform/transition rules live in the theme's container slot.
     return {
-      transform: `translate3d(${offset}%, 0px, 0px)`,
-      transition,
+      "--rl-carousel-transform": isVertical()
+        ? `translate3d(0px, ${offset}%, 0px)`
+        : `translate3d(${offset}%, 0px, 0px)`,
+      "--rl-carousel-transition": transition,
     };
   };
 

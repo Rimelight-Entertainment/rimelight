@@ -268,19 +268,14 @@ export const RLCompare: Component<RLCompareProps> = (props) => {
     return <RLIcon name={defaultIconName} class={classes().handleIcon} aria-hidden="true" />;
   };
 
+  // Runtime position only: the theme's orientation variants decide which axis it moves on.
   const clipStyle = () => ({
-    "clip-path": isHorizontal()
+    "--rl-compare-clip": isHorizontal()
       ? `inset(0 calc(100% - ${clampedValue()}%) 0 0)`
       : `inset(0 0 calc(100% - ${clampedValue()}%) 0)`,
   });
 
-  const dividerStyle = () =>
-    isHorizontal() ? { left: `${clampedValue()}%` } : { top: `${clampedValue()}%` };
-
-  const handleStyle = () =>
-    isHorizontal()
-      ? { left: `${clampedValue()}%`, top: "50%" }
-      : { left: "50%", top: `${clampedValue()}%` };
+  const positionStyle = () => ({ "--rl-compare-pos": `${clampedValue()}%` });
 
   return (
     <Tag
@@ -332,7 +327,7 @@ export const RLCompare: Component<RLCompareProps> = (props) => {
           <div
             class={classes().divider}
             data-slot="divider"
-            style={dividerStyle()}
+            style={positionStyle()}
             aria-hidden="true"
           />
         ) : null}
@@ -353,7 +348,7 @@ export const RLCompare: Component<RLCompareProps> = (props) => {
             aria-labelledby={props["aria-labelledby"]}
             aria-disabled={isDisabled() ? "true" : undefined}
             onKeyDown={handleKeyDown}
-            style={handleStyle()}
+            style={positionStyle()}
           >
             {renderHandle()}
           </div>

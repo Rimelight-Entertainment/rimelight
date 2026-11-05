@@ -104,10 +104,6 @@ export interface SplitterHandleConfig {
    */
   class?: ClassValue;
   /**
-   * Inline styles for this handle element.
-   */
-  style?: JSX.CSSProperties | string;
-  /**
    * Accessible label for this handle (`aria-label`).
    */
   "aria-label"?: string;
@@ -176,10 +172,6 @@ export interface SplitterPanelItem {
    * Additional CSS classes applied to this panel element.
    */
   class?: ClassValue;
-  /**
-   * Inline styles applied to this panel element.
-   */
-  style?: JSX.CSSProperties | string;
 }
 
 export type RLSplitterProps = InferThemeProps<typeof RLSplitterTheme> & {

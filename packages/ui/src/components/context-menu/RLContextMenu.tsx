@@ -740,8 +740,8 @@ export const RLContextMenu: Component<RLContextMenuProps> = (props) => {
         data-side={placement()}
         data-align={align()}
         style={{
-          left: `${coords().x}px`,
-          top: `${coords().y}px`,
+          "--rl-menu-x": `${coords().x}px`,
+          "--rl-menu-y": `${coords().y}px`,
         }}
       >
         <div

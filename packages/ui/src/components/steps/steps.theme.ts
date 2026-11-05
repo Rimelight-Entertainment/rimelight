@@ -5,6 +5,10 @@ export const RLStepsTheme = defineTheme("steps", {
   base: {
     root: "w-full",
   },
-  variants: {},
-  defaultVariants: {},
+  variants: {
+    color: "auto",
+  },
+  defaultVariants: {
+    color: "primary",
+  },
 });

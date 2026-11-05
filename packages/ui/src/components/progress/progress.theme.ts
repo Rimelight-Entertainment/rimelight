@@ -9,9 +9,11 @@ export const RLProgressTheme = defineTheme("progress", {
   variants: {
     color: "auto",
     size: {
+      xs: { root: "h-1" },
       sm: { root: "h-1.5" },
       md: { root: "h-3" },
       lg: { root: "h-5" },
+      xl: { root: "h-7" },
     },
   },
   defaultVariants: {

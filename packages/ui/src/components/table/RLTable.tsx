@@ -1277,8 +1277,7 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
 
       <div
         ref={(el) => (containerRef = el)}
-        class="overflow-x-auto w-full relative"
-        style={isVirtual() ? "max-height: 400px; overflow-y: auto;" : undefined}
+        class={`overflow-x-auto w-full relative${isVirtual() ? " max-h-[400px] overflow-y-auto" : ""}`}
       >
         <table ref={(el) => (tableElementRef = el)} class={classes().base} data-slot="base">
           <colgroup>
@@ -1288,21 +1287,27 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
                 const styles = () => {
                   const sizeVal = currentColumnSizing()[colId()] ?? col.size;
                   const list: string[] = [];
-                  if (typeof sizeVal === "number") list.push(`width: ${sizeVal}px;`);
-                  else if (sizeVal) list.push(`width: ${sizeVal};`);
+                  if (typeof sizeVal === "number") list.push(`--rl-col-width: ${sizeVal}px;`);
+                  else if (sizeVal) list.push(`--rl-col-width: ${sizeVal};`);
                   if (col.minSize) {
                     list.push(
-                      `min-width: ${typeof col.minSize === "number" ? `${col.minSize}px` : col.minSize};`,
+                      `--rl-col-min-width: ${typeof col.minSize === "number" ? `${col.minSize}px` : col.minSize};`,
                     );
                   }
                   if (col.maxSize) {
                     list.push(
-                      `max-width: ${typeof col.maxSize === "number" ? `${col.maxSize}px` : col.maxSize};`,
+                      `--rl-col-max-width: ${typeof col.maxSize === "number" ? `${col.maxSize}px` : col.maxSize};`,
                     );
                   }
                   return list.join(" ") || undefined;
                 };
-                return <col data-col-id={colId()} style={styles()} />;
+                return (
+                  <col
+                    data-col-id={colId()}
+                    class="[width:var(--rl-col-width,auto)] [min-width:var(--rl-col-min-width,auto)] [max-width:var(--rl-col-max-width,none)]"
+                    style={styles()}
+                  />
+                );
               }}
             </For>
           </colgroup>
@@ -1324,26 +1329,26 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
                       colId() in columnOffsets().left || colId() in columnOffsets().right;
                     const pinStyle = () => {
                       if (colId() in columnOffsets().left) {
-                        return `left: ${columnOffsets().left[colId()]}px;`;
+                        return `--rl-pin-left: ${columnOffsets().left[colId()]}px;`;
                       }
                       if (colId() in columnOffsets().right) {
-                        return `right: ${columnOffsets().right[colId()]}px;`;
+                        return `--rl-pin-right: ${columnOffsets().right[colId()]}px;`;
                       }
                       return "";
                     };
                     const sizeStyle = () => {
                       const sizeVal = currentColumnSizing()[colId()] ?? col.size;
                       const styles: string[] = [];
-                      if (typeof sizeVal === "number") styles.push(`width: ${sizeVal}px;`);
-                      else if (sizeVal) styles.push(`width: ${sizeVal};`);
+                      if (typeof sizeVal === "number") styles.push(`--rl-col-width: ${sizeVal}px;`);
+                      else if (sizeVal) styles.push(`--rl-col-width: ${sizeVal};`);
                       if (col.minSize) {
                         styles.push(
-                          `min-width: ${typeof col.minSize === "number" ? `${col.minSize}px` : col.minSize};`,
+                          `--rl-col-min-width: ${typeof col.minSize === "number" ? `${col.minSize}px` : col.minSize};`,
                         );
                       }
                       if (col.maxSize) {
                         styles.push(
-                          `max-width: ${typeof col.maxSize === "number" ? `${col.maxSize}px` : col.maxSize};`,
+                          `--rl-col-max-width: ${typeof col.maxSize === "number" ? `${col.maxSize}px` : col.maxSize};`,
                         );
                       }
                       return styles.join(" ");
@@ -1352,10 +1357,6 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
                       typeof col.meta?.class?.th === "function"
                         ? col.meta.class.th(col)
                         : col.meta?.class?.th || "";
-                    const metaThStyle = () =>
-                      typeof col.meta?.style?.th === "function"
-                        ? col.meta.style.th(col)
-                        : col.meta?.style?.th || "";
                     const canSort = () =>
                       col.enableSorting !== false &&
                       !!(col.accessorKey || col.id || col.accessorFn) &&
@@ -1397,7 +1398,7 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
                       <th
                         scope="col"
                         class={`${classes().th} ${pinned() ? "sticky bg-default z-10" : ""} ${metaThClass()}`}
-                        style={`${sizeStyle()} ${pinStyle()} ${metaThStyle()}`}
+                        style={`${sizeStyle()} ${pinStyle()}`}
                         data-col-id={colId()}
                         data-slot="th"
                         data-drop-position={dropPosition()}
@@ -1595,7 +1596,8 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
                   <tr>
                     <td
                       colspan={Math.max(1, visibleColumns().length)}
-                      style={`height: ${virtualizedView().padTop}px; padding: 0; border: 0;`}
+                      class="h-[var(--rl-pad-top,0px)] p-0 border-0"
+                      style={{ "--rl-pad-top": `${virtualizedView().padTop}px` }}
                     />
                   </tr>
                 </Show>
@@ -1608,8 +1610,8 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
                         <tr class={classes().trGroup} data-slot="tr-group" data-depth={depth}>
                           <td
                             colspan={Math.max(1, visibleColumns().length)}
-                            class={classes().tdGroup}
-                            style={{ "padding-left": `${depth * 1.5 + 1}rem` }}
+                            class={`${classes().tdGroup} pl-[var(--rl-depth-pad,1rem)]`}
+                            style={{ "--rl-depth-pad": `${depth * 1.5 + 1}rem` }}
                             data-slot="td-group"
                           >
                             <Show
@@ -1643,10 +1645,6 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
                       typeof props.meta?.class?.tr === "function"
                         ? props.meta.class.tr(row)
                         : props.meta?.class?.tr || "";
-                    const trMetaStyle = () =>
-                      typeof props.meta?.style?.tr === "function"
-                        ? props.meta.style.tr(row)
-                        : props.meta?.style?.tr || "";
 
                     const isRowDropTarget = () =>
                       dropTargetRow()?.id === row.id &&
@@ -1659,7 +1657,6 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
                       <>
                         <tr
                           class={`${classes().tr} ${trMetaClass()} ${props.rowClass?.(row) ?? ""}`}
-                          style={trMetaStyle() || undefined}
                           data-slot="tr"
                           data-row-id={row.id}
                           data-selected={row.getIsSelected() ? "true" : undefined}
@@ -1742,10 +1739,6 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
                                 typeof col.meta?.class?.td === "function"
                                   ? col.meta.class.td(row)
                                   : col.meta?.class?.td || "";
-                              const metaTdStyle = () =>
-                                typeof col.meta?.style?.td === "function"
-                                  ? col.meta.style.td(row)
-                                  : col.meta?.style?.td || "";
                               const colSpanVal = () =>
                                 typeof col.meta?.colspan?.td === "function"
                                   ? col.meta.colspan.td(row)
@@ -1759,16 +1752,16 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
                                 const sizeVal = currentColumnSizing()[colId()] ?? col.size;
                                 const styles: string[] = [];
                                 if (typeof sizeVal === "number")
-                                  styles.push(`width: ${sizeVal}px;`);
-                                else if (sizeVal) styles.push(`width: ${sizeVal};`);
+                                  styles.push(`--rl-col-width: ${sizeVal}px;`);
+                                else if (sizeVal) styles.push(`--rl-col-width: ${sizeVal};`);
                                 if (col.minSize) {
                                   styles.push(
-                                    `min-width: ${typeof col.minSize === "number" ? `${col.minSize}px` : col.minSize};`,
+                                    `--rl-col-min-width: ${typeof col.minSize === "number" ? `${col.minSize}px` : col.minSize};`,
                                   );
                                 }
                                 if (col.maxSize) {
                                   styles.push(
-                                    `max-width: ${typeof col.maxSize === "number" ? `${col.maxSize}px` : col.maxSize};`,
+                                    `--rl-col-max-width: ${typeof col.maxSize === "number" ? `${col.maxSize}px` : col.maxSize};`,
                                   );
                                 }
                                 return styles.join(" ");
@@ -1776,10 +1769,10 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
 
                               const pinStyle = () => {
                                 if (colId() in columnOffsets().left) {
-                                  return `left: ${columnOffsets().left[colId()]}px;`;
+                                  return `--rl-pin-left: ${columnOffsets().left[colId()]}px;`;
                                 }
                                 if (colId() in columnOffsets().right) {
-                                  return `right: ${columnOffsets().right[colId()]}px;`;
+                                  return `--rl-pin-right: ${columnOffsets().right[colId()]}px;`;
                                 }
                                 return "";
                               };
@@ -1798,7 +1791,7 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
                               return (
                                 <td
                                   class={`${classes().td} ${pinned() ? "sticky bg-default z-10" : ""} ${metaTdClass()}`}
-                                  style={`${sizeStyle()} ${pinStyle()} ${metaTdStyle()}`}
+                                  style={`${sizeStyle()} ${pinStyle()}`}
                                   colspan={colSpanVal()}
                                   rowspan={rowSpanVal()}
                                   data-slot="td"
@@ -1854,15 +1847,10 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
                                 typeof props.meta?.class?.tr === "function"
                                   ? props.meta.class.tr(subRow)
                                   : props.meta?.class?.tr || "";
-                              const subMetaStyle = () =>
-                                typeof props.meta?.style?.tr === "function"
-                                  ? props.meta.style.tr(subRow)
-                                  : props.meta?.style?.tr || "";
 
                               return (
                                 <tr
                                   class={`${classes().tr} ${subMetaClass()}`}
-                                  style={subMetaStyle() || undefined}
                                   data-slot="tr"
                                   data-row-id={subRow.id}
                                   data-depth={subRow.depth}
@@ -1899,10 +1887,6 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
                                         typeof col.meta?.class?.td === "function"
                                           ? col.meta.class.td(subRow)
                                           : col.meta?.class?.td || "";
-                                      const metaTdStyle = () =>
-                                        typeof col.meta?.style?.td === "function"
-                                          ? col.meta.style.td(subRow)
-                                          : col.meta?.style?.td || "";
                                       const colSpanVal = () =>
                                         typeof col.meta?.colspan?.td === "function"
                                           ? col.meta.colspan.td(subRow)
@@ -1916,16 +1900,17 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
                                         const sizeVal = currentColumnSizing()[colId()] ?? col.size;
                                         const styles: string[] = [];
                                         if (typeof sizeVal === "number")
-                                          styles.push(`width: ${sizeVal}px;`);
-                                        else if (sizeVal) styles.push(`width: ${sizeVal};`);
+                                          styles.push(`--rl-col-width: ${sizeVal}px;`);
+                                        else if (sizeVal)
+                                          styles.push(`--rl-col-width: ${sizeVal};`);
                                         if (col.minSize) {
                                           styles.push(
-                                            `min-width: ${typeof col.minSize === "number" ? `${col.minSize}px` : col.minSize};`,
+                                            `--rl-col-min-width: ${typeof col.minSize === "number" ? `${col.minSize}px` : col.minSize};`,
                                           );
                                         }
                                         if (col.maxSize) {
                                           styles.push(
-                                            `max-width: ${typeof col.maxSize === "number" ? `${col.maxSize}px` : col.maxSize};`,
+                                            `--rl-col-max-width: ${typeof col.maxSize === "number" ? `${col.maxSize}px` : col.maxSize};`,
                                           );
                                         }
                                         return styles.join(" ");
@@ -1933,10 +1918,10 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
 
                                       const pinStyle = () => {
                                         if (colId() in columnOffsets().left) {
-                                          return `left: ${columnOffsets().left[colId()]}px;`;
+                                          return `--rl-pin-left: ${columnOffsets().left[colId()]}px;`;
                                         }
                                         if (colId() in columnOffsets().right) {
-                                          return `right: ${columnOffsets().right[colId()]}px;`;
+                                          return `--rl-pin-right: ${columnOffsets().right[colId()]}px;`;
                                         }
                                         return "";
                                       };
@@ -1955,7 +1940,7 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
                                       return (
                                         <td
                                           class={`${classes().td} ${pinned() ? "sticky bg-default z-10" : ""} ${metaTdClass()}`}
-                                          style={`${sizeStyle()} ${pinStyle()} ${metaTdStyle()}`}
+                                          style={`${sizeStyle()} ${pinStyle()}`}
                                           colspan={colSpanVal()}
                                           rowspan={rowSpanVal()}
                                           data-slot="td"
@@ -2005,7 +1990,8 @@ export const RLTable = <T = unknown,>(props: RLTableProps<T>): JSX.Element => {
                   <tr>
                     <td
                       colspan={Math.max(1, visibleColumns().length)}
-                      style={`height: ${virtualizedView().padBottom}px; padding: 0; border: 0;`}
+                      class="h-[var(--rl-pad-bottom,0px)] p-0 border-0"
+                      style={{ "--rl-pad-bottom": `${virtualizedView().padBottom}px` }}
                     />
                   </tr>
                 </Show>

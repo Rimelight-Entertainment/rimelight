@@ -300,7 +300,7 @@ export const RLColorSlider: Component<RLColorSliderProps> = (props) => {
         ref={(el) => (trackRef = el)}
         class={classes().track}
         data-slot="track"
-        style={{ background: trackGradient() }}
+        style={{ "--rl-slider-track": trackGradient() }}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
@@ -315,16 +315,14 @@ export const RLColorSlider: Component<RLColorSliderProps> = (props) => {
           style={
             orientation() === "horizontal"
               ? {
-                  left: `${thumbPercent()}%`,
-                  top: "50%",
-                  transform: "translate(-50%, -50%)",
-                  "background-color": currentHex(),
+                  "--rl-thumb-x": `${thumbPercent()}%`,
+                  "--rl-thumb-y": "50%",
+                  "--rl-thumb-bg": currentHex(),
                 }
               : {
-                  left: "50%",
-                  top: `${100 - thumbPercent()}%`,
-                  transform: "translate(-50%, -50%)",
-                  "background-color": currentHex(),
+                  "--rl-thumb-x": "50%",
+                  "--rl-thumb-y": `${100 - thumbPercent()}%`,
+                  "--rl-thumb-bg": currentHex(),
                 }
           }
         />

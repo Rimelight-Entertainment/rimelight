@@ -26,16 +26,12 @@ export const RLScrollToTop: Component<RLScrollToTopProps> = (props) => {
   const progressWidth = () => props.progressWidth ?? 6;
   const gaugeBorderWidth = () => progressWidth() * 0.5;
 
-  const progressStyle = () => ({
-    background: `conic-gradient(from 0deg, var(--rl-${color()}-500) 0deg, var(--rl-${color()}-500) ${scrollPercentage() * 3.6}deg, transparent ${scrollPercentage() * 3.6}deg)`,
-    "-webkit-mask": `radial-gradient(circle closest-side, transparent calc(100% - ${gaugeBorderWidth()}px), #000 calc(100% - ${gaugeBorderWidth()}px))`,
-    mask: `radial-gradient(circle closest-side, transparent calc(100% - ${gaugeBorderWidth()}px), #000 calc(100% - ${gaugeBorderWidth()}px))`,
-  });
-
-  const trackStyle = () => ({
-    "border-width": `${gaugeBorderWidth()}px`,
-    "border-color": `var(--rl-${color()}-900)`,
-    "background-color": "#000",
+  // Runtime gauge values only; the ring styling itself lives in the theme's track/progress slots.
+  const gaugeVars = () => ({
+    "--rl-stt-border": `${gaugeBorderWidth()}px`,
+    "--rl-stt-track": `var(--rl-${color()}-900)`,
+    "--rl-stt-gauge": `conic-gradient(from 0deg, var(--rl-${color()}-500) 0deg, var(--rl-${color()}-500) ${scrollPercentage() * 3.6}deg, transparent ${scrollPercentage() * 3.6}deg)`,
+    "--rl-stt-mask": `radial-gradient(circle closest-side, transparent calc(100% - ${gaugeBorderWidth()}px), #000 calc(100% - ${gaugeBorderWidth()}px))`,
   });
 
   return (
@@ -54,15 +50,9 @@ export const RLScrollToTop: Component<RLScrollToTopProps> = (props) => {
         data-scroll-to-top-button
         onClick={scrollToTop}
       >
-        <div class={`relative size-full ${classes().progressBase}`}>
-          <div class="absolute inset-0 rounded-full border-solid" style={trackStyle()} />
-          {showProgress() ? (
-            <div
-              class="absolute inset-0 rounded-full"
-              data-gauge-progress
-              style={progressStyle()}
-            />
-          ) : null}
+        <div class={`relative size-full ${classes().progressBase}`} style={gaugeVars()}>
+          <div class={classes().track} />
+          {showProgress() ? <div class={classes().progress} data-gauge-progress /> : null}
           <div class={classes().iconContainer}>
             <RLIcon name="arrow-up" class={classes().icon} />
           </div>

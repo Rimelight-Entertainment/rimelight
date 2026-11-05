@@ -3,7 +3,7 @@ import { RLChartTheme } from "./chart.theme";
 import { createMemo, For, Show, type Component } from "solid-js";
 import { uiT } from "../../locale";
 
-const OMIT_KEYS = ["type", "data", "title", "height"] as const;
+const OMIT_KEYS = ["type", "data", "title", "height", "style"] as const;
 
 const palette = [
   "hsl(221 83% 53%)",
@@ -35,7 +35,7 @@ const describeArc = (cx: number, cy: number, r: number, start: number, end: numb
 };
 
 export const RLChart: Component<RLChartProps> = (props) => {
-  const { Tag, classes, rest, id, children, theme } = RLChartTheme.setup(props, {
+  const { Tag, classes, rest, children, theme } = RLChartTheme.setup(props, {
     omit: OMIT_KEYS,
     idPrefix: "rl-chart",
   });
@@ -99,14 +99,13 @@ export const RLChart: Component<RLChartProps> = (props) => {
 
   return (
     <>
-      <style>{`
-  .${id()} { min-height: ${height()}px; }
-  .${id()} [data-slot="container"] { height: ${height() - 60}px; gap: 6px; align-items: flex-end; }
-  .${id()} .rl-chart-line-wrap { height: ${height() - 60}px; }
-  .${id()} .rl-chart-pie-wrap { height: ${height() - 60}px; }
-`}</style>
-
-      <Tag data-slot="root" data-theme={theme()} class={`${classes().root}  ${id()}`} {...rest}>
+      <Tag
+        data-slot="root"
+        data-theme={theme()}
+        class={classes().root}
+        style={{ "--rl-chart-height": `${height()}px` }}
+        {...rest}
+      >
         <Show when={props.title}>
           {(t) => (
             <div class={classes().title} data-slot="title">
@@ -153,7 +152,7 @@ export const RLChart: Component<RLChartProps> = (props) => {
         </Show>
 
         <Show when={chartType() === "line" || chartType() === "area"}>
-          <div class="relative w-full rl-chart-line-wrap">
+          <div class="relative w-full rl-chart-line-wrap h-[calc(var(--rl-chart-height)-60px)]">
             <svg
               class={classes().svg}
               viewBox={`0 0 ${LINE_W} ${LINE_H}`}
@@ -216,7 +215,7 @@ export const RLChart: Component<RLChartProps> = (props) => {
         </Show>
 
         <Show when={chartType() === "pie" || chartType() === "donut"}>
-          <div class="flex items-center gap-6 justify-center rl-chart-pie-wrap">
+          <div class="flex items-center gap-6 justify-center rl-chart-pie-wrap h-[calc(var(--rl-chart-height)-60px)]">
             <svg
               viewBox="0 0 200 200"
               class="h-full w-auto max-h-48"

@@ -77,10 +77,9 @@ export const RLSlideover: Component<RLSlideoverProps> = (props) => {
         </Show>
 
         <div
-          class={classes().content}
+          class={`${classes().content}${isOpen() ? "" : " hidden!"}`}
           data-slot="content"
           data-state={isOpen() ? "open" : "closed"}
-          style={{ display: isOpen() ? undefined : "none" }}
         >
           <Show when={isDismissible()}>
             <button

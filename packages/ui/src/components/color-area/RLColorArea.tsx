@@ -136,11 +136,7 @@ export const RLColorArea: Component<RLColorAreaProps> = (props) => {
     } else {
       background = `hsl(${hueVal}, 100%, 50%)`;
     }
-    return {
-      background,
-      backgroundRepeat: "no-repeat",
-      backgroundSize: "100% 100%",
-    };
+    return { "--rl-area-bg": background };
   });
 
   const applyChannelValues = (newX: number, newY: number) => {
@@ -301,9 +297,9 @@ export const RLColorArea: Component<RLColorAreaProps> = (props) => {
           aria-label={uiT("color-area.thumb")}
           tabindex={0}
           style={{
-            left: `${pctX()}%`,
-            top: `${pctY()}%`,
-            "background-color": value(),
+            "--rl-thumb-x": `${pctX()}%`,
+            "--rl-thumb-y": `${pctY()}%`,
+            "--rl-thumb-bg": value(),
           }}
           onKeyDown={handleKeyDown}
         />

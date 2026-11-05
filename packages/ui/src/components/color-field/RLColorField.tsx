@@ -164,11 +164,7 @@ export const RLColorField: Component<RLColorFieldProps> = (props) => {
       data-readonly={props.readonly ? "true" : "false"}
       {...rest}
     >
-      <div
-        class={classes().swatch}
-        data-slot="swatch"
-        style={{ "background-color": currentHex() }}
-      />
+      <div class={classes().swatch} data-slot="swatch" style={{ "--rl-swatch": currentHex() }} />
       <input
         type="text"
         class={classes().input}
