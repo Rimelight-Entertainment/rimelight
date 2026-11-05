@@ -71,6 +71,59 @@ export interface MediaListData {
   nextCursor: string | null;
 }
 
+interface MediaUploadStart {
+  uploadId: string;
+  key: string;
+  id: string;
+  partSize: number;
+  partCount: number;
+}
+
+interface MediaUploadPart {
+  partNumber: number;
+  etag: string;
+}
+
+interface MediaPartResponse {
+  success: boolean;
+  data?: { part: MediaUploadPart };
+  error?: string;
+}
+
+const MEDIA_UPLOAD_CONCURRENCY = 3;
+const MEDIA_PART_ATTEMPTS = 3;
+const MEDIA_PART_TIMEOUT_MS = 10 * 60 * 1000;
+
+/** PUTs one part as the raw body. XHR (not fetch) so byte-level upload progress is reported. */
+function putPart(
+  url: string,
+  blob: Blob,
+  onBytes: (bytes: number) => void,
+): Promise<MediaUploadPart> {
+  const { promise, resolve, reject } = Promise.withResolvers<MediaUploadPart>();
+  const xhr = new XMLHttpRequest();
+  xhr.open("PUT", url);
+  xhr.timeout = MEDIA_PART_TIMEOUT_MS;
+  xhr.upload.onprogress = (event) => {
+    if (event.lengthComputable) onBytes(event.loaded);
+  };
+  xhr.onload = () => {
+    let data: MediaPartResponse | null = null;
+    try {
+      data = JSON.parse(xhr.responseText) as MediaPartResponse;
+    } catch {
+      // Non-JSON body (e.g. a proxy error page); the status code is reported instead.
+    }
+    if (xhr.status >= 200 && xhr.status < 300 && data?.success && data.data)
+      resolve(data.data.part);
+    else reject(new ApiError(xhr.status, data?.error ?? `Part upload failed (HTTP ${xhr.status})`));
+  };
+  xhr.onerror = () => reject(new ApiError(0, "Network error while uploading"));
+  xhr.ontimeout = () => reject(new ApiError(0, "Upload timed out"));
+  xhr.send(blob);
+  return promise;
+}
+
 export function createApi(base = "/api/cms") {
   const call = async <T>(method: string, path: string, body?: unknown): Promise<T> => {
     const res = await fetch(`${base}${path}`, {
@@ -100,6 +153,79 @@ export function createApi(base = "/api/cms") {
       }
     const str = s.toString();
     return str ? `?${str}` : "";
+  };
+
+  /**
+   * Uploads through the chunked media routes: the file goes out in `partSize` pieces, each request
+   * under the Cloudflare body limit. `onProgress` receives the fraction of bytes sent (0–1).
+   */
+  const multipartUpload = async <T>(
+    file: File,
+    start: { replaceId?: string },
+    finish: Record<string, unknown>,
+    onProgress?: (fraction: number) => void,
+  ): Promise<T> => {
+    if (file.size === 0) throw new ApiError(400, `${file.name} is empty`);
+    const started = await call<{ success: boolean; data: MediaUploadStart }>(
+      "POST",
+      "/media/uploads",
+      { filename: file.name, mimeType: file.type, size: file.size, ...start },
+    );
+    const { uploadId, key, id, partSize, partCount } = started.data;
+    const sent = Array.from({ length: partCount }, () => 0);
+    const reportProgress = () =>
+      onProgress?.(sent.reduce((total, bytes) => total + bytes, 0) / file.size);
+    const parts: MediaUploadPart[] = [];
+    let nextPart = 0;
+    const worker = async () => {
+      while (nextPart < partCount) {
+        const index = nextPart;
+        nextPart += 1;
+        const blob = file.slice(index * partSize, (index + 1) * partSize);
+        const url = `${base}/media/uploads/${uploadId}/parts/${index + 1}?key=${encodeURIComponent(key)}`;
+        parts[index] = await sendPartWithRetry(url, blob, (bytes) => {
+          sent[index] = bytes;
+          reportProgress();
+        });
+        sent[index] = blob.size;
+        reportProgress();
+      }
+    };
+    try {
+      await Promise.all(
+        Array.from({ length: Math.min(MEDIA_UPLOAD_CONCURRENCY, partCount) }, worker),
+      );
+      return await call<T>("POST", `/media/uploads/${uploadId}/complete`, {
+        ...finish,
+        key,
+        id,
+        size: file.size,
+        mimeType: file.type,
+        filename: file.name,
+        replace: start.replaceId !== undefined,
+        parts,
+      });
+    } catch (err) {
+      // Discard the stored parts so an abandoned upload doesn't leave data behind in R2.
+      void fetch(`${base}/media/uploads/${uploadId}?key=${encodeURIComponent(key)}`, {
+        method: "DELETE",
+        credentials: "same-origin",
+      }).catch(() => {});
+      throw err;
+    }
+  };
+  const sendPartWithRetry = async (url: string, blob: Blob, onBytes: (bytes: number) => void) => {
+    for (let attempt = 1; ; attempt += 1) {
+      try {
+        return await putPart(url, blob, onBytes);
+      } catch (err) {
+        // Network errors and 5xx are retried; 4xx (rejected by the server) fail immediately.
+        const retryable = !(err instanceof ApiError) || err.status === 0 || err.status >= 500;
+        if (!retryable || attempt >= MEDIA_PART_ATTEMPTS) throw err;
+        onBytes(0);
+        await new Promise((resolve) => setTimeout(resolve, 500 * 2 ** attempt));
+      }
+    }
   };
 
   return {
@@ -276,36 +402,34 @@ export function createApi(base = "/api/cms") {
           width?: number;
           height?: number;
         } = {},
+        onProgress?: (fraction: number) => void,
       ) => {
-        const form = new FormData();
-        form.set("file", file);
-        if (opts.folderId) form.set("folderId", opts.folderId);
-        if (opts.alt) form.set("alt", JSON.stringify(opts.alt));
-        if (opts.width) form.set("width", String(opts.width));
-        if (opts.height) form.set("height", String(opts.height));
-        const res = await fetch(`${base}/media`, {
-          method: "POST",
-          body: form,
-          credentials: "same-origin",
-        });
-        const data = (await res.json()) as any;
-        if (!res.ok || !data.success) throw new ApiError(res.status, data.error ?? "Upload failed");
-        return data.data.file as MediaAssetRecord;
+        const res = await multipartUpload<{ success: boolean; data: { file: MediaAssetRecord } }>(
+          file,
+          {},
+          {
+            folderId: opts.folderId ?? null,
+            alt: opts.alt,
+            width: opts.width,
+            height: opts.height,
+          },
+          onProgress,
+        );
+        return res.data.file;
       },
-      replace: async (id: string, file: File, opts: { width?: number; height?: number } = {}) => {
-        const form = new FormData();
-        form.set("file", file);
-        if (opts.width) form.set("width", String(opts.width));
-        if (opts.height) form.set("height", String(opts.height));
-        const res = await fetch(`${base}/media/${id}/replace`, {
-          method: "POST",
-          body: form,
-          credentials: "same-origin",
-        });
-        const data = (await res.json()) as any;
-        if (!res.ok || !data.success)
-          throw new ApiError(res.status, data.error ?? "Replace failed");
-        return data.data.file as MediaAssetRecord;
+      replace: async (
+        id: string,
+        file: File,
+        opts: { width?: number; height?: number } = {},
+        onProgress?: (fraction: number) => void,
+      ) => {
+        const res = await multipartUpload<{ success: boolean; data: { file: MediaAssetRecord } }>(
+          file,
+          { replaceId: id },
+          { width: opts.width, height: opts.height },
+          onProgress,
+        );
+        return res.data.file;
       },
       update: (id: string, patch: MediaAssetPatch) =>
         call<{ success: boolean; data: { file: MediaAssetRecord } }>(

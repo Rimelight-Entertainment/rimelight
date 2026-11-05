@@ -104,23 +104,6 @@ const extOf = (name: string) => {
   return dot > 0 && dot > name.lastIndexOf("/") ? name.slice(dot).toLowerCase() : "";
 };
 
-/** Parses an optional JSON-encoded localized object from a form field. */
-function parseLocalized(value: FormDataEntryValue | null): Record<string, string> | null {
-  if (typeof value !== "string" || !value.trim()) return null;
-  try {
-    const parsed = JSON.parse(value);
-    return parsed && typeof parsed === "object" ? (parsed as Record<string, string>) : null;
-  } catch {
-    return null;
-  }
-}
-
-const numberOrNull = (v: FormDataEntryValue | null) => {
-  if (typeof v !== "string" || v.trim() === "") return null;
-  const n = Number(v);
-  return Number.isFinite(n) ? n : null;
-};
-
 /** GET /media — folder contents (or every match when searching), plus the folder's subfolders. */
 export async function handleMediaList(
   request: Request,
@@ -213,47 +196,216 @@ export async function handleMediaFolderDelete(
   });
 }
 
+/** Largest chunk per request (bytes). Stays under the Cloudflare request body limit. */
+export const MEDIA_PART_SIZE: number = 50 * 1024 * 1024;
+/** R2's hard cap on parts per multipart upload. */
+const MEDIA_MAX_PARTS = 10_000;
+const MIME_FALLBACK = "application/octet-stream";
+
+const isPositiveInteger = (v: unknown): v is number =>
+  typeof v === "number" && Number.isInteger(v) && v > 0;
+const partCountFor = (size: number) => Math.ceil(size / MEDIA_PART_SIZE);
+/** Keys written here must live under the configured prefix, never the bucket root. */
+const keyUnderPrefix = (key: string, base: string) =>
+  key.startsWith(base) && key.length > base.length;
+
+interface UploadCompleteBody {
+  key?: unknown;
+  id?: unknown;
+  size?: unknown;
+  mimeType?: unknown;
+  replace?: unknown;
+  filename?: unknown;
+  folderId?: unknown;
+  alt?: unknown;
+  caption?: unknown;
+  width?: unknown;
+  height?: unknown;
+  parts?: { partNumber?: unknown; etag?: unknown }[];
+}
+
 /**
- * POST /media — upload into a folder. Form fields: `file`, `folderId`, `alt` (JSON localized),
- * `caption` (JSON localized), `width`, `height`.
+ * POST /media/uploads — starts a chunked upload of a new file, or of a replacement when `replaceId`
+ * is given. Body: `{ filename, mimeType, size, replaceId? }`. Returns the R2 `uploadId`, the object
+ * `key`, the asset `id`, and the part plan (`partSize`, `partCount`). Parts go next, then complete.
  */
-export async function handleMediaUpload(
+export async function handleMediaUploadStart(
   request: Request,
   ctx: MediaRouteContext = {},
 ): Promise<Response> {
-  return withMedia(request, ctx, "Failed to upload file", async ({ cms, bucket, base }) => {
-    if (!(request.headers.get("content-type") ?? "").includes("multipart/form-data")) {
-      return json({ success: false, error: "Expected multipart/form-data content type." }, 400);
-    }
-    const form = await request.formData();
-    const file = form.get("file");
-    if (!file || !(file instanceof File)) {
+  return withMedia(request, ctx, "Failed to start upload", async ({ cms, bucket, base }) => {
+    const body = (await request.json().catch(() => ({}))) as {
+      filename?: unknown;
+      mimeType?: unknown;
+      size?: unknown;
+      replaceId?: unknown;
+    };
+    const size = body.size;
+    if (!isPositiveInteger(size))
       return json(
-        { success: false, error: "No file found in form data payload (field name 'file')." },
+        { success: false, error: "Upload size must be a positive number of bytes." },
+        400,
+      );
+    if (partCountFor(size) > MEDIA_MAX_PARTS)
+      return json({ success: false, error: "File is too large to upload." }, 413);
+    const mimeType =
+      typeof body.mimeType === "string" && body.mimeType ? body.mimeType : MIME_FALLBACK;
+    let id: string;
+    let key: string;
+    if (typeof body.replaceId === "string" && body.replaceId) {
+      const current = await cms.media.getAsset(body.replaceId);
+      id = current.id;
+      // A replacement reuses the object key, so every URL that points at the asset keeps working.
+      key = current.storageKey;
+    } else {
+      const filename = typeof body.filename === "string" ? body.filename : "";
+      id = crypto.randomUUID();
+      // Immutable key: the id plus the original extension. Renames and moves never change it.
+      key = `${base}${id}${extOf(filename)}`;
+    }
+    const upload = await bucket.createMultipartUpload(key, {
+      httpMetadata: { contentType: mimeType },
+    });
+    return json(
+      {
+        success: true,
+        data: {
+          uploadId: upload.uploadId,
+          key,
+          id,
+          partSize: MEDIA_PART_SIZE,
+          partCount: partCountFor(size),
+        },
+      },
+      201,
+    );
+  });
+}
+
+/**
+ * PUT /media/uploads/:uploadId/parts/:partNumber?key=… — stores one chunk as the raw request body
+ * (at most `MEDIA_PART_SIZE` bytes). The body streams into R2 without being buffered in memory.
+ * Returns `{ part: { partNumber, etag } }`, which the complete step needs.
+ */
+export async function handleMediaUploadPart(
+  request: Request,
+  uploadId: string,
+  partNumberParam: string,
+  ctx: MediaRouteContext = {},
+): Promise<Response> {
+  return withMedia(request, ctx, "Failed to upload part", async ({ bucket, url, base }) => {
+    const partNumber = Number(partNumberParam);
+    const key = url.searchParams.get("key") ?? "";
+    if (!Number.isInteger(partNumber) || partNumber < 1 || partNumber > MEDIA_MAX_PARTS)
+      return json({ success: false, error: "Part number must be between 1 and 10000." }, 400);
+    if (!keyUnderPrefix(key, base))
+      return json({ success: false, error: "Invalid upload key." }, 400);
+    if (Number(request.headers.get("content-length")) > MEDIA_PART_SIZE)
+      return json({ success: false, error: "Part is larger than the part size." }, 413);
+    if (!request.body) return json({ success: false, error: "Missing part body." }, 400);
+    const part = await bucket
+      .resumeMultipartUpload(key, uploadId)
+      .uploadPart(partNumber, request.body);
+    return json({
+      success: true,
+      data: { part: { partNumber: part.partNumber, etag: part.etag } },
+    });
+  });
+}
+
+/**
+ * POST /media/uploads/:uploadId/complete — assembles the stored parts and records the asset.
+ * Body: `{ key, id, size, mimeType, parts, replace?, filename?, folderId?, alt?, caption?,
+ * width?, height? }`. Deletes the object and rejects when the stored size differs from `size`.
+ */
+export async function handleMediaUploadComplete(
+  request: Request,
+  uploadId: string,
+  ctx: MediaRouteContext = {},
+): Promise<Response> {
+  return withMedia(request, ctx, "Failed to finish upload", async ({ cms, bucket, base, url }) => {
+    const body = (await request.json().catch(() => ({}))) as UploadCompleteBody;
+    const key = typeof body.key === "string" ? body.key : "";
+    const id = typeof body.id === "string" ? body.id : "";
+    const size = body.size;
+    const parts = Array.isArray(body.parts) ? body.parts : [];
+    if (!keyUnderPrefix(key, base) || !id || !isPositiveInteger(size))
+      return json({ success: false, error: "Invalid upload." }, 400);
+    const expectedParts = partCountFor(size);
+    const partsComplete =
+      parts.length === expectedParts &&
+      parts.every(
+        (p, i) => Number(p.partNumber) === i + 1 && typeof p.etag === "string" && p.etag !== "",
+      );
+    if (!partsComplete)
+      return json(
+        { success: false, error: `Upload is incomplete: expected ${expectedParts} parts.` },
+        400,
+      );
+
+    // Check the key belongs to this asset before any object is finalized or recorded.
+    const replace = body.replace === true;
+    const filename = typeof body.filename === "string" ? body.filename : "";
+    if (replace) {
+      const current = await cms.media.getAsset(id);
+      if (current.storageKey !== key)
+        return json({ success: false, error: "Upload key does not match this file." }, 400);
+    } else if (key !== `${base}${id}${extOf(filename)}`) {
+      return json({ success: false, error: "Upload key does not match this file." }, 400);
+    }
+
+    const object = await bucket
+      .resumeMultipartUpload(key, uploadId)
+      .complete(parts.map((p) => ({ partNumber: Number(p.partNumber), etag: String(p.etag) })));
+    if (object.size !== size) {
+      await bucket.delete(key);
+      return json(
+        { success: false, error: "The stored file size does not match the upload. Try again." },
         400,
       );
     }
-    const id = crypto.randomUUID();
-    // Immutable key: the id plus the original extension. Renames and moves never change it.
-    const storageKey = `${base}${id}${extOf(file.name)}`;
-    await bucket.put(storageKey, file.stream(), {
-      httpMetadata: { contentType: file.type || "application/octet-stream" },
-    });
-    const folderId =
-      typeof form.get("folderId") === "string" ? (form.get("folderId") as string) || null : null;
+
+    const mimeType =
+      typeof body.mimeType === "string" && body.mimeType ? body.mimeType : MIME_FALLBACK;
+    const width = typeof body.width === "number" ? body.width : null;
+    const height = typeof body.height === "number" ? body.height : null;
+    if (replace) {
+      const asset = await cms.media.updateAsset(id, { mimeType, size, width, height });
+      const served = serializeAsset(asset, ctx);
+      const purged = await purgeCdn(ctx, [served.url, served.previewUrl], url.origin);
+      return json({ success: true, data: { file: served, purged } });
+    }
     const asset = await cms.media.createAsset({
       id,
-      storageKey,
-      filename: file.name || storageKey,
-      mimeType: file.type || "application/octet-stream",
-      size: file.size,
-      width: numberOrNull(form.get("width")),
-      height: numberOrNull(form.get("height")),
-      alt: parseLocalized(form.get("alt")),
-      caption: parseLocalized(form.get("caption")),
-      folderId,
+      storageKey: key,
+      filename: filename || key,
+      mimeType,
+      size,
+      width,
+      height,
+      alt: body.alt && typeof body.alt === "object" ? (body.alt as Record<string, string>) : null,
+      caption:
+        body.caption && typeof body.caption === "object"
+          ? (body.caption as Record<string, string>)
+          : null,
+      folderId: typeof body.folderId === "string" && body.folderId ? body.folderId : null,
     });
     return json({ success: true, data: { file: serializeAsset(asset, ctx) } }, 201);
+  });
+}
+
+/** DELETE /media/uploads/:uploadId?key=… — cancels a chunked upload and discards its parts. */
+export async function handleMediaUploadAbort(
+  request: Request,
+  uploadId: string,
+  ctx: MediaRouteContext = {},
+): Promise<Response> {
+  return withMedia(request, ctx, "Failed to cancel upload", async ({ bucket, url, base }) => {
+    const key = url.searchParams.get("key") ?? "";
+    if (!keyUnderPrefix(key, base))
+      return json({ success: false, error: "Invalid upload key." }, 400);
+    await bucket.resumeMultipartUpload(key, uploadId).abort();
+    return json({ success: true });
   });
 }
 
@@ -329,46 +481,6 @@ export async function purgeCdn(
   } catch (err) {
     return { workerCache, zone: false, error: (err as Error).message };
   }
-}
-
-/**
- * POST /media/:id/replace — overwrites the stored object with a new upload. The asset keeps its id,
- * key, URL and metadata; only the bytes and the type/size change.
- */
-export async function handleMediaReplace(
-  request: Request,
-  id: string,
-  ctx: MediaRouteContext = {},
-): Promise<Response> {
-  return withMedia(request, ctx, "Failed to replace file", async ({ cms, bucket }) => {
-    const form = await request.formData();
-    const file = form.get("file");
-    if (!file || !(file instanceof File)) {
-      return json(
-        { success: false, error: "No file found in form data payload (field name 'file')." },
-        400,
-      );
-    }
-    const current = await cms.media.getAsset(id);
-    // Overwrite the same object: the asset keeps its key, so every URL that points at it now
-    // serves the new file.
-    await bucket.put(current.storageKey, file.stream(), {
-      httpMetadata: { contentType: file.type || "application/octet-stream" },
-    });
-    const asset = await cms.media.updateAsset(id, {
-      mimeType: file.type || "application/octet-stream",
-      size: file.size,
-      width: numberOrNull(form.get("width")),
-      height: numberOrNull(form.get("height")),
-    });
-    const served = serializeAsset(asset, ctx);
-    const purged = await purgeCdn(
-      ctx,
-      [served.url, served.previewUrl],
-      new URL(request.url).origin,
-    );
-    return json({ success: true, data: { file: served, purged } });
-  });
 }
 
 /** DELETE /media/:id — removes the stored object and its record. */
@@ -467,6 +579,7 @@ export function registerCmsMediaRoutes(
     get: (path: string, handler: (c: any) => Promise<Response>) => unknown;
     post: (path: string, handler: (c: any) => Promise<Response>) => unknown;
     patch: (path: string, handler: (c: any) => Promise<Response>) => unknown;
+    put: (path: string, handler: (c: any) => Promise<Response>) => unknown;
     delete: (path: string, handler: (c: any) => Promise<Response>) => unknown;
   },
   basePath: string,
@@ -479,7 +592,21 @@ export function registerCmsMediaRoutes(
     getBucket: ctx.getBucket ?? (async (name: string) => c.env?.[name] ?? null),
   });
   router.get(basePath, (c) => handleMediaList(c.req.raw, withEnv(c)));
-  router.post(basePath, (c) => handleMediaUpload(c.req.raw, withEnv(c)));
+  router.post(`${basePath}/uploads`, (c) => handleMediaUploadStart(c.req.raw, withEnv(c)));
+  router.put(`${basePath}/uploads/:uploadId/parts/:partNumber`, (c) =>
+    handleMediaUploadPart(
+      c.req.raw,
+      c.req.param("uploadId"),
+      c.req.param("partNumber"),
+      withEnv(c),
+    ),
+  );
+  router.post(`${basePath}/uploads/:uploadId/complete`, (c) =>
+    handleMediaUploadComplete(c.req.raw, c.req.param("uploadId"), withEnv(c)),
+  );
+  router.delete(`${basePath}/uploads/:uploadId`, (c) =>
+    handleMediaUploadAbort(c.req.raw, c.req.param("uploadId"), withEnv(c)),
+  );
   router.get(`${basePath}/folders`, (c) => handleMediaFolders(c.req.raw, withEnv(c)));
   router.post(`${basePath}/folders`, (c) => handleMediaFolderCreate(c.req.raw, withEnv(c)));
   router.patch(`${basePath}/folders/:id`, (c) =>
@@ -491,9 +618,6 @@ export function registerCmsMediaRoutes(
   router.post(`${basePath}/sync`, (c) => handleMediaSync(c.req.raw, withEnv(c)));
   router.patch(`${basePath}/:id`, (c) =>
     handleMediaUpdate(c.req.raw, c.req.param("id"), withEnv(c)),
-  );
-  router.post(`${basePath}/:id/replace`, (c) =>
-    handleMediaReplace(c.req.raw, c.req.param("id"), withEnv(c)),
   );
   router.delete(`${basePath}/:id`, (c) =>
     handleMediaDelete(c.req.raw, c.req.param("id"), withEnv(c)),

@@ -344,10 +344,11 @@ const MediaManager: Component<{ onPick?: (asset: MediaAssetRecord) => void }> = 
       setUploadProgress(`${done + failed + 1} / ${files.length}`);
       try {
         const size = await readImageSize(file);
-        await api.media.upload(file, {
-          folderId: folderId(),
-          ...size,
-        });
+        await api.media.upload(file, { folderId: folderId(), ...size }, (fraction) =>
+          setUploadProgress(
+            `${done + failed + 1} / ${files.length} (${Math.floor(fraction * 100)}%)`,
+          ),
+        );
         done += 1;
       } catch (err) {
         failed += 1;

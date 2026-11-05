@@ -1,6 +1,9 @@
 export {
   handleMediaList,
-  handleMediaUpload,
+  handleMediaUploadStart,
+  handleMediaUploadPart,
+  handleMediaUploadComplete,
+  handleMediaUploadAbort,
   handleMediaDelete,
   handleMediaFile,
   registerCmsMediaRoutes,
