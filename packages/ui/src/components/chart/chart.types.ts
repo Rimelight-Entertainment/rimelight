@@ -30,4 +30,6 @@ export type RLChartProps = InferThemeProps<typeof RLChartTheme> & {
    * @default 280
    */
   height?: number;
+  /** The root element owns its styling; `style` is not accepted. */
+  style?: never;
 };

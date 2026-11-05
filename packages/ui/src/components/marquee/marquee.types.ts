@@ -29,4 +29,6 @@ export type RLMarqueeProps = Omit<
    * @default undefined
    */
   gap?: string | number;
+  /** The root element owns its styling; `style` is not accepted. */
+  style?: never;
 };

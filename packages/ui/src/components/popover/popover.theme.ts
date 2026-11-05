@@ -15,6 +15,7 @@ export const RLPopoverTheme = defineTheme("popover", {
       sm: { content: "p-2 whitespace-nowrap" },
       md: { content: "p-2.5 whitespace-nowrap" },
       lg: { content: "p-3 whitespace-nowrap" },
+      xl: { content: "p-3.5 whitespace-nowrap" },
     },
     placement: {
       top: { content: "bottom-full left-1/2 -translate-x-1/2 mb-2" },

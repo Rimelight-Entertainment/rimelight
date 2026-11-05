@@ -19,7 +19,8 @@ export const RLCarouselTheme = defineTheme("carousel", {
   base: {
     root: "relative focus:outline-none select-none group/carousel w-full",
     viewport: "overflow-hidden cursor-grab active:cursor-grabbing w-full",
-    container: "flex items-start backface-hidden",
+    container:
+      "flex items-start backface-hidden [transform:var(--rl-carousel-transform,none)] [transition:var(--rl-carousel-transition,none)]",
     item: "min-w-0 shrink-0 basis-full relative",
     slide: "min-w-0 shrink-0 basis-full relative",
     controls: "",

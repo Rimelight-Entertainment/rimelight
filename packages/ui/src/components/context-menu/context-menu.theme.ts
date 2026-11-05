@@ -50,7 +50,7 @@ export const RLContextMenuTheme = defineTheme("context-menu", {
     trigger:
       "select-none outline-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
     overlay: "fixed inset-0 z-50 bg-transparent",
-    positioner: "fixed z-50 outline-none",
+    positioner: "fixed z-50 outline-none left-[var(--rl-menu-x,0px)] top-[var(--rl-menu-y,0px)]",
     content:
       "min-w-44 rounded-lg border border-default bg-elevated p-1 text-highlighted shadow-lg ring-1 ring-black/5 focus:outline-none flex flex-col gap-0.5 select-none",
     group: "flex flex-col gap-0.5",
@@ -72,6 +72,15 @@ export const RLContextMenuTheme = defineTheme("context-menu", {
   },
   variants: {
     size: {
+      xs: {
+        content: "min-w-32 p-1",
+        groupLabel: "px-1.5 py-1 text-[10px]",
+        item: "px-1.5 py-1 text-xs gap-1",
+        itemLeadingIcon: "size-3",
+        itemDescription: "text-[10px]",
+        itemIndicator: "size-3",
+        itemSubIndicator: "size-3",
+      },
       sm: {
         content: "min-w-36 p-1",
         groupLabel: "px-1.5 py-1 text-[11px]",
@@ -93,11 +102,20 @@ export const RLContextMenuTheme = defineTheme("context-menu", {
       lg: {
         content: "min-w-52 p-1.5",
         groupLabel: "px-2.5 py-1.5 text-xs",
-        item: "px-2.5 py-2 text-base gap-2.5",
-        itemLeadingIcon: "size-4.5",
+        item: "px-2.5 py-2 text-sm gap-2.5",
+        itemLeadingIcon: "size-4",
         itemDescription: "text-xs",
-        itemIndicator: "size-4.5",
-        itemSubIndicator: "size-4.5",
+        itemIndicator: "size-4",
+        itemSubIndicator: "size-4",
+      },
+      xl: {
+        content: "min-w-60 p-2",
+        groupLabel: "px-3 py-2 text-sm",
+        item: "px-3 py-2.5 text-base gap-3",
+        itemLeadingIcon: "size-5",
+        itemDescription: "text-sm",
+        itemIndicator: "size-5",
+        itemSubIndicator: "size-5",
       },
     },
     disabled: {

@@ -56,7 +56,7 @@ export const RLAvatarTheme = defineTheme("avatar", {
   ],
   defaultVariants: {
     size: "md",
-    color: "neutral",
+    color: "primary",
     badgePosition: "bottom-right",
   },
 });

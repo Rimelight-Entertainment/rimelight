@@ -173,6 +173,13 @@ export const RLAudioTheme = defineTheme("audio", {
     },
     color: "auto",
     size: {
+      xs: {
+        container: "p-2.5 gap-2",
+        artwork: "size-10",
+        title: "text-xs",
+        playButton: "size-7",
+        playIcon: "size-3.5",
+      },
       sm: {
         container: "p-3.5 gap-2.5",
         artwork: "size-12",
@@ -190,9 +197,16 @@ export const RLAudioTheme = defineTheme("audio", {
       lg: {
         container: "p-6 gap-4.5",
         artwork: "size-20",
-        title: "text-base",
+        title: "text-sm",
         playButton: "size-13",
         playIcon: "size-6",
+      },
+      xl: {
+        container: "p-7 gap-5",
+        artwork: "size-24",
+        title: "text-base",
+        playButton: "size-14",
+        playIcon: "size-7",
       },
     },
   },

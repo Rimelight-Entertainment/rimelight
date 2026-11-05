@@ -96,18 +96,18 @@ export const RLCalendarTheme = defineTheme("calendar", {
         cell: "text-sm",
       },
       lg: {
+        headingLabel: "text-sm",
+        headCell: "text-sm",
+        headCellWeek: "text-sm",
+        cellWeek: "text-sm",
+        cell: "text-sm",
+      },
+      xl: {
         headingLabel: "text-base",
         headCell: "text-base",
         headCellWeek: "text-base",
         cellWeek: "text-base",
         cell: "text-base",
-      },
-      xl: {
-        headingLabel: "text-lg",
-        headCell: "text-lg",
-        headCellWeek: "text-lg",
-        cellWeek: "text-lg",
-        cell: "text-lg",
       },
     },
     view: {

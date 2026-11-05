@@ -20,8 +20,10 @@ export const RLLayoutGridTheme = defineTheme("layout-grid", {
     container: "relative w-full h-full",
     columns:
       "mx-auto w-full max-w-[1440px] px-xs sm:px-md md:px-xl lg:px-xl gap-xs sm:gap-md md:gap-xl lg:gap-xl h-full box-border grid grid-cols-[repeat(var(--rl-grid-cols),1fr)]",
-    column: "grid-column h-full box-border",
-    outerColumn: "rl-outer-column absolute top-0 h-full box-border",
+    column:
+      "grid-column h-full box-border [border-inline:var(--rl-col-border)] [background-color:var(--rl-col-bg)]",
+    outerColumn:
+      "rl-outer-column absolute top-0 h-full box-border left-[var(--rl-col-left,0px)] w-[var(--rl-col-width,0px)] [border-inline:var(--rl-col-border)] [background-color:var(--rl-col-bg)]",
     indicator:
       "fixed bottom-5 right-5 bg-black/85 text-white px-3 py-1.5 rounded-md font-mono text-[11px] font-bold pointer-events-none border border-white/15 shadow-lg tracking-wider flex items-center gap-2",
     indicatorBreakpoint: "text-info",

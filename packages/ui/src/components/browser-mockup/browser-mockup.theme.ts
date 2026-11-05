@@ -74,28 +74,17 @@ export const RLBrowserMockupTheme = defineTheme("browser-mockup", {
         urlBar: "border-default/30 bg-elevated/20",
       },
     },
-    color: {
-      primary: {
-        urlPrefix: "text-primary",
-      },
-      secondary: {
-        urlPrefix: "text-secondary",
-      },
-      success: {
-        urlPrefix: "text-success",
-      },
-      info: {
-        urlPrefix: "text-info",
-      },
-      warning: {
-        urlPrefix: "text-warning",
-      },
-      error: {
-        urlPrefix: "text-error",
-      },
-      neutral: {},
-    },
+    color: "auto",
     size: {
+      xs: {
+        header: "px-2 py-1 gap-1.5",
+        dot: "w-2 h-2",
+        controls: "gap-1",
+        urlBar: "px-1.5 py-0.5 text-[10px]",
+        urlIcon: "w-2.5 h-2.5",
+        navButton: "w-4 h-4",
+        body: "p-2",
+      },
       sm: {
         header: "px-3 py-1.5 gap-2",
         dot: "w-2.5 h-2.5",
@@ -174,63 +163,17 @@ export const RLBrowserMockupTheme = defineTheme("browser-mockup", {
   compoundVariants: [
     {
       variant: ["outline", "subtle", "solid"],
-      color: "primary",
       class: {
-        root: "border-primary/40 focus-within:border-primary/60",
-        header: "border-primary/30",
-        urlBar: "border-primary/30 focus-within:border-primary",
-      },
-    },
-    {
-      variant: ["outline", "subtle", "solid"],
-      color: "secondary",
-      class: {
-        root: "border-secondary/40 focus-within:border-secondary/60",
-        header: "border-secondary/30",
-        urlBar: "border-secondary/30 focus-within:border-secondary",
-      },
-    },
-    {
-      variant: ["outline", "subtle", "solid"],
-      color: "success",
-      class: {
-        root: "border-success/40 focus-within:border-success/60",
-        header: "border-success/30",
-        urlBar: "border-success/30 focus-within:border-success",
-      },
-    },
-    {
-      variant: ["outline", "subtle", "solid"],
-      color: "info",
-      class: {
-        root: "border-info/40 focus-within:border-info/60",
-        header: "border-info/30",
-        urlBar: "border-info/30 focus-within:border-info",
-      },
-    },
-    {
-      variant: ["outline", "subtle", "solid"],
-      color: "warning",
-      class: {
-        root: "border-warning/40 focus-within:border-warning/60",
-        header: "border-warning/30",
-        urlBar: "border-warning/30 focus-within:border-warning",
-      },
-    },
-    {
-      variant: ["outline", "subtle", "solid"],
-      color: "error",
-      class: {
-        root: "border-error/40 focus-within:border-error/60",
-        header: "border-error/30",
-        urlBar: "border-error/30 focus-within:border-error",
+        root: "border-[var(--rl-border)]/40 focus-within:border-[var(--rl-border)]/60",
+        header: "border-[var(--rl-border)]/30",
+        urlBar: "border-[var(--rl-border)]/30 focus-within:border-[var(--rl-border)]",
       },
     },
   ],
   defaultVariants: {
     variant: "outline",
     size: "md",
-    color: "neutral",
+    color: "primary",
     controlsVariant: "color",
     padded: true,
     shadow: true,

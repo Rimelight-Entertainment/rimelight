@@ -64,10 +64,10 @@ describe("RLCompare Component Test Suite", () => {
       );
 
       const beforeSlot = slotTag(html, "before");
-      expect(beforeSlot).toMatch(/clip-path:\s*inset\(0 calc\(100% - 50%\) 0 0\)/);
+      expect(beforeSlot).toMatch(/--rl-compare-clip:\s*inset\(0 calc\(100% - 50%\) 0 0\)/);
 
       const handleSlot = slotTag(html, "handle");
-      expect(handleSlot).toMatch(/left:\s*50%/);
+      expect(handleSlot).toMatch(/--rl-compare-pos:\s*50%/);
       expect(attr(handleSlot, "aria-valuenow")).toBe("50");
       expect(attr(handleSlot, "aria-valuetext")).toBe("50%");
     });
@@ -78,10 +78,10 @@ describe("RLCompare Component Test Suite", () => {
       );
 
       const beforeSlot = slotTag(html, "before");
-      expect(beforeSlot).toMatch(/clip-path:\s*inset\(0 calc\(100% - 75%\) 0 0\)/);
+      expect(beforeSlot).toMatch(/--rl-compare-clip:\s*inset\(0 calc\(100% - 75%\) 0 0\)/);
 
       const handleSlot = slotTag(html, "handle");
-      expect(handleSlot).toMatch(/left:\s*75%/);
+      expect(handleSlot).toMatch(/--rl-compare-pos:\s*75%/);
       expect(attr(handleSlot, "aria-valuenow")).toBe("75");
     });
 
@@ -131,12 +131,12 @@ describe("RLCompare Component Test Suite", () => {
       expect(attr(rootTag, "data-orientation")).toBe("vertical");
 
       const beforeSlot = slotTag(html, "before");
-      expect(beforeSlot).toMatch(/clip-path:\s*inset\(0 0 calc\(100% - 30%\) 0\)/);
+      expect(beforeSlot).toMatch(/--rl-compare-clip:\s*inset\(0 0 calc\(100% - 30%\) 0\)/);
 
       const handleTag = slotTag(html, "handle");
       expect(attr(handleTag, "aria-orientation")).toBe("vertical");
       expect(handleTag).toContain("cursor-ns-resize");
-      expect(handleTag).toMatch(/top:\s*30%/);
+      expect(handleTag).toMatch(/--rl-compare-pos:\s*30%/);
     });
   });
 

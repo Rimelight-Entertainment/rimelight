@@ -120,8 +120,14 @@ describe("RLAvatar Solid Component Suite", () => {
       expect(html).toContain("rl-color-brand-violet");
     });
 
-    it("applies neutral compound variant classes by default", () => {
+    it("applies the primary color by default", () => {
       const html = renderSolid(RLAvatar, { alt: "John Doe" });
+
+      expect(html).toContain("rl-color-primary");
+    });
+
+    it("applies neutral compound variant classes when color is neutral", () => {
+      const html = renderSolid(RLAvatar, { alt: "John Doe", color: "neutral" });
 
       expect(html).toContain("bg-elevated");
       expect(html).toContain("text-muted");

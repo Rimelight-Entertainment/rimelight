@@ -74,4 +74,6 @@ export type RLPageSectionProps = Omit<
   bodySlot?: JSX.Element;
   footerSlot?: JSX.Element;
   actionSlot?: JSX.Element;
+  /** The root element owns its styling; `style` is not accepted. */
+  style?: never;
 };

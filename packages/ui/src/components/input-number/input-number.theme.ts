@@ -14,9 +14,11 @@ export const RLInputNumberTheme = defineTheme("input-number", {
   },
   variants: {
     size: {
+      xs: {},
       sm: {},
       md: {},
       lg: {},
+      xl: {},
     },
   },
   defaultVariants: {

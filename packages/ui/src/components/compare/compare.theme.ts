@@ -17,7 +17,8 @@ export const RLCompareTheme = defineTheme("compare", {
     root: "relative select-none overflow-hidden touch-none group isolate",
     container: "relative w-full h-full overflow-hidden",
     after: "w-full h-full block select-none",
-    before: "absolute inset-0 w-full h-full block select-none pointer-events-none",
+    before:
+      "absolute inset-0 w-full h-full block select-none pointer-events-none [clip-path:var(--rl-compare-clip,inset(0_0_0_0))]",
     image: "w-full h-full object-cover select-none pointer-events-none block",
     beforeLabel:
       "absolute z-2 pointer-events-none transition-opacity font-medium tracking-wide inline-flex items-center justify-center select-none",
@@ -32,12 +33,12 @@ export const RLCompareTheme = defineTheme("compare", {
   variants: {
     orientation: {
       horizontal: {
-        divider: "top-0 bottom-0 -translate-x-1/2 w-0.5",
-        handle: "top-1/2 cursor-ew-resize active:cursor-ew-resize",
+        divider: "top-0 bottom-0 -translate-x-1/2 w-0.5 left-[var(--rl-compare-pos,50%)]",
+        handle: "top-1/2 left-[var(--rl-compare-pos,50%)] cursor-ew-resize active:cursor-ew-resize",
       },
       vertical: {
-        divider: "left-0 right-0 -translate-y-1/2 h-0.5",
-        handle: "left-1/2 cursor-ns-resize active:cursor-ns-resize",
+        divider: "left-0 right-0 -translate-y-1/2 h-0.5 top-[var(--rl-compare-pos,50%)]",
+        handle: "left-1/2 top-[var(--rl-compare-pos,50%)] cursor-ns-resize active:cursor-ns-resize",
       },
     },
     size: {
@@ -124,7 +125,7 @@ export const RLCompareTheme = defineTheme("compare", {
     orientation: "horizontal",
     size: "md",
     variant: "solid",
-    color: "auto",
+    color: "primary",
   },
 });
 

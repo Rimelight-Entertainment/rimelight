@@ -16,9 +16,11 @@ export const RLKbdTheme = defineTheme("kbd", {
       },
     },
     size: {
+      xs: { root: "h-3.5 min-w-[14px] text-[9px]" },
       sm: { root: "h-4 min-w-[16px] text-[10px]" },
       md: { root: "h-5 min-w-[20px] text-[11px]" },
       lg: { root: "h-6 min-w-[24px] text-[12px]" },
+      xl: { root: "h-7 min-w-[28px] text-[13px]" },
     },
   },
   compoundVariants: [
@@ -45,7 +47,7 @@ export const RLKbdTheme = defineTheme("kbd", {
   ],
   defaultVariants: {
     variant: "outline",
-    color: "neutral",
+    color: "primary",
     size: "md",
   },
 });

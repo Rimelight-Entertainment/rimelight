@@ -10,9 +10,11 @@ export const RLInputPinTheme = defineTheme("input-pin", {
   },
   variants: {
     size: {
+      xs: {},
       sm: {},
       md: {},
       lg: {},
+      xl: {},
     },
   },
   defaultVariants: {

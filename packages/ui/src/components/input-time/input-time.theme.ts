@@ -8,9 +8,11 @@ export const RLInputTimeTheme = defineTheme("input-time", {
   },
   variants: {
     size: {
+      xs: {},
       sm: {},
       md: {},
       lg: {},
+      xl: {},
     },
   },
   defaultVariants: {

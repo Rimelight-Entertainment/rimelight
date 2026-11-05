@@ -130,6 +130,201 @@ export function rimelightUiPreset({ colors, icons, fonts, presets = {} }: UIConf
     ],
     preflights: [
       {
+        getCSS: () => `
+@keyframes marquee-left {
+  from { transform: translateX(0); }
+  to { transform: translateX(calc(-100% - var(--marquee-gap, 1rem))); }
+}
+@keyframes marquee-right {
+  from { transform: translateX(calc(-100% - var(--marquee-gap, 1rem))); }
+  to { transform: translateX(0); }
+}
+@keyframes marquee-up {
+  from { transform: translateY(0); }
+  to { transform: translateY(calc(-100% - var(--marquee-gap, 1rem))); }
+}
+@keyframes marquee-down {
+  from { transform: translateY(calc(-100% - var(--marquee-gap, 1rem))); }
+  to { transform: translateY(0); }
+}
+.animate-marquee,
+.animate-marquee-left {
+  animation: marquee-left 40s linear infinite;
+}
+.animate-marquee-right {
+  animation: marquee-right 40s linear infinite;
+}
+.animate-marquee-up {
+  animation: marquee-up 40s linear infinite;
+}
+.animate-marquee-down {
+  animation: marquee-down 40s linear infinite;
+}
+
+:root[data-theme="dark"] .rl-img-light,
+        [data-theme="dark"] .rl-img-light,
+        [data-theme="dark"] .rl-image-color-mode .rl-img-light,
+        .rl-image-color-mode[data-theme="dark"] .rl-img-light {
+          display: none !important;
+        }
+
+        :root[data-theme="dark"] .rl-img-dark,
+        [data-theme="dark"] .rl-img-dark,
+        [data-theme="dark"] .rl-image-color-mode .rl-img-dark,
+        .rl-image-color-mode[data-theme="dark"] .rl-img-dark {
+          display: block !important;
+        }
+
+        :root[data-theme="light"] .rl-img-light,
+        [data-theme="light"] .rl-img-light,
+        [data-theme="light"] .rl-image-color-mode .rl-img-light,
+        .rl-image-color-mode[data-theme="light"] .rl-img-light {
+          display: block !important;
+        }
+
+        :root[data-theme="light"] .rl-img-dark,
+        [data-theme="light"] .rl-img-dark,
+        [data-theme="light"] .rl-image-color-mode .rl-img-dark,
+        .rl-image-color-mode[data-theme="light"] .rl-img-dark {
+          display: none !important;
+        }
+
+        @media (prefers-color-scheme: dark) {
+          :root:not([data-theme="light"]) .rl-img-light {
+            display: none !important;
+          }
+          :root:not([data-theme="light"]) .rl-img-dark {
+            display: block !important;
+          }
+          :root:not([data-theme="light"]) [data-theme="light"] .rl-img-light {
+            display: block !important;
+          }
+          :root:not([data-theme="light"]) [data-theme="light"] .rl-img-dark {
+            display: none !important;
+          }
+        }
+
+        @supports (background-image: light-dark(none, none)) {
+          .rl-image-color-mode {
+            background-image: light-dark(var(--rl-img-light), var(--rl-img-dark));
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+          }
+          .rl-image-color-mode > .rl-img-light,
+          .rl-image-color-mode > .rl-img-dark {
+            opacity: 0 !important;
+            visibility: hidden !important;
+          }
+        }
+
+.rl-steps-list {
+          list-style: none;
+          counter-reset: rl-step 0;
+          padding: 0;
+          margin: 0;
+          display: flex;
+          flex-direction: column;
+        }
+        .rl-steps-list > li {
+          counter-increment: rl-step;
+          position: relative;
+          padding-left: 2.625rem;
+          padding-bottom: 1.75rem;
+          margin: 0;
+        }
+        .rl-steps-list > li:last-child {
+          padding-bottom: 0;
+        }
+        .rl-steps-list > li::before {
+          content: counter(rl-step);
+          position: absolute;
+          left: 0;
+          top: 0.125rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 1.75rem;
+          height: 1.75rem;
+          border-radius: 9999px;
+          font-size: 0.75rem;
+          font-weight: 700;
+          line-height: 1;
+          color: var(--rl-neutral-50);
+          background-color: var(--rl-bg);
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+          z-index: 1;
+        }
+        .rl-steps-list > li::after {
+          content: '';
+          position: absolute;
+          left: calc(0.875rem - 1px);
+          top: calc(1.75rem + 0.375rem);
+          bottom: 0;
+          width: 2px;
+          background-color: var(--rl-neutral-200);
+        }
+        .rl-steps-list > li:last-child::after {
+          display: none;
+        }
+        .rl-steps-list > li > :first-child {
+          margin-top: 0;
+        }
+        [data-size="xs"] .rl-steps-list > li {
+          padding-left: 1.75rem;
+          padding-bottom: 1rem;
+        }
+        [data-size="xs"] .rl-steps-list > li::before {
+          width: 1.125rem;
+          height: 1.125rem;
+          font-size: 0.5625rem;
+        }
+        [data-size="xs"] .rl-steps-list > li::after {
+          left: calc(0.5625rem - 1px);
+          top: calc(1.125rem + 0.375rem);
+        }
+        [data-size="sm"] .rl-steps-list > li {
+          padding-left: 2rem;
+          padding-bottom: 1.25rem;
+        }
+        [data-size="sm"] .rl-steps-list > li::before {
+          width: 1.375rem;
+          height: 1.375rem;
+          font-size: 0.625rem;
+        }
+        [data-size="sm"] .rl-steps-list > li::after {
+          left: calc(0.6875rem - 1px);
+          top: calc(1.375rem + 0.375rem);
+        }
+        [data-size="lg"] .rl-steps-list > li {
+          padding-left: 3.25rem;
+          padding-bottom: 2.25rem;
+        }
+        [data-size="lg"] .rl-steps-list > li::before {
+          width: 2.25rem;
+          height: 2.25rem;
+          font-size: 0.875rem;
+        }
+        [data-size="lg"] .rl-steps-list > li::after {
+          left: calc(1.125rem - 1px);
+          top: calc(2.25rem + 0.375rem);
+        }
+        [data-size="xl"] .rl-steps-list > li {
+          padding-left: 3.75rem;
+          padding-bottom: 2.75rem;
+        }
+        [data-size="xl"] .rl-steps-list > li::before {
+          width: 2.75rem;
+          height: 2.75rem;
+          font-size: 1rem;
+        }
+        [data-size="xl"] .rl-steps-list > li::after {
+          left: calc(1.375rem - 1px);
+          top: calc(2.75rem + 0.375rem);
+        }
+`,
+      },
+      {
         getCSS: () => `:root {
   color-scheme: light dark;
   --rl-header-height: 4rem;
@@ -139,6 +334,22 @@ export function rimelightUiPreset({ colors, icons, fonts, presets = {} }: UIConf
 [data-theme="dark"] { color-scheme: dark; }
 [data-theme="light"] { color-scheme: light; }
 body { background-color: var(--rl-neutral-50); color: var(--rl-neutral-950); }
+
+/* Sticky surfaces: the container is the sticky element itself (see sticky-surface theme). */
+@container rl-sticky scroll-state(stuck: top) {
+  .rl-sticky-shadow {
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1), 0 1px 4px 0 rgba(0, 0, 0, 0.06);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  }
+}
+@media (prefers-color-scheme: dark) {
+  @container rl-sticky scroll-state(stuck: top) {
+    .rl-sticky-shadow {
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.4), 0 1px 4px 0 rgba(0, 0, 0, 0.2);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+  }
+}
 
 /* Text selection uses the primary colour. */
 ::selection {

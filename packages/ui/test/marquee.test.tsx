@@ -12,7 +12,7 @@ describe("RLMarquee Solid Component Suite", () => {
     const matches = html.match(/data-slot="track"/g);
     expect(matches?.length).toBe(2);
     expect(html).toContain('aria-hidden="true"');
-    expect(html).toContain("calc(-100% - var(--marquee-gap, 1rem))");
+    expect(html).not.toContain("<style");
   });
 
   it("applies custom gap and speed", () => {
@@ -23,6 +23,6 @@ describe("RLMarquee Solid Component Suite", () => {
     });
 
     expect(html).toContain("--marquee-gap:2rem");
-    expect(html).toContain("animation-duration:25s");
+    expect(html).toContain("--rl-marquee-speed:25s");
   });
 });

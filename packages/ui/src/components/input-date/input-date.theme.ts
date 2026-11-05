@@ -8,9 +8,11 @@ export const RLInputDateTheme = defineTheme("input-date", {
   },
   variants: {
     size: {
+      xs: {},
       sm: {},
       md: {},
       lg: {},
+      xl: {},
     },
   },
   defaultVariants: {

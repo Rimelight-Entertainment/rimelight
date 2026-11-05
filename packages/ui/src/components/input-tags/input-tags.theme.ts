@@ -33,6 +33,6 @@ export const RLInputTagsTheme = defineTheme("input-tags", {
     },
   ],
   defaultVariants: {
-    color: "neutral",
+    color: "primary",
   },
 });

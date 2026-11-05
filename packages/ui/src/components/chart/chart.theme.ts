@@ -3,9 +3,10 @@ import { defineTheme } from "../../resolver";
 export const RLChartTheme = defineTheme("chart", {
   slots: ["root", "title", "container", "svg", "axis", "bar", "line", "tooltip", "legend"],
   base: {
-    root: "flex flex-col gap-3 p-4 rounded-xl border border-default bg-elevated text-highlighted shadow-sm",
+    root: "flex flex-col gap-3 p-4 rounded-xl border border-default bg-elevated text-highlighted shadow-sm min-h-[var(--rl-chart-height)]",
     title: "text-sm font-semibold tracking-tight text-highlighted",
-    container: "relative w-full aspect-video flex items-end justify-between",
+    container:
+      "relative w-full aspect-video flex items-end justify-between gap-1.5 h-[calc(var(--rl-chart-height)-60px)]",
     svg: "w-full h-full",
     axis: "text-[10px] text-muted",
     bar: "rounded-t transition-all hover:opacity-85",

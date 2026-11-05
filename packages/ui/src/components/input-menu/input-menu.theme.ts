@@ -6,23 +6,41 @@ export const RLInputMenuTheme = defineTheme("input-menu", {
     root: "relative w-full flex flex-col gap-1.5",
     label: "text-sm font-medium text-highlighted",
     trigger:
-      "flex h-9 w-full items-center justify-between rounded-md border border-default bg-default px-3 py-2 text-sm shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+      "flex w-full items-center justify-between rounded-md border border-default bg-default shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
     input:
-      "flex h-9 w-full rounded-md border border-default bg-transparent px-3 py-1 text-sm shadow-sm transition-all placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
+      "flex w-full rounded-md border border-default bg-transparent shadow-sm transition-all placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
     content:
       "absolute z-50 min-w-[8rem] overflow-hidden rounded-md border bg-elevated p-1 text-highlighted shadow-md transition-all w-full mt-1 max-h-60 overflow-y-auto",
-    item: "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 px-2 text-sm outline-none hover:bg-accented hover:text-highlighted data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+    item: "relative flex w-full cursor-default select-none items-center rounded-sm outline-none hover:bg-accented hover:text-highlighted data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
     itemText: "truncate",
     itemIcon: "ml-auto size-4",
   },
   variants: {
     size: {
-      sm: { trigger: "h-8 px-2 text-xs", input: "h-8 text-xs", item: "py-1 px-1.5 text-xs" },
-      md: { trigger: "h-9 px-3 text-sm", input: "h-9 text-sm", item: "py-1.5 px-2 text-sm" },
+      xs: {
+        trigger: "text-xs leading-none px-2 py-1",
+        input: "text-xs leading-none px-2 py-1",
+        item: "py-1 px-1.5 text-xs",
+      },
+      sm: {
+        trigger: "text-xs leading-none px-2.5 py-1.5",
+        input: "text-xs leading-none px-2.5 py-1.5",
+        item: "py-1 px-1.5 text-xs",
+      },
+      md: {
+        trigger: "text-sm leading-none px-2.5 py-1.5",
+        input: "text-sm leading-none px-2.5 py-1.5",
+        item: "py-1.5 px-2 text-sm",
+      },
       lg: {
-        trigger: "h-10 px-4 text-base",
-        input: "h-10 text-base",
-        item: "py-2 px-2.5 text-base",
+        trigger: "text-sm leading-none px-3 py-2",
+        input: "text-sm leading-none px-3 py-2",
+        item: "py-2 px-2.5 text-sm",
+      },
+      xl: {
+        trigger: "text-base leading-none px-3 py-2",
+        input: "text-base leading-none px-3 py-2",
+        item: "py-2.5 px-3 text-base",
       },
     },
   },

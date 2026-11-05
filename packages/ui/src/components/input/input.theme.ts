@@ -5,9 +5,9 @@ export const RLInputTheme = defineTheme("input", {
   base: {
     root: "relative flex items-center w-full rounded-md border border-default bg-default shadow-sm focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
     input:
-      "w-full bg-transparent px-3 py-1.5 text-sm outline-none placeholder:text-muted disabled:cursor-not-allowed disabled:opacity-50",
-    leading: "absolute left-3 flex items-center justify-center text-muted",
-    trailing: "absolute right-3 flex items-center justify-center text-muted",
+      "w-full bg-transparent outline-none placeholder:text-muted disabled:cursor-not-allowed disabled:opacity-50",
+    leading: "absolute flex items-center justify-center text-muted",
+    trailing: "absolute flex items-center justify-center text-muted",
   },
   variants: {
     variant: {
@@ -17,9 +17,19 @@ export const RLInputTheme = defineTheme("input", {
       },
     },
     size: {
-      sm: { input: "py-1 text-xs", leading: "left-2.5", trailing: "right-2.5" },
-      md: { input: "py-1.5 text-sm", leading: "left-3", trailing: "right-3" },
-      lg: { input: "py-2 text-base", leading: "left-3.5", trailing: "right-3.5" },
+      xs: { input: "text-xs leading-none px-2 py-1", leading: "left-2", trailing: "right-2" },
+      sm: {
+        input: "text-xs leading-none px-2.5 py-1.5",
+        leading: "left-2.5",
+        trailing: "right-2.5",
+      },
+      md: {
+        input: "text-sm leading-none px-2.5 py-1.5",
+        leading: "left-2.5",
+        trailing: "right-2.5",
+      },
+      lg: { input: "text-sm leading-none px-3 py-2", leading: "left-3", trailing: "right-3" },
+      xl: { input: "text-base leading-none px-3 py-2", leading: "left-3", trailing: "right-3" },
     },
     hasLeading: {
       true: { input: "pl-9" },

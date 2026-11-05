@@ -7,9 +7,11 @@ export const RLLabelTheme = defineTheme("label", {
   },
   variants: {
     size: {
+      xs: { root: "text-xs" },
       sm: { root: "text-xs" },
       md: { root: "text-sm" },
-      lg: { root: "text-base" },
+      lg: { root: "text-sm" },
+      xl: { root: "text-base" },
     },
   },
   defaultVariants: {

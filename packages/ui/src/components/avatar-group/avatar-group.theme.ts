@@ -34,6 +34,6 @@ export const RLAvatarGroupTheme = defineTheme("avatar-group", {
   },
   defaultVariants: {
     size: "md",
-    color: "neutral",
+    color: "primary",
   },
 });
