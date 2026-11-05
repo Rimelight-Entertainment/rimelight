@@ -48,7 +48,7 @@ export const copyMarkdownAudit: ComponentAuditDefinition = {
       id: "leading-icon",
       title: "Leading icon",
       description: "Forwarded icon prop overrides the default copy icon.",
-      render: () => <RLCopyMarkdown raw={RAW} leadingIcon="file-text" />,
+      render: () => <RLCopyMarkdown raw={RAW} leadingIcon="lucide:file-text" />,
     },
     {
       id: "disabled",

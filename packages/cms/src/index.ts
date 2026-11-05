@@ -29,6 +29,7 @@ export * from "./auth/filter-blocks";
 export * from "./auth/editor-guards";
 export * from "./auth/filter-templates";
 export type { AuthAdapter, UserSessionContext, UserType } from "@rimelight/auth";
+export type { CmsAccessConfig } from "./auth/access";
 
 // ─── Docs engine ─────────────────────────────────────────────────────────────
 export * from "./docs/index";

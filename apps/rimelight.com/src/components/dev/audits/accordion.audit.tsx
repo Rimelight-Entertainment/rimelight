@@ -15,7 +15,7 @@ export const AccordionSandbox = (): JSX.Element => {
     },
     {
       label: t("app.text.how-does-accordion-grouping-work"),
-      icon: "folder-tree",
+      icon: "lucide:folder-tree",
       content:
         "When `type` is `single`, items share an HTML5 `name` attribute on the `<details>` elements to enforce exclusive single-item open state natively without heavy JS.",
     },
@@ -27,8 +27,8 @@ export const AccordionSandbox = (): JSX.Element => {
     },
     {
       label: t("app.text.custom-trailing-icon-support"),
-      icon: "settings",
-      trailingIcon: "arrow-down-circle",
+      icon: "lucide:settings",
+      trailingIcon: "lucide:circle-arrow-down",
       content: "This item overrides the default chevron trailing icon.",
     },
   ];
@@ -43,7 +43,7 @@ export const AccordionSandbox = (): JSX.Element => {
     BASE_ITEMS.slice(0, itemCount()).map((item): AccordionItem => {
       const res: AccordionItem = { ...item };
       if (useCustomIcon()) {
-        res.trailingIcon = "plus";
+        res.trailingIcon = "lucide:plus";
       }
       return res;
     }),
@@ -160,7 +160,7 @@ export const accordionAudit: ComponentAuditDefinition = {
         return t("app.text.custom-leading-trailing-icons");
       },
       description:
-        "Verifying icon resolution for bare icon names, custom trailing icons, and rotational transitions.",
+        "Verifying icon resolution for built-in icon names, custom trailing icons, and rotational transitions.",
       render: () => (
         <RLAccordion
           items={[
@@ -168,7 +168,7 @@ export const accordionAudit: ComponentAuditDefinition = {
               get label() {
                 return t("app.text.security-permissions");
               },
-              icon: "shield-check",
+              icon: "lucide:shield-check",
               trailingIcon: "lock",
               content: "Role-based access controls and token expirations.",
             },
@@ -176,7 +176,7 @@ export const accordionAudit: ComponentAuditDefinition = {
               get label() {
                 return t("app.text.payment-invoices");
               },
-              icon: "credit-card",
+              icon: "lucide:credit-card",
               trailingIcon: "external-link",
               content: "Subscription management, payment gateways, and tax history.",
             },
@@ -206,7 +206,7 @@ export const accordionAudit: ComponentAuditDefinition = {
               get label() {
                 return t("app.text.disabled-section-2-disabled-true");
               },
-              icon: "ban",
+              icon: "lucide:ban",
               disabled: true,
               content: "Should not be clickable or expandable.",
             },
@@ -235,21 +235,21 @@ export const accordionAudit: ComponentAuditDefinition = {
               get label() {
                 return t("app.text.icons");
               },
-              icon: "smile",
+              icon: "lucide:smile",
               content: "You have nothing to do, @nuxt/icon will handle it automatically.",
             },
             {
               get label() {
                 return t("app.text.colors");
               },
-              icon: "swatch-book",
+              icon: "lucide:swatch-book",
               content: "Choose a primary and a neutral color from your Tailwind CSS theme.",
             },
             {
               get label() {
                 return t("app.text.components");
               },
-              icon: "box",
+              icon: "lucide:box",
               content: "Customize via the `class` / `ui` props or in your app config.",
             },
           ]}
@@ -311,20 +311,20 @@ export const accordionAudit: ComponentAuditDefinition = {
         "The root trailingIcon prop overrides the default chevron for every item that does not set its own trailingIcon.",
       render: () => (
         <RLAccordion
-          trailingIcon="plus"
+          trailingIcon="lucide:plus"
           items={[
             {
               get label() {
                 return t("app.text.global-plus-icon");
               },
-              icon: "smile",
+              icon: "lucide:smile",
               content: "Uses the root trailingIcon.",
             },
             {
               get label() {
                 return t("app.text.per-item-override-wins");
               },
-              icon: "swatch-book",
+              icon: "lucide:swatch-book",
               trailingIcon: "arrow-down",
               content: "Uses its own trailingIcon.",
             },

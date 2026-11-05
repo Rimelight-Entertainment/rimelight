@@ -1,11 +1,15 @@
 import { getUIConfig } from "./runtime";
-import { DEFAULT_ICON_NAMES, type RimelightIcons } from "./constants/icons";
+import { DEFAULT_ICONS, toIconClass, type RimelightIcons } from "./constants/icons";
 
-export { DEFAULT_ICON_NAMES, type RimelightIcons };
+export { DEFAULT_ICONS, toIconClass, type RimelightIcons };
 
+/**
+ * Resolves an icon to a UnoCSS class. Precedence: `custom` prop, then the
+ * `UIConfig.icons` override for `name`, then the built-in default for `name`,
+ * then `name` itself.
+ */
 export const resolveIcon = (name = "", custom?: string): string => {
   const override = name ? getUIConfig()?.icons?.[name] : undefined;
-  const raw = custom || override || name;
-  if (!raw || raw.startsWith("<")) return "";
-  return raw.startsWith("i-") || raw.includes(":") ? raw : `i-lucide-${raw}`;
+  const mapped = name && Object.hasOwn(DEFAULT_ICONS, name) ? DEFAULT_ICONS[name] : undefined;
+  return toIconClass(custom || override || mapped || name);
 };

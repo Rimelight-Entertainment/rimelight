@@ -3,7 +3,7 @@ import { type JSX } from "@solidjs/web";
 import { RLBadge } from "@rimelight/ui/components/badge/RLBadge.tsx";
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
 import { RLIcon } from "@rimelight/ui/components/icon/RLIcon.tsx";
-import { DEFAULT_ICON_NAMES } from "@rimelight/ui/icons";
+import { DEFAULT_ICONS } from "@rimelight/ui/icons";
 import { getUIConfig } from "@rimelight/ui/runtime";
 import { t } from "@rimelight/i18n";
 
@@ -67,7 +67,7 @@ export default function DevUserInterfacePage() {
   const [copiedIcon, setCopiedIcon] = createSignal<string | null>(null);
 
   const uiConfig = getUIConfig();
-  const iconNames: readonly string[] = DEFAULT_ICON_NAMES;
+  const iconNames: readonly string[] = Object.keys(DEFAULT_ICONS);
   const userIconOverrides = uiConfig?.icons ?? {};
   const overrideCount = Object.keys(userIconOverrides).length;
 

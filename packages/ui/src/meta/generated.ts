@@ -718,7 +718,8 @@ export const componentMeta: ComponentMetaMap = {
         name: "icon",
         type: "string | undefined",
         required: false,
-        description: "Bare lucide icon name rendered as the fallback content.",
+        description:
+          "Icon name (built-in name, `set:name`, or `i-<set>-<name>` class) rendered as the fallback content.",
         default: "undefined",
       },
       {
@@ -1253,7 +1254,7 @@ export const componentMeta: ComponentMetaMap = {
         type: "string | undefined",
         required: false,
         description:
-          "Bare lucide icon name displayed next to the title. Use `iconSlot` for custom content.",
+          "Icon name (built-in name, `set:name`, or `i-<set>-<name>` class) displayed next to the title. Use `iconSlot` for custom content.",
         default: "undefined; no icon is rendered when unset.",
       },
       {
@@ -1275,7 +1276,8 @@ export const componentMeta: ComponentMetaMap = {
         name: "closeIcon",
         type: "string | undefined",
         required: false,
-        description: "Bare lucide icon name displayed in the close button.",
+        description:
+          "Icon name (built-in name, `set:name`, or `i-<set>-<name>` class) displayed in the close button.",
         default: '"x"',
       },
       {
@@ -1332,7 +1334,8 @@ export const componentMeta: ComponentMetaMap = {
         name: "leadingIcon",
         type: "string | undefined",
         required: false,
-        description: "Bare lucide icon name displayed before the link label.",
+        description:
+          "Icon name (built-in name, `set:name`, or `i-<set>-<name>` class) displayed before the link label.",
         default: "undefined",
       },
       {
@@ -1340,7 +1343,7 @@ export const componentMeta: ComponentMetaMap = {
         type: "string | undefined",
         required: false,
         description:
-          "Bare lucide icon name displayed after the link label. Replaces the external icon when set.",
+          "Icon name (built-in name, `set:name`, or `i-<set>-<name>` class) displayed after the link label. Replaces the external icon when set.",
         default: "undefined",
       },
       {
@@ -1361,7 +1364,8 @@ export const componentMeta: ComponentMetaMap = {
         name: "externalIcon",
         type: "string | undefined",
         required: false,
-        description: "Bare lucide icon name for the external link indicator.",
+        description:
+          "Icon name (built-in name, `set:name`, or `i-<set>-<name>` class) for the external link indicator.",
         default: '"external-link"',
       },
       {
@@ -2966,7 +2970,8 @@ export const componentMeta: ComponentMetaMap = {
         name: "icon",
         type: "string | undefined",
         required: false,
-        description: "Bare lucide icon name displayed at the start of the callout.",
+        description:
+          "Icon name (built-in name, `set:name`, or `i-<set>-<name>` class) displayed at the start of the callout.",
         default: "undefined; no icon is rendered when unset.",
       },
       {
@@ -2995,7 +3000,8 @@ export const componentMeta: ComponentMetaMap = {
         name: "closeIcon",
         type: "string | undefined",
         required: false,
-        description: "Bare lucide icon name displayed in the close button.",
+        description:
+          "Icon name (built-in name, `set:name`, or `i-<set>-<name>` class) displayed in the close button.",
         default: '"x"',
       },
       {
@@ -3952,14 +3958,15 @@ export const componentMeta: ComponentMetaMap = {
         type: "string | undefined",
         required: false,
         description:
-          "Bare lucide icon name displayed when checked, or above the label when `hasIndicator` is `false`.",
+          "Icon name (built-in name, `set:name`, or `i-<set>-<name>` class) displayed when checked, or above the label when `hasIndicator` is `false`.",
         default: "'check'",
       },
       {
         name: "indeterminateIcon",
         type: "string | undefined",
         required: false,
-        description: "Bare lucide icon name displayed when the checkbox is indeterminate.",
+        description:
+          "Icon name (built-in name, `set:name`, or `i-<set>-<name>` class) displayed when the checkbox is indeterminate.",
         default: "'minus'",
       },
       {

@@ -157,7 +157,7 @@ export const BadgeSandbox = (): JSX.Element => {
           variant={variant()}
           color={color()}
           shape={shape()}
-          leadingIcon={hasLeadingIcon() ? "rocket" : undefined}
+          leadingIcon={hasLeadingIcon() ? "lucide:rocket" : undefined}
           trailingIcon={hasTrailingIcon() ? "arrow-right" : undefined}
           avatar={hasAvatar() ? { src: "https://github.com/nuxt.png", alt: "Nuxt" } : undefined}
           label={label() || undefined}
@@ -212,7 +212,9 @@ export const badgeAudit: ComponentAuditDefinition = {
         "Scales font size, padding, spacing, and nested icon/avatar dimensions proportionally.",
       render: () => (
         <div class="flex items-center gap-3 flex-wrap">
-          <For each={SIZES}>{(s) => <RLBadge size={s} icon="rocket" label={`Size ${s}`} />}</For>
+          <For each={SIZES}>
+            {(s) => <RLBadge size={s} icon="lucide:rocket" label={`Size ${s}`} />}
+          </For>
         </div>
       ),
     },
@@ -225,7 +227,7 @@ export const badgeAudit: ComponentAuditDefinition = {
         "Leading icon, trailing icon, both leading and trailing icons simultaneously, and icon-only badge.",
       render: () => (
         <div class="flex items-center gap-3 flex-wrap">
-          <RLBadge icon="rocket" label="Leading Icon" />
+          <RLBadge icon="lucide:rocket" label="Leading Icon" />
           <RLBadge trailingIcon="arrow-right" label="Trailing Icon" />
           <RLBadge icon="star" trailingIcon="check" label="Both Icons" />
           <RLBadge icon="bell" shape="square" aria-label="Notifications" />

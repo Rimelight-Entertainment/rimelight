@@ -1,6 +1,7 @@
 import { Show, createSignal, onSettled, type Component } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
+import { RLLink } from "@rimelight/ui/components/link/RLLink.tsx";
 import { RLModal } from "@rimelight/ui/components/modal/RLModal.tsx";
 import { RLEmpty } from "@rimelight/ui/components/empty/RLEmpty.tsx";
 import { RLFormField } from "@rimelight/ui/components/form-field/RLFormField.tsx";
@@ -56,21 +57,29 @@ export const Button: Component<{
 }> = (props) => {
   const style = () => buttonStyle[props.variant ?? "secondary"];
   return (
-    <RLButton
-      size="sm"
-      variant={style().variant}
-      color={style().color}
-      leadingIcon={props.icon}
-      loading={props.loading}
-      disabled={props.disabled}
-      href={props.href}
-      type={props.type ?? "button"}
-      title={props.title}
-      class={props.class}
-      onClick={(e: MouseEvent) => props.onClick?.(e)}
+    <Show
+      when={props.href}
+      fallback={
+        <RLButton
+          size="sm"
+          variant={style().variant}
+          color={style().color}
+          leadingIcon={props.icon}
+          loading={props.loading}
+          disabled={props.disabled}
+          type={props.type ?? "button"}
+          title={props.title}
+          class={props.class}
+          onClick={(e: MouseEvent) => props.onClick?.(e)}
+        >
+          {props.children}
+        </RLButton>
+      }
     >
-      {props.children}
-    </RLButton>
+      <RLLink href={props.href} leadingIcon={props.icon} title={props.title} class={props.class}>
+        {props.children}
+      </RLLink>
+    </Show>
   );
 };
 

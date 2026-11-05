@@ -256,9 +256,10 @@ api.get("/callback", async (c) => {
     await syncAuth0UserToDb(session);
 
     // Generate signed compact session cookie
-    const sessionSecret =
-      auth0Config.sessionSecret ||
-      "rimelight_default_development_secret_key_32bytes_minimum_length";
+    const sessionSecret = auth0Config.sessionSecret;
+    if (!sessionSecret) {
+      throw new Error("AUTH0_SECRET is not configured; refusing to sign session cookies");
+    }
     const sessionToken = await createSessionToken(session, sessionSecret, "7d");
 
     setCookie(c, auth0Config.sessionCookieName || "rimelight_session", sessionToken, {

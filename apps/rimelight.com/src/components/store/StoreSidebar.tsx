@@ -4,8 +4,8 @@ import { t } from "@rimelight/i18n";
 
 export const StoreSidebar: Component = () => {
   const categories = [
-    { label: t("app.text.all-products"), icon: "grid-3x3", to: "/store" },
-    { label: t("app.text.digital-goods"), icon: "zap", to: "/store/digital" },
+    { label: t("app.text.all-products"), icon: "lucide:grid-3x3", to: "/store" },
+    { label: t("app.text.digital-goods"), icon: "lucide:zap", to: "/store/digital" },
   ];
 
   const supportLinks = [

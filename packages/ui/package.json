@@ -1585,6 +1585,7 @@
     "prepack": "vp run generate:meta && vp pack"
   },
   "dependencies": {
+    "@iconify-json/lucide": "1.2.150",
     "@unocss/vite": "66.12.0",
     "unocss": "66.12.0"
   },

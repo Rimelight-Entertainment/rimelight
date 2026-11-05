@@ -6,7 +6,7 @@ import { buildDocsNavFromPages } from "../docs/config";
 import type { Cms } from "../services/index";
 import type { Entry, EntrySummary } from "../services/entries";
 import { handleCmsError } from "./errors";
-import { cmsForRequest, resolveActor, type CmsServerOptions } from "./context";
+import { cmsForRequest, resolveIdentity, type CmsServerOptions } from "./context";
 
 export interface ContentRouterOptions extends CmsServerOptions {}
 
@@ -83,8 +83,20 @@ export function createContentRouter(options: ContentRouterOptions = {}): Content
       `public, max-age=${seconds}, s-maxage=${seconds * 5}, stale-while-revalidate=86400`,
     );
 
-  const readerRoles = async (c: Context) =>
-    (await resolveActor(c, { ...options, devBypassAuth: false }))?.roles;
+  /**
+   * Roles for public visibility filters, taken from the verified identity's groups. Identity-only:
+   * a site visitor never provisions a CMS account. Any failure renders the page as anonymous.
+   */
+  const readerRoles = async (c: Context): Promise<string[] | undefined> => {
+    try {
+      const identity = await resolveIdentity(c.req.raw, options);
+      if (!identity?.emailVerified) return undefined;
+      return identity.groups.length ? identity.groups : ["member"];
+    } catch (err) {
+      console.warn("[@rimelight/cms] reader roles unavailable; rendering as anonymous", err);
+      return undefined;
+    }
+  };
 
   async function findPublished(cms: Cms, c: Context, slug: string, collection?: string) {
     const token = c.req.query("preview");

@@ -506,13 +506,13 @@ export const splitterAudit: ComponentAuditDefinition = {
       id: "handle-icon-override",
       title: "Handle Icon Override",
       description:
-        "Swap the default grip for a named lucide icon, or hide it with handleIcon={false}.",
+        "Swap the default grip for a built-in name, a set:name icon, or hide it with handleIcon={false}.",
       render: () => (
         <div class="flex flex-col gap-3">
           <div class="h-48 w-full border border-default/60 rounded-xl overflow-hidden bg-card/30">
             <RLSplitter
               defaultValue={["50%", "50%"]}
-              handleIcon="ellipsis"
+              handleIcon="lucide:ellipsis"
               panels={[{ children: "Left" }, { children: "Right" }]}
             />
           </div>

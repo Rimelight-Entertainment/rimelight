@@ -12,11 +12,21 @@ beforeEach(async () => {
   await migrateCms(binding);
   app = createCmsApi({
     db: drizzle(binding),
-    // Tests authenticate with a header instead of cookies.
-    getSession: async (req) => {
+    // Tests authenticate with a header instead of cookies. The identity goes through the same
+    // identify → provisioning path a real provider uses; the first user provisioned becomes admin.
+    identify: async (req) => {
       const role = req.headers.get("x-role");
-      return role ? { userId: `${role}-user`, name: role, roles: [role], permissions: [] } : null;
+      return role
+        ? {
+            subject: `${role}-sub`,
+            email: `${role}@test.local`,
+            emailVerified: !req.headers.get("x-unverified"),
+            name: role,
+            groups: [role],
+          }
+        : null;
     },
+    access: { roleMapping: { admin: "admin", editor: "editor", viewer: "viewer" } },
   });
   // Nothing is built in: scaffold the collections these tests write to from presets.
   for (const preset of ["blog", "page", "doc"])
@@ -27,6 +37,7 @@ const call = (method: string, path: string, body?: unknown, role: string | null 
   app.request(path, {
     method,
     headers: {
+      "X-Rimelight-Request": "1",
       ...(role ? { "x-role": role } : {}),
       ...(body ? { "content-type": "application/json" } : {}),
     },
@@ -160,5 +171,35 @@ describe("MCP", () => {
       })
     ).json()) as any;
     expect(missing.error.code).toBe(-32602);
+  });
+});
+
+describe("CSRF gate and identity checks", () => {
+  const post = (headers: Record<string, string>) =>
+    app.request("/cms/entries", {
+      method: "POST",
+      headers: { "content-type": "application/json", ...headers },
+      body: JSON.stringify({ collection: "blog", title: "Gate" }),
+    });
+
+  it("rejects a state-changing request that lacks X-Rimelight-Request", async () => {
+    const res = await post({ "x-role": "admin" });
+    expect(res.status).toBe(403);
+    expect(await res.json()).toMatchObject({ code: "CSRF_REJECTED" });
+  });
+
+  it("lets a Bearer client past the CSRF gate", async () => {
+    const res = await post({ authorization: "Bearer not-a-session" });
+    expect(res.status).toBe(401);
+  });
+
+  it("treats an unverified identity as anonymous", async () => {
+    const res = await post({ "X-Rimelight-Request": "1", "x-role": "admin", "x-unverified": "1" });
+    expect(res.status).toBe(401);
+  });
+
+  it("does not CSRF-gate safe reads", async () => {
+    const res = await app.request("/cms/entries", { headers: { "x-role": "admin" } });
+    expect(res.status).toBe(200);
   });
 });

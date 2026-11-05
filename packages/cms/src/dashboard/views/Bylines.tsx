@@ -438,7 +438,7 @@ export const Bylines: Component = () => {
             ]}
             value={tab()}
             onValueChange={(value: string) => setTab(value as "bylines" | "schema")}
-            content={false}
+            body={false}
             size="sm"
             variant="solid"
           />

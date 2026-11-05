@@ -22,6 +22,7 @@ export function cms(): MiddlewareHandler {
     config: cmsConfig,
     apiPath: (options.apiPath ?? "/api/cms").replace(/\/$/, ""),
     ...(options.devBypassAuth ? { devBypassAuth: true } : {}),
+    ...(options.access ? { access: options.access } : {}),
   });
   const apiPath = (options.apiPath ?? "/api/cms").replace(/\/$/, "");
   const apiRoot = apiPath.replace(/\/cms$/, "");

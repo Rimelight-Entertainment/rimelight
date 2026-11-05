@@ -148,9 +148,9 @@ const FolderTree: Component<{
   return (
     <RLTree
       items={items()}
-      selected={props.selected ?? ROOT_ID}
+      value={props.selected ?? ROOT_ID}
       defaultExpanded={[ROOT_ID]}
-      onSelect={(item: TreeItem) => props.onSelect(idOf(item.id))}
+      onValueChange={(id: string) => props.onSelect(idOf(id))}
       itemClass={(item: TreeItem) =>
         props.dropTarget && props.hover === item.id ? "ring-2 ring-primary" : undefined
       }

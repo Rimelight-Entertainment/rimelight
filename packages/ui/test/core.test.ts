@@ -91,7 +91,7 @@ describe("@rimelight/ui core icon resolution", () => {
     expect(icon).toBe("i-lucide-check");
   });
 
-  it("should resolve bare lucide names to i-lucide classes", () => {
+  it("should resolve built-in names through the lucide default map", () => {
     const icon = resolveIcon("check");
     expect(icon).toBe("i-lucide-check");
   });

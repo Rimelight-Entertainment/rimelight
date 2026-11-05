@@ -66,7 +66,7 @@ export default defineConfig({
       },
     }),
 
-    auth(),
+    auth({ provider: "auth0" }),
 
     i18n({ types: ".cloudflare/types/i18n.d.ts" }),
 
@@ -85,7 +85,13 @@ export default defineConfig({
       },
     }),
 
-    cms({ autoMigrate: true, devBypassAuth: true }),
+    cms({
+      autoMigrate: true,
+      devBypassAuth: true,
+      access: {
+        roleMapping: { owner: "owner", admin: "admin", editor: "editor", viewer: "viewer" },
+      },
+    }),
   ],
 
   test: {

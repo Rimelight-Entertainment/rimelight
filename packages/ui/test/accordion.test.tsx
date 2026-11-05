@@ -5,7 +5,11 @@ import type { AccordionItem } from "../src/components/accordion/accordion.types"
 import { renderSolid } from "./utils/normalize";
 
 const SAMPLE_ITEMS: AccordionItem[] = [
-  { label: "Getting Started", icon: "rocket", content: "Installation and quick start guide." },
+  {
+    label: "Getting Started",
+    icon: "lucide:rocket",
+    content: "Installation and quick start guide.",
+  },
   { label: "Component Architecture", icon: "layers", content: "Reactive primitives and tokens." },
   { label: "Accessibility", content: "ARIA patterns and focus management." },
 ];

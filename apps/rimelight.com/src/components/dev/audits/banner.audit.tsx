@@ -169,7 +169,7 @@ export const bannerAudit: ComponentAuditDefinition = {
         <div class="flex flex-col gap-3">
           <RLBanner
             title={"We just raised Series A funding!"}
-            icon="rocket"
+            icon="lucide:rocket"
             color="secondary"
             actions={[
               {
@@ -292,7 +292,7 @@ export const bannerAudit: ComponentAuditDefinition = {
           id="audit-closable-banner-demo"
           title={"You can dismiss this banner. On explicit `id`, state is saved to localStorage."}
           color="warning"
-          icon="alert-circle"
+          icon="circle-alert"
           closeIcon="x"
           dismissible
         />

@@ -8,9 +8,7 @@ import type {
   RoleGuard,
   UserSessionContext,
 } from "../types";
-import type { AuthAdapter } from "../types";
-import { createCfAccessFromEnv } from "../adapters/cf-access";
-import { createAuth0FromEnv } from "../adapters/auth0";
+import { getDefaultAuth } from "../default";
 import { config as pluginConfig } from "virtual:rimelight-auth";
 
 function isConfigRecord(obj: unknown): obj is AuthConfig {
@@ -18,18 +16,6 @@ function isConfigRecord(obj: unknown): obj is AuthConfig {
 }
 
 const defaultPluginConfig: AuthConfig = isConfigRecord(pluginConfig) ? pluginConfig : {};
-
-let _defaultAuth: AuthAdapter | null = null;
-
-function getDefaultAuth(): AuthAdapter {
-  if (!_defaultAuth) {
-    const isAuth0 =
-      (typeof process !== "undefined" && Boolean(process.env?.["AUTH0_DOMAIN"])) ||
-      (typeof import.meta !== "undefined" && Boolean((import.meta as any).env?.["AUTH0_DOMAIN"]));
-    _defaultAuth = isAuth0 ? createAuth0FromEnv({ devFallback: true }) : createCfAccessFromEnv();
-  }
-  return _defaultAuth;
-}
 
 const STATIC_ASSET_REGEX =
   /\.(css|js|map|png|jpg|jpeg|gif|svg|webp|woff|woff2|ttf|ico|json|webmanifest)$/i;
@@ -48,8 +34,8 @@ function matchesPattern(
 }
 
 /**
- * Hono Authentication & Authorization middleware. Automatically uses the
- * default auth adapter (CF Access or Auth0 based on env) if `auth` is not provided.
+ * Hono Authentication & Authorization middleware. Uses the deployment's identity provider
+ * (the `auth()` Vite plugin's `provider`, see `getDefaultAuth`) if `auth` is not provided.
  *
  * @example
  *   import { auth } from "@rimelight/auth/middleware"

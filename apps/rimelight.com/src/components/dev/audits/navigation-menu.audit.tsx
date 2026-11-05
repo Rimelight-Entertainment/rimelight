@@ -5,7 +5,7 @@ import type { NavigationMenuItem } from "@rimelight/ui/components/navigation-men
 import { AUDIT_COLORS, type ComponentAuditDefinition, type TestScenario } from "./types";
 
 const ITEMS: NavigationMenuItem[] = [
-  { label: "Home", href: "/", icon: "home" },
+  { label: "Home", href: "/", icon: "house" },
   {
     label: "Products",
     children: [
@@ -23,7 +23,7 @@ const GROUPED_ITEMS: NavigationMenuItem[] = [
       {
         label: "Learn",
         children: [
-          { label: "Guides", href: "/guides", icon: "book-open" },
+          { label: "Guides", href: "/guides", icon: "lucide:book-open" },
           { label: "Tutorials", href: "/tutorials" },
         ],
       },

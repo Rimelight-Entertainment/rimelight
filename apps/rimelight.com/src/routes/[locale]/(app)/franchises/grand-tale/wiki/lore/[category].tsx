@@ -77,7 +77,7 @@ export const LoreCategoryPage: Component = () => {
                 return (
                   <tr class="hover:bg-neutral-900/30 transition-colors">
                     <td class="p-4 flex items-center gap-3">
-                      <RLIcon name="file-text" class="size-5 text-indigo-500 shrink-0" />
+                      <RLIcon name="lucide:file-text" class="size-5 text-indigo-500 shrink-0" />
                       <a
                         href={getLocaleUrl(`/${page.slug}`)}
                         class="font-bold text-white hover:text-indigo-400 uppercase transition-colors"

@@ -12,13 +12,13 @@ const ITEMS = [
   {
     title: "Account",
     description: "Create your login",
-    icon: "user",
+    icon: "lucide:user",
     content: "Enter your details.",
   },
   {
     title: "Billing",
     description: "Add a payment method",
-    icon: "credit-card",
+    icon: "lucide:credit-card",
     content: "Pay securely.",
   },
   {
@@ -222,7 +222,7 @@ export const stepperAudit: ComponentAuditDefinition = {
       criterion: "Static conformance (slots, data-slot, RL primitives, banned names)",
       status: "pass",
       notes:
-        "Children render in data-slot body. indicatorSlot and wrapperSlot are read via setup slots accessors. Icons use RLIcon with bare lucide names.",
+        "Children render in data-slot body. indicatorSlot and wrapperSlot are read via setup slots accessors. Icons use RLIcon with built-in names or set:name values.",
     },
     {
       criterion: "Native trigger elements and disabled state",

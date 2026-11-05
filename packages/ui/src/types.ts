@@ -86,8 +86,8 @@ export interface PresetOptions {
    */
   colors?: Record<string, ColorModeInput>;
   /**
-   * Global icon overrides mapping icon names to bare Lucide names (e.g. `x`) or
-   * `i-<set>-<name>` class names for non-Lucide sets (e.g. `i-simple-icons-github`).
+   * Global icon overrides. Keys are icon names; values are a built-in name, `set:name`, or an
+   * `i-<set>-<name>` class. Built-in names resolve to Lucide via `DEFAULT_ICONS`.
    */
   icons?: RimelightIcons;
   /**

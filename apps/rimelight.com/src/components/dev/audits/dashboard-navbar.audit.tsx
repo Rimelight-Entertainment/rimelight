@@ -2,7 +2,7 @@ import { RLDashboardNavbar } from "@rimelight/ui/components/dashboard-navbar/RLD
 import type { ComponentAuditDefinition } from "./types";
 
 export const DashboardNavbarSandbox = () => (
-  <RLDashboardNavbar icon="home" title="Overview" trailingSlot={<span>Avatar</span>}>
+  <RLDashboardNavbar icon="house" title="Overview" trailingSlot={<span>Avatar</span>}>
     Search
   </RLDashboardNavbar>
 );

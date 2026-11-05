@@ -229,7 +229,9 @@ export const ButtonSandbox = (): JSX.Element => {
         size={size()}
         shape={shape()}
         label={label() || undefined}
-        icon={hasIcon() && !hasAvatar() ? (isTrailing() ? "arrow-right" : "rocket") : undefined}
+        icon={
+          hasIcon() && !hasAvatar() ? (isTrailing() ? "arrow-right" : "lucide:rocket") : undefined
+        }
         trailing={isTrailing()}
         avatar={hasAvatar() ? { src: "https://github.com/nuxt.png" } : undefined}
         loading={isLoading()}
@@ -298,7 +300,7 @@ export const buttonAudit: ComponentAuditDefinition = {
                 size={s}
                 color="primary"
                 variant="solid"
-                icon="rocket"
+                icon="lucide:rocket"
                 label={`Size ${s}`}
               />
             )}
@@ -342,7 +344,7 @@ export const buttonAudit: ComponentAuditDefinition = {
             variant="outline"
             color="neutral"
           />
-          <RLButton icon="trash" aria-label="Delete" variant="ghost" color="error" />
+          <RLButton icon="lucide:trash" aria-label="Delete" variant="ghost" color="error" />
         </div>
       ),
     },

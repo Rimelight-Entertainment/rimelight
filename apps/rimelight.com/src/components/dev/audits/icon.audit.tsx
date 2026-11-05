@@ -1,7 +1,7 @@
 import { createSignal, For } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import { RLIcon } from "@rimelight/ui/components/icon/RLIcon.tsx";
-import { DEFAULT_ICON_NAMES } from "@rimelight/ui/icons";
+import { DEFAULT_ICONS } from "@rimelight/ui/icons";
 import { AUDIT_COLORS, type ComponentAuditDefinition } from "./types";
 import { t } from "@rimelight/i18n";
 
@@ -10,16 +10,16 @@ const COLORS = AUDIT_COLORS;
 
 const FEATURED = [
   "star",
-  "rocket",
+  "lucide:rocket",
   "sparkles",
   "image",
   "download",
   "external-link",
   "search",
-  "settings",
+  "lucide:settings",
   "user",
   "lock",
-  "eye",
+  "lucide:eye",
   "bell",
   "check",
   "info",
@@ -31,7 +31,7 @@ const FEATURED = [
   "layers",
 ] as const;
 
-const ALL_ICONS: readonly string[] = DEFAULT_ICON_NAMES;
+const ALL_ICONS: readonly string[] = Object.keys(DEFAULT_ICONS);
 
 export const IconSandbox = (): JSX.Element => {
   const [size, setSize] = createSignal<(typeof SIZES)[number]>("md");
@@ -101,7 +101,7 @@ export const iconAudit: ComponentAuditDefinition = {
   category: "Media & Visuals",
   status: "Passed",
   description:
-    "A polymorphic icon primitive resolving Lucide icon names, UnoCSS/Iconify class names, and per-instance overrides through the UI resolver, with scale tokens and full currentColor inheritance via CSS mask icons.",
+    "A polymorphic icon primitive resolving built-in names (Lucide), `set:name` Iconify values, UnoCSS/Iconify class names, and per-instance overrides through the UI resolver, with scale tokens and full currentColor inheritance via CSS mask icons.",
   importPath: "@rimelight/ui/components/icon/RLIcon.tsx",
   renderSandbox: () => <IconSandbox />,
   testScenarios: [
@@ -136,7 +136,7 @@ export const iconAudit: ComponentAuditDefinition = {
           <For each={COLORS}>
             {(c) => (
               <div class="flex flex-col items-center gap-2">
-                <RLIcon name="rocket" size="lg" class={`text-${c}`} />
+                <RLIcon name="lucide:rocket" size="lg" class={`text-${c}`} />
                 <span class="text-[10px] font-mono text-muted">{c}</span>
               </div>
             )}
@@ -173,8 +173,8 @@ export const iconAudit: ComponentAuditDefinition = {
         "A bare Lucide name resolves through the bundled collection; a full i-<set>-<name> class name passes through verbatim.",
       render: () => (
         <div class="flex items-center gap-6">
-          <RLIcon name="circle-gauge" size="xl" class="text-primary" />
-          <RLIcon name="compass" size="xl" class="text-secondary" />
+          <RLIcon name="lucide:circle-gauge" size="xl" class="text-primary" />
+          <RLIcon name="lucide:compass" size="xl" class="text-secondary" />
         </div>
       ),
     },
@@ -200,7 +200,7 @@ export const iconAudit: ComponentAuditDefinition = {
             <span>{"Rate limit approaching — 82% consumed."}</span>
           </p>
           <p class="flex items-center gap-2">
-            <RLIcon name="circle-x" class="text-error" />
+            <RLIcon name="lucide:circle-x" class="text-error" />
             <span>{"Build failed at step 4 of 9."}</span>
           </p>
         </div>
@@ -226,13 +226,13 @@ export const iconAudit: ComponentAuditDefinition = {
     {
       criterion: "Nuxt UI v4 API parity (Icon)",
       status: "pass",
-      notes: "Matches name, size, class, and ui overrides with the lucide-backed resolver.",
+      notes: "Matches name, size, class, and ui overrides with the default-name resolver.",
     },
     {
       criterion: "Multi-source icon resolution cascade",
       status: "pass",
       notes:
-        "Resolves custom class -> config overrides -> i- prefixed class names -> bare lucide names via the bundled collection -> empty.",
+        "Resolves custom class -> config overrides -> i- prefixed class names -> built-in default names -> set:name values -> empty.",
     },
     {
       criterion: "Deterministic SSR-safe class rendering",

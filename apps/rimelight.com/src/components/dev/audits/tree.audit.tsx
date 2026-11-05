@@ -7,22 +7,22 @@ const SAMPLE = [
   {
     id: "src",
     label: "src",
-    icon: "folder",
+    icon: "lucide:folder",
     children: [
       {
         id: "src/app",
         label: "app",
-        icon: "folder",
-        children: [{ id: "src/app/root", label: "root.tsx", icon: "file" }],
+        icon: "lucide:folder",
+        children: [{ id: "src/app/root", label: "root.tsx", icon: "lucide:file" }],
       },
-      { id: "src/index", label: "index.ts", icon: "file" },
+      { id: "src/index", label: "index.ts", icon: "lucide:file" },
     ],
   },
   {
     id: "docs",
     label: "docs",
-    icon: "book",
-    children: [{ id: "docs/readme", label: "README.md", icon: "file" }],
+    icon: "lucide:book",
+    children: [{ id: "docs/readme", label: "README.md", icon: "lucide:file" }],
   },
   { id: "secrets", label: "secrets.env", icon: "lock", disabled: true },
 ];

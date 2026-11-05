@@ -96,7 +96,7 @@ export const errorAudit: ComponentAuditDefinition = {
           actions={[
             {
               label: "Retry",
-              icon: "refresh-cw",
+              icon: "lucide:refresh-cw",
               color: "primary",
               variant: "solid",
               onClick: () => {},

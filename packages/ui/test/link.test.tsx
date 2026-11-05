@@ -116,7 +116,7 @@ describe("RLLink", () => {
           href="/docs"
           localize={false}
           label="Docs"
-          leadingIcon="book-open"
+          leadingIcon="lucide:book-open"
           trailingIcon="arrow-right"
         />
       ));
@@ -130,7 +130,7 @@ describe("RLLink", () => {
           href="/docs"
           localize={false}
           label="Docs"
-          leadingIcon="book-open"
+          leadingIcon="lucide:book-open"
           leadingSlot={<span data-testid="custom" />}
         />
       ));

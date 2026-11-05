@@ -12,6 +12,7 @@ import { RichEditingContext, type RichEditing } from "../editor/rich-context";
 import { collectionColor } from "../core/collections/color";
 import { createApi } from "./api";
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
+import { RLLink } from "@rimelight/ui/components/link/RLLink.tsx";
 import { DashboardContext, useDashboard, type DashboardContextValue, type Toast } from "./context";
 import { Overview } from "./views/Overview";
 import { EntriesList } from "./views/EntriesList";
@@ -19,6 +20,8 @@ import { EntryEditor } from "./views/EntryEditor";
 import { MediaLibrary } from "./views/Media";
 import { Taxonomies } from "./views/Taxonomies";
 import { Bylines } from "./views/Bylines";
+import { Users } from "./views/Users";
+import { isAdmin } from "../auth/roles";
 import { Templates } from "./views/Templates";
 import { Reviews } from "./views/Reviews";
 import { Schemas } from "./views/Schemas";
@@ -151,6 +154,8 @@ const DashboardApp: Component<CmsDashboardProps> = (props) => {
         return <Taxonomies {...(second ? { taxonomy: second } : {})} />;
       case "bylines":
         return <Bylines />;
+      case "users":
+        return <Users />;
       case "templates":
         return <Templates {...(second ? { id: second } : {})} />;
       case "reviews":
@@ -251,13 +256,15 @@ const Sidebar: Component<{ active: string }> = (props) => {
   const { href, user } = useDashboard();
   const isActive = (p: string) =>
     p === "/" ? props.active === "/" : props.active === p || props.active.startsWith(`${p}/`);
+  const canManageUsers = () => {
+    const actor = user();
+    return !!actor && isAdmin(actor);
+  };
 
   const item = (p: string, label: string, icon: string) => (
-    <RLButton
+    <RLLink
       href={href(p)}
-      variant={isActive(p) ? "soft" : "ghost"}
-      color={isActive(p) ? "primary" : "neutral"}
-      justify="start"
+      class={`justify-start ${isActive(p) ? "bg-primary-500/10 font-medium text-primary-500" : "text-toned hover:bg-elevated"}`}
       leadingIcon={icon}
       label={label}
     />
@@ -286,6 +293,7 @@ const Sidebar: Component<{ active: string }> = (props) => {
       {item("/schemas", "Collections", "i-lucide-database")}
       {item("/templates", "Templates", "i-lucide-layout-template")}
       {item("/bylines", "Bylines", "i-lucide-users")}
+      <Show when={canManageUsers()}>{item("/users", "Users", "i-lucide-user-cog")}</Show>
       {item("/settings", "Settings", "i-lucide-settings")}
       <div class="mt-auto flex items-center gap-2 border-t border-default px-2.5 pt-3 text-xs text-muted">
         <span class="i-lucide-circle-user size-4" />

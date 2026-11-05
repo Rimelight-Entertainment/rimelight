@@ -1,5 +1,5 @@
 import type { StorageConfig } from "./storage/index";
-import type { AuthAdapter } from "@rimelight/auth";
+import type { CmsAccessConfig } from "./auth/access";
 import type { BlockDefinition } from "./core/blocks/registry";
 
 /**
@@ -29,7 +29,8 @@ export interface CmsPluginOptions {
   /** Allow unauthenticated access as an admin in development. Never enabled in production builds. */
   devBypassAuth?: boolean;
   storage?: StorageConfig;
-  auth?: AuthAdapter | string;
+  /** Who may use the CMS: how verified sign-ins are provisioned and mapped to roles. */
+  access?: CmsAccessConfig;
 }
 
 export function defineCmsConfig(config: CmsConfig): CmsConfig {

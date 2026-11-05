@@ -1,4 +1,5 @@
-import type { AuthAdapter, UserSessionContext, UserType } from "../types";
+import type { AccessIdentity, AuthAdapter, UserSessionContext, UserType } from "../types";
+import { getEnv } from "../env";
 import { parse } from "hono/utils/cookie";
 import {
   decodeJwt,
@@ -292,6 +293,67 @@ function parseCookie(cookieHeader: string | null, name: string): string | null {
   }
 }
 
+/** Identity from a verified Auth0 token payload (Bearer or RS256 cookie). */
+function identityFromPayload(
+  payload: Record<string, any>,
+  rolesClaim: string,
+): AccessIdentity | null {
+  if (!payload["sub"] || !payload["email"]) return null;
+  const roles = payload[rolesClaim] ?? payload["roles"];
+  return {
+    subject: String(payload["sub"]),
+    email: String(payload["email"]),
+    emailVerified: payload["email_verified"] === true,
+    name: typeof payload["name"] === "string" ? payload["name"] : undefined,
+    groups: Array.isArray(roles) ? roles.filter((r): r is string => typeof r === "string") : [],
+  };
+}
+
+/** Identity from the website's signed session payload (HS256, `AUTH0_SECRET`). */
+function identityFromSession(session: UserSessionContext): AccessIdentity | null {
+  if (!session.email) return null;
+  return {
+    subject: session.userId,
+    email: session.email,
+    emailVerified: session.metadata?.["email_verified"] === true,
+    name: session.name,
+    groups: session.roles,
+  };
+}
+
+/**
+ * Verifies the request's Auth0 credential and returns the identity it asserts. A Bearer token takes
+ * precedence over the session cookie; an invalid Bearer token yields `null` rather than falling
+ * through to the cookie. Signed-in identities without an email are not identities.
+ */
+export async function identifyAuth0Request(
+  request: Request,
+  options: Auth0AdapterOptions,
+): Promise<AccessIdentity | null> {
+  const {
+    domain,
+    audience,
+    rolesClaim = "https://rimelight.com/roles",
+    sessionCookieName = "rimelight_session",
+    sessionSecret,
+  } = options;
+
+  const authHeader = request.headers.get("authorization");
+  if (authHeader?.startsWith("Bearer ")) {
+    const payload = await verifyAuth0Jwt(authHeader.slice(7).trim(), { domain, audience });
+    return payload ? identityFromPayload(payload, rolesClaim) : null;
+  }
+
+  const token = parseCookie(request.headers.get("cookie"), sessionCookieName);
+  if (!token) return null;
+  if (sessionSecret) {
+    const session = await verifySessionToken(token, sessionSecret);
+    return session ? identityFromSession(session) : null;
+  }
+  const payload = await verifyAuth0Jwt(token, { domain, audience });
+  return payload ? identityFromPayload(payload, rolesClaim) : null;
+}
+
 /**
  * Auth0 / OIDC Auth Adapter
  */
@@ -311,6 +373,7 @@ export function auth0Auth(options: Auth0AdapterOptions): AuthAdapter {
   return {
     name: "auth0",
     options,
+    identify: (request: Request) => identifyAuth0Request(request, options),
     async getSession(req: Request): Promise<UserSessionContext | null> {
       if (!req) return null;
 
@@ -430,14 +493,6 @@ export function mapAuth0PayloadToSession(
   };
 }
 
-function getEnv(key: string, fallback = ""): string {
-  if (typeof process !== "undefined" && process.env?.[key]) return process.env[key]!;
-  if (typeof import.meta !== "undefined" && (import.meta as any).env?.[key]) {
-    return (import.meta as any).env[key];
-  }
-  return fallback;
-}
-
 export function getAuth0ConfigFromEnv(
   overrides: Partial<Auth0AdapterOptions> = {},
 ): Auth0AdapterOptions {
@@ -451,9 +506,7 @@ export function getAuth0ConfigFromEnv(
       overrides.userTypeClaim || getEnv("AUTH0_USER_TYPE_CLAIM", "https://rimelight.com/user_type"),
     permissionsClaim: overrides.permissionsClaim || "permissions",
     sessionCookieName: overrides.sessionCookieName || "rimelight_session",
-    sessionSecret:
-      overrides.sessionSecret ||
-      getEnv("AUTH0_SECRET", "rimelight_default_development_secret_key_32bytes_minimum_length"),
+    sessionSecret: overrides.sessionSecret || getEnv("AUTH0_SECRET") || undefined,
     loginUrl: overrides.loginUrl || "/api/auth/login",
     defaultRole: overrides.defaultRole || "user",
   };
@@ -475,6 +528,7 @@ export function createAuth0FromEnv(
   return {
     name: "auth0",
     options: config,
+    identify: (request: Request) => identifyAuth0Request(request, config),
     async getSession(req: Request): Promise<UserSessionContext | null> {
       const session = await baseAdapter.getSession(req);
       if (session) return session;

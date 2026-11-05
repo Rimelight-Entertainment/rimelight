@@ -105,7 +105,7 @@ export type RLCheckboxGroupProps<T extends CheckboxGroupItem = CheckboxGroupItem
   hasIndicator?: boolean | undefined;
 
   /**
-   * Bare lucide icon name used by every checkbox in the group.
+   * Icon name (built-in name, `set:name`, or `i-<set>-<name>` class) used by every checkbox in the group.
    * @default 'check'
    */
   icon?: string | undefined;

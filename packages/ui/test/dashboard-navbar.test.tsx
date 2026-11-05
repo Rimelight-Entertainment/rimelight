@@ -42,7 +42,7 @@ describe("RLDashboardNavbar", () => {
     const bare = mountComponent(() => <RLDashboardNavbar title="Home" />);
     expect(bare.querySelector("[data-slot='icon']")).toBeNull();
 
-    const withIcon = mountComponent(() => <RLDashboardNavbar title="Home" icon="home" />);
+    const withIcon = mountComponent(() => <RLDashboardNavbar title="Home" icon="house" />);
     expect(withIcon.querySelector("[data-slot='icon']")).not.toBeNull();
   });
 

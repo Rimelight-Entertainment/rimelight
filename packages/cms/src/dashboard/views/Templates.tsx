@@ -227,7 +227,7 @@ const TemplateWorkspace: Component<{ template: PageTemplate }> = (props) => {
               ]}
               value={tab()}
               onValueChange={(value: string) => setTab(value as "settings" | "block")}
-              content={false}
+              body={false}
             />
           </div>
           <div class="p-4">

@@ -546,7 +546,7 @@ const EditorWorkspace: Component<{
               ]}
               value={tab()}
               onValueChange={(value: string) => setTab(value as "entry" | "block")}
-              content={false}
+              body={false}
               size="sm"
             />
           </div>

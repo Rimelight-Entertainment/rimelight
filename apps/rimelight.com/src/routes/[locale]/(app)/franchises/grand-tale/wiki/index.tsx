@@ -12,25 +12,25 @@ export const WikiIndexPage: Component = () => {
       title: t("app.text.getting-started"),
       description: t("app.text.new-to-grand-tale-start-here-to-learn-the-basics"),
       href: "/franchises/grand-tale/wiki/getting-started",
-      icon: "book-open",
+      icon: "lucide:book-open",
     },
     {
       title: t("app.text.characters"),
       description: t("app.text.explore-the-heroes-villains-and-legends-of-the-w"),
       href: "/franchises/grand-tale/wiki/lore/characters",
-      icon: "users",
+      icon: "lucide:users",
     },
     {
       title: t("app.text.locations"),
       description: t("app.text.discover-the-regions-cities-and-landmarks"),
       href: "/franchises/grand-tale/wiki/lore/locations",
-      icon: "map-pin",
+      icon: "lucide:map-pin",
     },
     {
       title: t("app.text.heroes"),
       description: t("app.text.master-the-playable-heroes-and-their-abilities"),
       href: "/franchises/grand-tale/wiki/lore/heroes",
-      icon: "shield-check",
+      icon: "lucide:shield-check",
     },
   ];
   const trendingArticles = [
@@ -97,7 +97,7 @@ export const WikiIndexPage: Component = () => {
 
       <section class="space-y-8">
         <h2 class="text-2xl font-bold text-white uppercase tracking-tight flex items-center gap-3">
-          <RLIcon name="compass" class="text-indigo-400 size-6" />
+          <RLIcon name="lucide:compass" class="text-indigo-400 size-6" />
           Quick Navigation
         </h2>
 
@@ -108,7 +108,7 @@ export const WikiIndexPage: Component = () => {
                 <RLCard class="bg-neutral-900/40 border-neutral-800 hover:bg-neutral-850 hover:border-indigo-500/50 transition-all h-full rounded-2xl p-6">
                   <div class="flex items-start gap-4">
                     <div class="p-3 bg-indigo-500/20 rounded-xl border border-indigo-500/30 shrink-0">
-                      <span class={`${item.icon} size-6 text-indigo-400`} />
+                      <RLIcon name={item.icon} class="size-6 text-indigo-400" />
                     </div>
                     <div class="space-y-1 flex-1">
                       <h3 class="text-lg font-bold text-white group-hover:text-indigo-400 uppercase transition-colors">
@@ -126,7 +126,7 @@ export const WikiIndexPage: Component = () => {
 
       <section class="space-y-8">
         <h2 class="text-2xl font-bold text-white uppercase tracking-tight flex items-center gap-3">
-          <RLIcon name="flame" class="text-indigo-400 size-6" />
+          <RLIcon name="lucide:flame" class="text-indigo-400 size-6" />
           Trending Articles
         </h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">

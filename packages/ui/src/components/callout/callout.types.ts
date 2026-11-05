@@ -15,7 +15,7 @@ export type RLCalloutProps = Omit<InferThemeProps<typeof RLCalloutTheme>, "title
    */
   description?: string | undefined;
   /**
-   * Bare lucide icon name displayed at the start of the callout.
+   * Icon name (built-in name, `set:name`, or `i-<set>-<name>` class) displayed at the start of the callout.
    * @default undefined; no icon is rendered when unset.
    */
   icon?: string | undefined;
@@ -36,7 +36,7 @@ export type RLCalloutProps = Omit<InferThemeProps<typeof RLCalloutTheme>, "title
    */
   dismissible?: boolean | undefined;
   /**
-   * Bare lucide icon name displayed in the close button.
+   * Icon name (built-in name, `set:name`, or `i-<set>-<name>` class) displayed in the close button.
    * @default "x"
    */
   closeIcon?: string | undefined;

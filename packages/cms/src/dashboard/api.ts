@@ -5,6 +5,7 @@ import type { TaxonomyTerm } from "../core/types/taxonomies";
 import type { Taxonomy } from "../services/taxonomies";
 import type { TaxonomyPreset } from "../core/taxonomies/presets";
 import type { CmsActor } from "../services/context";
+import type { CmsUserRecord, UserPage } from "../services/users";
 import type { LockState } from "../services/entries";
 import type {
   BylineFieldInput,
@@ -149,6 +150,7 @@ function putPart(
   const { promise, resolve, reject } = Promise.withResolvers<MediaUploadPart>();
   const xhr = new XMLHttpRequest();
   xhr.open("PUT", url);
+  xhr.setRequestHeader("X-Rimelight-Request", "1");
   xhr.timeout = MEDIA_PART_TIMEOUT_MS;
   xhr.upload.onprogress = (event) => {
     if (event.lengthComputable) onBytes(event.loaded);
@@ -175,7 +177,10 @@ export function createApi(base = "/api/cms") {
     const res = await fetch(`${base}${path}`, {
       method,
       credentials: "same-origin",
-      headers: body === undefined ? {} : { "Content-Type": "application/json" },
+      headers: {
+        "X-Rimelight-Request": "1",
+        ...(body === undefined ? {} : { "Content-Type": "application/json" }),
+      },
       ...(body === undefined ? {} : { body: JSON.stringify(body) }),
     });
     if (!(res.headers.get("content-type") ?? "").includes("application/json")) {
@@ -255,6 +260,7 @@ export function createApi(base = "/api/cms") {
       // Discard the stored parts so an abandoned upload doesn't leave data behind in R2.
       void fetch(`${base}/media/uploads/${uploadId}?key=${encodeURIComponent(key)}`, {
         method: "DELETE",
+        headers: { "X-Rimelight-Request": "1" },
         credentials: "same-origin",
       }).catch(() => {});
       throw err;
@@ -398,6 +404,23 @@ export function createApi(base = "/api/cms") {
       update: (id: string, input: Partial<BylineWriteInput>) =>
         call<{ byline: BylineRecord }>("PUT", `/bylines/${id}`, input),
       remove: (id: string) => call("DELETE", `/bylines/${id}`),
+    },
+    users: {
+      list: (
+        p: {
+          search?: string | undefined;
+          role?: string | undefined;
+          limit?: number | undefined;
+          offset?: number | undefined;
+        } = {},
+      ) => call<UserPage>("GET", `/users${qs({ ...p })}`),
+      get: (id: string) => call<{ user: CmsUserRecord }>("GET", `/users/${id}`),
+      update: (id: string, input: { name?: string | null; role?: string }) =>
+        call<{ user: CmsUserRecord }>("PUT", `/users/${id}`, input),
+      invite: (input: { email: string; role?: string; name?: string | null }) =>
+        call<{ user: CmsUserRecord }>("POST", "/users/invite", input),
+      setDisabled: (id: string, disabled: boolean) =>
+        call<{ user: CmsUserRecord }>("POST", `/users/${id}/${disabled ? "disable" : "enable"}`),
     },
     bylineFields: {
       list: () => call<{ fields: BylineFieldRecord[] }>("GET", "/byline-fields"),

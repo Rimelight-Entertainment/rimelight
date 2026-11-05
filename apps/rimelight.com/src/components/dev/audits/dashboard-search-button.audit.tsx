@@ -23,7 +23,7 @@ export const dashboardSearchButtonAudit: ComponentAuditDefinition = {
       id: "custom-label",
       title: "Label",
       description: "Visible label text set through the label prop.",
-      render: () => <RLDashboardSearchButton label="Search projects" icon="folder" />,
+      render: () => <RLDashboardSearchButton label="Search projects" icon="lucide:folder" />,
     },
     {
       id: "trailing-slot",

@@ -70,13 +70,13 @@ export type RLCheckboxProps = Omit<
   highlight?: boolean | undefined;
 
   /**
-   * Bare lucide icon name displayed when checked, or above the label when `hasIndicator` is `false`.
+   * Icon name (built-in name, `set:name`, or `i-<set>-<name>` class) displayed when checked, or above the label when `hasIndicator` is `false`.
    * @default 'check'
    */
   icon?: string | undefined;
 
   /**
-   * Bare lucide icon name displayed when the checkbox is indeterminate.
+   * Icon name (built-in name, `set:name`, or `i-<set>-<name>` class) displayed when the checkbox is indeterminate.
    * @default 'minus'
    */
   indeterminateIcon?: string | undefined;

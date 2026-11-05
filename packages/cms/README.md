@@ -14,6 +14,7 @@ Content management for Rimelight sites. Content is built from typed collections 
 - **Media**: uploads stored in R2 (`@rimelight/cms/storage`).
 - **Dashboard**: a Solid-based editor, served from `@rimelight/cms/dashboard`.
 - **Permission-aware reads**: block and template filtering by user role.
+- **User admin**: admins list (paged, `limit` 1–100 with `offset`), search, invite, edit roles, and disable or enable CMS users. A name or role an admin sets is kept on later identity sign-ins; the identity provider only overwrites fields nobody edited (role sync requires `syncRoles`).
 - **Storage backends**: Postgres (`./schema`) and SQLite/Cloudflare D1 (`./schema/sqlite`).
 - **MCP server**: exposes content to AI tools (`@rimelight/cms/mcp`).
 - **Scheduled jobs**: publishing and maintenance tasks (`@rimelight/cms/cron`).

@@ -13,7 +13,7 @@ const NAV: SidebarItem[] = [
   { label: "Overview", href: "#overview", icon: "layers", active: true },
   {
     label: "Guides",
-    icon: "compass",
+    icon: "lucide:compass",
     badge: "New",
     children: [
       { label: "Install", href: "#install" },
@@ -22,13 +22,13 @@ const NAV: SidebarItem[] = [
   },
   {
     label: "Components",
-    icon: "blocks",
+    icon: "lucide:blocks",
     children: [
-      { label: "Button", href: "#button", icon: "square" },
-      { label: "Modal", href: "#modal", icon: "square-stack", badge: "Beta" },
+      { label: "Button", href: "#button", icon: "lucide:square" },
+      { label: "Modal", href: "#modal", icon: "lucide:square-stack", badge: "Beta" },
     ],
   },
-  { label: "Settings", href: "#settings", icon: "settings" },
+  { label: "Settings", href: "#settings", icon: "lucide:settings" },
 ];
 
 export const SidebarSandbox = (): JSX.Element => {
@@ -196,7 +196,7 @@ export const sidebarAudit: ComponentAuditDefinition = {
     {
       id: "icons",
       title: "Icons",
-      description: "Bare lucide names on top-level and nested items.",
+      description: "Built-in names (Lucide) and set:name icons on top-level and nested items.",
       render: () => (
         <RLSidebar
           class="h-96 rounded-xl border border-default"
@@ -204,8 +204,8 @@ export const sidebarAudit: ComponentAuditDefinition = {
             { label: "Home", href: "#home", icon: "house" },
             {
               label: "Files",
-              icon: "folder",
-              children: [{ label: "Docs", href: "#docs", icon: "file-text" }],
+              icon: "lucide:folder",
+              children: [{ label: "Docs", href: "#docs", icon: "lucide:file-text" }],
             },
           ]}
         />

@@ -13,7 +13,7 @@ export type RLBannerProps = Omit<
    */
   title?: string | undefined;
   /**
-   * Bare lucide icon name displayed next to the title. Use `iconSlot` for custom content.
+   * Icon name (built-in name, `set:name`, or `i-<set>-<name>` class) displayed next to the title. Use `iconSlot` for custom content.
    * @default undefined; no icon is rendered when unset.
    */
   icon?: string | undefined;
@@ -29,7 +29,7 @@ export type RLBannerProps = Omit<
    */
   dismissible?: boolean | undefined;
   /**
-   * Bare lucide icon name displayed in the close button.
+   * Icon name (built-in name, `set:name`, or `i-<set>-<name>` class) displayed in the close button.
    * @default "x"
    */
   closeIcon?: string | undefined;
@@ -69,12 +69,12 @@ export type RLBannerProps = Omit<
    */
   label?: string | undefined;
   /**
-   * Bare lucide icon name displayed before the link label.
+   * Icon name (built-in name, `set:name`, or `i-<set>-<name>` class) displayed before the link label.
    * @default undefined
    */
   leadingIcon?: string | undefined;
   /**
-   * Bare lucide icon name displayed after the link label. Replaces the external icon when set.
+   * Icon name (built-in name, `set:name`, or `i-<set>-<name>` class) displayed after the link label. Replaces the external icon when set.
    * @default undefined
    */
   trailingIcon?: string | undefined;
@@ -89,7 +89,7 @@ export type RLBannerProps = Omit<
    */
   external?: boolean | undefined;
   /**
-   * Bare lucide icon name for the external link indicator.
+   * Icon name (built-in name, `set:name`, or `i-<set>-<name>` class) for the external link indicator.
    * @default "external-link"
    */
   externalIcon?: string | undefined;

@@ -16,7 +16,7 @@ export type RLAvatarProps = InferThemeProps<typeof RLAvatarTheme> & {
    */
   alt?: string | undefined;
   /**
-   * Bare lucide icon name rendered as the fallback content.
+   * Icon name (built-in name, `set:name`, or `i-<set>-<name>` class) rendered as the fallback content.
    * @default undefined
    */
   icon?: string | undefined;

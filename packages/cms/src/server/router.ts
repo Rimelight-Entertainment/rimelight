@@ -25,6 +25,17 @@ export function createCmsRouter(options: CmsRouterOptions = {}): Hono {
 
   app.onError(handleCmsError as any);
 
+  // CSRF gate. Browsers attach ambient credentials (Access cookie, session cookie) to cross-site
+  // requests, but a custom header forces a CORS preflight that a cross-site form cannot send.
+  // Bearer clients hold no ambient credential, so they are exempt.
+  app.use("*", async (c, next) => {
+    const method = c.req.method;
+    if (method === "GET" || method === "HEAD" || method === "OPTIONS") return next();
+    if (c.req.header("X-Rimelight-Request") === "1") return next();
+    if (c.req.header("Authorization")?.startsWith("Bearer ")) return next();
+    return c.json({ success: false, error: "Missing required header", code: "CSRF_REJECTED" }, 403);
+  });
+
   const route =
     (fn: Handler, status: 200 | 201 = 200) =>
     async (c: Context) => {
@@ -389,6 +400,47 @@ export function createCmsRouter(options: CmsRouterOptions = {}): Hono {
   app.delete(
     "/taxonomies/:taxonomy/terms/:id",
     route(({ cms, actor, c }) => cms.taxonomies.deleteTerm(actor, p(c, "id"))),
+  );
+
+  // ── Users (admin only; the service enforces the role check) ────────────────
+  app.get(
+    "/users",
+    route(async ({ cms, actor, c }) => {
+      const limit = q(c, "limit");
+      const offset = q(c, "offset");
+      return cms.users.listUsers(actor, {
+        search: q(c, "search"),
+        role: q(c, "role"),
+        limit: limit === undefined ? undefined : Number(limit),
+        offset: offset === undefined ? undefined : Number(offset),
+      });
+    }),
+  );
+  app.post(
+    "/users/invite",
+    route(async ({ cms, actor, body }) => ({ user: await cms.users.inviteUser(actor, body) }), 201),
+  );
+  app.get(
+    "/users/:id",
+    route(async ({ cms, actor, c }) => ({ user: await cms.users.getUser(actor, p(c, "id")) })),
+  );
+  app.put(
+    "/users/:id",
+    route(async ({ cms, actor, c, body }) => ({
+      user: await cms.users.updateUser(actor, p(c, "id"), body),
+    })),
+  );
+  app.post(
+    "/users/:id/disable",
+    route(async ({ cms, actor, c }) => ({
+      user: await cms.users.setUserDisabled(actor, p(c, "id"), true),
+    })),
+  );
+  app.post(
+    "/users/:id/enable",
+    route(async ({ cms, actor, c }) => ({
+      user: await cms.users.setUserDisabled(actor, p(c, "id"), false),
+    })),
   );
 
   // ── Bylines ────────────────────────────────────────────────────────────────

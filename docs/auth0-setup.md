@@ -93,18 +93,18 @@ To mark a staff account, edit the user's `app_metadata` in the dashboard and set
 
 Set these for local development in `apps/rimelight.com/.dev.vars`:
 
-| Variable              | Value                                                                                                  |
-| --------------------- | ------------------------------------------------------------------------------------------------------ |
-| `AUTH0_DOMAIN`        | The tenant domain, for example `rimelight.eu.auth0.com`. No `https://`.                                |
-| `AUTH0_CLIENT_ID`     | The `rimelight.com` application's Client ID.                                                           |
-| `AUTH0_CLIENT_SECRET` | The `rimelight.com` application's Client Secret.                                                       |
-| `AUTH0_AUDIENCE`      | `https://api.rimelight.com`                                                                            |
-| `AUTH0_SECRET`        | A random 32-byte hex string, for example `openssl rand -hex 32`. Used to sign website session cookies. |
+| Variable              | Value                                                                                                                                     |
+| --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `AUTH0_DOMAIN`        | The tenant domain, for example `rimelight.eu.auth0.com`. No `https://`.                                                                   |
+| `AUTH0_CLIENT_ID`     | The `rimelight.com` application's Client ID.                                                                                              |
+| `AUTH0_CLIENT_SECRET` | The `rimelight.com` application's Client Secret.                                                                                          |
+| `AUTH0_AUDIENCE`      | `https://api.rimelight.com`                                                                                                               |
+| `AUTH0_SECRET`        | Required. A random 32-byte hex string, for example `openssl rand -hex 32`. Signs website session cookies; sign-in fails when it is unset. |
 
 Production uses the same names. They're declared as secrets in `cloudflare.config.ts`, so set them
 in the Cloudflare dashboard or with `wrangler secret put`, not in a file.
 
-Changing `AUTH0_SECRET` signs out every existing website session.
+Changing `AUTH0_SECRET` signs out every existing website session. There is no fallback value.
 
 ## 7. Test account
 

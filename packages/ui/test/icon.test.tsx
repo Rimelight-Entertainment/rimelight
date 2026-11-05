@@ -1,7 +1,8 @@
 import { describe, it, expect } from "vite-plus/test";
 
 import { RLIcon } from "../src/components/icon/RLIcon";
-import { DEFAULT_ICON_NAMES, resolveIcon } from "../src/icons";
+import { resolveIcon } from "../src/icons";
+import { setUIConfig } from "../src/runtime";
 import { renderToString } from "@solidjs/web";
 import { cleanHtml } from "./utils/normalize";
 
@@ -14,40 +15,51 @@ function renderRaw(fn: () => any): string {
 }
 
 describe("icon resolution", () => {
-  it("resolves bare lucide names to i-lucide classes", () => {
+  it("resolves built-in names through the default lucide map", () => {
     expect(resolveIcon("check")).toBe("i-lucide-check");
   });
 
-  it("passes through full i- prefixed class names", () => {
-    expect(resolveIcon("i-lucide-check")).toBe("i-lucide-check");
+  it("leaves bare names outside the default map unchanged", () => {
+    expect(resolveIcon("rocket")).toBe("rocket");
   });
 
-  it("passes through collection:name class names", () => {
-    expect(resolveIcon("lucide:check")).toBe("lucide:check");
+  it("passes through full i- prefixed class names", () => {
+    expect(resolveIcon("i-tabler-check")).toBe("i-tabler-check");
+  });
+
+  it("converts set:name notation to an i- class", () => {
+    expect(resolveIcon("tabler:check")).toBe("i-tabler-check");
   });
 
   it("prefers the custom prop over the name", () => {
     expect(resolveIcon("check", "i-custom-icon")).toBe("i-custom-icon");
   });
 
+  it("prefers a UIConfig override over the built-in default", () => {
+    setUIConfig({ icons: { check: "i-tabler-check" } });
+    expect(resolveIcon("check")).toBe("i-tabler-check");
+    setUIConfig(null);
+  });
+
   it("returns an empty icon for empty input and raw markup strings", () => {
     expect(resolveIcon("")).toBe("");
     expect(resolveIcon("custom", "<svg><path/></svg>")).toBe("");
   });
-
-  it("ships a non-empty default icon name list", () => {
-    expect(DEFAULT_ICON_NAMES.length).toBeGreaterThan(0);
-    expect(DEFAULT_ICON_NAMES).toContain("check");
-  });
 });
 
 describe("RLIcon class rendering", () => {
-  it("renders bare names as lucide icon classes", () => {
-    const html = render(() => <RLIcon name="rocket" />);
-    expect(html).toContain("i-lucide-rocket");
+  it("renders built-in names as lucide icon classes", () => {
+    const html = render(() => <RLIcon name="check" />);
+    expect(html).toContain("i-lucide-check");
     expect(html).not.toContain("<svg");
     expect(html).toContain('data-slot="root"');
     expect(html).toContain('aria-hidden="true"');
+  });
+
+  it("renders set:name notation as an icon class for that set", () => {
+    const html = render(() => <RLIcon name="tabler:rocket" />);
+    expect(html).toContain("i-tabler-rocket");
+    expect(html).not.toContain("<svg");
   });
 
   it("normalizes kebab-case lucide names", () => {

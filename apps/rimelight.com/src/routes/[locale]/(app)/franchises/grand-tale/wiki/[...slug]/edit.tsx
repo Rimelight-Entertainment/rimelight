@@ -92,7 +92,7 @@ export const WikiEditPage: Component = () => {
             variant="solid"
             color="primary"
             size="xs"
-            leadingIcon="save"
+            leadingIcon="lucide:save"
             disabled={saving()}
             onClick={handleSave}
           >

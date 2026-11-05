@@ -97,7 +97,7 @@ describe("RLContextMenu", () => {
             { type: "separator" },
             {
               label: "Delete",
-              icon: "trash-2",
+              icon: "lucide:trash",
               color: "error",
             },
           ]}
@@ -179,7 +179,7 @@ describe("RLContextMenu", () => {
           label: "Actions",
           items: [
             { label: "Copy path", icon: "copy" },
-            { label: "Rename file", icon: "edit-2" },
+            { label: "Rename file", icon: "lucide:pen" },
           ],
         },
       ];
@@ -240,11 +240,11 @@ describe("RLContextMenu", () => {
           label: "Sort by",
           open: true,
           children: [
-            { label: "Name", icon: "arrow-down-a-z" },
-            { label: "Modified date", icon: "calendar" },
+            { label: "Name", icon: "lucide:arrow-down-a-z" },
+            { label: "Modified date", icon: "lucide:calendar" },
           ],
         },
-        { label: "Refresh", icon: "refresh-cw" },
+        { label: "Refresh", icon: "lucide:refresh-cw" },
       ];
 
       const html = render(() => (

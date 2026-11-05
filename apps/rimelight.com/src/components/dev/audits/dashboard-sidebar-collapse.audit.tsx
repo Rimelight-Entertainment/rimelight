@@ -34,7 +34,7 @@ export const dashboardSidebarCollapseAudit: ComponentAuditDefinition = {
       id: "custom-icon",
       title: "Custom icon",
       description: "Icon prop replaces the default expanded icon.",
-      render: () => <RLDashboardSidebarCollapse icon="panel-left-close" />,
+      render: () => <RLDashboardSidebarCollapse icon="lucide:panel-left-close" />,
     },
   ],
 };

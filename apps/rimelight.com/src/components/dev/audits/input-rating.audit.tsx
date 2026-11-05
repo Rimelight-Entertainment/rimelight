@@ -123,8 +123,8 @@ export const inputRatingAudit: ComponentAuditDefinition = {
       description: "Custom icon for filled items and a different icon for empty items.",
       render: () => (
         <RLInputRating
-          icon="heart"
-          emptyIcon="heart-outline"
+          icon="lucide:heart"
+          emptyIcon="lucide:heart"
           defaultValue={2}
           aria-label="Heart rating"
         />

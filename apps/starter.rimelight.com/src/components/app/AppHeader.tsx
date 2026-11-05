@@ -22,7 +22,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
 
   const startLinkGroup = (): RLLinkGroupProps => ({
     label: t("app.header.link-groups.center.start.label"),
-    leadingIcon: "rocket",
+    leadingIcon: "lucide:rocket",
     links: [
       {
         label: t("app.header.link-groups.center.start.links.introduction"),
@@ -41,7 +41,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
 
   const customizeLinkGroup = (): RLLinkGroupProps => ({
     label: t("app.header.link-groups.center.customize.label"),
-    leadingIcon: "palette",
+    leadingIcon: "lucide:palette",
     links: [
       {
         label: t("app.header.link-groups.center.customize.links.branding"),
@@ -64,12 +64,12 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
 
   const resourcesLinkGroup = (): RLLinkGroupProps => ({
     label: t("app.header.link-groups.right.resources.label"),
-    leadingIcon: "library",
+    leadingIcon: "lucide:library",
     links: [
       {
         label: t("app.header.link-groups.right.resources.links.docs"),
         href: getLocaleUrl("/docs"),
-        leadingIcon: "file-text size-4",
+        leadingIcon: "lucide:file-text size-4",
       },
       {
         label: t("app.header.link-groups.right.resources.links.github"),
@@ -232,7 +232,7 @@ export const AppHeader: Component<AppHeaderProps> = (props) => {
           <RLButton
             variant="ghost"
             color="neutral"
-            leadingIcon="keyboard"
+            leadingIcon="lucide:keyboard"
             aria-label={t("app.header.shortcuts.open")}
             onClick={() => useShortcuts().open()}
           />

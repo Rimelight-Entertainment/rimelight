@@ -71,22 +71,22 @@ pnpm dev
 
 Set these in `.dev.vars` for local development, and as Worker secrets in production. Never commit `.dev.vars`.
 
-| Variable                  | Description                                                       |
-| ------------------------- | ----------------------------------------------------------------- |
-| `CONSTRUCTION_MODE`       | Set to `true` to hold the site behind the construction passphrase |
-| `CONSTRUCTION_PASSPHRASE` | Passphrase that unlocks a site in construction mode               |
-| `TURNSTILE_SITE_KEY`      | Cloudflare Turnstile site key (client-side widget)                |
-| `TURNSTILE_SECRET_KEY`    | Cloudflare Turnstile secret key (server-side verification)        |
-| `DATABASE_URL`            | PostgreSQL connection string                                      |
-| `AUTH0_DOMAIN`            | Auth0 tenant domain                                               |
-| `AUTH0_CLIENT_ID`         | Auth0 application client ID                                       |
-| `AUTH0_CLIENT_SECRET`     | Auth0 application client secret                                   |
-| `AUTH0_AUDIENCE`          | Auth0 API audience                                                |
-| `AUTH0_SECRET`            | Session secret used by the Auth0 integration                      |
-| `AUTH0_BASE_URL`          | Public base URL of the site, used for Auth0 callbacks             |
-| `AUTH0_ROLES_CLAIM`       | Token claim that holds user roles                                 |
-| `AUTH0_USER_TYPE_CLAIM`   | Token claim that holds the user type                              |
-| `GITHUB_TOKEN`            | GitHub token for fetching data during builds                      |
+| Variable                  | Description                                                                  |
+| ------------------------- | ---------------------------------------------------------------------------- |
+| `CONSTRUCTION_MODE`       | Set to `true` to hold the site behind the construction passphrase            |
+| `CONSTRUCTION_PASSPHRASE` | Passphrase that unlocks a site in construction mode                          |
+| `TURNSTILE_SITE_KEY`      | Cloudflare Turnstile site key (client-side widget)                           |
+| `TURNSTILE_SECRET_KEY`    | Cloudflare Turnstile secret key (server-side verification)                   |
+| `DATABASE_URL`            | PostgreSQL connection string                                                 |
+| `AUTH0_DOMAIN`            | Auth0 tenant domain                                                          |
+| `AUTH0_CLIENT_ID`         | Auth0 application client ID                                                  |
+| `AUTH0_CLIENT_SECRET`     | Auth0 application client secret                                              |
+| `AUTH0_AUDIENCE`          | Auth0 API audience                                                           |
+| `AUTH0_SECRET`            | Required. Session secret for the Auth0 integration; sign-in fails when unset |
+| `AUTH0_BASE_URL`          | Public base URL of the site, used for Auth0 callbacks                        |
+| `AUTH0_ROLES_CLAIM`       | Token claim that holds user roles                                            |
+| `AUTH0_USER_TYPE_CLAIM`   | Token claim that holds the user type                                         |
+| `GITHUB_TOKEN`            | GitHub token for fetching data during builds                                 |
 
 ## Cloudflare Bindings
 

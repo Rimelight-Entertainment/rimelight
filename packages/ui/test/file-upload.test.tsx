@@ -118,7 +118,7 @@ describe("RLFileUpload", () => {
     it("does not leak upload-specific props to the DOM", () => {
       const html = renderSolid(RLFileUpload, {
         title: "Upload",
-        icon: "file",
+        icon: "lucide:file",
         onValueChange: () => {},
       });
       expect(html).not.toContain('icon="');

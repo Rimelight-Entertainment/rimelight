@@ -98,7 +98,7 @@ export const CollapsibleSandbox = (): JSX.Element => {
               variant="subtle"
               color="neutral"
               disabled={isDisabled()}
-              trailingIcon={open ? "chevronUp" : "chevronDown"}
+              trailingIcon={open ? "lucide:chevron-up" : "chevron-down"}
               block
             />
           )}
@@ -239,7 +239,7 @@ export const collapsibleAudit: ComponentAuditDefinition = {
             <div class="flex items-center justify-between p-3 rounded-lg border border-default bg-elevated/50 cursor-pointer select-none">
               <span class="text-sm font-medium text-highlighted">{"Expand Details"}</span>
               <RLIcon
-                name="chevronDown"
+                name="chevron-down"
                 size="sm"
                 class={`transition-transform duration-200 ${open ? "rotate-180" : ""}`}
               />

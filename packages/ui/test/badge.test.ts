@@ -40,13 +40,13 @@ describe("RLBadge", () => {
 
   describe("Icons", () => {
     it("shows icon on the leading side by default", () => {
-      const html = renderSolid(RLBadge, { icon: "rocket", label: "x" });
+      const html = renderSolid(RLBadge, { icon: "lucide:rocket", label: "x" });
       expect(html).toContain('data-slot="leading-icon"');
       expect(html).not.toContain('data-slot="trailing-icon"');
     });
 
     it("shows icon on the trailing side when trailing is set", () => {
-      const html = renderSolid(RLBadge, { icon: "rocket", trailing: true, label: "x" });
+      const html = renderSolid(RLBadge, { icon: "lucide:rocket", trailing: true, label: "x" });
       expect(html).toContain('data-slot="trailing-icon"');
       expect(html).not.toContain('data-slot="leading-icon"');
     });
@@ -58,7 +58,7 @@ describe("RLBadge", () => {
     });
 
     it("prefers leadingIcon over icon on the leading side", () => {
-      const html = renderSolid(RLBadge, { icon: "rocket", leadingIcon: "star" });
+      const html = renderSolid(RLBadge, { icon: "lucide:rocket", leadingIcon: "star" });
       expect(count(html, /data-slot="leading-icon"/g)).toBe(1);
     });
 

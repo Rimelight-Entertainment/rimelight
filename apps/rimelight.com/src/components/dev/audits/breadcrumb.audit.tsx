@@ -8,7 +8,7 @@ import { t } from "@rimelight/i18n";
 const COLORS = AUDIT_COLORS;
 
 const defaultItems = (): BreadcrumbItem[] => [
-  { label: t("app.text.docs"), icon: "bookOpen", href: "/docs" },
+  { label: t("app.text.docs"), icon: "lucide:book-open", href: "/docs" },
   { label: t("app.text.components"), icon: "layers", href: "/docs/components" },
   { label: t("app.text.breadcrumb") },
 ];
@@ -24,7 +24,7 @@ const manyItems = (): BreadcrumbItem[] => [
 
 export const BreadcrumbSandbox = (): JSX.Element => {
   const [color, setColor] = createSignal<string>("primary");
-  const [separatorIcon, setSeparatorIcon] = createSignal("chevronRight");
+  const [separatorIcon, setSeparatorIcon] = createSignal("chevron-right");
   const [maxVisible, setMaxVisible] = createSignal<number | undefined>(undefined);
   const [showIcons, setShowIcons] = createSignal(false);
   const [showAvatars, setShowAvatars] = createSignal(false);
@@ -33,7 +33,7 @@ export const BreadcrumbSandbox = (): JSX.Element => {
     {
       label: t("app.text.home"),
       href: "/",
-      icon: showIcons() ? "home" : undefined,
+      icon: showIcons() ? "house" : undefined,
       avatar: showAvatars()
         ? { src: "https://github.com/rimelight.png", alt: "Rimelight" }
         : undefined,
@@ -41,7 +41,7 @@ export const BreadcrumbSandbox = (): JSX.Element => {
     {
       label: t("app.text.documentation"),
       href: "/docs",
-      icon: showIcons() ? "bookOpen" : undefined,
+      icon: showIcons() ? "lucide:book-open" : undefined,
     },
     {
       label: t("app.text.components"),
@@ -51,7 +51,7 @@ export const BreadcrumbSandbox = (): JSX.Element => {
     {
       label: t("app.text.breadcrumb"),
       href: "/docs/components/breadcrumb",
-      icon: showIcons() ? "link" : undefined,
+      icon: showIcons() ? "lucide:link" : undefined,
     },
   ];
 
@@ -80,7 +80,7 @@ export const BreadcrumbSandbox = (): JSX.Element => {
 
         <div class="flex items-center gap-1.5 flex-wrap">
           <span class="text-muted mr-1">{t("app.text.separator")}</span>
-          <For each={["chevronRight", "arrowRight", "slash"]}>
+          <For each={["chevron-right", "arrow-right", "lucide:slash"]}>
             {(icon) => (
               <button
                 type="button"

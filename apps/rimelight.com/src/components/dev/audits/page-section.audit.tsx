@@ -215,7 +215,7 @@ export const PageSectionSandbox = (): JSX.Element => {
           reverse={reverse()}
           title={title()}
           {...(variant() === "cta" ? { ctaVariant: ctaVariant() } : {})}
-          {...(hasIcon() ? { icon: "rocket" } : {})}
+          {...(hasIcon() ? { icon: "lucide:rocket" } : {})}
           {...(hasHeadline() ? { headline: headline() } : {})}
           {...(hasDescription() ? { description: description() } : {})}
           {...(hasLinks()
@@ -408,7 +408,7 @@ export const pageSectionAudit: ComponentAuditDefinition = {
       render: () => (
         <RLPageSection
           orientation="vertical"
-          icon="shield"
+          icon="lucide:shield"
           headline="Security first"
           title={"Everything you need to ship with confidence"}
           description="Icon, headline, title, and description all resolve through the default header with theme tokens."

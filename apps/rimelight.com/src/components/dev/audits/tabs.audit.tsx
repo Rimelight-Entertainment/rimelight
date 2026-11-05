@@ -9,7 +9,12 @@ const SIZES = ["xs", "sm", "md", "lg", "xl"] as const;
 
 const ITEMS = [
   { label: "Overview", value: "overview", content: "Overview panel content." },
-  { label: "Settings", value: "settings", icon: "settings", content: "Settings panel content." },
+  {
+    label: "Settings",
+    value: "settings",
+    icon: "lucide:settings",
+    content: "Settings panel content.",
+  },
   { label: "Inbox", value: "inbox", badge: 12, content: "Inbox panel content." },
   { label: "Archived", value: "archived", disabled: true, content: "Archived panel content." },
 ];

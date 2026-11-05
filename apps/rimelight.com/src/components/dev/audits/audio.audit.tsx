@@ -408,8 +408,8 @@ export const audioAudit: ComponentAuditDefinition = {
           icons={{
             play: "sun",
             pause: "moon",
-            skipBack: "arrowLeft",
-            skipForward: "arrowRight",
+            skipBack: "arrow-left",
+            skipForward: "arrow-right",
           }}
         />
       ),

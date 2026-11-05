@@ -255,7 +255,7 @@ export const EntriesList: Component<{ collection?: string; create?: boolean }> =
               items={STATUSES.map((s) => ({ label: s[0]!.toUpperCase() + s.slice(1), value: s }))}
               value={status()}
               onValueChange={(value: string) => setStatus(value as (typeof STATUSES)[number])}
-              content={false}
+              body={false}
               size="sm"
               variant="solid"
             />

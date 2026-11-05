@@ -195,7 +195,7 @@ export const DocsPage: Component<{ path?: string | undefined }> = (props) => {
                 size="sm"
                 leadingIcon="menu"
                 label="Menu"
-                trailingIcon={panel() === "nav" ? "chevron-up" : "chevron-down"}
+                trailingIcon={panel() === "nav" ? "lucide:chevron-up" : "chevron-down"}
                 aria-expanded={panel() === "nav" ? "true" : "false"}
                 aria-controls="docs-panel-nav"
                 onClick={() => toggle("nav")}
@@ -208,7 +208,7 @@ export const DocsPage: Component<{ path?: string | undefined }> = (props) => {
                 variant="ghost"
                 size="sm"
                 label="On this page"
-                trailingIcon={panel() === "toc" ? "chevron-up" : "chevron-down"}
+                trailingIcon={panel() === "toc" ? "lucide:chevron-up" : "chevron-down"}
                 class="whitespace-nowrap"
                 aria-expanded={panel() === "toc" ? "true" : "false"}
                 aria-controls="docs-panel-toc"

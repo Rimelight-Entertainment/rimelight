@@ -8,7 +8,7 @@ const items: TreeItem[] = [
   {
     id: "docs",
     label: "Docs",
-    icon: "folder",
+    icon: "lucide:folder",
     children: [{ id: "intro", label: "Intro" }],
   },
   { id: "locked", label: "Locked", disabled: true },

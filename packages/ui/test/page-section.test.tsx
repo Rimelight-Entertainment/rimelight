@@ -25,7 +25,7 @@ describe("RLPageSection", () => {
 
   it("renders headline, description, and icon when provided", () => {
     const withAll = mountComponent(() => (
-      <RLPageSection headline="Eyebrow" title="Title" description="Details" icon="rocket" />
+      <RLPageSection headline="Eyebrow" title="Title" description="Details" icon="lucide:rocket" />
     ));
     const bare = mountComponent(() => <RLPageSection title="Title" />);
     expect(withAll.textContent).toContain("Eyebrow");
@@ -47,7 +47,7 @@ describe("RLPageSection", () => {
       <RLPageSection
         title="Default title"
         description="Default description"
-        icon="rocket"
+        icon="lucide:rocket"
         backgroundSlot={<span>Background slot</span>}
         leadingSlot={<span>Leading slot</span>}
         titleSlot={<span>Title slot</span>}

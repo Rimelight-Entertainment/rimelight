@@ -484,6 +484,9 @@ importers:
 
   packages/ui:
     dependencies:
+      '@iconify-json/lucide':
+        specifier: 1.2.150
+        version: 1.2.150
       '@unocss/vite':
         specifier: 66.12.0
         version: 66.12.0(@voidzero-dev/vite-plus-core@1.4.0(@types/node@26.6.5)(jiti@2.7.0)(typescript@7.1.0-beta))(cac@7.1.0)(srvx@1.0.7)

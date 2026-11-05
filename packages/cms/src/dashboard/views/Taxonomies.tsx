@@ -3,6 +3,7 @@ import { resolveLabel } from "../../core/collections/define";
 import type { TaxonomyTerm } from "../../core/types/taxonomies";
 import { useDashboard } from "../context";
 import { RLButton } from "@rimelight/ui/components/button/RLButton.tsx";
+import { RLLink } from "@rimelight/ui/components/link/RLLink.tsx";
 import { RLInput } from "@rimelight/ui/components/input/RLInput.tsx";
 import { RLTextarea } from "@rimelight/ui/components/textarea/RLTextarea.tsx";
 import { RLSelect } from "@rimelight/ui/components/select/RLSelect.tsx";
@@ -67,11 +68,9 @@ export const Taxonomies: Component<{ taxonomy?: string }> = (props) => {
         <nav class="flex w-44 shrink-0 flex-col gap-0.5">
           <For each={taxonomies.data()?.taxonomies ?? []}>
             {(t) => (
-              <RLButton
+              <RLLink
                 href={href(`/taxonomies/${t.slug}`)}
-                variant={active() === t.slug ? "soft" : "ghost"}
-                color="neutral"
-                class="justify-start"
+                class={`justify-start ${active() === t.slug ? "bg-primary-500/10 font-medium text-primary-500" : "text-toned hover:bg-elevated"}`}
                 label={resolveLabel(t.label)}
               />
             )}

@@ -17,7 +17,7 @@ export type SidebarBadge = Pick<RLBadgeProps, "color" | "variant"> & {
 export interface SidebarItem {
   label: string;
   href?: string | undefined;
-  /** Bare lucide icon name, e.g. `layers`. */
+  /** Icon name (built-in name, `set:name`, or `i-<set>-<name>` class), e.g. `layers`. */
   icon?: string | undefined;
   badge?: string | SidebarBadge | undefined;
   active?: boolean | undefined;
@@ -28,7 +28,7 @@ export interface SidebarScope {
   id?: string | undefined;
   label: string;
   href?: string | undefined;
-  /** Bare lucide icon name, e.g. `layers`. */
+  /** Icon name (built-in name, `set:name`, or `i-<set>-<name>` class), e.g. `layers`. */
   icon?: string | undefined;
   items?: SidebarItem[] | undefined;
 }
