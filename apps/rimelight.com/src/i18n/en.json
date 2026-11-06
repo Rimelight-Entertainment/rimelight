@@ -1261,6 +1261,7 @@
       "estate-debug-forbidden": "Only admins can change the estate directly.",
       "estate-research-slots-full": "All five research slots are busy.",
       "estate-server-unauthorized": "The estate server is not authorized.",
+      "player-unknown": "Unknown player.",
       "estate-unknown-currency": "Unknown currency for the estate.",
       "estate-tier-out-of-date": "The facility has changed since it was read. Try again.",
       "estate-gate-below-tier": "A facility the change needs is not high enough.",

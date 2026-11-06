@@ -1261,6 +1261,7 @@
       "estate-debug-forbidden": "Solo los administradores pueden cambiar la propiedad directamente.",
       "estate-research-slots-full": "Las cinco ranuras de investigación están ocupadas.",
       "estate-server-unauthorized": "El servidor de la propiedad no está autorizado.",
+      "player-unknown": "Jugador desconocido.",
       "estate-unknown-currency": "Moneda desconocida para la propiedad.",
       "estate-tier-out-of-date": "La instalación ha cambiado desde que se leyó. Inténtalo de nuevo.",
       "estate-gate-below-tier": "Una instalación que necesita este cambio no tiene el nivel suficiente.",

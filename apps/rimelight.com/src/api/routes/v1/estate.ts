@@ -23,9 +23,10 @@ import {
 } from "../../title-estate";
 import { isTitleSlug, type TitleSlug } from "../../titles";
 import { netBatch, type LedgerBatchEntry } from "../../title-ledger";
-import { LedgerRefusal, writeLedgerChanges } from "../../title-ledger-write";
-import { requireClientToken, type ClientVariables } from "./middleware";
+import { LedgerRefusal, writeLedgerChanges, type LedgerTx } from "../../title-ledger-write";
+import type { ClientVariables } from "./middleware";
 import { requireGameServer, type GameServerVariables } from "./game-server-auth";
+import { playerExists, serverPlayerSchema } from "./server-player";
 
 /**
  * The Grand Estate on the web API. The game server prices every change from the game's assets, checks it, and then calls the
@@ -68,6 +69,7 @@ const gateConditionSchema = z.union([
 const gateConditionsSchema = z.array(gateConditionSchema).default([]);
 
 const upgradeSchema = z.object({
+  player: serverPlayerSchema,
   requestId: uuid,
   facility: uuid,
   tier: z.number().int(),
@@ -78,6 +80,7 @@ const upgradeSchema = z.object({
   conditions: gateConditionsSchema,
 });
 const dispatchSchema = z.object({
+  player: serverPlayerSchema,
   requestId: uuid,
   kind: z.enum(["expedition", "research"]),
   expedition: uuid,
@@ -92,17 +95,19 @@ const dispatchSchema = z.object({
   conditions: gateConditionsSchema,
 });
 const cancelSchema = z.object({
+  player: serverPlayerSchema,
   requestId: uuid,
   expedition: uuid,
   refund: z.number().int().min(0),
   goldCurrency: uuid,
 });
 const claimSchema = z.object({
+  player: serverPlayerSchema,
   requestId: uuid,
   expedition: uuid,
   rewardCurrency: uuid,
 });
-const endNowSchema = z.object({ expedition: uuid });
+const endNowSchema = z.object({ expedition: uuid, player: serverPlayerSchema });
 
 function unixSeconds(date: Date): number {
   return Math.floor(date.getTime() / 1000);
@@ -177,6 +182,9 @@ async function applyEstateChange(
   apply: () => Promise<EstateEffect>,
 ): Promise<Record<string, unknown>> {
   const { gameServerId, userId, title, requestId, request } = scope;
+  if (!(await playerExists(tx, userId))) {
+    throw new EstateRefusal(409, t("api.message.player-unknown"));
+  }
   const [batch] = await tx
     .insert(titleLedgerBatches)
     .values({ userId, title, requestId, gameServerId, request })
@@ -315,18 +323,17 @@ function gateMessage(reason: GateReason, kind: GateCondition["kind"]): string {
 
 export const estateRoutes = new Hono<{
   Bindings: Env;
-  Variables: ClientVariables & GameServerVariables;
+  Variables: ClientVariables;
 }>();
 
-/** The estate of the signed-in player: every facility's tier, and every run that has not been claimed. */
-estateRoutes.get("/titles/:title/estate", requireClientToken, async (c) => {
-  const title = c.req.param("title");
-  if (!isTitleSlug(title)) {
-    return c.json({ error: "Not Found", message: t("api.message.unknown-title") }, 404);
-  }
+/** The game server's estate routes. Mounted at `/server/v1`, outside the client router; the player is named in the body. */
+export const estateServerRoutes = new Hono<{
+  Bindings: Env;
+  Variables: GameServerVariables;
+}>();
 
-  const userId = c.var.user.id;
-  const db = getDb();
+/** A player's estate: every facility's tier, and every run that has not been claimed. */
+async function estateState(db: Pick<LedgerTx, "select">, userId: string, title: TitleSlug) {
   const facilityRows = await db
     .select()
     .from(titleEstateFacilities)
@@ -338,11 +345,37 @@ estateRoutes.get("/titles/:title/estate", requireClientToken, async (c) => {
 
   const facilities: Record<string, number> = {};
   for (const row of facilityRows) facilities[row.facilityId] = row.tier;
-  return c.json({ success: true, facilities, expeditions: runRows.map(runResponse) });
+  return { success: true, facilities, expeditions: runRows.map(runResponse) };
+}
+
+/** The estate of the signed-in player. */
+estateRoutes.get("/titles/:title/estate", async (c) => {
+  const title = c.req.param("title");
+  if (!isTitleSlug(title)) {
+    return c.json({ error: "Not Found", message: t("api.message.unknown-title") }, 404);
+  }
+  return c.json(await estateState(getDb(), c.var.user.id, title));
+});
+
+const stateSchema = z.object({ player: serverPlayerSchema });
+
+/** The estate of a player, read by the game server before it prices a change. The player is named in the body. */
+estateServerRoutes.post("/titles/:title/estate/server/state", requireGameServer, async (c) => {
+  const title = c.req.param("title");
+  if (!isTitleSlug(title)) {
+    return c.json({ error: "Not Found", message: t("api.message.unknown-title") }, 404);
+  }
+  const body = await readBody(c.req, stateSchema);
+  if (!body.ok) return c.json({ error: body.error, message: body.message }, 400);
+  const db = getDb();
+  if (!(await playerExists(db, body.data.player))) {
+    return c.json({ error: "Conflict", message: t("api.message.player-unknown") }, 409);
+  }
+  return c.json(await estateState(db, body.data.player, title));
 });
 
 /** Records a facility level the game server has priced and checked. The facility must be exactly one tier below the new level, and its gate conditions must hold. */
-estateRoutes.post(
+estateServerRoutes.post(
   "/titles/:title/estate/server/facilities/upgrade",
   requireGameServer,
   async (c) => {
@@ -352,8 +385,8 @@ estateRoutes.post(
     }
     const body = await readBody(c.req, upgradeSchema);
     if (!body.ok) return c.json({ error: body.error, message: body.message }, 400);
-    const { requestId, ...request } = body.data;
-    const userId = c.var.user.id;
+    const { requestId, player, ...request } = body.data;
+    const userId = player;
     const { facility, tier, cost, goldCurrency, blueprintCost, blueprintCurrency, conditions } =
       request;
     if (!isEstateTier(tier) || tier <= ESTATE_MIN_TIER) {
@@ -414,7 +447,7 @@ estateRoutes.post(
 );
 
 /** Records a sent expedition. One run per expedition: a second send is refused while one is out. */
-estateRoutes.post(
+estateServerRoutes.post(
   "/titles/:title/estate/server/expeditions/dispatch",
   requireGameServer,
   async (c) => {
@@ -424,8 +457,8 @@ estateRoutes.post(
     }
     const body = await readBody(c.req, dispatchSchema);
     if (!body.ok) return c.json({ error: body.error, message: body.message }, 400);
-    const { requestId, ...request } = body.data;
-    const userId = c.var.user.id;
+    const { requestId, player, ...request } = body.data;
+    const userId = player;
     const {
       kind,
       expedition,
@@ -517,7 +550,7 @@ estateRoutes.post(
 );
 
 /** Records a recall: the run is removed and its gold refunded. A concluded run cannot be recalled. */
-estateRoutes.post(
+estateServerRoutes.post(
   "/titles/:title/estate/server/expeditions/cancel",
   requireGameServer,
   async (c) => {
@@ -527,8 +560,8 @@ estateRoutes.post(
     }
     const body = await readBody(c.req, cancelSchema);
     if (!body.ok) return c.json({ error: body.error, message: body.message }, 400);
-    const { requestId, ...request } = body.data;
-    const userId = c.var.user.id;
+    const { requestId, player, ...request } = body.data;
+    const userId = player;
     const { expedition, refund, goldCurrency } = request;
 
     try {
@@ -572,7 +605,7 @@ estateRoutes.post(
 );
 
 /** Records a claim: the concluded run is removed and its stored reward is credited in the reward currency. A claimed research is recorded as completed. */
-estateRoutes.post(
+estateServerRoutes.post(
   "/titles/:title/estate/server/expeditions/claim",
   requireGameServer,
   async (c) => {
@@ -582,8 +615,8 @@ estateRoutes.post(
     }
     const body = await readBody(c.req, claimSchema);
     if (!body.ok) return c.json({ error: body.error, message: body.message }, 400);
-    const { requestId, ...request } = body.data;
-    const userId = c.var.user.id;
+    const { requestId, player, ...request } = body.data;
+    const userId = player;
     const { expedition, rewardCurrency } = request;
 
     try {
@@ -635,7 +668,7 @@ estateRoutes.post(
 );
 
 /** Debug: ends a running expedition now, so the game server concludes it on its next check. */
-estateRoutes.post(
+estateServerRoutes.post(
   "/titles/:title/estate/server/expeditions/end-now",
   requireGameServer,
   async (c) => {
@@ -645,7 +678,7 @@ estateRoutes.post(
     }
     const body = await readBody(c.req, endNowSchema);
     if (!body.ok) return c.json({ error: body.error, message: body.message }, 400);
-    const userId = c.var.user.id;
+    const userId = body.data.player;
     const { expedition } = body.data;
 
     const updated = await getDb()

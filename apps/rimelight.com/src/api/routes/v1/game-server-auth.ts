@@ -12,9 +12,9 @@ import {
 export type GameServerVariables = { gameServerId: string };
 
 /**
- * Lets only a game server through to the write routes. The server sends `X-Game-Server: <id>.<secret>`. The credential must be
- * an unrevoked row for the route's title whose secret hashes to the stored hash. The player is not identified here: the v1
- * router has already verified the player's bearer token, and the route reads the player from `c.var.user`. Sets `gameServerId`.
+ * Lets only a game server through to the write routes, which are mounted at `/server/v1`, outside the client router. The server
+ * sends `X-Game-Server: <id>.<secret>`. The credential must be an unrevoked row for the route's title whose secret hashes to the
+ * stored hash. The player is named in the request body, so the route checks that the player exists. Sets `gameServerId`.
  */
 export const requireGameServer = createMiddleware<{
   Bindings: Env;

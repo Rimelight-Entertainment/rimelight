@@ -12,7 +12,6 @@ import { titleProficiencies } from "#db/schema/title-proficiencies";
 import { heroExperienceFor } from "../../title-heroes";
 import { titleHeroes } from "#db/schema/title-heroes";
 import { estateRoutes } from "./estate";
-import { ledgerRoutes } from "./ledger";
 import { mailRoutes } from "./mail";
 import { isTitleSlug } from "../../titles";
 import { requireClientToken, type ClientVariables } from "./middleware";
@@ -264,7 +263,6 @@ v1.post("/titles/:title/proficiencies/set", async (c) => {
 });
 
 v1.route("/", estateRoutes);
-v1.route("/", ledgerRoutes);
 v1.route("/", mailRoutes);
 
 export default v1;

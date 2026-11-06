@@ -1,15 +1,14 @@
 import { Hono } from "hono";
-import { and, desc, eq, isNull } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 import { getDb } from "#db";
 import { titleLedgerBatches } from "#db/schema/title-ledger";
 import { titleMail } from "#db/schema/title-mail";
-import { users } from "#db/schema/users";
 import { z } from "zod";
 import { t } from "@rimelight/i18n";
 import { currencyCapsFor } from "../../title-currencies";
 import { itemCapsFor } from "../../title-items";
 import { netBatch } from "../../title-ledger";
-import { LedgerRefusal, writeLedgerChanges, type LedgerTx } from "../../title-ledger-write";
+import { LedgerRefusal, writeLedgerChanges } from "../../title-ledger-write";
 import {
   decideMailSend,
   mailSendLedgerEntries,
@@ -22,8 +21,9 @@ import {
   type MailSendRefusal,
 } from "../../title-mail";
 import { isTitleSlug, type TitleSlug } from "../../titles";
-import { requireClientToken, type ClientVariables } from "./middleware";
+import type { ClientVariables } from "./middleware";
 import { requireGameServer, type GameServerVariables } from "./game-server-auth";
+import { playerExists, serverPlayerSchema } from "./server-player";
 
 /**
  * Mail on the web API: a letter a server sends one player, with items and currency attached. The game server sends and claims
@@ -53,7 +53,7 @@ const sendSchema = z
   })
   // A letter may be text alone: a message with no attachments debits nothing from its sender.
   .refine((mail) => mailStacksAreDistinct(mail.items, mail.currency));
-const claimSchema = z.object({ mail: uuid });
+const claimSchema = z.object({ mail: uuid, player: serverPlayerSchema });
 
 const CLAIM_REFUSAL_KEY = {
   unknown: "api.message.mail-unknown",
@@ -93,22 +93,19 @@ function mailResponse(row: typeof titleMail.$inferSelect) {
   };
 }
 
-/** Whether a player account exists and has not been deleted. */
-async function playerExists(tx: LedgerTx, userId: string): Promise<boolean> {
-  const [row] = await tx
-    .select({ id: users.id })
-    .from(users)
-    .where(and(eq(users.id, userId), isNull(users.deletedAt)));
-  return row !== undefined;
-}
-
 export const mailRoutes = new Hono<{
   Bindings: Env;
-  Variables: ClientVariables & GameServerVariables;
+  Variables: ClientVariables;
+}>();
+
+/** The game server's mail routes. Mounted at `/server/v1`, outside the client router; the player is named in the body. */
+export const mailServerRoutes = new Hono<{
+  Bindings: Env;
+  Variables: GameServerVariables;
 }>();
 
 /** The signed-in player's letters in this title, newest first, with their attachments and whether each is claimed. */
-mailRoutes.get("/titles/:title/mail", requireClientToken, async (c) => {
+mailRoutes.get("/titles/:title/mail", async (c) => {
   const title = c.req.param("title");
   if (!isTitleSlug(title)) {
     return c.json({ error: "Not Found", message: t("api.message.unknown-title") }, 404);
@@ -128,7 +125,7 @@ mailRoutes.get("/titles/:title/mail", requireClientToken, async (c) => {
  * A letter with no sender is granted by the server and debits no one. The id is the caller's, so a retry of the same letter
  * returns the stored row; the same id with a different letter is refused.
  */
-mailRoutes.post("/titles/:title/mail/server/send", requireGameServer, async (c) => {
+mailServerRoutes.post("/titles/:title/mail/server/send", requireGameServer, async (c) => {
   const title = c.req.param("title");
   if (!isTitleSlug(title)) {
     return c.json({ error: "Not Found", message: t("api.message.unknown-title") }, 404);
@@ -252,10 +249,10 @@ mailRoutes.post("/titles/:title/mail/server/send", requireGameServer, async (c) 
 });
 
 /**
- * The game server claims a letter for the player who holds the bearer token. The letter is locked, checked, marked claimed, and its
+ * The game server claims a letter for the player it names in the body. The letter is locked, checked, marked claimed, and its
  * attachments credited as one ledger batch, all in one transaction: a letter is claimed once or not at all.
  */
-mailRoutes.post("/titles/:title/mail/server/claim", requireGameServer, async (c) => {
+mailServerRoutes.post("/titles/:title/mail/server/claim", requireGameServer, async (c) => {
   const title = c.req.param("title");
   if (!isTitleSlug(title)) {
     return c.json({ error: "Not Found", message: t("api.message.unknown-title") }, 404);
@@ -272,7 +269,7 @@ mailRoutes.post("/titles/:title/mail/server/claim", requireGameServer, async (c)
     return c.json({ error: "Bad Request", message: t("api.message.mail-invalid") }, 400);
   }
 
-  const claimant = c.var.user.id;
+  const claimant = parsed.data.player;
   const gameServerId = c.var.gameServerId;
   try {
     const claimed = await getDb().transaction(async (tx) => {
