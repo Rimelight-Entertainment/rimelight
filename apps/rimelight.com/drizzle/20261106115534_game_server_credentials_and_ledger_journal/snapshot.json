@@ -1,0 +1,774 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "b1fd5695-de95-4c51-b4c3-4d4959c2ea19",
+  "prevIds": ["4a3bec65-b2bf-4c4c-8335-11c0a0a6bfa8"],
+  "footprints": [
+    {
+      "statementType": "create_table",
+      "statementTarget": ["table", "public", "title_estate_expeditions"],
+      "writes": [
+        "s|tbl|public.title_estate_expeditions",
+        "n|tbl|public.title_estate_expeditions",
+        "e|tbl|public.title_estate_expeditions",
+        "n|rel|public.title_estate_expeditions",
+        "n|type|public.title_estate_expeditions",
+        "n|rel|public.title_estate_expeditions_user_id_title_expedition_pk"
+      ],
+      "reads": ["n|sch|public"]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": ["table", "public", "title_estate_facilities"],
+      "writes": [
+        "s|tbl|public.title_estate_facilities",
+        "n|tbl|public.title_estate_facilities",
+        "e|tbl|public.title_estate_facilities",
+        "n|rel|public.title_estate_facilities",
+        "n|type|public.title_estate_facilities",
+        "n|rel|public.title_estate_facilities_user_id_title_facility_pk"
+      ],
+      "reads": ["n|sch|public"]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": ["table", "public", "title_ledger_batches"],
+      "writes": [
+        "s|tbl|public.title_ledger_batches",
+        "n|tbl|public.title_ledger_batches",
+        "e|tbl|public.title_ledger_batches",
+        "n|rel|public.title_ledger_batches",
+        "n|type|public.title_ledger_batches",
+        "n|rel|public.title_ledger_batches_pkey",
+        "n|rel|public.title_ledger_batches_user_id_title_request_id_key"
+      ],
+      "reads": ["n|sch|public"]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": ["table", "public", "title_ledger_entries"],
+      "writes": [
+        "s|tbl|public.title_ledger_entries",
+        "n|tbl|public.title_ledger_entries",
+        "e|tbl|public.title_ledger_entries",
+        "n|rel|public.title_ledger_entries",
+        "n|type|public.title_ledger_entries",
+        "n|rel|public.title_ledger_entries_batch_id_item_id_pk"
+      ],
+      "reads": ["n|sch|public"]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": ["table", "public", "game_server_credentials"],
+      "writes": [
+        "s|tbl|public.game_server_credentials",
+        "n|tbl|public.game_server_credentials",
+        "e|tbl|public.game_server_credentials",
+        "n|rel|public.game_server_credentials",
+        "n|type|public.game_server_credentials",
+        "n|rel|public.game_server_credentials_pkey"
+      ],
+      "reads": ["n|sch|public"]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": ["table", "public", "title_ledger_batches"],
+      "writes": [
+        "s|fk|public.title_ledger_batches.title_ledger_batches_user_id_users_id_fk",
+        "n|fk|public.title_ledger_batches.title_ledger_batches_user_id_users_id_fk",
+        "e|fk|public.title_ledger_batches.title_ledger_batches_user_id_users_id_fk",
+        "n|con|public.title_ledger_batches.title_ledger_batches_user_id_users_id_fk"
+      ],
+      "reads": [
+        "n|tbl|public.title_ledger_batches",
+        "n|sch|public",
+        "n|tbl|public.users",
+        "n|sch|public",
+        "n|col|public.title_ledger_batches.user_id",
+        "n|col|public.users.id",
+        "e|uniqueness|public.users.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": ["table", "public", "title_ledger_batches"],
+      "writes": [
+        "s|fk|public.title_ledger_batches.title_ledger_batches_game_server_id_game_server_credentials_id_fk",
+        "n|fk|public.title_ledger_batches.title_ledger_batches_game_server_id_game_server_credentials_id_fk",
+        "e|fk|public.title_ledger_batches.title_ledger_batches_game_server_id_game_server_credentials_id_fk",
+        "n|con|public.title_ledger_batches.title_ledger_batches_game_server_id_game_server_credentials_id_fk"
+      ],
+      "reads": [
+        "n|tbl|public.title_ledger_batches",
+        "n|sch|public",
+        "n|tbl|public.game_server_credentials",
+        "n|sch|public",
+        "n|col|public.title_ledger_batches.game_server_id",
+        "n|col|public.game_server_credentials.id",
+        "e|uniqueness|public.game_server_credentials.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": ["table", "public", "title_ledger_entries"],
+      "writes": [
+        "s|fk|public.title_ledger_entries.title_ledger_entries_batch_id_title_ledger_batches_id_fk",
+        "n|fk|public.title_ledger_entries.title_ledger_entries_batch_id_title_ledger_batches_id_fk",
+        "e|fk|public.title_ledger_entries.title_ledger_entries_batch_id_title_ledger_batches_id_fk",
+        "n|con|public.title_ledger_entries.title_ledger_entries_batch_id_title_ledger_batches_id_fk"
+      ],
+      "reads": [
+        "n|tbl|public.title_ledger_entries",
+        "n|sch|public",
+        "n|tbl|public.title_ledger_batches",
+        "n|sch|public",
+        "n|col|public.title_ledger_entries.batch_id",
+        "n|col|public.title_ledger_batches.id",
+        "e|uniqueness|public.title_ledger_batches.id"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "title_estate_expeditions",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "title_estate_facilities",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "title_ledger_batches",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "title_ledger_entries",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "game_server_credentials",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "title_estate_expeditions",
+        "name": "user_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "title_estate_expeditions",
+        "name": "title",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "title_estate_expeditions",
+        "name": "expedition_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "title_estate_expeditions",
+        "name": "tier",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "title_estate_expeditions",
+        "name": "started_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "title_estate_expeditions",
+        "name": "ends_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "title_estate_expeditions",
+        "name": "reward",
+        "type": "bigint",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "title_estate_expeditions",
+        "name": "kind",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "'expedition'",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "title_estate_facilities",
+        "name": "user_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "title_estate_facilities",
+        "name": "title",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "title_estate_facilities",
+        "name": "facility_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "title_estate_facilities",
+        "name": "tier",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "1",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "title_estate_facilities",
+        "name": "updated_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "title_ledger_batches",
+        "name": "id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "title_ledger_batches",
+        "name": "user_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "title_ledger_batches",
+        "name": "title",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "title_ledger_batches",
+        "name": "request_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "title_ledger_batches",
+        "name": "game_server_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "title_ledger_batches",
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "title_ledger_entries",
+        "name": "batch_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "title_ledger_entries",
+        "name": "kind",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "title_ledger_entries",
+        "name": "item_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "title_ledger_entries",
+        "name": "delta",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "title_ledger_entries",
+        "name": "balance_after",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "game_server_credentials",
+        "name": "id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "game_server_credentials",
+        "name": "title",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "game_server_credentials",
+        "name": "label",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "game_server_credentials",
+        "name": "secret_hash",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "game_server_credentials",
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "game_server_credentials",
+        "name": "revoked_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "title_ledger_batches",
+        "name": "title_ledger_batches_user_id_users_id_fk",
+        "nameExplicit": true,
+        "columns": ["user_id"],
+        "schemaTo": "public",
+        "tableTo": "users",
+        "columnsTo": ["id"],
+        "onUpdate": "NO ACTION",
+        "onDelete": "CASCADE",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "title_ledger_batches",
+        "name": "title_ledger_batches_game_server_id_game_server_credentials_id_fk",
+        "nameExplicit": true,
+        "columns": ["game_server_id"],
+        "schemaTo": "public",
+        "tableTo": "game_server_credentials",
+        "columnsTo": ["id"],
+        "onUpdate": "NO ACTION",
+        "onDelete": "NO ACTION",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "title_ledger_entries",
+        "name": "title_ledger_entries_batch_id_title_ledger_batches_id_fk",
+        "nameExplicit": true,
+        "columns": ["batch_id"],
+        "schemaTo": "public",
+        "tableTo": "title_ledger_batches",
+        "columnsTo": ["id"],
+        "onUpdate": "NO ACTION",
+        "onDelete": "CASCADE",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "title_estate_expeditions",
+        "name": "title_estate_expeditions_user_id_title_expedition_pk",
+        "columns": ["user_id", "title", "expedition_id"],
+        "nameExplicit": true,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "title_estate_facilities",
+        "name": "title_estate_facilities_user_id_title_facility_pk",
+        "columns": ["user_id", "title", "facility_id"],
+        "nameExplicit": true,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "title_ledger_entries",
+        "name": "title_ledger_entries_batch_id_item_id_pk",
+        "columns": ["batch_id", "item_id"],
+        "nameExplicit": true,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "title_ledger_batches",
+        "name": "title_ledger_batches_pkey",
+        "columns": ["id"],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "game_server_credentials",
+        "name": "game_server_credentials_pkey",
+        "columns": ["id"],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "title_ledger_batches",
+        "name": "title_ledger_batches_user_id_title_request_id_key",
+        "nameExplicit": true,
+        "columns": ["user_id", "title", "request_id"],
+        "nullsNotDistinct": false,
+        "entityType": "uniques"
+      }
+    }
+  ]
+}

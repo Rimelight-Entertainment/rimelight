@@ -17,6 +17,7 @@ export default defineConfig({
     cache: {
       enabled: true,
     },
+    domains: ["rimelight.com", "www.rimelight.com"],
     env: {
       ASSETS: bindings.assets(),
       IMAGES: bindings.images(),
@@ -56,7 +57,6 @@ export default defineConfig({
         id: "5889fcb4d3034e909c0f060f18975597",
       }),
       GITHUB_TOKEN: bindings.secret(),
-      GT_ESTATE_SERVER_TOKEN: bindings.secret(),
     },
   },
 });

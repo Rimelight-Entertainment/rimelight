@@ -20,7 +20,7 @@ export function currencyCapsFor(title: TitleSlug): Record<string, number> {
   return CURRENCY_CAPS[title];
 }
 
-/** Roles allowed to grant or spend currency directly. Players never hold these. */
+/** Roles allowed to set balances and proficiency experience directly, for the debug tools. Players never hold these. */
 const GRANT_ROLES = new Set(["admin", "owner"]);
 
 export function canAdjustCurrency(role: string): boolean {

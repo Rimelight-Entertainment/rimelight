@@ -1,0 +1,108 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "a478e45e-9801-4126-92ba-fde255626f43",
+  "prevIds": ["b1fd5695-de95-4c51-b4c3-4d4959c2ea19"],
+  "footprints": [
+    {
+      "statementType": "create_table",
+      "statementTarget": ["table", "public", "title_estate_research_completions"],
+      "writes": [
+        "s|tbl|public.title_estate_research_completions",
+        "n|tbl|public.title_estate_research_completions",
+        "e|tbl|public.title_estate_research_completions",
+        "n|rel|public.title_estate_research_completions",
+        "n|type|public.title_estate_research_completions",
+        "n|rel|public.title_estate_research_completions_user_id_title_research_pk"
+      ],
+      "reads": ["n|sch|public"]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "title_estate_research_completions",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "title_estate_research_completions",
+        "name": "user_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "title_estate_research_completions",
+        "name": "title",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "title_estate_research_completions",
+        "name": "research_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "title_estate_research_completions",
+        "name": "completed_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "title_estate_research_completions",
+        "name": "title_estate_research_completions_user_id_title_research_pk",
+        "columns": ["user_id", "title", "research_id"],
+        "nameExplicit": true,
+        "entityType": "pks"
+      }
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "8452eec4-d2a1-48b5-a0df-5842d12a93f1",
+  "prevIds": ["a478e45e-9801-4126-92ba-fde255626f43"],
+  "footprints": [
+    {
+      "statementType": "add_column",
+      "statementTarget": ["column", "public", "title_ledger_entries", "reason"],
+      "writes": [
+        "s|col|public.title_ledger_entries.reason",
+        "n|col|public.title_ledger_entries.reason",
+        "e|col|public.title_ledger_entries.reason"
+      ],
+      "reads": ["n|tbl|public.title_ledger_entries", "n|sch|public"]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "title_ledger_entries",
+        "name": "reason",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "17c40c78-c18b-4ff2-9284-649f57f8cdec",
+  "prevIds": ["a95b88fb-df1b-40a5-b2c5-0ecd9ccf6c66"],
+  "footprints": [
+    {
+      "statementType": "add_column",
+      "statementTarget": ["column", "public", "title_ledger_batches", "request"],
+      "writes": [
+        "s|col|public.title_ledger_batches.request",
+        "n|col|public.title_ledger_batches.request",
+        "e|col|public.title_ledger_batches.request"
+      ],
+      "reads": ["n|tbl|public.title_ledger_batches", "n|sch|public"]
+    },
+    {
+      "statementType": "add_column",
+      "statementTarget": ["column", "public", "title_ledger_batches", "response"],
+      "writes": [
+        "s|col|public.title_ledger_batches.response",
+        "n|col|public.title_ledger_batches.response",
+        "e|col|public.title_ledger_batches.response"
+      ],
+      "reads": ["n|tbl|public.title_ledger_batches", "n|sch|public"]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "title_ledger_batches",
+        "name": "request",
+        "type": "jsonb",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "title_ledger_batches",
+        "name": "response",
+        "type": "jsonb",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    }
+  ]
+}

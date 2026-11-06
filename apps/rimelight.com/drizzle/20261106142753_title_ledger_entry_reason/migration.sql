@@ -1,0 +1,1 @@
+ALTER TABLE "title_ledger_entries" ADD COLUMN "reason" text;

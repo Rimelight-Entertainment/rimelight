@@ -1,20 +1,37 @@
 import { Hono } from "hono";
 import { and, eq, sql } from "drizzle-orm";
 import { getDb } from "#db";
-import { titleEstateExpeditions, titleEstateFacilities } from "#db/schema/title-estate";
+import {
+  titleEstateExpeditions,
+  titleEstateFacilities,
+  titleEstateResearchCompletions,
+} from "#db/schema/title-estate";
+import { titleLedgerBatches } from "#db/schema/title-ledger";
 import { titleCurrencies } from "#db/schema/title-currencies";
 import { z } from "zod";
 import { t } from "@rimelight/i18n";
-import { clampBalance, currencyCapsFor } from "../../title-currencies";
-import { ESTATE_MIN_TIER, canStartResearch, hasConcluded, isEstateTier } from "../../title-estate";
+import { currencyCapsFor } from "../../title-currencies";
+import {
+  ESTATE_MIN_TIER,
+  canStartResearch,
+  evaluateGate,
+  hasConcluded,
+  isEstateTier,
+  type GateCondition,
+  type GateReason,
+  type GateState,
+} from "../../title-estate";
 import { isTitleSlug, type TitleSlug } from "../../titles";
+import { netBatch, type LedgerBatchEntry } from "../../title-ledger";
+import { LedgerRefusal, writeLedgerChanges } from "../../title-ledger-write";
 import { requireClientToken, type ClientVariables } from "./middleware";
-import { requireGameServer } from "./estate-server-auth";
+import { requireGameServer, type GameServerVariables } from "./game-server-auth";
 
 /**
  * The Grand Estate on the web API. The game server prices every change from the game's assets, checks it, and then calls the
- * write routes under `/server/` with what it decided. The web API stores that decision in one transaction and does not price
- * anything itself. A player reads their estate here.
+ * write routes under `/server/` with what it decided and the gate conditions it evaluated. The web API checks each condition
+ * against its stored state, and stores the change in one transaction. It prices nothing itself. A player reads their estate here.
+ * Every write carries a `requestId` and is recorded as one ledger batch under it, so a retry replays and never applies twice.
  */
 type Tx = Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];
 
@@ -29,17 +46,39 @@ class EstateRefusal extends Error {
 }
 
 const uuid = z.string().uuid();
-const serverUser = z.object({ userId: uuid });
 
-const upgradeSchema = serverUser.extend({
+/**
+ * The gate conditions the game server evaluated for a step. A `hasTag` names a tag and no subject; every other kind names a
+ * subject uuid and no tag. A `level` or a `hasTag` is sent but refused, since the web API cannot check it.
+ */
+const gateConditionSchema = z.union([
+  z.object({
+    kind: z.enum(["facilityTier", "hasCompletedResearch", "balance", "level"]),
+    subject: uuid,
+    tag: z.null(),
+    value: z.number().int().min(0),
+  }),
+  z.object({
+    kind: z.literal("hasTag"),
+    subject: z.null(),
+    tag: z.string().min(1),
+    value: z.number().int().min(0),
+  }),
+]);
+const gateConditionsSchema = z.array(gateConditionSchema).default([]);
+
+const upgradeSchema = z.object({
+  requestId: uuid,
   facility: uuid,
   tier: z.number().int(),
   cost: z.number().int().min(0),
   goldCurrency: uuid,
   blueprintCost: z.number().int().min(0),
   blueprintCurrency: uuid,
+  conditions: gateConditionsSchema,
 });
-const dispatchSchema = serverUser.extend({
+const dispatchSchema = z.object({
+  requestId: uuid,
   kind: z.enum(["expedition", "research"]),
   expedition: uuid,
   /** The facility an expedition unlocks from. Researches are not tied to a facility. */
@@ -50,17 +89,20 @@ const dispatchSchema = serverUser.extend({
   goldCurrency: uuid,
   startedAt: z.number().int(),
   endsAt: z.number().int(),
+  conditions: gateConditionsSchema,
 });
-const cancelSchema = serverUser.extend({
+const cancelSchema = z.object({
+  requestId: uuid,
   expedition: uuid,
   refund: z.number().int().min(0),
   goldCurrency: uuid,
 });
-const claimSchema = serverUser.extend({
+const claimSchema = z.object({
+  requestId: uuid,
   expedition: uuid,
   rewardCurrency: uuid,
 });
-const endNowSchema = serverUser.extend({ expedition: uuid });
+const endNowSchema = z.object({ expedition: uuid });
 
 function unixSeconds(date: Date): number {
   return Math.floor(date.getTime() / 1000);
@@ -102,35 +144,76 @@ async function lockFacilityTier(
   return row!.tier;
 }
 
-/**
- * Adds a signed amount to one currency of the player, locking its row. A debit the balance cannot cover is refused (null) and
- * changes nothing. A credit is clamped to the currency's cap. Returns the balance after the change.
- */
-async function adjustCurrencyBalance(
-  tx: Tx,
-  userId: string,
-  title: string,
-  currencyId: string,
-  delta: number,
-): Promise<number | null> {
-  const cap = currencyCapsFor(title as TitleSlug)[currencyId];
-  if (cap === undefined) {
-    throw new EstateRefusal(409, t("api.message.estate-unknown-currency"));
-  }
-  const key = and(
-    eq(titleCurrencies.userId, userId),
-    eq(titleCurrencies.title, title),
-    eq(titleCurrencies.currencyId, currencyId),
+/** The JSON text of a value with its object keys sorted, so two requests with the same fields compare equal in any key order. */
+function canonicalJson(value: unknown): string {
+  return JSON.stringify(value, (_key, item: unknown) =>
+    item !== null && typeof item === "object" && !Array.isArray(item)
+      ? Object.fromEntries(Object.entries(item).sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)))
+      : item,
   );
-  await tx.insert(titleCurrencies).values({ userId, title, currencyId }).onConflictDoNothing();
-  const [row] = await tx.select().from(titleCurrencies).where(key).for("update");
-  const next = row!.amount + delta;
-  if (delta < 0 && next < 0) {
-    return null;
+}
+
+/** What one estate change did: the response fields it sends back, and the currency entries it writes to the ledger. */
+interface EstateEffect {
+  response: Record<string, unknown>;
+  entries: LedgerBatchEntry[];
+}
+
+/**
+ * Applies one game-server estate change as a ledger batch under its request id, in the caller's transaction. The batch row is
+ * written first, under the id. A retry with the same id and request returns the stored response and applies nothing. The same
+ * id with a different request is refused. Otherwise `apply` makes the change (it may refuse), its currency entries are written
+ * to the ledger, and the response is stored on the batch with the request. A refusal rolls back the batch row with the rest.
+ */
+async function applyEstateChange(
+  tx: Tx,
+  scope: {
+    gameServerId: string;
+    userId: string;
+    title: string;
+    requestId: string;
+    request: Record<string, unknown>;
+  },
+  apply: () => Promise<EstateEffect>,
+): Promise<Record<string, unknown>> {
+  const { gameServerId, userId, title, requestId, request } = scope;
+  const [batch] = await tx
+    .insert(titleLedgerBatches)
+    .values({ userId, title, requestId, gameServerId, request })
+    .onConflictDoNothing({
+      target: [titleLedgerBatches.userId, titleLedgerBatches.title, titleLedgerBatches.requestId],
+    })
+    .returning({ id: titleLedgerBatches.id });
+  if (!batch) {
+    const [stored] = await tx
+      .select()
+      .from(titleLedgerBatches)
+      .where(
+        and(
+          eq(titleLedgerBatches.userId, userId),
+          eq(titleLedgerBatches.title, title),
+          eq(titleLedgerBatches.requestId, requestId),
+        ),
+      );
+    if (!stored?.response || canonicalJson(stored.request) !== canonicalJson(request)) {
+      throw new LedgerRefusal(t("api.message.ledger-request-reused"));
+    }
+    return stored.response;
   }
-  const stored = clampBalance(next, cap);
-  await tx.update(titleCurrencies).set({ amount: stored, updatedAt: new Date() }).where(key);
-  return stored;
+
+  const effect = await apply();
+  const net = netBatch(effect.entries);
+  if (net === null) throw new EstateRefusal(409, t("api.message.estate-invalid"));
+  const caps = currencyCapsFor(title as TitleSlug);
+  for (const id of net.keys()) {
+    if (caps[id] === undefined) {
+      throw new EstateRefusal(409, t("api.message.estate-unknown-currency"));
+    }
+  }
+  const balances = await writeLedgerChanges(tx, userId, title, batch.id, net, caps);
+  const response = { success: true, ...effect.response, balances: Object.fromEntries(balances) };
+  await tx.update(titleLedgerBatches).set({ response }).where(eq(titleLedgerBatches.id, batch.id));
+  return response;
 }
 
 function runKey(userId: string, title: string, expedition: string) {
@@ -159,7 +242,81 @@ async function readBody<T extends z.ZodType>(
   return { ok: true, data: parsed.data };
 }
 
-export const estateRoutes = new Hono<{ Bindings: Env; Variables: ClientVariables }>();
+/**
+ * Reads what a gate can check about the player, inside the change's transaction. The rows are read without row locks: the change
+ * already locks the facility and the currencies it writes. A facility tier only rises and a completion is only added, so a stale
+ * read of either refuses rather than passes. A currency balance can fall under a concurrent spend, so a balance read may lag it
+ * by a moment.
+ */
+async function readGateState(tx: Tx, userId: string, title: string): Promise<GateState> {
+  const facilityRows = await tx
+    .select()
+    .from(titleEstateFacilities)
+    .where(and(eq(titleEstateFacilities.userId, userId), eq(titleEstateFacilities.title, title)));
+  const researchRows = await tx
+    .select()
+    .from(titleEstateResearchCompletions)
+    .where(
+      and(
+        eq(titleEstateResearchCompletions.userId, userId),
+        eq(titleEstateResearchCompletions.title, title),
+      ),
+    );
+  const currencyRows = await tx
+    .select()
+    .from(titleCurrencies)
+    .where(and(eq(titleCurrencies.userId, userId), eq(titleCurrencies.title, title)));
+
+  // Every currency the title caps is listed, at zero when the player has no row for it. A currency it does not cap is absent,
+  // so a gate on it is refused as unknown.
+  const held = new Map(currencyRows.map((row): [string, number] => [row.currencyId, row.amount]));
+  const balances = new Map<string, number>();
+  for (const currencyId of Object.keys(currencyCapsFor(title as TitleSlug))) {
+    balances.set(currencyId, held.get(currencyId) ?? 0);
+  }
+  return {
+    facilityTiers: new Map(facilityRows.map((row): [string, number] => [row.facilityId, row.tier])),
+    completedResearch: new Set(researchRows.map((row) => row.researchId)),
+    balances,
+  };
+}
+
+/**
+ * Checks the gate conditions the game server sent against the player's stored state, and refuses the change at the first that
+ * fails. The web API trusts the server to send every condition that applies. A compromised game server can omit a condition, and
+ * the web API cannot detect that. This gap is accepted: the web API checks the conditions it is sent.
+ */
+async function checkGate(
+  tx: Tx,
+  userId: string,
+  title: string,
+  conditions: readonly GateCondition[],
+): Promise<void> {
+  if (conditions.length === 0) return;
+  const result = evaluateGate(conditions, await readGateState(tx, userId, title));
+  if (!result.passed) throw new EstateRefusal(409, gateMessage(result.reason, result.kind));
+}
+
+/** The refusal for a failed gate condition. A level or a tag the web API cannot check names its kind. */
+function gateMessage(reason: GateReason, kind: GateCondition["kind"]): string {
+  switch (reason) {
+    case "below-tier":
+      return t("api.message.estate-gate-below-tier");
+    case "not-completed":
+      return t("api.message.estate-gate-not-completed");
+    case "below-balance":
+      return t("api.message.estate-gate-below-balance");
+    case "unknown-currency":
+      return t("api.message.estate-unknown-currency");
+    case "unsupported":
+      return t("api.message.estate-gate-unsupported", { kind });
+  }
+}
+
+export const estateRoutes = new Hono<{
+  Bindings: Env;
+  Variables: ClientVariables & GameServerVariables;
+}>();
 
 /** The estate of the signed-in player: every facility's tier, and every run that has not been claimed. */
 estateRoutes.get("/titles/:title/estate", requireClientToken, async (c) => {
@@ -184,7 +341,7 @@ estateRoutes.get("/titles/:title/estate", requireClientToken, async (c) => {
   return c.json({ success: true, facilities, expeditions: runRows.map(runResponse) });
 });
 
-/** Records a facility level the game server has priced and checked. The facility must be exactly one tier below the new level. */
+/** Records a facility level the game server has priced and checked. The facility must be exactly one tier below the new level, and its gate conditions must hold. */
 estateRoutes.post(
   "/titles/:title/estate/server/facilities/upgrade",
   requireGameServer,
@@ -195,49 +352,62 @@ estateRoutes.post(
     }
     const body = await readBody(c.req, upgradeSchema);
     if (!body.ok) return c.json({ error: body.error, message: body.message }, 400);
-    const { userId, facility, tier, cost, goldCurrency, blueprintCost, blueprintCurrency } =
-      body.data;
+    const { requestId, ...request } = body.data;
+    const userId = c.var.user.id;
+    const { facility, tier, cost, goldCurrency, blueprintCost, blueprintCurrency, conditions } =
+      request;
     if (!isEstateTier(tier) || tier <= ESTATE_MIN_TIER) {
       return c.json({ error: "Bad Request", message: t("api.message.estate-invalid") }, 400);
     }
 
     try {
-      const balances = await getDb().transaction(async (tx) => {
-        const current = await lockFacilityTier(tx, userId, title, facility);
-        if (current !== tier - 1) {
-          throw new EstateRefusal(409, t("api.message.estate-tier-out-of-date"));
-        }
-        const gold = await adjustCurrencyBalance(tx, userId, title, goldCurrency, -cost);
-        if (gold === null) {
-          throw new EstateRefusal(409, t("api.message.estate-not-enough-gold"));
-        }
-        // The Blueprints are spent in the same transaction, so a level either costs both or neither.
-        const blueprints = await adjustCurrencyBalance(
+      const response = await getDb().transaction((tx) =>
+        applyEstateChange(
           tx,
-          userId,
-          title,
-          blueprintCurrency,
-          -blueprintCost,
-        );
-        if (blueprints === null) {
-          throw new EstateRefusal(409, t("api.message.estate-not-enough-blueprints"));
-        }
-        await tx
-          .update(titleEstateFacilities)
-          .set({ tier, updatedAt: new Date() })
-          .where(
-            and(
-              eq(titleEstateFacilities.userId, userId),
-              eq(titleEstateFacilities.title, title),
-              eq(titleEstateFacilities.facilityId, facility),
-            ),
-          );
-        return { [goldCurrency]: gold, [blueprintCurrency]: blueprints };
-      });
-      return c.json({ success: true, facility, tier, balances });
+          { gameServerId: c.var.gameServerId, userId, title, requestId, request },
+          async () => {
+            const current = await lockFacilityTier(tx, userId, title, facility);
+            if (current !== tier - 1) {
+              throw new EstateRefusal(409, t("api.message.estate-tier-out-of-date"));
+            }
+            await checkGate(tx, userId, title, conditions);
+            await tx
+              .update(titleEstateFacilities)
+              .set({ tier, updatedAt: new Date() })
+              .where(
+                and(
+                  eq(titleEstateFacilities.userId, userId),
+                  eq(titleEstateFacilities.title, title),
+                  eq(titleEstateFacilities.facilityId, facility),
+                ),
+              );
+            // The gold and the Blueprints are spent in one batch, so a level either costs both or neither.
+            return {
+              response: { facility, tier },
+              entries: [
+                {
+                  kind: "currency",
+                  id: goldCurrency,
+                  delta: -cost,
+                  reason: `estate upgrade ${facility} to tier ${tier}`,
+                },
+                {
+                  kind: "currency",
+                  id: blueprintCurrency,
+                  delta: -blueprintCost,
+                  reason: `estate upgrade ${facility} to tier ${tier}`,
+                },
+              ],
+            };
+          },
+        ),
+      );
+      return c.json(response);
     } catch (err) {
       if (err instanceof EstateRefusal)
         return c.json({ error: "Conflict", message: err.message }, err.status);
+      if (err instanceof LedgerRefusal)
+        return c.json({ error: "Conflict", message: err.message }, 409);
       throw err;
     }
   },
@@ -254,9 +424,10 @@ estateRoutes.post(
     }
     const body = await readBody(c.req, dispatchSchema);
     if (!body.ok) return c.json({ error: body.error, message: body.message }, 400);
+    const { requestId, ...request } = body.data;
+    const userId = c.var.user.id;
     const {
       kind,
-      userId,
       expedition,
       facility,
       tier,
@@ -265,65 +436,81 @@ estateRoutes.post(
       goldCurrency,
       startedAt,
       endsAt,
-    } = body.data;
-    // An expedition unlocks from a facility; a research does not, and only a fixed number of them run at once.
-    if (!isEstateTier(tier) || (kind === "expedition" && facility === undefined)) {
+      conditions,
+    } = request;
+    // An expedition unlocks from a facility and carries no gate conditions; a research does not unlock from one, and only a fixed
+    // number of them run at once.
+    if (
+      !isEstateTier(tier) ||
+      (kind === "expedition" && (facility === undefined || conditions.length > 0))
+    ) {
       return c.json({ error: "Bad Request", message: t("api.message.estate-invalid") }, 400);
     }
 
     try {
-      const result = await getDb().transaction(async (tx) => {
-        if (kind === "expedition") {
-          const facilityTier = await lockFacilityTier(tx, userId, title, facility!);
-          if (tier > facilityTier) {
-            throw new EstateRefusal(409, t("api.message.estate-facility-too-low"));
-          }
-        } else {
-          const running = await tx
-            .select({ count: sql<number>`count(*)::int` })
-            .from(titleEstateExpeditions)
-            .where(
-              and(
-                eq(titleEstateExpeditions.userId, userId),
-                eq(titleEstateExpeditions.title, title),
-                eq(titleEstateExpeditions.kind, "research"),
-              ),
-            );
-          if (!canStartResearch(running[0]?.count ?? 0)) {
-            throw new EstateRefusal(409, t("api.message.estate-research-slots-full"));
-          }
-        }
-        const inserted = await tx
-          .insert(titleEstateExpeditions)
-          .values({
-            userId,
-            title,
-            expeditionId: expedition,
-            tier,
-            startedAt: new Date(startedAt * 1000),
-            endsAt: new Date(endsAt * 1000),
-            reward,
-            kind,
-          })
-          .onConflictDoNothing()
-          .returning();
-        if (inserted.length === 0) {
-          throw new EstateRefusal(409, t("api.message.estate-already-out"));
-        }
-        const balance = await adjustCurrencyBalance(tx, userId, title, goldCurrency, -cost);
-        if (balance === null) {
-          throw new EstateRefusal(409, t("api.message.estate-not-enough-gold"));
-        }
-        return { row: inserted[0]!, balance };
-      });
-      return c.json({
-        success: true,
-        run: runResponse(result.row),
-        balances: { [goldCurrency]: result.balance },
-      });
+      const response = await getDb().transaction((tx) =>
+        applyEstateChange(
+          tx,
+          { gameServerId: c.var.gameServerId, userId, title, requestId, request },
+          async () => {
+            if (kind === "expedition") {
+              const facilityTier = await lockFacilityTier(tx, userId, title, facility!);
+              if (tier > facilityTier) {
+                throw new EstateRefusal(409, t("api.message.estate-facility-too-low"));
+              }
+            } else {
+              const running = await tx
+                .select({ count: sql<number>`count(*)::int` })
+                .from(titleEstateExpeditions)
+                .where(
+                  and(
+                    eq(titleEstateExpeditions.userId, userId),
+                    eq(titleEstateExpeditions.title, title),
+                    eq(titleEstateExpeditions.kind, "research"),
+                  ),
+                );
+              if (!canStartResearch(running[0]?.count ?? 0)) {
+                throw new EstateRefusal(409, t("api.message.estate-research-slots-full"));
+              }
+              await checkGate(tx, userId, title, conditions);
+            }
+            const inserted = await tx
+              .insert(titleEstateExpeditions)
+              .values({
+                userId,
+                title,
+                expeditionId: expedition,
+                tier,
+                startedAt: new Date(startedAt * 1000),
+                endsAt: new Date(endsAt * 1000),
+                reward,
+                kind,
+              })
+              .onConflictDoNothing()
+              .returning();
+            if (inserted.length === 0) {
+              throw new EstateRefusal(409, t("api.message.estate-already-out"));
+            }
+            return {
+              response: { run: runResponse(inserted[0]!) },
+              entries: [
+                {
+                  kind: "currency",
+                  id: goldCurrency,
+                  delta: -cost,
+                  reason: `estate ${kind} ${expedition} tier ${tier}`,
+                },
+              ],
+            };
+          },
+        ),
+      );
+      return c.json(response);
     } catch (err) {
       if (err instanceof EstateRefusal)
         return c.json({ error: "Conflict", message: err.message }, err.status);
+      if (err instanceof LedgerRefusal)
+        return c.json({ error: "Conflict", message: err.message }, 409);
       throw err;
     }
   },
@@ -340,31 +527,51 @@ estateRoutes.post(
     }
     const body = await readBody(c.req, cancelSchema);
     if (!body.ok) return c.json({ error: body.error, message: body.message }, 400);
-    const { userId, expedition, refund, goldCurrency } = body.data;
+    const { requestId, ...request } = body.data;
+    const userId = c.var.user.id;
+    const { expedition, refund, goldCurrency } = request;
 
     try {
-      const balance = await getDb().transaction(async (tx) => {
-        const [run] = await tx
-          .select()
-          .from(titleEstateExpeditions)
-          .where(runKey(userId, title, expedition))
-          .for("update");
-        if (!run) throw new EstateRefusal(409, t("api.message.estate-not-out"));
-        if (hasConcluded(run.endsAt, new Date()))
-          throw new EstateRefusal(409, t("api.message.estate-already-concluded"));
-        await tx.delete(titleEstateExpeditions).where(runKey(userId, title, expedition));
-        return adjustCurrencyBalance(tx, userId, title, goldCurrency, refund);
-      });
-      return c.json({ success: true, expedition, balances: { [goldCurrency]: balance ?? 0 } });
+      const response = await getDb().transaction((tx) =>
+        applyEstateChange(
+          tx,
+          { gameServerId: c.var.gameServerId, userId, title, requestId, request },
+          async () => {
+            const [run] = await tx
+              .select()
+              .from(titleEstateExpeditions)
+              .where(runKey(userId, title, expedition))
+              .for("update");
+            if (!run) throw new EstateRefusal(409, t("api.message.estate-not-out"));
+            if (hasConcluded(run.endsAt, new Date()))
+              throw new EstateRefusal(409, t("api.message.estate-already-concluded"));
+            await tx.delete(titleEstateExpeditions).where(runKey(userId, title, expedition));
+            return {
+              response: { expedition },
+              entries: [
+                {
+                  kind: "currency",
+                  id: goldCurrency,
+                  delta: refund,
+                  reason: `estate recall ${expedition}`,
+                },
+              ],
+            };
+          },
+        ),
+      );
+      return c.json(response);
     } catch (err) {
       if (err instanceof EstateRefusal)
         return c.json({ error: "Conflict", message: err.message }, err.status);
+      if (err instanceof LedgerRefusal)
+        return c.json({ error: "Conflict", message: err.message }, 409);
       throw err;
     }
   },
 );
 
-/** Records a claim: the concluded run is removed and its stored reward is credited in the reward currency. */
+/** Records a claim: the concluded run is removed and its stored reward is credited in the reward currency. A claimed research is recorded as completed. */
 estateRoutes.post(
   "/titles/:title/estate/server/expeditions/claim",
   requireGameServer,
@@ -375,32 +582,53 @@ estateRoutes.post(
     }
     const body = await readBody(c.req, claimSchema);
     if (!body.ok) return c.json({ error: body.error, message: body.message }, 400);
-    const { userId, expedition, rewardCurrency } = body.data;
+    const { requestId, ...request } = body.data;
+    const userId = c.var.user.id;
+    const { expedition, rewardCurrency } = request;
 
     try {
-      const result = await getDb().transaction(async (tx) => {
-        const [run] = await tx
-          .select()
-          .from(titleEstateExpeditions)
-          .where(runKey(userId, title, expedition))
-          .for("update");
-        if (!run) throw new EstateRefusal(409, t("api.message.estate-not-out"));
-        if (!hasConcluded(run.endsAt, new Date()))
-          throw new EstateRefusal(409, t("api.message.estate-not-concluded"));
-        const reward = run.reward ?? 0;
-        await tx.delete(titleEstateExpeditions).where(runKey(userId, title, expedition));
-        const balance = await adjustCurrencyBalance(tx, userId, title, rewardCurrency, reward);
-        return { reward, balance: balance ?? 0 };
-      });
-      return c.json({
-        success: true,
-        expedition,
-        reward: result.reward,
-        balances: { [rewardCurrency]: result.balance },
-      });
+      const response = await getDb().transaction((tx) =>
+        applyEstateChange(
+          tx,
+          { gameServerId: c.var.gameServerId, userId, title, requestId, request },
+          async () => {
+            const [run] = await tx
+              .select()
+              .from(titleEstateExpeditions)
+              .where(runKey(userId, title, expedition))
+              .for("update");
+            if (!run) throw new EstateRefusal(409, t("api.message.estate-not-out"));
+            if (!hasConcluded(run.endsAt, new Date()))
+              throw new EstateRefusal(409, t("api.message.estate-not-concluded"));
+            const reward = run.reward ?? 0;
+            await tx.delete(titleEstateExpeditions).where(runKey(userId, title, expedition));
+            if (run.kind === "research") {
+              // Claiming a research is when it completes: its reward is paid here, and the completion is kept for later gates.
+              await tx
+                .insert(titleEstateResearchCompletions)
+                .values({ userId, title, researchId: expedition })
+                .onConflictDoNothing();
+            }
+            return {
+              response: { expedition, reward },
+              entries: [
+                {
+                  kind: "currency",
+                  id: rewardCurrency,
+                  delta: reward,
+                  reason: `estate claim ${expedition}`,
+                },
+              ],
+            };
+          },
+        ),
+      );
+      return c.json(response);
     } catch (err) {
       if (err instanceof EstateRefusal)
         return c.json({ error: "Conflict", message: err.message }, err.status);
+      if (err instanceof LedgerRefusal)
+        return c.json({ error: "Conflict", message: err.message }, 409);
       throw err;
     }
   },
@@ -417,7 +645,8 @@ estateRoutes.post(
     }
     const body = await readBody(c.req, endNowSchema);
     if (!body.ok) return c.json({ error: body.error, message: body.message }, 400);
-    const { userId, expedition } = body.data;
+    const userId = c.var.user.id;
+    const { expedition } = body.data;
 
     const updated = await getDb()
       .update(titleEstateExpeditions)

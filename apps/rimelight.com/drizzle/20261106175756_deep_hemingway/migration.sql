@@ -1,0 +1,2 @@
+ALTER TABLE "title_mail" ADD COLUMN "sender_id" uuid;--> statement-breakpoint
+ALTER TABLE "title_mail" ADD CONSTRAINT "title_mail_sender_id_users_id_fk" FOREIGN KEY ("sender_id") REFERENCES "users"("id") ON DELETE SET NULL;

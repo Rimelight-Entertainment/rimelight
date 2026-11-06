@@ -47,3 +47,23 @@ export const titleEstateExpeditions = pgTable(
     }),
   ],
 );
+
+/**
+ * A research the player has completed, in one title. A research completes when its run is claimed, which is when its reward is
+ * paid. The row is kept, so a later gate can require the research. The server is the only writer.
+ */
+export const titleEstateResearchCompletions = pgTable(
+  "title_estate_research_completions",
+  {
+    userId: uuid("user_id").notNull(),
+    title: text("title").notNull(),
+    researchId: uuid("research_id").notNull(),
+    completedAt: timestamp("completed_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (t) => [
+    primaryKey({
+      name: "title_estate_research_completions_user_id_title_research_pk",
+      columns: [t.userId, t.title, t.researchId],
+    }),
+  ],
+);

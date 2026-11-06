@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vite-plus/test";
-import { planLedger } from "../src/api/title-ledger";
+import { decideLedgerRequest, netBatch, planLedger } from "../src/api/title-ledger";
 
 const GOLD = "c13f3bd2-2c20-47bd-a26e-4f3ae3f7b29c";
 const ROCK = "11111111-1111-4111-8111-111111111111";
@@ -47,5 +47,96 @@ describe("ledger plan", () => {
     const plan = planLedger(new Map(), [{ id: ROCK, delta: 1000000 }], {});
     expect(plan.ok).toBe(true);
     if (plan.ok) expect(plan.next.get(ROCK)).toBe(1000000);
+  });
+});
+
+describe("ledger batch netting and replay", () => {
+  it("nets a batch per id, adding up repeated entries", () => {
+    const net = netBatch([
+      { kind: "currency", id: GOLD, delta: -40, reason: "estate payment" },
+      { kind: "currency", id: GOLD, delta: -10, reason: "estate payment" },
+      { kind: "item", id: ROCK, delta: 3, reason: "loot roll table=t roll=1" },
+    ]);
+    expect(net).toEqual(
+      new Map([
+        [GOLD, { kind: "currency", delta: -50, reason: "estate payment" }],
+        [ROCK, { kind: "item", delta: 3, reason: "loot roll table=t roll=1" }],
+      ]),
+    );
+  });
+
+  it("keeps every distinct reason of the changes it adds up, so a merged row names each drop", () => {
+    const net = netBatch([
+      { kind: "item", id: ROCK, delta: 2, reason: "loot roll table=t roll=1" },
+      { kind: "item", id: ROCK, delta: 1, reason: "loot roll table=t roll=2" },
+      { kind: "item", id: ROCK, delta: 1, reason: "loot roll table=t roll=1" },
+    ]);
+    expect(net?.get(ROCK)).toEqual({
+      kind: "item",
+      delta: 4,
+      reason: "loot roll table=t roll=1; loot roll table=t roll=2",
+    });
+  });
+
+  it("refuses a batch that names one id as both a currency and an item", () => {
+    expect(
+      netBatch([
+        { kind: "currency", id: GOLD, delta: 1, reason: "test" },
+        { kind: "item", id: GOLD, delta: 1, reason: "test" },
+      ]),
+    ).toBeNull();
+  });
+
+  it("applies a batch whose request id has not been seen", () => {
+    expect(
+      decideLedgerRequest(null, [{ kind: "currency", id: GOLD, delta: -5, reason: "test" }]),
+    ).toBe("apply");
+  });
+
+  it("replays a retry with the same changes", () => {
+    const batch = [
+      { kind: "currency" as const, id: GOLD, delta: -5, reason: "test" },
+      { kind: "item" as const, id: ROCK, delta: 2, reason: "test" },
+    ];
+    expect(decideLedgerRequest(batch, [...batch].reverse())).toBe("replay");
+  });
+
+  it("conflicts when the same request id names a different amount", () => {
+    expect(
+      decideLedgerRequest(
+        [{ kind: "currency", id: GOLD, delta: -5, reason: "test" }],
+        [{ kind: "currency", id: GOLD, delta: -6, reason: "test" }],
+      ),
+    ).toBe("conflict");
+  });
+
+  it("conflicts when the same request id names a different id", () => {
+    expect(
+      decideLedgerRequest(
+        [{ kind: "currency", id: GOLD, delta: -5, reason: "test" }],
+        [{ kind: "currency", id: ROCK, delta: -5, reason: "test" }],
+      ),
+    ).toBe("conflict");
+  });
+
+  it("conflicts when the same request id names a different kind", () => {
+    expect(
+      decideLedgerRequest(
+        [{ kind: "currency", id: GOLD, delta: -5, reason: "test" }],
+        [{ kind: "item", id: GOLD, delta: -5, reason: "test" }],
+      ),
+    ).toBe("conflict");
+  });
+
+  it("conflicts when the same request id adds an entry the stored batch lacks", () => {
+    expect(
+      decideLedgerRequest(
+        [{ kind: "currency", id: GOLD, delta: -5, reason: "test" }],
+        [
+          { kind: "currency", id: GOLD, delta: -5, reason: "test" },
+          { kind: "item", id: ROCK, delta: 1, reason: "test" },
+        ],
+      ),
+    ).toBe("conflict");
   });
 });

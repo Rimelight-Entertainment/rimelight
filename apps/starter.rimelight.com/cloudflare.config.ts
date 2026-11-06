@@ -17,6 +17,7 @@ export default defineConfig({
     cache: {
       enabled: true,
     },
+    domains: ["starter.rimelight.com"],
     env: {
       ASSETS: bindings.assets(),
       IMAGES: bindings.images(),

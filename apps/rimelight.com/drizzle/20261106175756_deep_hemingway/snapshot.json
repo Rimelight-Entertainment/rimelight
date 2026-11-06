@@ -1,0 +1,72 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "a95b88fb-df1b-40a5-b2c5-0ecd9ccf6c66",
+  "prevIds": ["11c3fff4-c6be-4fd1-a5b6-1f4b4eca6e35"],
+  "footprints": [
+    {
+      "statementType": "add_column",
+      "statementTarget": ["column", "public", "title_mail", "sender_id"],
+      "writes": [
+        "s|col|public.title_mail.sender_id",
+        "n|col|public.title_mail.sender_id",
+        "e|col|public.title_mail.sender_id"
+      ],
+      "reads": ["n|tbl|public.title_mail", "n|sch|public"]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": ["table", "public", "title_mail"],
+      "writes": [
+        "s|fk|public.title_mail.title_mail_sender_id_users_id_fk",
+        "n|fk|public.title_mail.title_mail_sender_id_users_id_fk",
+        "e|fk|public.title_mail.title_mail_sender_id_users_id_fk",
+        "n|con|public.title_mail.title_mail_sender_id_users_id_fk"
+      ],
+      "reads": [
+        "n|tbl|public.title_mail",
+        "n|sch|public",
+        "n|tbl|public.users",
+        "n|sch|public",
+        "n|col|public.title_mail.sender_id",
+        "n|col|public.users.id",
+        "e|uniqueness|public.users.id"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "title_mail",
+        "name": "sender_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "title_mail",
+        "name": "title_mail_sender_id_users_id_fk",
+        "nameExplicit": true,
+        "columns": ["sender_id"],
+        "schemaTo": "public",
+        "tableTo": "users",
+        "columnsTo": ["id"],
+        "onUpdate": "NO ACTION",
+        "onDelete": "SET NULL",
+        "entityType": "fks"
+      }
+    }
+  ]
+}
