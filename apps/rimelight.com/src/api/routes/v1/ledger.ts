@@ -288,7 +288,9 @@ ledgerServerRoutes.post(
 const heroExperienceGrantSchema = z.object({
   player: serverPlayerSchema,
   requestId: z.string().uuid(),
-  heroId: z.string().uuid(),
+  // The game's hero ids fail zod's strict RFC 4122 uuid() check, so the id is not validated as a uuid here. canGrantHeroExperience
+  // checks membership in HERO_IDS. The game sends uppercase; HERO_IDS is lowercase.
+  heroId: z.string().transform((id) => id.toLowerCase()),
   amount: z.number().int().min(-1_000_000_000).max(1_000_000_000),
   pointTag: z.string().min(1),
 });

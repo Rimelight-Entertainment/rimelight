@@ -4,8 +4,8 @@
  * used reads as zero.
  */
 export const HERO_IDS = [
-  "a3e1c0d2-5b7f-4e19-9c4a-2d6f8b1e7c30", // Aeneas (Knight)
-  "b7f24d1e-9a63-4c8b-8e2f-5d1a9c0b6e42", // Agni (Sorcerer)
+  "3e0c79c3-6b8e-4f6b-056c-c4b002fffd9b", // Aeneas (Knight)
+  "0900d41e-389f-45ad-3861-a79d1bb606d8", // Agni (Sorcerer)
 ];
 
 /** Zero-fills every hero id, then overlays the stored rows. A row for an id that is not a hero is ignored. */

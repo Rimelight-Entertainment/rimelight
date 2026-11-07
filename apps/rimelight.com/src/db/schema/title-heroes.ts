@@ -1,7 +1,7 @@
 import { bigint, pgTable, primaryKey, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
 /**
- * A player's experience with one hero in one title. Keyed by the hero's internal id (a UUIDv4).
+ * A player's experience with one hero in one title. Keyed by the hero's id from the game.
  * The server is the only writer; a client reads its experience, and changes it only through the server's routes.
  */
 export const titleHeroes = pgTable(
