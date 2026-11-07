@@ -1245,6 +1245,8 @@
       "body-must-be-json": "Body must be JSON.",
       "settings-invalid": "Settings structure is invalid.",
       "stored-settings-too-large": "Stored settings would exceed 64 KB.",
+      "preset-slot-invalid": "Preset slot must be a whole number from 1 to 5.",
+      "preset-invalid": "Preset name or settings are invalid.",
       "proficiency-adjust-forbidden": "Only admins can change proficiency experience.",
       "proficiency-invalid": "Proficiency change is invalid.",
       "proficiency-unknown": "Unknown proficiency for this title.",

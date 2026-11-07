@@ -16,4 +16,5 @@ export * from "./title-heroes.ts";
 export * from "./title-estate.ts";
 export * from "./title-ledger.ts";
 export * from "./title-mail.ts";
+export * from "./title-presets.ts";
 export * from "./game-server-credentials.ts";

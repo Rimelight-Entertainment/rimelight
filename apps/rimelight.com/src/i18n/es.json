@@ -1245,6 +1245,8 @@
       "body-must-be-json": "El cuerpo debe ser JSON.",
       "settings-invalid": "La estructura de la configuración no es válida.",
       "stored-settings-too-large": "Las configuraciones guardadas superarían los 64 KB.",
+      "preset-slot-invalid": "La ranura de preajuste debe ser un número entero del 1 al 5.",
+      "preset-invalid": "El nombre o la configuración del preajuste no son válidos.",
       "proficiency-adjust-forbidden": "Solo los administradores pueden cambiar la experiencia de competencias.",
       "proficiency-invalid": "El cambio de competencia no es válido.",
       "proficiency-unknown": "Competencia desconocida para este título.",

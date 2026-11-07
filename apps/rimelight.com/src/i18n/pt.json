@@ -1245,6 +1245,8 @@
       "body-must-be-json": "O corpo deve ser JSON.",
       "settings-invalid": "A estrutura das configurações é inválida.",
       "stored-settings-too-large": "As configurações armazenadas excederiam 64 KB.",
+      "preset-slot-invalid": "A posição do predefinido deve ser um número inteiro de 1 a 5.",
+      "preset-invalid": "O nome ou as configurações do predefinido são inválidos.",
       "proficiency-adjust-forbidden": "Apenas administradores podem alterar a experiência de proficiências.",
       "proficiency-invalid": "A alteração de proficiência é inválida.",
       "proficiency-unknown": "Proficiência desconhecida para este título.",

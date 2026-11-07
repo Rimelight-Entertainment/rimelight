@@ -6,7 +6,7 @@ export type { TitleSettingsDocument, TitleSettingValue } from "#db/schema/title-
 export const MAX_BODY_BYTES = 16 * 1024;
 export const MAX_STORED_BYTES = 64 * 1024;
 
-const NAME = /^[a-z][a-zA-Z0-9]{0,63}$/;
+export const NAME = /^[a-z][a-zA-Z0-9]{0,63}$/;
 
 // Structure only: category -> key -> scalar. The server does not know what any setting means.
 // Zod 4 rejects non-finite numbers in z.number().

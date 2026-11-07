@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { and, eq, sql } from "drizzle-orm";
 import { getDb } from "#db";
 import { titleSettings } from "#db/schema/title-settings";
+import { titlePresets } from "#db/schema/title-presets";
 import { titleCurrencies } from "#db/schema/title-currencies";
 import { titleItems } from "#db/schema/title-items";
 import { z } from "zod";
@@ -23,6 +24,13 @@ import {
   MAX_STORED_BYTES,
   titleSettingsPatchSchema,
 } from "./title-settings";
+import {
+  fitsStoredLimit,
+  parsePresetSlot,
+  presetBodySchema,
+  presetList,
+  presetView,
+} from "./title-presets";
 
 class PayloadTooLargeError extends Error {}
 
@@ -118,6 +126,95 @@ v1.put("/titles/:title/settings", async (c) => {
     }
     throw err;
   }
+});
+
+/** The five settings presets of the title, index 0 = slot 1. An empty slot reads as null. */
+v1.get("/titles/:title/presets", async (c) => {
+  const db = getDb();
+  const rows = await db
+    .select()
+    .from(titlePresets)
+    .where(
+      and(eq(titlePresets.userId, c.var.user.id), eq(titlePresets.title, c.req.param("title"))),
+    );
+  return c.json({ success: true, presets: presetList(rows) });
+});
+
+/** Replaces one preset slot with a full snapshot (no merge). Last write wins; each write bumps the version. */
+v1.put("/titles/:title/presets/:slot", async (c) => {
+  const title = c.req.param("title");
+  const slot = parsePresetSlot(c.req.param("slot"));
+  if (slot === null) {
+    return c.json({ error: "Bad Request", message: t("api.message.preset-slot-invalid") }, 400);
+  }
+
+  const raw = await c.req.text();
+  if (new TextEncoder().encode(raw).length > MAX_STORED_BYTES) {
+    return c.json({ error: "Payload Too Large", message: t("api.message.body-too-large") }, 413);
+  }
+
+  let body: unknown;
+  try {
+    body = JSON.parse(raw);
+  } catch {
+    return c.json({ error: "Bad Request", message: t("api.message.body-must-be-json") }, 400);
+  }
+
+  const parsed = presetBodySchema.safeParse(body);
+  if (!parsed.success) {
+    return c.json({ error: "Bad Request", message: t("api.message.preset-invalid") }, 400);
+  }
+  const { name, settings } = parsed.data;
+  if (!fitsStoredLimit(settings)) {
+    return c.json(
+      { error: "Payload Too Large", message: t("api.message.stored-settings-too-large") },
+      413,
+    );
+  }
+
+  const db = getDb();
+  const [row] = await db
+    .insert(titlePresets)
+    .values({
+      userId: c.var.user.id,
+      title,
+      slot,
+      name,
+      settings,
+      version: 1,
+      updatedAt: new Date(),
+    })
+    .onConflictDoUpdate({
+      target: [titlePresets.userId, titlePresets.title, titlePresets.slot],
+      set: {
+        name,
+        settings,
+        version: sql`${titlePresets.version} + 1`,
+        updatedAt: new Date(),
+      },
+    })
+    .returning();
+  return c.json({ success: true, preset: presetView(row!) });
+});
+
+/** Clears one preset slot. Idempotent: an empty slot stays empty. */
+v1.delete("/titles/:title/presets/:slot", async (c) => {
+  const slot = parsePresetSlot(c.req.param("slot"));
+  if (slot === null) {
+    return c.json({ error: "Bad Request", message: t("api.message.preset-slot-invalid") }, 400);
+  }
+
+  const db = getDb();
+  await db
+    .delete(titlePresets)
+    .where(
+      and(
+        eq(titlePresets.userId, c.var.user.id),
+        eq(titlePresets.title, c.req.param("title")),
+        eq(titlePresets.slot, slot),
+      ),
+    );
+  return c.json({ success: true });
 });
 
 /** Balances for every currency of the title. A currency the player has never been granted reads as zero. */
