@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vite-plus/test";
-import { decideLedgerRequest, netBatch, planLedger } from "../src/api/title-ledger";
+import {
+  decideLedgerRequest,
+  isSameStoredRequest,
+  netBatch,
+  planLedger,
+} from "../src/api/title-ledger";
 
 const GOLD = "c13f3bd2-2c20-47bd-a26e-4f3ae3f7b29c";
 const ROCK = "11111111-1111-4111-8111-111111111111";
@@ -138,5 +143,23 @@ describe("ledger batch netting and replay", () => {
         ],
       ),
     ).toBe("conflict");
+  });
+});
+
+describe("replay payload compare", () => {
+  it("treats an identical stored payload as the same request", () => {
+    expect(isSameStoredRequest({ id: GOLD, delta: 5 }, { id: GOLD, delta: 5 })).toBe(true);
+  });
+
+  it("treats a different value under the same RequestId as a different request", () => {
+    expect(isSameStoredRequest({ id: GOLD, delta: 5 }, { id: GOLD, delta: 6 })).toBe(false);
+  });
+
+  it("treats a different key set as a different request", () => {
+    expect(isSameStoredRequest({ id: GOLD, delta: 5 }, { id: GOLD })).toBe(false);
+  });
+
+  it("never matches a legacy batch with no stored request", () => {
+    expect(isSameStoredRequest(null, { id: GOLD, delta: 5 })).toBe(false);
   });
 });

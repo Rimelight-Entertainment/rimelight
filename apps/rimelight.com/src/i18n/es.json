@@ -1276,6 +1276,7 @@
       "ledger-over-cap": "Eso superaría el máximo que puedes tener.",
       "ledger-request-reused": "Ese identificador de solicitud ya se usó para otros cambios.",
       "mail-invalid": "Ese correo no es válido.",
+      "mail-attachments-invalid": "Los adjuntos de ese correo están fuera de rango.",
       "mail-unknown": "Correo desconocido para este título.",
       "mail-wrong-recipient": "Ese correo pertenece a otro jugador.",
       "mail-already-claimed": "Ese correo ya fue reclamado.",

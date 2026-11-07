@@ -10,6 +10,7 @@ export * from "./title-currencies.ts";
 export * from "./title-items.ts";
 export * from "./title-proficiencies.ts";
 export * from "./title-heroes.ts";
+export * from "./title-hero-catalogue.ts";
 export * from "./title-estate.ts";
 export * from "./title-ledger.ts";
 export * from "./title-mail.ts";

@@ -1276,6 +1276,7 @@
       "ledger-over-cap": "That would go over the most you can hold.",
       "ledger-request-reused": "That request id was already used for different changes.",
       "mail-invalid": "That mail is invalid.",
+      "mail-attachments-invalid": "That mail's attachments are out of range.",
       "mail-unknown": "Unknown mail for this title.",
       "mail-wrong-recipient": "That mail belongs to another player.",
       "mail-already-claimed": "That mail has already been claimed.",

@@ -1,7 +1,7 @@
 import { z } from "zod";
 import type { TitlePresetRow } from "#db/schema/title-presets";
 import type { TitleSettingsDocument } from "#db/schema/title-settings";
-import { byteLength, MAX_STORED_BYTES, NAME } from "./title-settings";
+import { MAX_BODY_BYTES, NAME } from "./title-settings";
 
 export const PRESET_SLOTS = 5;
 
@@ -32,9 +32,9 @@ export function parsePresetSlot(raw: string): number | null {
   return slot >= 1 && slot <= PRESET_SLOTS ? slot : null;
 }
 
-/** True when the snapshot fits the per-slot storage cap. */
-export function fitsStoredLimit(settings: TitleSettingsDocument): boolean {
-  return byteLength(settings) <= MAX_STORED_BYTES;
+/** True when a preset request body is within the 16 KB cap, counted in UTF-8 bytes. Matches GTSettingsDocument::MaxBodyBytes. */
+export function presetBodyFits(raw: string): boolean {
+  return new TextEncoder().encode(raw).length <= MAX_BODY_BYTES;
 }
 
 export function presetView(row: TitlePresetRow): PresetView {

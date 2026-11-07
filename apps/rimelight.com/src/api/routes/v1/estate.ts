@@ -107,7 +107,6 @@ const claimSchema = z.object({
   expedition: uuid,
   rewardCurrency: uuid,
 });
-const endNowSchema = z.object({ expedition: uuid, player: serverPlayerSchema });
 
 function unixSeconds(date: Date): number {
   return Math.floor(date.getTime() / 1000);
@@ -664,31 +663,5 @@ estateServerRoutes.post(
         return c.json({ error: "Conflict", message: err.message }, 409);
       throw err;
     }
-  },
-);
-
-/** Debug: ends a running expedition now, so the game server concludes it on its next check. */
-estateServerRoutes.post(
-  "/titles/:title/estate/server/expeditions/end-now",
-  requireGameServer,
-  async (c) => {
-    const title = c.req.param("title");
-    if (!isTitleSlug(title)) {
-      return c.json({ error: "Not Found", message: t("api.message.unknown-title") }, 404);
-    }
-    const body = await readBody(c.req, endNowSchema);
-    if (!body.ok) return c.json({ error: body.error, message: body.message }, 400);
-    const userId = body.data.player;
-    const { expedition } = body.data;
-
-    const updated = await getDb()
-      .update(titleEstateExpeditions)
-      .set({ endsAt: sql`now()` })
-      .where(runKey(userId, title, expedition))
-      .returning();
-    if (updated.length === 0) {
-      return c.json({ error: "Conflict", message: t("api.message.estate-not-out") }, 409);
-    }
-    return c.json({ success: true, run: runResponse(updated[0]!) });
   },
 );

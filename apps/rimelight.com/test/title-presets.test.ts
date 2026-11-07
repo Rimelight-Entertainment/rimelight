@@ -1,13 +1,12 @@
 import { describe, expect, it } from "vite-plus/test";
 import type { TitlePresetRow } from "../src/db/schema/title-presets";
 import {
-  fitsStoredLimit,
   parsePresetSlot,
+  presetBodyFits,
   presetBodySchema,
   presetList,
   presetView,
 } from "../src/api/routes/v1/title-presets";
-import { byteLength, MAX_STORED_BYTES } from "../src/api/routes/v1/title-settings";
 
 const snapshot = {
   audio: { masterVolume: 0.8, muted: false, label: "x" },
@@ -58,22 +57,20 @@ describe("parsePresetSlot", () => {
   });
 });
 
-describe("fitsStoredLimit", () => {
-  const big = (categories: number) =>
-    Object.fromEntries(
-      Array.from({ length: categories }, (_, i) => [`cat${i}`, { v: "x".repeat(256) }]),
-    );
-
-  it("accepts a snapshot under the cap", () => {
-    const settings = big(100);
-    expect(byteLength(settings)).toBeLessThanOrEqual(MAX_STORED_BYTES);
-    expect(fitsStoredLimit(settings)).toBe(true);
+describe("presetBodyFits", () => {
+  // Pinned to GTSettingsDocument::MaxBodyBytes (16 KB): 16384 bytes accepted, 16385 refused.
+  it("accepts a body of exactly 16384 bytes", () => {
+    expect(presetBodyFits("x".repeat(16384))).toBe(true);
   });
 
-  it("rejects a snapshot over the cap", () => {
-    const settings = big(240);
-    expect(byteLength(settings)).toBeGreaterThan(MAX_STORED_BYTES);
-    expect(fitsStoredLimit(settings)).toBe(false);
+  it("refuses a body of 16385 bytes", () => {
+    expect(presetBodyFits("x".repeat(16385))).toBe(false);
+  });
+
+  it("counts UTF-8 bytes, not characters", () => {
+    // "é" is 2 bytes: 8192 of them is 16384 bytes, one more is 16386.
+    expect(presetBodyFits("é".repeat(8192))).toBe(true);
+    expect(presetBodyFits("é".repeat(8193))).toBe(false);
   });
 });
 

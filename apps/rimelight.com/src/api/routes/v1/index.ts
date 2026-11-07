@@ -11,6 +11,7 @@ import { itemCapsFor } from "../../title-items";
 import { proficiencyIdsFor } from "../../title-proficiencies";
 import { titleProficiencies } from "#db/schema/title-proficiencies";
 import { heroExperienceFor } from "../../title-heroes";
+import { titleHeroCatalogue } from "#db/schema/title-hero-catalogue";
 import { titleHeroes } from "#db/schema/title-heroes";
 import { estateRoutes } from "./estate";
 import { mailRoutes } from "./mail";
@@ -25,7 +26,7 @@ import {
   titleSettingsPatchSchema,
 } from "./title-settings";
 import {
-  fitsStoredLimit,
+  presetBodyFits,
   parsePresetSlot,
   presetBodySchema,
   presetList,
@@ -149,7 +150,7 @@ v1.put("/titles/:title/presets/:slot", async (c) => {
   }
 
   const raw = await c.req.text();
-  if (new TextEncoder().encode(raw).length > MAX_STORED_BYTES) {
+  if (!presetBodyFits(raw)) {
     return c.json({ error: "Payload Too Large", message: t("api.message.body-too-large") }, 413);
   }
 
@@ -165,12 +166,6 @@ v1.put("/titles/:title/presets/:slot", async (c) => {
     return c.json({ error: "Bad Request", message: t("api.message.preset-invalid") }, 400);
   }
   const { name, settings } = parsed.data;
-  if (!fitsStoredLimit(settings)) {
-    return c.json(
-      { error: "Payload Too Large", message: t("api.message.stored-settings-too-large") },
-      413,
-    );
-  }
 
   const db = getDb();
   const [row] = await db
@@ -283,12 +278,22 @@ v1.get("/titles/:title/heroes", async (c) => {
   }
 
   const db = getDb();
+  const catalogue = await db
+    .select({ heroId: titleHeroCatalogue.heroId })
+    .from(titleHeroCatalogue)
+    .where(eq(titleHeroCatalogue.title, title));
   const rows = await db
     .select()
     .from(titleHeroes)
     .where(and(eq(titleHeroes.userId, c.var.user.id), eq(titleHeroes.title, title)));
 
-  return c.json({ success: true, experience: heroExperienceFor(rows) });
+  return c.json({
+    success: true,
+    experience: heroExperienceFor(
+      catalogue.map((row) => row.heroId),
+      rows,
+    ),
+  });
 });
 
 const proficiencySetSchema = z.object({

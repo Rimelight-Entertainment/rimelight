@@ -155,3 +155,37 @@ export function mailSendRefusal(found: {
   if (found.sender === false) return "unknown-sender";
   return null;
 }
+
+/** The most stacks of one kind (items, currency) a letter may carry. Matches GrandTale's AttachmentsFit. */
+export const MAX_ATTACHMENTS_PER_KIND = 32;
+
+/** The most one attachment may quantify. Matches GrandTale's AttachmentsFit. */
+export const MAX_ATTACHMENT_QUANTITY = 1_000_000_000;
+
+/** Why a letter's attachments do not fit. */
+export type MailAttachmentsRefusal =
+  | "duplicate-stack"
+  | "too-many-per-kind"
+  | "quantity-out-of-range";
+
+/**
+ * Whether a letter's attachments fit the limits the client enforces before it sends: no id appears twice, each kind has at most
+ * MAX_ATTACHMENTS_PER_KIND stacks, and each quantity is a whole number from 1 to MAX_ATTACHMENT_QUANTITY. Null when they fit.
+ */
+export function mailAttachmentsRefusal(
+  items: MailItemStack[],
+  currency: MailCurrencyStack[],
+): MailAttachmentsRefusal | null {
+  if (!mailStacksAreDistinct(items, currency)) return "duplicate-stack";
+  if (items.length > MAX_ATTACHMENTS_PER_KIND || currency.length > MAX_ATTACHMENTS_PER_KIND) {
+    return "too-many-per-kind";
+  }
+  const quantities = [
+    ...items.map((stack) => stack.quantity),
+    ...currency.map((stack) => stack.amount),
+  ];
+  if (!quantities.every((q) => Number.isInteger(q) && q >= 1 && q <= MAX_ATTACHMENT_QUANTITY)) {
+    return "quantity-out-of-range";
+  }
+  return null;
+}

@@ -102,3 +102,17 @@ export function decideLedgerRequest(
   }
   return "replay";
 }
+
+/**
+ * Whether the payload stored under a request id is the same as the incoming payload, field for field. A batch recorded without
+ * a payload never matches: a replay cannot be proven to be the same grant.
+ */
+export function isSameStoredRequest(
+  stored: Record<string, unknown> | null | undefined,
+  incoming: Record<string, unknown>,
+): boolean {
+  if (!stored) return false;
+  const keys = Object.keys(incoming);
+  if (Object.keys(stored).length !== keys.length) return false;
+  return keys.every((key) => key in stored && stored[key] === incoming[key]);
+}

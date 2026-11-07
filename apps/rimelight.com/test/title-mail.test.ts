@@ -7,6 +7,7 @@ import {
   mailClaimRefusal,
   mailLedgerEntries,
   mailStacksAreDistinct,
+  mailAttachmentsRefusal,
   type MailContent,
 } from "../src/api/title-mail";
 
@@ -159,5 +160,46 @@ describe("mail send sender", () => {
     expect(mailSendRefusal({ recipient: true, sender: false })).toBe("unknown-sender");
     expect(mailSendRefusal({ recipient: true, sender: null })).toBeNull();
     expect(mailSendRefusal({ recipient: true, sender: true })).toBeNull();
+  });
+});
+
+// Pinned to GrandTale's AttachmentsFit (GTMailMath.cpp): 32 stacks per kind, quantities 1 to 1,000,000,000, no repeated id.
+describe("mail attachments fit", () => {
+  const idAt = (n: number) => `00000000-0000-4000-8000-${n.toString(16).padStart(12, "0")}`;
+  const items = (count: number, quantity = 1) =>
+    Array.from({ length: count }, (_, n) => ({ item: idAt(n), quantity }));
+  const currency = (count: number, amount = 1) =>
+    Array.from({ length: count }, (_, n) => ({ currency: idAt(1000 + n), amount }));
+
+  it("accepts 32 stacks of each kind at the largest quantity", () => {
+    expect(
+      mailAttachmentsRefusal(items(32, 1_000_000_000), currency(32, 1_000_000_000)),
+    ).toBeNull();
+  });
+
+  it("refuses a 33rd item stack", () => {
+    expect(mailAttachmentsRefusal(items(33), [])).toBe("too-many-per-kind");
+  });
+
+  it("refuses a 33rd currency stack", () => {
+    expect(mailAttachmentsRefusal([], currency(33))).toBe("too-many-per-kind");
+  });
+
+  it("refuses a quantity of zero", () => {
+    expect(mailAttachmentsRefusal(items(1, 0), [])).toBe("quantity-out-of-range");
+  });
+
+  it("refuses a quantity one past the largest", () => {
+    expect(mailAttachmentsRefusal(items(1, 1_000_000_001), [])).toBe("quantity-out-of-range");
+  });
+
+  it("refuses an amount of zero in currency", () => {
+    expect(mailAttachmentsRefusal([], currency(1, 0))).toBe("quantity-out-of-range");
+  });
+
+  it("refuses an id that appears twice across items and currency", () => {
+    expect(
+      mailAttachmentsRefusal([{ item: GOLD, quantity: 1 }], [{ currency: GOLD, amount: 1 }]),
+    ).toBe("duplicate-stack");
   });
 });

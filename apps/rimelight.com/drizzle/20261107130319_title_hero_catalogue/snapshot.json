@@ -1,0 +1,76 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "12633ca9-e7c1-4c6a-99db-9d6db4dabe82",
+  "prevIds": ["f9ad6582-4acd-416a-9aa9-245ee5ac689c"],
+  "footprints": [
+    {
+      "statementType": "create_table",
+      "statementTarget": ["table", "public", "title_hero_catalogue"],
+      "writes": [
+        "s|tbl|public.title_hero_catalogue",
+        "n|tbl|public.title_hero_catalogue",
+        "e|tbl|public.title_hero_catalogue",
+        "n|rel|public.title_hero_catalogue",
+        "n|type|public.title_hero_catalogue",
+        "n|rel|public.title_hero_catalogue_title_hero_id_pk"
+      ],
+      "reads": ["n|sch|public"]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "title_hero_catalogue",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "title_hero_catalogue",
+        "name": "title",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "title_hero_catalogue",
+        "name": "hero_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "title_hero_catalogue",
+        "name": "title_hero_catalogue_title_hero_id_pk",
+        "columns": ["title", "hero_id"],
+        "nameExplicit": true,
+        "entityType": "pks"
+      }
+    }
+  ]
+}

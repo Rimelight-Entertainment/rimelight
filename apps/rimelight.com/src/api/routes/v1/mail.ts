@@ -11,11 +11,13 @@ import { netBatch } from "../../title-ledger";
 import { LedgerRefusal, writeLedgerChanges } from "../../title-ledger-write";
 import {
   decideMailSend,
+  mailAttachmentsRefusal,
   mailSendLedgerEntries,
   mailSendRefusal,
   mailClaimRefusal,
   mailLedgerEntries,
   mailStacksAreDistinct,
+  type MailAttachmentsRefusal,
   type MailClaimRefusal,
   type MailContent,
   type MailSendRefusal,
@@ -66,13 +68,15 @@ const SEND_REFUSAL_KEY = {
   "unknown-sender": "api.message.mail-unknown-sender",
 } as const satisfies Record<MailSendRefusal, string>;
 
-/** A send or claim the mail refuses. Thrown inside a transaction, so nothing written before it survives. */
+/** A send or claim the mail refuses. Thrown inside a transaction, so nothing written before it survives. `reason` is a code the client can act on. */
 class MailRefusal extends Error {
   readonly status: 404 | 409;
+  readonly reason: MailAttachmentsRefusal | undefined;
 
-  constructor(status: 404 | 409, message: string) {
+  constructor(status: 404 | 409, message: string, reason?: MailAttachmentsRefusal) {
     super(message);
     this.status = status;
+    this.reason = reason;
   }
 }
 
@@ -287,6 +291,11 @@ mailServerRoutes.post("/titles/:title/mail/server/claim", requireGameServer, asy
       }
       const letter = mail!;
 
+      const attachmentsRefusal = mailAttachmentsRefusal(letter.items, letter.currency);
+      if (attachmentsRefusal !== null) {
+        throw new MailRefusal(409, t("api.message.mail-attachments-invalid"), attachmentsRefusal);
+      }
+
       // Each attachment must name a currency or item the title has a cap for, as the wallet's batch rules require.
       const currencyCaps = currencyCapsFor(title as TitleSlug);
       const itemCaps = itemCapsFor(title as TitleSlug);
@@ -312,11 +321,20 @@ mailServerRoutes.post("/titles/:title/mail/server/claim", requireGameServer, asy
       );
       if (!net) throw new MailRefusal(409, t("api.message.ledger-invalid"));
 
+      // Claim batches get a fresh requestId: the send batch for a self-sent letter
+      // already uses (claimant, title, letter.id), so reusing it would collide.
+      // Idempotency comes from the FOR UPDATE lock and the claimedAt check above.
       const [batch] = await tx
         .insert(titleLedgerBatches)
-        .values({ userId: claimant, title, requestId: letter.id, gameServerId })
+        .values({
+          userId: claimant,
+          title,
+          requestId: `mail-claim:${crypto.randomUUID()}`,
+          gameServerId,
+        })
         .returning({ id: titleLedgerBatches.id });
-      const balances = await writeLedgerChanges(tx, claimant, title, batch!.id, net, caps);
+      if (!batch) throw new MailRefusal(409, t("api.message.ledger-invalid"));
+      const balances = await writeLedgerChanges(tx, claimant, title, batch.id, net, caps);
 
       const claimedAt = new Date();
       await tx.update(titleMail).set({ claimedAt }).where(eq(titleMail.id, letter.id));
@@ -330,7 +348,11 @@ mailServerRoutes.post("/titles/:title/mail/server/claim", requireGameServer, asy
   } catch (err) {
     if (err instanceof MailRefusal) {
       return c.json(
-        { error: err.status === 404 ? "Not Found" : "Conflict", message: err.message },
+        {
+          error: err.status === 404 ? "Not Found" : "Conflict",
+          message: err.message,
+          ...(err.reason !== undefined && { reason: err.reason }),
+        },
         err.status,
       );
     }

@@ -7,12 +7,13 @@ import { z } from "zod";
 import { t } from "@rimelight/i18n";
 import { clampBalance, currencyCapsFor } from "../../title-currencies";
 import { itemCapsFor } from "../../title-items";
-import { decideLedgerRequest, netBatch } from "../../title-ledger";
+import { decideLedgerRequest, isSameStoredRequest, netBatch } from "../../title-ledger";
 import { LedgerRefusal, writeLedgerChanges } from "../../title-ledger-write";
 import { proficiencyIdsFor } from "../../title-proficiencies";
 import { titleProficiencies } from "#db/schema/title-proficiencies";
+import { titleHeroCatalogue } from "#db/schema/title-hero-catalogue";
 import { titleHeroes } from "#db/schema/title-heroes";
-import { canGrantHeroExperience, heroExperienceAdd } from "../../title-heroes";
+import { heroExperienceAdd, isHeroExperienceAmount } from "../../title-heroes";
 import { isTitleSlug, type TitleSlug } from "../../titles";
 import { requireGameServer, type GameServerVariables } from "./game-server-auth";
 import { playerExists, serverPlayerSchema } from "./server-player";
@@ -186,95 +187,111 @@ ledgerServerRoutes.post(
       return c.json({ error: "Bad Request", message: t("api.message.ledger-unknown") }, 400);
     }
 
-    const result = await getDb().transaction(async (tx) => {
-      const inserted = await tx
-        .insert(titleLedgerBatches)
-        .values({ userId, title, requestId, gameServerId })
-        .onConflictDoNothing({
-          target: [
-            titleLedgerBatches.userId,
-            titleLedgerBatches.title,
-            titleLedgerBatches.requestId,
-          ],
-        })
-        .returning({ id: titleLedgerBatches.id });
+    const request = { proficiency, delta, engramCurrency, engram };
+    let result: { experience: number; balance: number | null };
+    try {
+      result = await getDb().transaction(async (tx) => {
+        const inserted = await tx
+          .insert(titleLedgerBatches)
+          .values({ userId, title, requestId, gameServerId, request })
+          .onConflictDoNothing({
+            target: [
+              titleLedgerBatches.userId,
+              titleLedgerBatches.title,
+              titleLedgerBatches.requestId,
+            ],
+          })
+          .returning({ id: titleLedgerBatches.id });
 
-      const key = and(
-        eq(titleProficiencies.userId, userId),
-        eq(titleProficiencies.title, title),
-        eq(titleProficiencies.proficiencyId, proficiency),
-      );
-      const balanceKey = and(
-        eq(titleCurrencies.userId, userId),
-        eq(titleCurrencies.title, title),
-        eq(titleCurrencies.currencyId, engramCurrency),
-      );
+        const key = and(
+          eq(titleProficiencies.userId, userId),
+          eq(titleProficiencies.title, title),
+          eq(titleProficiencies.proficiencyId, proficiency),
+        );
+        const balanceKey = and(
+          eq(titleCurrencies.userId, userId),
+          eq(titleCurrencies.title, title),
+          eq(titleCurrencies.currencyId, engramCurrency),
+        );
 
-      // The grant was already applied under this request id: report its stored state and write nothing.
-      if (inserted.length === 0) {
-        const [existing] = await tx
-          .select({ id: titleLedgerBatches.id })
-          .from(titleLedgerBatches)
-          .where(
-            and(
-              eq(titleLedgerBatches.userId, userId),
-              eq(titleLedgerBatches.title, title),
-              eq(titleLedgerBatches.requestId, requestId),
-            ),
-          );
-        const [experienceRow] = await tx.select().from(titleProficiencies).where(key);
-        const engramRows =
-          engram > 0
-            ? await tx
-                .select()
-                .from(titleLedgerEntries)
-                .where(
-                  and(
-                    eq(titleLedgerEntries.batchId, existing!.id),
-                    eq(titleLedgerEntries.kind, "currency"),
-                    eq(titleLedgerEntries.itemId, engramCurrency),
-                  ),
-                )
-            : [];
-        return {
-          experience: experienceRow?.experience ?? 0,
-          balance: engramRows[0]?.balanceAfter ?? null,
-        };
-      }
-      const batchId = inserted[0]!.id;
+        // The grant was already applied under this request id: a retry with the same payload reports its stored state and
+        // writes nothing. A different payload under the same id is refused.
+        if (inserted.length === 0) {
+          const [existing] = await tx
+            .select({ id: titleLedgerBatches.id, request: titleLedgerBatches.request })
+            .from(titleLedgerBatches)
+            .where(
+              and(
+                eq(titleLedgerBatches.userId, userId),
+                eq(titleLedgerBatches.title, title),
+                eq(titleLedgerBatches.requestId, requestId),
+              ),
+            );
+          if (!isSameStoredRequest(existing!.request, request)) {
+            throw new LedgerRefusal(t("api.message.ledger-request-reused"));
+          }
+          const [experienceRow] = await tx.select().from(titleProficiencies).where(key);
+          const engramRows =
+            engram > 0
+              ? await tx
+                  .select()
+                  .from(titleLedgerEntries)
+                  .where(
+                    and(
+                      eq(titleLedgerEntries.batchId, existing!.id),
+                      eq(titleLedgerEntries.kind, "currency"),
+                      eq(titleLedgerEntries.itemId, engramCurrency),
+                    ),
+                  )
+              : [];
+          return {
+            experience: experienceRow?.experience ?? 0,
+            balance: engramRows[0]?.balanceAfter ?? null,
+          };
+        }
+        const batchId = inserted[0]!.id;
 
-      await tx
-        .insert(titleProficiencies)
-        .values({ userId, title, proficiencyId: proficiency })
-        .onConflictDoNothing();
-      const [row] = await tx.select().from(titleProficiencies).where(key).for("update");
-      const experience = Math.max(0, row!.experience + delta);
-      await tx.update(titleProficiencies).set({ experience, updatedAt: new Date() }).where(key);
-
-      let balance: number | null = null;
-      if (engram > 0) {
         await tx
-          .insert(titleCurrencies)
-          .values({ userId, title, currencyId: engramCurrency })
+          .insert(titleProficiencies)
+          .values({ userId, title, proficiencyId: proficiency })
           .onConflictDoNothing();
-        const [currency] = await tx.select().from(titleCurrencies).where(balanceKey).for("update");
-        const before = currency!.amount;
-        // The Engram clamps at the cap, so the journal records the amount actually credited, not the amount converted.
-        balance = clampBalance(before + engram, engramCap);
-        await tx.insert(titleLedgerEntries).values({
-          batchId,
-          kind: "currency",
-          itemId: engramCurrency,
-          delta: balance - before,
-          balanceAfter: balance,
-        });
-        await tx
-          .update(titleCurrencies)
-          .set({ amount: balance, updatedAt: new Date() })
-          .where(balanceKey);
-      }
-      return { experience, balance };
-    });
+        const [row] = await tx.select().from(titleProficiencies).where(key).for("update");
+        const experience = Math.max(0, row!.experience + delta);
+        await tx.update(titleProficiencies).set({ experience, updatedAt: new Date() }).where(key);
+
+        let balance: number | null = null;
+        if (engram > 0) {
+          await tx
+            .insert(titleCurrencies)
+            .values({ userId, title, currencyId: engramCurrency })
+            .onConflictDoNothing();
+          const [currency] = await tx
+            .select()
+            .from(titleCurrencies)
+            .where(balanceKey)
+            .for("update");
+          const before = currency!.amount;
+          // The Engram clamps at the cap, so the journal records the amount actually credited, not the amount converted.
+          balance = clampBalance(before + engram, engramCap);
+          await tx.insert(titleLedgerEntries).values({
+            batchId,
+            kind: "currency",
+            itemId: engramCurrency,
+            delta: balance - before,
+            balanceAfter: balance,
+          });
+          await tx
+            .update(titleCurrencies)
+            .set({ amount: balance, updatedAt: new Date() })
+            .where(balanceKey);
+        }
+        return { experience, balance };
+      });
+    } catch (err) {
+      if (err instanceof LedgerRefusal)
+        return c.json({ error: "Conflict", message: err.message }, 409);
+      throw err;
+    }
 
     return c.json({
       success: true,
@@ -288,8 +305,8 @@ ledgerServerRoutes.post(
 const heroExperienceGrantSchema = z.object({
   player: serverPlayerSchema,
   requestId: z.string().uuid(),
-  // The game's hero ids fail zod's strict RFC 4122 uuid() check, so the id is not validated as a uuid here. canGrantHeroExperience
-  // checks membership in HERO_IDS. The game sends uppercase; HERO_IDS is lowercase.
+  // The game's hero ids fail zod's strict RFC 4122 uuid() check, so the id is not validated as a uuid here. The game sends
+  // uppercase; the catalogue and stored rows are lowercase.
   heroId: z.string().transform((id) => id.toLowerCase()),
   amount: z.number().int().min(-1_000_000_000).max(1_000_000_000),
   pointTag: z.string().min(1),
@@ -297,7 +314,7 @@ const heroExperienceGrantSchema = z.object({
 
 /**
  * The game server's grant of experience with one hero, for the player it names in the body. Only a positive whole amount
- * up to the bound is accepted; the rule is canGrantHeroExperience's. The grant is one batch under its request id, written in the
+ * up to the bound is accepted, and the hero must be in the title's catalogue. The grant is one batch under its request id, written in the
  * same transaction as the experience total, so a retry under the same request id writes nothing and returns the stored total.
  * Like the proficiency grant, it journals no currency entry. The point tag names the hero's experience point and is kept on the batch's request.
  */
@@ -314,7 +331,17 @@ ledgerServerRoutes.post("/titles/:title/heroes/server/grant", requireGameServer,
     return c.json({ error: "Bad Request", message: t("api.message.body-must-be-json") }, 400);
   }
   const parsed = heroExperienceGrantSchema.safeParse(body);
-  if (!parsed.success || !canGrantHeroExperience(parsed.data.heroId, parsed.data.amount)) {
+  if (!parsed.success || !isHeroExperienceAmount(parsed.data.amount)) {
+    return c.json({ error: "Bad Request", message: t("api.message.hero-experience-invalid") }, 400);
+  }
+  const [known] = await getDb()
+    .select({ heroId: titleHeroCatalogue.heroId })
+    .from(titleHeroCatalogue)
+    .where(
+      and(eq(titleHeroCatalogue.title, title), eq(titleHeroCatalogue.heroId, parsed.data.heroId)),
+    )
+    .limit(1);
+  if (!known) {
     return c.json({ error: "Bad Request", message: t("api.message.hero-experience-invalid") }, 400);
   }
 
@@ -324,32 +351,60 @@ ledgerServerRoutes.post("/titles/:title/heroes/server/grant", requireGameServer,
   }
   const gameServerId = c.var.gameServerId;
   const { requestId, heroId, amount, pointTag } = parsed.data;
+  const request = { heroId, amount, pointTag };
   const key = and(
     eq(titleHeroes.userId, userId),
     eq(titleHeroes.title, title),
     eq(titleHeroes.heroId, heroId),
   );
 
-  const experience = await getDb().transaction(async (tx) => {
-    const inserted = await tx
-      .insert(titleLedgerBatches)
-      .values({ userId, title, requestId, gameServerId, request: { heroId, amount, pointTag } })
-      .onConflictDoNothing({
-        target: [titleLedgerBatches.userId, titleLedgerBatches.title, titleLedgerBatches.requestId],
-      })
-      .returning({ id: titleLedgerBatches.id });
+  let experience: number;
+  try {
+    experience = await getDb().transaction(async (tx) => {
+      const inserted = await tx
+        .insert(titleLedgerBatches)
+        .values({ userId, title, requestId, gameServerId, request })
+        .onConflictDoNothing({
+          target: [
+            titleLedgerBatches.userId,
+            titleLedgerBatches.title,
+            titleLedgerBatches.requestId,
+          ],
+        })
+        .returning({ id: titleLedgerBatches.id });
 
-    await tx.insert(titleHeroes).values({ userId, title, heroId }).onConflictDoNothing();
-    const [row] = await tx.select().from(titleHeroes).where(key).for("update");
+      // The grant was already applied under this request id: a retry with the same payload reports the stored total and
+      // writes nothing. A different payload under the same id is refused.
+      if (inserted.length === 0) {
+        const [existing] = await tx
+          .select({ request: titleLedgerBatches.request })
+          .from(titleLedgerBatches)
+          .where(
+            and(
+              eq(titleLedgerBatches.userId, userId),
+              eq(titleLedgerBatches.title, title),
+              eq(titleLedgerBatches.requestId, requestId),
+            ),
+          );
+        if (!isSameStoredRequest(existing!.request, request)) {
+          throw new LedgerRefusal(t("api.message.ledger-request-reused"));
+        }
+      }
 
-    // The grant was already applied under this request id: report the stored total and write nothing.
-    if (inserted.length === 0) {
-      return row!.experience;
-    }
-    const next = heroExperienceAdd(row!.experience, amount);
-    await tx.update(titleHeroes).set({ experience: next, updatedAt: new Date() }).where(key);
-    return next;
-  });
+      await tx.insert(titleHeroes).values({ userId, title, heroId }).onConflictDoNothing();
+      const [row] = await tx.select().from(titleHeroes).where(key).for("update");
+      if (inserted.length === 0) {
+        return row!.experience;
+      }
+      const next = heroExperienceAdd(row!.experience, amount);
+      await tx.update(titleHeroes).set({ experience: next, updatedAt: new Date() }).where(key);
+      return next;
+    });
+  } catch (err) {
+    if (err instanceof LedgerRefusal)
+      return c.json({ error: "Conflict", message: err.message }, 409);
+    throw err;
+  }
 
   return c.json({ success: true, heroId, experience });
 });
