@@ -1274,7 +1274,7 @@ admin.delete("/admin/departments/:id", (c) =>
     const id = c.req.param("id") ?? "";
     const sql = getDb().$client;
     const flat = await listDepartments(sql);
-    const target = flat.find((d) => d.id === id);
+    const target = (await listDepartments(sql, id)).find((d) => d.id === id);
     if (!target) notFound("There is no such department.");
     if (target.member_count > 0) {
       conflict("department_has_members", "Move the people out of this department first.");
@@ -1498,7 +1498,7 @@ admin.delete("/admin/positions/:id", (c) =>
     if (isResponse(actor)) return actor;
     const id = c.req.param("id") ?? "";
     const sql = getDb().$client;
-    const position = (await listPositions(sql)).find((p) => p.id === id);
+    const position = (await listPositions(sql, id)).find((p) => p.id === id);
     if (!position) notFound("There is no such position.");
     if (position.member_count > 0) conflict("position_in_use", "People still hold this position.");
     let deleted: Row[];
