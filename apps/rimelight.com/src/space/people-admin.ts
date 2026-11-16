@@ -492,12 +492,13 @@ type TeamBudgetRow = {
   currency: string | null;
 };
 
-async function listDepartments(sql: Sql): Promise<Department[]> {
+async function listDepartments(sql: Sql, id: string | null = null): Promise<Department[]> {
   const rows: Row[] = await sql`
     SELECT d.id::text AS id, d.name, d.parent_department_id::text AS parent_department_id,
            d.head_id::text AS head_id,
            (SELECT count(*)::int FROM employees m WHERE m.department_id = d.id AND m.deleted_at IS NULL) AS member_count
       FROM departments d
+     WHERE (${id}::text IS NULL OR d.id = ${id}::text::uuid)
      ORDER BY d.name`;
   return rows.map((r: Row) => ({
     id: String(r.id),
@@ -508,11 +509,12 @@ async function listDepartments(sql: Sql): Promise<Department[]> {
   }));
 }
 
-async function listTeams(sql: Sql): Promise<Team[]> {
+async function listTeams(sql: Sql, id: string | null = null): Promise<Team[]> {
   const rows: Row[] = await sql`
     SELECT t.id::text AS id, t.name, t.department_id::text AS department_id, t.lead_id::text AS lead_id,
            (SELECT count(*)::int FROM employees m WHERE m.team_id = t.id AND m.deleted_at IS NULL) AS member_count
       FROM teams t
+     WHERE (${id}::text IS NULL OR t.id = ${id}::text::uuid)
      ORDER BY t.name`;
   return rows.map((r: Row) => ({
     id: String(r.id),
@@ -523,11 +525,12 @@ async function listTeams(sql: Sql): Promise<Team[]> {
   }));
 }
 
-async function listPositions(sql: Sql): Promise<Position[]> {
+async function listPositions(sql: Sql, id: string | null = null): Promise<Position[]> {
   const rows: Row[] = await sql`
     SELECT p.id::text AS id, p.title, p.department_id::text AS department_id, p.level, p.description,
            (SELECT count(*)::int FROM employees m WHERE m.position_id = p.id AND m.deleted_at IS NULL) AS member_count
       FROM positions p
+     WHERE (${id}::text IS NULL OR p.id = ${id}::text::uuid)
      ORDER BY p.title`;
   return rows.map((r: Row) => ({
     id: String(r.id),
@@ -539,7 +542,7 @@ async function listPositions(sql: Sql): Promise<Position[]> {
   }));
 }
 
-async function listSeats(sql: Sql): Promise<Seat[]> {
+async function listSeats(sql: Sql, id: string | null = null): Promise<Seat[]> {
   const rows: Row[] = await sql`
     SELECT s.id::text AS id, s.team_id::text AS team_id, t.name AS team_name,
            s.job_profile_id::text AS job_profile_id, s.title, s.level, s.state,
@@ -549,6 +552,7 @@ async function listSeats(sql: Sql): Promise<Seat[]> {
       FROM seats s
       JOIN teams t ON t.id = s.team_id
       LEFT JOIN employees u ON u.id = s.person_id
+     WHERE (${id}::text IS NULL OR s.id = ${id}::text::uuid)
      ORDER BY t.name, s.title, s.id::text`;
   return rows.map((r: Row) => ({
     id: String(r.id),
@@ -1313,7 +1317,7 @@ admin.post("/admin/teams", (c) =>
       VALUES (${name}::text, ${department}::text::uuid, NULLIF(${lead ?? ""}::text, '')::uuid)
       RETURNING id::text AS id`;
     const id = String(rows[0]?.id);
-    const created = (await listTeams(sql)).find((t) => t.id === id);
+    const created = (await listTeams(sql, id)).find((t) => t.id === id);
     if (!created) throw new Error("created team not found");
     return c.json(created, 201, { "Cache-Control": "no-store" });
   }),
@@ -1326,7 +1330,7 @@ admin.patch("/admin/teams/:id", (c) =>
     if (isResponse(actor)) return actor;
     const id = c.req.param("id") ?? "";
     const sql = getDb().$client;
-    const existing = (await listTeams(sql)).find((t) => t.id === id);
+    const existing = (await listTeams(sql, id)).find((t) => t.id === id);
     if (!existing) notFound("There is no such team.");
     const body = await readBody(c, ["name", "department_id", "lead_id"]);
     const name = body.name === undefined ? undefined : required("name", body.name, 100);
@@ -1346,7 +1350,7 @@ admin.patch("/admin/teams/:id", (c) =>
       WHERE id = ${id}::text::uuid
       RETURNING id::text AS id`;
     if (rows.length === 0) notFound("There is no such team.");
-    const updated = (await listTeams(sql)).find((t) => t.id === id);
+    const updated = (await listTeams(sql, id)).find((t) => t.id === id);
     if (!updated) notFound("There is no such team.");
     return c.json(updated, 200, { "Cache-Control": "no-store" });
   }),
@@ -1359,7 +1363,7 @@ admin.delete("/admin/teams/:id", (c) =>
     if (isResponse(actor)) return actor;
     const id = c.req.param("id") ?? "";
     const sql = getDb().$client;
-    const team = (await listTeams(sql)).find((t) => t.id === id);
+    const team = (await listTeams(sql, id)).find((t) => t.id === id);
     if (!team) notFound("There is no such team.");
     if (team.member_count > 0) {
       conflict("team_has_members", "Move the members out of this team first.");
@@ -1448,7 +1452,7 @@ admin.post("/admin/positions", (c) =>
               ${level ?? ""}::text, ${description ?? ""}::text)
       RETURNING id::text AS id`;
     const id = String(rows[0]?.id);
-    const created = (await listPositions(sql)).find((p) => p.id === id);
+    const created = (await listPositions(sql, id)).find((p) => p.id === id);
     if (!created) throw new Error("created position not found");
     return c.json(created, 201, { "Cache-Control": "no-store" });
   }),
@@ -1534,7 +1538,7 @@ admin.post("/admin/seats", (c) =>
     const input = await resolveFor(sql, null, body);
     const id = await insertSeat(sql, input);
     await syncSeatedPeople(sql);
-    const created = (await listSeats(sql)).find((s) => s.id === id);
+    const created = (await listSeats(sql, id)).find((s) => s.id === id);
     if (!created) throw new Error("created seat not found");
     return c.json(created, 201, { "Cache-Control": "no-store" });
   }),
