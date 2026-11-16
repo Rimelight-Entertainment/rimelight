@@ -5,9 +5,13 @@ import { seo } from "@rimelight/seo/middleware";
 import { cms } from "@rimelight/cms/middleware";
 import { i18n } from "@rimelight/i18n/middleware";
 import api from "#api/server";
+import space from "./space/api.ts";
 import { handleRequest } from "virtual:solid-ssr-handler";
 
 const app = new Hono<{ Bindings: Env }>();
+
+// Rimelight Space API: registered before the site middleware, so its traffic skips the site's rate limits.
+app.route("/v1", space);
 
 app.use(security());
 app.use(auth());
