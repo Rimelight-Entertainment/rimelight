@@ -14,15 +14,15 @@ import type postgres from "postgres";
 import { getDb } from "../db/index.ts";
 import { caller, isResponse } from "./session.ts";
 
-type Db = ReturnType<typeof getDb>["$client"];
+export type Db = ReturnType<typeof getDb>["$client"];
 type Q = Db | postgres.TransactionSql<{}>;
 // biome-ignore lint/suspicious/noExplicitAny: postgres.js rows are untyped
 type Row = Record<string, any>;
 
-const NAME_MAX = 120;
+export const NAME_MAX = 120;
 const STATE_NAME_MAX = 60;
 const GOAL_MAX = 2000;
-const TEXT_MAX = 2000;
+export const TEXT_MAX = 2000;
 const SUMMARY_MAX = 255;
 const DESCRIPTION_MAX = 20000;
 const COMMENT_MAX = 10000;
@@ -55,7 +55,7 @@ class Conflict extends Error {}
 const fail = (status: number, error: string, message: string) =>
   new Fail(status, { error, message });
 const notFound = (message: string) => fail(404, "not_found", message);
-const invalid = (field: string, message: string) =>
+export const invalid = (field: string, message: string) =>
   fail(422, "invalid_field", `${field}: ${message}`);
 const badRequest = (message = "The request body is not valid.") =>
   fail(400, "invalid_request", message);
@@ -71,7 +71,7 @@ const serverError = () =>
   );
 
 /** Runs a route body. A `Fail` becomes its status and body; anything else is a logged 500. */
-function handle(run: (c: Context) => Promise<Response>) {
+export function handle(run: (c: Context) => Promise<Response>) {
   return async (c: Context): Promise<Response> => {
     try {
       return await run(c);
@@ -84,7 +84,11 @@ function handle(run: (c: Context) => Promise<Response>) {
 }
 
 /** Maps a `Conflict` (or a raw unique or foreign-key violation) from `run` to a named 409. */
-async function withConflict<T>(code: string, message: string, run: () => Promise<T>): Promise<T> {
+export async function withConflict<T>(
+  code: string,
+  message: string,
+  run: () => Promise<T>,
+): Promise<T> {
   try {
     return await run();
   } catch (err) {
@@ -103,7 +107,7 @@ function pgConflict(err: unknown): boolean {
 type Body = Record<string, unknown>;
 
 /** The JSON object of the body. Non-objects and unknown fields are a 400, as serde's deny_unknown_fields. */
-async function readBody(c: Context, allowed: string[]): Promise<Body> {
+export async function readBody(c: Context, allowed: string[]): Promise<Body> {
   let raw: unknown;
   try {
     raw = await c.req.json();
@@ -119,14 +123,14 @@ async function readBody(c: Context, allowed: string[]): Promise<Body> {
 }
 
 /** An optional string. Absent and null are `undefined`; any other type is a 400. */
-function optStr(body: Body, key: string): string | undefined {
+export function optStr(body: Body, key: string): string | undefined {
   const v = body[key];
   if (v === undefined || v === null) return undefined;
   if (typeof v !== "string") throw badRequest();
   return v;
 }
 
-function reqStr(body: Body, key: string): string {
+export function reqStr(body: Body, key: string): string {
   const v = optStr(body, key);
   if (v === undefined) throw badRequest();
   return v;
@@ -158,14 +162,14 @@ function optStrs(body: Body, key: string): string[] | undefined {
 
 /* ---------- validation helpers ---------- */
 
-const asciiUpper = (s: string) => s.replace(/[a-z]/g, (ch) => ch.toUpperCase());
+export const asciiUpper = (s: string) => s.replace(/[a-z]/g, (ch) => ch.toUpperCase());
 const charCount = (s: string) => [...s].length;
 /** A route parameter; the router always supplies it. */
 const param = (c: Context, name: string): string => c.req.param(name) ?? "";
-const nowSecs = () => Math.floor(Date.now() / 1000);
+export const nowSecs = () => Math.floor(Date.now() / 1000);
 
 /** `EMB`, `EMB2`: 2 to 10 characters, a capital letter first, then capitals or digits. */
-const validProjectKey = (key: string) => /^[A-Z][A-Z0-9]{1,9}$/.test(key);
+export const validProjectKey = (key: string) => /^[A-Z][A-Z0-9]{1,9}$/.test(key);
 
 const isUuid = (value: string) =>
   /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(value);
@@ -210,7 +214,11 @@ function pathId(raw: string, what: string): string {
 }
 
 /** Trimmed text within `max` characters. Empty is kept (it means "clear" in a patch). */
-function textField(field: string, value: string | undefined, max: number): string | undefined {
+export function textField(
+  field: string,
+  value: string | undefined,
+  max: number,
+): string | undefined {
   if (value === undefined) return undefined;
   const v = value.trim();
   if (charCount(v) > max) throw invalid(field, `at most ${max} characters`);
@@ -218,7 +226,7 @@ function textField(field: string, value: string | undefined, max: number): strin
 }
 
 /** A required trimmed text field within `max` characters. */
-function requiredField(field: string, value: string | undefined, max: number): string {
+export function requiredField(field: string, value: string | undefined, max: number): string {
   const v = (value ?? "").trim();
   if (v === "") throw invalid(field, "is required");
   if (charCount(v) > max) throw invalid(field, `at most ${max} characters`);
@@ -278,7 +286,7 @@ function requireEdit(a: Access): void {
   if (!canEdit(a)) throw forbidden("Viewers can read this project but not change it.");
 }
 
-function requireManage(a: Access): void {
+export function requireManage(a: Access): void {
   if (!canManage(a)) throw forbidden("Only project admins can change this.");
 }
 
@@ -312,9 +320,9 @@ async function membersOf(sql: Db, projectId: string) {
 }
 
 /** The project with its workflow and members, as seen by `viewerId`. `null` when there is no such key. */
-async function projectRow(sql: Db, key: string, viewerId: string) {
+export async function projectRow(sql: Db, key: string, viewerId: string) {
   const rows = await sql`SELECT p.id::text AS id, p.key, p.name, p.description,
-       p.lead_id::text AS lead_id, lu.name AS lead_name, m.role AS my_role
+       p.lead_id::text AS lead_id, lu.name AS lead_name, m.role AS my_role, p.image_key
      FROM projects p
      LEFT JOIN employees lu ON lu.id = p.lead_id
      LEFT JOIN project_members m ON m.project_id = p.id AND m.user_id = ${viewerId}::text::uuid AND m.deleted_at IS NULL
@@ -330,6 +338,7 @@ async function projectRow(sql: Db, key: string, viewerId: string) {
       ? { id: row["lead_id"] as string, display_name: (row["lead_name"] as string | null) ?? "" }
       : null,
     my_role: (row["my_role"] as string | null) ?? null,
+    image_url: row["image_key"] ? `/v1/projects/${row["key"]}/image` : null,
     workflow: await workflowOf(sql, row["id"]),
     members: await membersOf(sql, row["id"]),
   };
@@ -338,7 +347,7 @@ async function projectRow(sql: Db, key: string, viewerId: string) {
 type ProjectView = NonNullable<Awaited<ReturnType<typeof projectRow>>>;
 
 /** A project the caller may see, with their access. Anything else is a 404. */
-async function loadProject(
+export async function loadProject(
   sql: Db,
   me: Caller,
   rawKey: string,
@@ -553,7 +562,7 @@ async function loadIssue(sql: Db, me: Caller, rawKey: string) {
   return { loaded, issue };
 }
 
-async function activePerson(sql: Db, field: string, raw: string): Promise<string> {
+export async function activePerson(sql: Db, field: string, raw: string): Promise<string> {
   const id = idArg(field, raw);
   const rows =
     await sql`SELECT u.is_active FROM employees u WHERE u.id = ${id}::text::uuid AND u.deleted_at IS NULL`;
@@ -749,48 +758,6 @@ async function toggleSocial(
 }
 
 /* ---------- projects ---------- */
-
-async function createProject(c: Context): Promise<Response> {
-  const who = await caller(c);
-  if (isResponse(who)) return who;
-  const sql = getDb().$client;
-  const now = nowSecs();
-  if (!(await isAdmin(sql, who.id))) throw forbidden("Only admins can create projects.");
-  const body = await readBody(c, ["key", "name", "description", "lead_id"]);
-  const key = asciiUpper(reqStr(body, "key").trim());
-  const name = reqStr(body, "name");
-  const description = optStr(body, "description");
-  const leadRaw = optStr(body, "lead_id");
-
-  if (!validProjectKey(key))
-    throw invalid("key", "use 2 to 10 letters or digits, starting with a letter");
-  const projectName = requiredField("name", name, NAME_MAX);
-  const projectDescription = textField("description", description, TEXT_MAX) ?? "";
-  const leadId =
-    leadRaw !== undefined && leadRaw.trim() !== ""
-      ? await activePerson(sql, "lead_id", leadRaw)
-      : null;
-
-  await withConflict("project_key_taken", "Another project already uses this key.", () =>
-    sql.begin(async (tx) => {
-      const rows =
-        await tx`INSERT INTO projects (key, name, description, lead_id, created_at, updated_at)
-         VALUES (${key}::text, ${projectName}::text, ${projectDescription}::text, ${leadId}::text::uuid,
-                 to_timestamp(${now}::bigint), to_timestamp(${now}::bigint))
-         RETURNING id::text AS id`;
-      const projectId = rows[0]?.["id"] as string;
-      await tx`INSERT INTO workflow_states (project_id, name, category, position, created_at, updated_at)
-         SELECT ${projectId}::text::uuid, s.name, s.category, s.position, to_timestamp(${now}::bigint), to_timestamp(${now}::bigint)
-         FROM (VALUES ('Open', 'unstarted', 1), ('In Progress', 'started', 2), ('In Review', 'started', 3),
-                      ('Done', 'done', 4), ('Won''t Do', 'cancelled', 5)) AS s (name, category, position)`;
-      await tx`INSERT INTO project_members (project_id, user_id, role, created_at, updated_at)
-         VALUES (${projectId}::text::uuid, ${who.id}::text::uuid, 'admin', to_timestamp(${now}::bigint), to_timestamp(${now}::bigint))`;
-    }),
-  );
-  const project = await projectRow(sql, key, who.id);
-  if (!project) throw new Error("project vanished after create");
-  return Response.json(project, { status: 201 });
-}
 
 async function updateProject(c: Context): Promise<Response> {
   const who = await caller(c);
@@ -1835,7 +1802,6 @@ async function updateSprint(c: Context): Promise<Response> {
 
 const projectsWrite = new Hono();
 
-projectsWrite.post("/projects", handle(createProject));
 projectsWrite.patch("/projects/:key", handle(updateProject));
 projectsWrite.put("/projects/:key/members/:user", handle(setMember));
 projectsWrite.delete("/projects/:key/members/:user", handle(removeMember));

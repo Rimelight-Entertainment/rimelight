@@ -14,6 +14,8 @@ import peopleRead from "./people-read.ts";
 import peopleAdmin from "./people-admin.ts";
 import projectsRead from "./projects-read.ts";
 import projectsWrite from "./projects-write.ts";
+import projectsCreate from "./projects-create.ts";
+import projectImages from "./project-images.ts";
 import avatars from "./avatars.ts";
 import attachments from "./attachments.ts";
 
@@ -25,6 +27,8 @@ space.route("/", peopleRead);
 space.route("/", peopleAdmin);
 space.route("/", projectsRead);
 space.route("/", projectsWrite);
+space.route("/", projectsCreate);
+space.route("/", projectImages);
 space.route("/", avatars);
 space.route("/", attachments);
 

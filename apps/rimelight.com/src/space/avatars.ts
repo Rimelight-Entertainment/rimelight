@@ -54,10 +54,10 @@ function contentTypeForKey(key: string): string | null {
   }
 }
 
-type Sniffed = { mediaType: string; ext: string };
+export type Sniffed = { mediaType: string; ext: string };
 
 /** people_service.rs sniff_image: PNG, JPEG or WebP by magic bytes, else null. */
-function sniffImage(bytes: Uint8Array): Sniffed | null {
+export function sniffImage(bytes: Uint8Array): Sniffed | null {
   const startsWith = (sig: number[]) => sig.every((b, i) => bytes[i] === b);
   if (startsWith([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])) {
     return { mediaType: "image/png", ext: "png" };
@@ -74,12 +74,12 @@ function sniffImage(bytes: Uint8Array): Sniffed | null {
 }
 
 /** people_service.rs media_type: the part before `;`, trimmed and lower-cased. */
-function mediaType(value: string): string {
+export function mediaType(value: string): string {
   return (value.split(";")[0] ?? "").trim().toLowerCase();
 }
 
 /** people_service.rs random_hex: 8 random bytes as 16 lower-case hex digits. */
-function randomHex(): string {
+export function randomHex(): string {
   const bytes = crypto.getRandomValues(new Uint8Array(8));
   return Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
 }

@@ -124,6 +124,7 @@ type ProjectHead = {
   description: string;
   lead: UserRef | null;
   my_role: string | null;
+  image_url: string | null;
 };
 
 /** A project the viewer may see. Anything else is a 404 (no existence leak). */
@@ -136,7 +137,7 @@ async function loadProject(
   if (!VALID_PROJECT_KEY.test(key)) return noProject();
   const rows = await sql`
     SELECT p.id::text AS id, p.key AS key, p.name AS name, p.description AS description,
-           p.lead_id::text AS lead_id, lu.name AS lead_name, m.role AS my_role
+           p.lead_id::text AS lead_id, lu.name AS lead_name, m.role AS my_role, p.image_key AS image_key
       FROM projects p
       LEFT JOIN employees lu ON lu.id = p.lead_id
       LEFT JOIN project_members m ON m.project_id = p.id
@@ -155,6 +156,7 @@ async function loadProject(
       description: row["description"],
       lead: row["lead_id"] ? { id: row["lead_id"], display_name: row["lead_name"] ?? "" } : null,
       my_role: role,
+      image_url: row["image_key"] ? `/v1/projects/${row["key"]}/image` : null,
     },
   };
 }
@@ -1589,7 +1591,7 @@ projectsRead.get("/projects", async (c) => {
     if (isResponse(me)) return me;
     const rows = await sql`
       SELECT p.id::text AS id, p.key AS key, p.name AS name, p.lead_id::text AS lead_id,
-             lu.name AS lead_name, m.role AS my_role
+             lu.name AS lead_name, m.role AS my_role, p.image_key AS image_key
         FROM projects p
         LEFT JOIN employees lu ON lu.id = p.lead_id
         LEFT JOIN project_members m ON m.project_id = p.id
@@ -1603,6 +1605,7 @@ projectsRead.get("/projects", async (c) => {
         name: r["name"],
         lead: r["lead_id"] ? { id: r["lead_id"], display_name: r["lead_name"] ?? "" } : null,
         my_role: r["my_role"],
+        image_url: r["image_key"] ? `/v1/projects/${r["key"]}/image` : null,
       })),
     );
   } catch (err) {
