@@ -1312,10 +1312,17 @@ admin.post("/admin/teams", (c) =>
     const lead = emptyToNull(body.lead_id);
     const sql = getDb().$client;
     await checkRefs(sql, department, null, lead, null);
-    const rows: Row[] = await sql`
-      INSERT INTO teams (name, department_id, lead_id)
-      VALUES (${name}::text, ${department}::text::uuid, NULLIF(${lead ?? ""}::text, '')::uuid)
-      RETURNING id::text AS id`;
+    let rows: Row[];
+    try {
+      rows = await sql`
+        INSERT INTO teams (name, department_id, lead_id)
+        VALUES (${name}::text, ${department}::text::uuid, NULLIF(${lead ?? ""}::text, '')::uuid)
+        RETURNING id::text AS id`;
+    } catch (err) {
+      if (isConstraint(err))
+        conflict("team_name_taken", "A team with that name already exists in this department.");
+      throw err;
+    }
     const id = String(rows[0]?.id);
     const created = (await listTeams(sql, id)).find((t) => t.id === id);
     if (!created) throw new Error("created team not found");
