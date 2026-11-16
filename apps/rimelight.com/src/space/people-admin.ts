@@ -1217,10 +1217,17 @@ admin.post("/admin/departments", (c) =>
     const rows: Row[] = await sql`
       INSERT INTO departments (name, parent_department_id, head_id)
       VALUES (${name}::text, NULLIF(${parent ?? ""}::text, '')::uuid, NULLIF(${head ?? ""}::text, '')::uuid)
-      RETURNING id::text AS id`;
-    const id = String(rows[0]?.id);
-    const created = (await listDepartments(sql)).find((d) => d.id === id);
-    if (!created) throw new Error("created department not found");
+      RETURNING id::text AS id, name, parent_department_id::text AS parent_department_id, head_id::text AS head_id`;
+    const row = rows[0];
+    if (!row) throw new Error("department insert returned no row");
+    // A new department has no members yet, so its count is zero.
+    const created = {
+      id: String(row.id),
+      name: String(row.name),
+      parent_department_id: str(row.parent_department_id),
+      head_id: str(row.head_id),
+      member_count: 0,
+    };
     return c.json(created, 201, { "Cache-Control": "no-store" });
   }),
 );
