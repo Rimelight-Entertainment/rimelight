@@ -107,7 +107,8 @@ async function handle(c: Context, run: () => Promise<Response>): Promise<Respons
     return await run();
   } catch (err) {
     if (err instanceof Failure) return err.response;
-    console.error("space people-admin failed", c.req.method, c.req.path, err);
+    const detail = err instanceof Error ? `${err.name}: ${err.message}` : String(err);
+    console.error(`space people-admin failed ${c.req.method} ${c.req.path}: ${detail}`);
     return serverError();
   }
 }
