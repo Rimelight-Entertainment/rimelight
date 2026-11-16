@@ -14,6 +14,8 @@ import peopleRead from "./people-read.ts";
 import peopleAdmin from "./people-admin.ts";
 import projectsRead from "./projects-read.ts";
 import projectsWrite from "./projects-write.ts";
+import avatars from "./avatars.ts";
+import attachments from "./attachments.ts";
 
 const space = new Hono();
 
@@ -23,6 +25,8 @@ space.route("/", peopleRead);
 space.route("/", peopleAdmin);
 space.route("/", projectsRead);
 space.route("/", projectsWrite);
+space.route("/", avatars);
+space.route("/", attachments);
 
 /** SHA-256 of the token, the same bytes the Rust backend stores in `sessions.token_hash`. */
 async function hashToken(token: string): Promise<Uint8Array> {
