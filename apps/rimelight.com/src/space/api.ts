@@ -18,6 +18,7 @@ import projectsCreate from "./projects-create.ts";
 import projectImages from "./project-images.ts";
 import avatars from "./avatars.ts";
 import attachments from "./attachments.ts";
+import locations from "./locations.ts";
 
 const space = new Hono();
 
@@ -31,6 +32,7 @@ space.route("/", projectsCreate);
 space.route("/", projectImages);
 space.route("/", avatars);
 space.route("/", attachments);
+space.route("/", locations);
 
 /** SHA-256 of the token, the same bytes the Rust backend stores in `sessions.token_hash`. */
 async function hashToken(token: string): Promise<Uint8Array> {
