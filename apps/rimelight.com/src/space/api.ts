@@ -95,4 +95,30 @@ space.get("/me", async (c) => {
   }
 });
 
+/**
+ * Fallback for anything no route answered. A known path with the wrong method gets 405 (as the Rust backend
+ * does), an unknown path gets 404. Same JSON bodies as the Rust backend.
+ */
+space.all("*", (c) => {
+  const suffix = new URL(c.req.url).pathname.replace(/^\/v1/, "");
+  const methods = new Set<string>();
+  for (const route of space.routes) {
+    if (route.method === "ALL" || route.method === "*") continue;
+    const pattern = new RegExp(
+      "^" + route.path.replace(/\/\*$/, "").replace(/:[^/]+/g, "[^/]+") + "$",
+    );
+    if (pattern.test(suffix)) methods.add(route.method);
+  }
+  if (methods.size > 0) {
+    return Response.json(
+      { error: "method_not_allowed", message: "This method is not supported on this endpoint." },
+      { status: 405, headers: { Allow: [...methods].join(", "), "Cache-Control": "no-store" } },
+    );
+  }
+  return Response.json(
+    { error: "not_found", message: "There is no such endpoint." },
+    { status: 404, headers: { "Cache-Control": "no-store" } },
+  );
+});
+
 export default space;
