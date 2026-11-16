@@ -8,8 +8,11 @@
  */
 import { Hono } from "hono";
 import { getDb } from "../db/index.ts";
+import auth from "./auth.ts";
 
 const space = new Hono();
+
+space.route("/auth", auth);
 
 /** SHA-256 of the token, the same bytes the Rust backend stores in `sessions.token_hash`. */
 async function hashToken(token: string): Promise<Uint8Array> {
