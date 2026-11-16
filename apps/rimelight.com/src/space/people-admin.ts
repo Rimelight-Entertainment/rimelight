@@ -43,18 +43,11 @@ const MAX_WHOLE_MONEY = 9_999_999_999;
 const ADMIN_DENIED = "Only admins can do this.";
 const MONEY_DENIED = "Only admins and HR can see this.";
 const UUID = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
-const SEAT_FIELDS = [
-  "team_id",
-  "job_profile_id",
-  "title",
-  "level",
-  "state",
-  "person_id",
-  "reports_to_seat_id",
-  "salary_min",
-  "salary_max",
-  "currency",
-];
+/** Fields a seat write accepts (decision 0042: a seat is a slot holding a position). */
+const SEAT_FIELDS = ["team_id", "job_profile_id", "state", "person_id", "reports_to_seat_id"];
+/** Fields that now belong to the position; a seat write that sends one is a 422 invalid_field. */
+const SEAT_POSITION_FIELDS = ["title", "level", "salary_min", "salary_max", "currency"];
+const POSITION_FIELDS = ["title", "level", "description", "salary_min", "salary_max", "currency"];
 
 /** Carries a ready-made error response out of a handler. */
 class Failure {
@@ -463,26 +456,30 @@ type Team = {
 type Position = {
   id: string;
   title: string;
-  department_id: string | null;
   level: string;
   description: string;
-  member_count: number;
+  salary_min: string | null;
+  salary_max: string | null;
+  currency: string | null;
+  seat_count: number;
+  filled_count: number;
+  open_count: number;
 };
 
 type Seat = {
   id: string;
   team_id: string;
   team_name: string;
-  job_profile_id: string | null;
-  title: string;
+  job_profile_id: string;
+  job_profile_title: string;
   level: string;
+  salary_min: string | null;
+  salary_max: string | null;
+  currency: string | null;
   state: string;
   person_id: string | null;
   person_name: string | null;
   reports_to_seat_id: string | null;
-  salary_min: string | null;
-  salary_max: string | null;
-  currency: string | null;
 };
 
 type TeamBudgetRow = {
@@ -527,47 +524,55 @@ async function listTeams(sql: Sql, id: string | null = null): Promise<Team[]> {
 
 async function listPositions(sql: Sql, id: string | null = null): Promise<Position[]> {
   const rows: Row[] = await sql`
-    SELECT p.id::text AS id, p.title, p.department_id::text AS department_id, p.level, p.description,
-           (SELECT count(*)::int FROM employees m WHERE m.position_id = p.id AND m.deleted_at IS NULL) AS member_count
+    SELECT p.id::text AS id, p.title, p.level, p.description,
+           p.salary_min::text AS salary_min, p.salary_max::text AS salary_max, p.currency::text AS currency,
+           (SELECT count(*)::int FROM seats s WHERE s.job_profile_id = p.id) AS seat_count,
+           (SELECT count(*)::int FROM seats s WHERE s.job_profile_id = p.id AND s.state = 'filled') AS filled_count,
+           (SELECT count(*)::int FROM seats s WHERE s.job_profile_id = p.id AND s.state = 'open') AS open_count
       FROM positions p
      WHERE (${id}::text IS NULL OR p.id = ${id}::text::uuid)
-     ORDER BY p.title`;
+     ORDER BY p.title, p.id::text`;
   return rows.map((r: Row) => ({
     id: String(r.id),
     title: String(r.title),
-    department_id: str(r.department_id),
     level: String(r.level),
     description: String(r.description),
-    member_count: Number(r.member_count),
+    salary_min: str(r.salary_min),
+    salary_max: str(r.salary_max),
+    currency: str(r.currency),
+    seat_count: Number(r.seat_count),
+    filled_count: Number(r.filled_count),
+    open_count: Number(r.open_count),
   }));
 }
 
 async function listSeats(sql: Sql, id: string | null = null): Promise<Seat[]> {
   const rows: Row[] = await sql`
     SELECT s.id::text AS id, s.team_id::text AS team_id, t.name AS team_name,
-           s.job_profile_id::text AS job_profile_id, s.title, s.level, s.state,
-           s.person_id::text AS person_id, u.name AS person_name,
-           s.reports_to_seat_id::text AS reports_to_seat_id,
-           s.salary_min::text AS salary_min, s.salary_max::text AS salary_max, s.currency::text AS currency
+           s.job_profile_id::text AS job_profile_id, p.title AS job_profile_title, p.level,
+           p.salary_min::text AS salary_min, p.salary_max::text AS salary_max, p.currency::text AS currency,
+           s.state, s.person_id::text AS person_id, u.name AS person_name,
+           s.reports_to_seat_id::text AS reports_to_seat_id
       FROM seats s
       JOIN teams t ON t.id = s.team_id
+      JOIN positions p ON p.id = s.job_profile_id
       LEFT JOIN employees u ON u.id = s.person_id
      WHERE (${id}::text IS NULL OR s.id = ${id}::text::uuid)
-     ORDER BY t.name, s.title, s.id::text`;
+     ORDER BY t.name, p.title, s.id::text`;
   return rows.map((r: Row) => ({
     id: String(r.id),
     team_id: String(r.team_id),
     team_name: String(r.team_name),
-    job_profile_id: str(r.job_profile_id),
-    title: String(r.title),
+    job_profile_id: String(r.job_profile_id),
+    job_profile_title: String(r.job_profile_title),
     level: String(r.level),
+    salary_min: str(r.salary_min),
+    salary_max: str(r.salary_max),
+    currency: str(r.currency),
     state: String(r.state),
     person_id: str(r.person_id),
     person_name: str(r.person_name),
     reports_to_seat_id: str(r.reports_to_seat_id),
-    salary_min: str(r.salary_min),
-    salary_max: str(r.salary_max),
-    currency: str(r.currency),
   }));
 }
 
@@ -625,20 +630,30 @@ function currencyCode(value: string): string | null {
   return /^[A-Z]{3}$/.test(code) ? code : null;
 }
 
-/** The budget of each team: `used` is the top of the salary range of its filled and open seats in the budget currency. */
-function budgetRows(rows: TeamBudgetRow[], seats: Seat[]) {
+/**
+ * What one seat counts against a team budget in `currency`: the top of its position's salary range
+ * when the seat is filled or open and the position pays in that currency, else 0 (minor units).
+ */
+function seatBudgetAmount(
+  state: string,
+  jobProfileId: string | null,
+  positions: Position[],
+  currency: string,
+): number {
+  if (state !== SEAT_FILLED && state !== SEAT_OPEN) return 0;
+  const position = positions.find((p) => p.id === jobProfileId);
+  if (!position || position.salary_max === null || position.currency !== currency) return 0;
+  return parseMoney(position.salary_max) ?? 0;
+}
+
+/** The budget of each team: `used` is the top of the salary range of its filled and open seats' positions. */
+function budgetRows(rows: TeamBudgetRow[], seats: Seat[], positions: Position[]) {
   return rows.map((row) => {
     let used = 0;
     if (row.currency !== null) {
       for (const seat of seats) {
-        if (
-          seat.team_id === row.team_id &&
-          (seat.state === SEAT_FILLED || seat.state === SEAT_OPEN) &&
-          seat.currency === row.currency &&
-          seat.salary_max !== null
-        ) {
-          const max = parseMoney(seat.salary_max);
-          if (max !== null) used += max;
+        if (seat.team_id === row.team_id) {
+          used += seatBudgetAmount(seat.state, seat.job_profile_id, positions, row.currency);
         }
       }
     }
@@ -756,15 +771,46 @@ function salaryField(
 type SeatWrite = {
   team_id: string;
   job_profile_id: string;
-  title: string;
-  level: string;
   state: string;
   person_id: string;
   reports_to_seat_id: string;
-  salary_min: string;
-  salary_max: string;
-  currency: string;
 };
+
+/** Salary and currency of a position: absent keeps the current value, "" clears it. */
+type Salary = {
+  salary_min: string | null;
+  salary_max: string | null;
+  currency: string | null;
+};
+
+function resolveSalary(body: Body, current: Salary | null): Salary {
+  const min = salaryField("salary_min", body.salary_min, current?.salary_min ?? null);
+  const max = salaryField("salary_max", body.salary_max, current?.salary_max ?? null);
+  if (min !== null && max !== null && (parseMoney(min) ?? 0) > (parseMoney(max) ?? 0)) {
+    invalid("salary_max", "must be at least salary_min");
+  }
+  let currency: string | null;
+  if (body.currency === undefined) {
+    currency = current?.currency ?? null;
+  } else if (body.currency === "") {
+    currency = null;
+  } else {
+    const code = currencyCode(body.currency);
+    if (code === null) invalid("currency", "must be a code such as GBP");
+    currency = code;
+  }
+  if ((min !== null || max !== null) && currency === null) {
+    invalid("currency", "is required with a salary");
+  }
+  return { salary_min: min, salary_max: max, currency };
+}
+
+/** Refuses a seat write that sends a field which now belongs to the position (decision 0042). */
+function rejectPositionFields(body: Body): void {
+  for (const key of SEAT_POSITION_FIELDS) {
+    if (body[key] !== undefined) invalid(key, "belongs to the position; set it on the position");
+  }
+}
 
 /** Resolves a seat write into the full row to store. `current` is the seat being updated (null on create). */
 function resolveSeat(
@@ -773,7 +819,6 @@ function resolveSeat(
   teams: Team[],
   positions: Position[],
   seats: Seat[],
-  budgets: TeamBudgetRow[],
   person: (id: string) => Person | null,
 ): SeatWrite {
   const selfId = current === null ? null : current.id;
@@ -789,27 +834,12 @@ function resolveSeat(
     teamId = body.team_id;
   }
 
-  let title: string;
-  if (body.title !== undefined) {
-    title = required("title", body.title, 120);
-  } else if (current !== null) {
-    title = current.title;
-  } else {
-    invalid("title", "is required");
-  }
-
-  let level: string;
-  if (body.level !== undefined) {
-    level = Array.from(String(body.level).trim()).slice(0, 60).join("");
-  } else {
-    level = current === null ? "" : current.level;
-  }
-
   let jobProfileId: string;
   if (body.job_profile_id === undefined) {
-    jobProfileId = current?.job_profile_id ?? "";
+    if (current === null) invalid("job_profile_id", "is required");
+    jobProfileId = current.job_profile_id;
   } else if (body.job_profile_id === "") {
-    jobProfileId = "";
+    invalid("job_profile_id", "is required");
   } else {
     if (!positions.some((p) => p.id === body.job_profile_id)) {
       invalid("job_profile_id", "does not exist");
@@ -867,45 +897,40 @@ function resolveSeat(
     state = current === null ? SEAT_OPEN : current.state;
   }
 
-  const budgetCurrency = budgets.find((b) => b.team_id === teamId)?.currency ?? null;
-  const min = salaryField("salary_min", body.salary_min, current?.salary_min ?? null);
-  const max = salaryField("salary_max", body.salary_max, current?.salary_max ?? null);
-  if (min !== null && max !== null && (parseMoney(min) ?? 0) > (parseMoney(max) ?? 0)) {
-    invalid("salary_max", "must be at least salary_min");
-  }
-
-  let currency: string | null;
-  if (body.currency === undefined) {
-    currency = current?.currency ?? null;
-  } else if (body.currency === "") {
-    currency = null;
-  } else {
-    const code = currencyCode(body.currency);
-    if (code === null) invalid("currency", "must be a code such as GBP");
-    currency = code;
-  }
-  if (min !== null || max !== null) {
-    if (currency === null) invalid("currency", "is required with a salary");
-    if (budgetCurrency !== null && budgetCurrency !== currency) {
-      invalid("currency", "must match the team's budget currency");
-    }
-  }
-
   return {
     team_id: teamId,
     job_profile_id: jobProfileId,
-    title,
-    level,
     state,
     person_id: personId,
     reports_to_seat_id: reportsTo,
-    salary_min: min ?? "",
-    salary_max: max ?? "",
-    currency: currency ?? "",
   };
 }
 
-/** Loads what resolveSeat needs and resolves a write. */
+/**
+ * Refuses a seat write that takes the team's used budget above its cap. `used` counts every filled and
+ * open seat in the team, this one included at its position's salary_max (the seat's own old value is left out).
+ * A team with no budget is never refused.
+ */
+function checkBudget(
+  input: SeatWrite,
+  selfId: string | null,
+  seats: Seat[],
+  positions: Position[],
+  budgets: TeamBudgetRow[],
+): void {
+  const budget = budgets.find((b) => b.team_id === input.team_id);
+  if (!budget || budget.cap === null || budget.currency === null) return;
+  const cap = parseMoney(budget.cap);
+  if (cap === null) return;
+  let used = seatBudgetAmount(input.state, input.job_profile_id, positions, budget.currency);
+  for (const seat of seats) {
+    if (seat.team_id !== input.team_id || seat.id === selfId) continue;
+    used += seatBudgetAmount(seat.state, seat.job_profile_id, positions, budget.currency);
+  }
+  if (used > cap) conflict("over_budget", "This team's budget would be exceeded.");
+}
+
+/** Loads what resolveSeat needs, resolves a write and checks the team budget. */
 async function resolveFor(sql: Sql, current: Seat | null, body: Body): Promise<SeatWrite> {
   const teams = await listTeams(sql);
   const positions = await listPositions(sql);
@@ -917,28 +942,18 @@ async function resolveFor(sql: Sql, current: Seat | null, body: Body): Promise<S
     const found = await getPerson(sql, personId);
     if (found) people.set(personId, found);
   }
-  return resolveSeat(
-    current,
-    body,
-    teams,
-    positions,
-    seats,
-    budgets,
-    (id) => people.get(id) ?? null,
-  );
+  const input = resolveSeat(current, body, teams, positions, seats, (id) => people.get(id) ?? null);
+  checkBudget(input, current?.id ?? null, seats, positions, budgets);
+  return input;
 }
 
 /** Inserts a seat; a constraint violation is `seat_conflict`, as in write_seat. */
 async function insertSeat(sql: Sql, input: SeatWrite): Promise<string> {
   try {
     const rows: Row[] = await sql`
-      INSERT INTO seats (team_id, job_profile_id, title, level, state, person_id,
-                         reports_to_seat_id, salary_min, salary_max, currency)
-      VALUES (${input.team_id}::text::uuid, NULLIF(${input.job_profile_id}::text, '')::uuid,
-              ${input.title}::text, ${input.level}::text, ${input.state}::text,
-              NULLIF(${input.person_id}::text, '')::uuid, NULLIF(${input.reports_to_seat_id}::text, '')::uuid,
-              NULLIF(${input.salary_min}::text, '')::numeric, NULLIF(${input.salary_max}::text, '')::numeric,
-              NULLIF(${input.currency}::text, ''))
+      INSERT INTO seats (team_id, job_profile_id, state, person_id, reports_to_seat_id)
+      VALUES (${input.team_id}::text::uuid, ${input.job_profile_id}::text::uuid, ${input.state}::text,
+              NULLIF(${input.person_id}::text, '')::uuid, NULLIF(${input.reports_to_seat_id}::text, '')::uuid)
       RETURNING id::text AS id`;
     return String(rows[0]?.id);
   } catch (err) {
@@ -1420,7 +1435,8 @@ admin.put("/admin/teams/:id/budget", (c) =>
     const row = (await listTeamBudgets(sql)).find((r) => r.team_id === id);
     if (!row) notFound("There is no such team.");
     const seats = await listSeats(sql);
-    const budget = budgetRows([row], seats)[0];
+    const positions = await listPositions(sql);
+    const budget = budgetRows([row], seats, positions)[0];
     return c.json(budget, 200, { "Cache-Control": "no-store" });
   }),
 );
@@ -1433,7 +1449,8 @@ admin.get("/admin/team-budgets", (c) =>
     const sql = getDb().$client;
     const rows = await listTeamBudgets(sql);
     const seats = await listSeats(sql);
-    return c.json(budgetRows(rows, seats), 200, { "Cache-Control": "no-store" });
+    const positions = await listPositions(sql);
+    return c.json(budgetRows(rows, seats, positions), 200, { "Cache-Control": "no-store" });
   }),
 );
 
@@ -1446,17 +1463,18 @@ admin.post("/admin/positions", (c) =>
   handle(c, async () => {
     const actor = await gate(c, [ROLE_ADMIN], ADMIN_DENIED);
     if (isResponse(actor)) return actor;
-    const body = await readBody(c, ["title", "department_id", "level", "description"]);
+    const body = await readBody(c, POSITION_FIELDS);
     const title = required("title", body.title, 120);
-    const department = emptyToNull(body.department_id);
     const level = text("level", body.level, 60);
     const description = text("description", body.description, 2000);
+    const salary = resolveSalary(body, null);
     const sql = getDb().$client;
-    await checkRefs(sql, department, null, null, null);
     const rows: Row[] = await sql`
-      INSERT INTO positions (title, department_id, level, description)
-      VALUES (${title}::text, NULLIF(${department ?? ""}::text, '')::uuid,
-              ${level ?? ""}::text, ${description ?? ""}::text)
+      INSERT INTO positions (title, level, description, salary_min, salary_max, currency)
+      VALUES (${title}::text, ${level ?? ""}::text, ${description ?? ""}::text,
+              NULLIF(${salary.salary_min ?? ""}::text, '')::numeric,
+              NULLIF(${salary.salary_max ?? ""}::text, '')::numeric,
+              NULLIF(${salary.currency ?? ""}::text, ''))
       RETURNING id::text AS id`;
     const id = String(rows[0]?.id);
     const created = (await listPositions(sql, id)).find((p) => p.id === id);
@@ -1472,23 +1490,22 @@ admin.patch("/admin/positions/:id", (c) =>
     if (isResponse(actor)) return actor;
     const id = c.req.param("id") ?? "";
     const sql = getDb().$client;
-    if (!(await listPositions(sql)).some((p) => p.id === id)) {
-      notFound("There is no such position.");
-    }
-    const body = await readBody(c, ["title", "department_id", "level", "description"]);
+    const current = (await listPositions(sql)).find((p) => p.id === id);
+    if (!current) notFound("There is no such position.");
+    const body = await readBody(c, POSITION_FIELDS);
     const title = text("title", body.title, 120);
     if (title === undefined || title === "") invalid("title", "is required");
     const level = text("level", body.level, 60);
     const description = text("description", body.description, 2000);
-    const department = emptyToNull(body.department_id);
-    await checkRefs(sql, department, null, null, null);
+    const salary = resolveSalary(body, current);
     const rows: Row[] = await sql`
       UPDATE positions SET
         title = COALESCE(${title}::text, title),
-        department_id = CASE WHEN ${department}::text IS NULL THEN department_id
-                             ELSE NULLIF(${department}::text, '')::uuid END,
         level = COALESCE(${level ?? null}::text, level),
-        description = COALESCE(${description ?? null}::text, description)
+        description = COALESCE(${description ?? null}::text, description),
+        salary_min = NULLIF(${salary.salary_min ?? ""}::text, '')::numeric,
+        salary_max = NULLIF(${salary.salary_max ?? ""}::text, '')::numeric,
+        currency = NULLIF(${salary.currency ?? ""}::text, '')
       WHERE id = ${id}::text::uuid
       RETURNING id::text AS id`;
     if (rows.length === 0) notFound("There is no such position.");
@@ -1507,7 +1524,7 @@ admin.delete("/admin/positions/:id", (c) =>
     const sql = getDb().$client;
     const position = (await listPositions(sql, id)).find((p) => p.id === id);
     if (!position) notFound("There is no such position.");
-    if (position.member_count > 0) conflict("position_in_use", "People still hold this position.");
+    if (position.seat_count > 0) conflict("position_in_use", "Seats still use this position.");
     let deleted: Row[];
     try {
       deleted =
@@ -1540,7 +1557,8 @@ admin.post("/admin/seats", (c) =>
   handle(c, async () => {
     const actor = await gate(c, [ROLE_ADMIN], ADMIN_DENIED);
     if (isResponse(actor)) return actor;
-    const body = await readBody(c, SEAT_FIELDS);
+    const body = await readBody(c, [...SEAT_FIELDS, ...SEAT_POSITION_FIELDS]);
+    rejectPositionFields(body);
     const sql = getDb().$client;
     const input = await resolveFor(sql, null, body);
     const id = await insertSeat(sql, input);
@@ -1560,27 +1578,20 @@ admin.patch("/admin/seats/:id", (c) =>
     const sql = getDb().$client;
     const current = (await listSeats(sql)).find((s) => s.id === id);
     if (!current) notFound("There is no such seat.");
-    const body = await readBody(c, SEAT_FIELDS);
+    const body = await readBody(c, [...SEAT_FIELDS, ...SEAT_POSITION_FIELDS]);
+    rejectPositionFields(body);
     const input = await resolveFor(sql, current, body);
     let rows: Row[];
     try {
       rows = await sql`
         UPDATE seats SET
           team_id = ${input.team_id}::text::uuid,
-          job_profile_id = CASE WHEN ${input.job_profile_id}::text = '' THEN NULL
-                                ELSE ${input.job_profile_id}::text::uuid END,
-          title = ${input.title}::text,
-          level = ${input.level}::text,
+          job_profile_id = ${input.job_profile_id}::text::uuid,
           state = ${input.state}::text,
           person_id = CASE WHEN ${input.person_id}::text = '' THEN NULL
                            ELSE ${input.person_id}::text::uuid END,
           reports_to_seat_id = CASE WHEN ${input.reports_to_seat_id}::text = '' THEN NULL
-                                    ELSE ${input.reports_to_seat_id}::text::uuid END,
-          salary_min = CASE WHEN ${input.salary_min}::text = '' THEN NULL
-                            ELSE ${input.salary_min}::text::numeric END,
-          salary_max = CASE WHEN ${input.salary_max}::text = '' THEN NULL
-                            ELSE ${input.salary_max}::text::numeric END,
-          currency = CASE WHEN ${input.currency}::text = '' THEN NULL ELSE ${input.currency}::text END
+                                    ELSE ${input.reports_to_seat_id}::text::uuid END
         WHERE id = ${id}::text::uuid
         RETURNING id::text AS id`;
     } catch (err) {

@@ -81,29 +81,35 @@ type TeamRow = {
   member_count: number;
 };
 
+/** A job title (decision 0042). Salary is not read here: the directory carries no money. */
 type PositionRow = {
   id: string;
   title: string;
-  department_id: string | null;
   level: string;
   description: string;
-  member_count: number;
+  salary_min: null;
+  salary_max: null;
+  currency: null;
+  seat_count: number;
+  filled_count: number;
+  open_count: number;
 };
 
+/** A slot in a team holding a position. Title and level come from the position; money is not read here. */
 type SeatJson = {
   id: string;
   team_id: string;
   team_name: string;
-  job_profile_id: string | null;
-  title: string;
+  job_profile_id: string;
+  job_profile_title: string;
   level: string;
+  salary_min: null;
+  salary_max: null;
+  currency: null;
   state: string;
   person_id: string | null;
   person_name: string | null;
   reports_to_seat_id: string | null;
-  salary_min: null;
-  salary_max: null;
-  currency: null;
 };
 
 type SeatNode = { seat: SeatJson; reports: SeatNode[] };
@@ -345,32 +351,44 @@ async function listTeams(sql: Sql): Promise<TeamRow[]> {
 
 async function listPositions(sql: Sql): Promise<PositionRow[]> {
   const rows = await sql`
-    SELECT p.id::text AS id, p.title, p.department_id::text AS department_id,
-           p.level, p.description,
-           (SELECT count(*)::int FROM employees m
-             WHERE m.position_id = p.id AND m.deleted_at IS NULL) AS member_count
+    SELECT p.id::text AS id, p.title, p.level, p.description,
+           (SELECT count(*)::int FROM seats s WHERE s.job_profile_id = p.id) AS seat_count,
+           (SELECT count(*)::int FROM seats s WHERE s.job_profile_id = p.id AND s.state = 'filled') AS filled_count,
+           (SELECT count(*)::int FROM seats s WHERE s.job_profile_id = p.id AND s.state = 'open') AS open_count
       FROM positions p
-     ORDER BY p.title`;
-  return rows as unknown as PositionRow[];
+     ORDER BY p.title, p.id::text`;
+  return rows.map((r) => ({
+    id: r["id"] as string,
+    title: r["title"] as string,
+    level: r["level"] as string,
+    description: r["description"] as string,
+    salary_min: null,
+    salary_max: null,
+    currency: null,
+    seat_count: Number(r["seat_count"]),
+    filled_count: Number(r["filled_count"]),
+    open_count: Number(r["open_count"]),
+  }));
 }
 
-/** Every seat, in team name, title and id order. Money columns are not read: the org chart carries none. */
+/** Every seat, in team name, position title and id order. Money is not read: the org chart carries none. */
 async function listSeats(sql: Sql): Promise<SeatJson[]> {
   const rows = await sql`
     SELECT s.id::text AS id, s.team_id::text AS team_id, t.name AS team_name,
-           s.job_profile_id::text AS job_profile_id, s.title, s.level, s.state,
+           s.job_profile_id::text AS job_profile_id, p.title AS job_profile_title, p.level, s.state,
            s.person_id::text AS person_id, u.name AS person_name,
            s.reports_to_seat_id::text AS reports_to_seat_id
       FROM seats s
       JOIN teams t ON t.id = s.team_id
+      JOIN positions p ON p.id = s.job_profile_id
       LEFT JOIN employees u ON u.id = s.person_id
-     ORDER BY t.name, s.title, s.id::text`;
+     ORDER BY t.name, p.title, s.id::text`;
   return rows.map((r) => ({
     id: r["id"] as string,
     team_id: r["team_id"] as string,
     team_name: r["team_name"] as string,
-    job_profile_id: (r["job_profile_id"] as string | null) ?? null,
-    title: r["title"] as string,
+    job_profile_id: r["job_profile_id"] as string,
+    job_profile_title: r["job_profile_title"] as string,
     level: r["level"] as string,
     state: r["state"] as string,
     person_id: (r["person_id"] as string | null) ?? null,
