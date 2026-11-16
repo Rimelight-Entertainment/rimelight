@@ -9,6 +9,13 @@
 import type { Context } from "hono";
 import { Hono } from "hono";
 import { getDb } from "../db/index.ts";
+import {
+  Auth0Error,
+  createEmployeeAccount,
+  deleteAccount,
+  managementToken,
+  sendPasswordSetupEmail,
+} from "./auth0-management.ts";
 import { caller, isResponse } from "./session.ts";
 import type { Caller } from "./session.ts";
 
@@ -972,20 +979,57 @@ admin.post("/admin/users", (c) =>
     const sql = getDb().$client;
     await checkRefs(sql, departmentId, teamId, managerId, positionId);
 
+    // The Auth0 account comes first; the employees row is inserted only once it exists, so a failed
+    // Auth0 call leaves no row behind.
+    let token: string;
+    let account: { userId: string; created: boolean };
+    try {
+      token = await managementToken();
+      account = await createEmployeeAccount(token, email, displayName);
+    } catch (err) {
+      console.error(
+        "space people-admin: Auth0 account create failed",
+        err instanceof Auth0Error ? err.message : "unexpected error",
+      );
+      return fail(502, "auth0_error", "The sign-in account could not be created. Try again.");
+    }
+
     let id: string;
     try {
       const rows: Row[] = await sql`
-        INSERT INTO employees (email, name, title, position_id, department_id, team_id, manager_id, start_date)
+        INSERT INTO employees (email, name, title, position_id, department_id, team_id, manager_id, start_date, auth0_id)
         VALUES (${email}::text, ${displayName}::text, NULLIF(${title ?? ""}::text, ''),
                 NULLIF(${positionId ?? ""}::text, '')::uuid, NULLIF(${departmentId ?? ""}::text, '')::uuid,
                 NULLIF(${teamId ?? ""}::text, '')::uuid, NULLIF(${managerId ?? ""}::text, '')::uuid,
-                NULLIF(${startDate ?? ""}::text, '')::date)
+                NULLIF(${startDate ?? ""}::text, '')::date, ${account.userId}::text)
         RETURNING id::text AS id`;
       id = String(rows[0]?.id);
     } catch (err) {
+      // Roll back only an account this request created; a reused account belongs to someone already.
+      if (account.created) {
+        try {
+          await deleteAccount(token, account.userId);
+        } catch (rollbackErr) {
+          console.error(
+            "space people-admin: Auth0 rollback failed",
+            rollbackErr instanceof Auth0Error ? rollbackErr.message : "unexpected error",
+          );
+        }
+      }
       if (isConstraint(err)) conflict("email_taken", "Another person already has this email.");
       throw err;
     }
+
+    // The password setup email is best effort: the person exists and can still use Forgot password.
+    try {
+      await sendPasswordSetupEmail(token, account.userId);
+    } catch (err) {
+      console.error(
+        "space people-admin: password setup email failed",
+        err instanceof Auth0Error ? err.message : "unexpected error",
+      );
+    }
+
     const created = await getPerson(sql, id);
     if (!created) throw new Error("created person not found");
     return c.json(profile(created), 201, { "Cache-Control": "no-store" });
