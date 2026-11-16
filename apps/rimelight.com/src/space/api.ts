@@ -10,11 +10,19 @@ import { Hono } from "hono";
 import { getDb } from "../db/index.ts";
 import auth from "./auth.ts";
 import people from "./people.ts";
+import peopleRead from "./people-read.ts";
+import peopleAdmin from "./people-admin.ts";
+import projectsRead from "./projects-read.ts";
+import projectsWrite from "./projects-write.ts";
 
 const space = new Hono();
 
 space.route("/auth", auth);
 space.route("/", people);
+space.route("/", peopleRead);
+space.route("/", peopleAdmin);
+space.route("/", projectsRead);
+space.route("/", projectsWrite);
 
 /** SHA-256 of the token, the same bytes the Rust backend stores in `sessions.token_hash`. */
 async function hashToken(token: string): Promise<Uint8Array> {
