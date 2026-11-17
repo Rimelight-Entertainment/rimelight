@@ -46,7 +46,7 @@ The source for Rimelight Entertainment's websites and the shared packages behind
 
 ### Prerequisites
 
-- Node.js 26.13.0 (see `.node-version`)
+- Node.js 26.13.1 (see `.node-version`)
 - pnpm 12.16.1 (see `packageManager` in `package.json`)
 
 ### Install

@@ -54,7 +54,7 @@ The CLI copies this template, sets the domain, and optionally installs dependenc
 
 ### Prerequisites
 
-- Node.js 26.13.0 (see `.node-version`)
+- Node.js 26.13.1 (see `.node-version`)
 - pnpm 12.16.1
 - A Cloudflare account
 
