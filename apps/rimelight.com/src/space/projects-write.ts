@@ -13,6 +13,7 @@ import { Hono } from "hono";
 import type postgres from "postgres";
 import { getDb } from "../db/index.ts";
 import { caller, isResponse } from "./session.ts";
+import { requireKnownAreas } from "./areas.ts";
 
 export type Db = ReturnType<typeof getDb>["$client"];
 type Q = Db | postgres.TransactionSql<{}>;
@@ -1045,6 +1046,7 @@ async function createIssue(c: Context): Promise<Response> {
       : null;
   const due = optionalDate("due_date", dueRaw) ?? null;
   const tags = cleanTags(tagsRaw ?? []);
+  await requireKnownAreas(sql, tags);
 
   const number = await sql.begin(async (tx) => {
     const numRows = await tx`UPDATE projects SET next_issue_number = next_issue_number + 1,
@@ -1171,7 +1173,10 @@ async function updateIssue(c: Context): Promise<Response> {
     const date = optionalDate("due_date", dueRaw);
     if (date !== undefined) values.due_date = date;
   }
-  if (tagsRaw !== undefined) values.tags = cleanTags(tagsRaw);
+  if (tagsRaw !== undefined) {
+    values.tags = cleanTags(tagsRaw);
+    await requireKnownAreas(sql, values.tags);
+  }
 
   // A state in a finished category stamps resolved_at once; leaving it clears it.
   const oldCategory = current.state.category;

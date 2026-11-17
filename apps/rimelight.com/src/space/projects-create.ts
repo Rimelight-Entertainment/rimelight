@@ -58,7 +58,8 @@ async function createProject(c: Context): Promise<Response> {
       await tx`INSERT INTO workflow_states (project_id, name, category, position, created_at, updated_at)
          SELECT ${projectId}::text::uuid, s.name, s.category, s.position, to_timestamp(${now}::bigint), to_timestamp(${now}::bigint)
          FROM (VALUES ('Open', 'unstarted', 1), ('In Progress', 'started', 2), ('In Review', 'started', 3),
-                      ('Done', 'done', 4), ('Won''t Do', 'cancelled', 5)) AS s (name, category, position)`;
+                      ('On Hold', 'started', 4), ('Done', 'done', 5), ('Won''t Do', 'cancelled', 6),
+                      ('Canceled', 'cancelled', 7)) AS s (name, category, position)`;
       await tx`INSERT INTO project_members (project_id, user_id, role, created_at, updated_at)
          VALUES (${projectId}::text::uuid, ${who.id}::text::uuid, 'admin', to_timestamp(${now}::bigint), to_timestamp(${now}::bigint))`;
     }),
