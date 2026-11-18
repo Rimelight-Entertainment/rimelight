@@ -767,10 +767,11 @@ async function updateProject(c: Context): Promise<Response> {
   const now = nowSecs();
   const { project, access } = await loadProject(sql, who, param(c, "key"));
   requireManage(access);
-  const body = await readBody(c, ["name", "description", "lead_id"]);
+  const body = await readBody(c, ["name", "description", "lead_id", "key"]);
   const nameRaw = optStr(body, "name");
   const descRaw = optStr(body, "description");
   const leadRaw = optStr(body, "lead_id");
+  const keyRaw = optStr(body, "key");
 
   const name = nameRaw === undefined ? null : requiredField("name", nameRaw, NAME_MAX);
   const description = textField("description", descRaw, TEXT_MAX) ?? null;
@@ -780,14 +781,27 @@ async function updateProject(c: Context): Promise<Response> {
     setLead = true;
     leadId = leadRaw.trim() === "" ? null : await activePerson(sql, "lead_id", leadRaw);
   }
-  const changed = await sql`UPDATE projects SET
+  let newKey: string | null = null;
+  if (keyRaw !== undefined) {
+    const candidate = asciiUpper(keyRaw.trim());
+    if (!validProjectKey(candidate)) {
+      throw invalid("key", "use 2 to 10 letters or digits, starting with a letter");
+    }
+    newKey = candidate;
+  }
+  const changed = await withConflict(
+    "project_key_taken",
+    "Another project already uses this key.",
+    () => sql`UPDATE projects SET
        name = COALESCE(${name}::text, name),
        description = COALESCE(${description}::text, description),
        lead_id = CASE WHEN ${setLead}::bool THEN ${leadId}::text::uuid ELSE lead_id END,
+       key = COALESCE(${newKey}::text, key),
        updated_at = to_timestamp(${now}::bigint)
-     WHERE id = ${project.id}::text::uuid AND deleted_at IS NULL`;
+     WHERE id = ${project.id}::text::uuid AND deleted_at IS NULL`,
+  );
   if (changed.count !== 1) throw noProject();
-  const updated = await projectRow(sql, project.key, who.id);
+  const updated = await projectRow(sql, newKey ?? project.key, who.id);
   if (!updated) throw noProject();
   return Response.json(updated, { status: 200 });
 }
