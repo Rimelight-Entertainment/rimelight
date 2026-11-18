@@ -45,7 +45,7 @@
     "check": "cf workers types && rimelight-i18n types --config vite.config.ts && vp check --fix"
   },
   "dependencies": {
-    "@cloudflare/vite-plugin": "2.0.0-beta.v.11",
+    "@cloudflare/vite-plugin": "2.0.0-rc.0",
     "@neondatabase/serverless": "1.2.1",
     "@rimelight/auth": "workspace:*",
     "@rimelight/cms": "workspace:*",

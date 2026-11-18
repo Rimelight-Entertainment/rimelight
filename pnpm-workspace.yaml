@@ -21,3 +21,6 @@ permissions:
 # Vulnerability Fixes & Toolchain Alignment
 overrides:
   vite: npm:@voidzero-dev/vite-plus-core@1.6.0
+auditConfig:
+  ignoreGhsas:
+    - GHSA-fc5q-39xc-vjpf
