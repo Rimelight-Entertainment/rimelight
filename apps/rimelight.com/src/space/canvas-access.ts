@@ -103,7 +103,7 @@ export type CanvasRow = {
   seq: number;
   createdAt: Date;
   updatedAt: Date;
-  deletedAt: Date | null;
+  archivedAt: Date | null;
   access: AccessLevel;
 };
 
@@ -122,7 +122,7 @@ export function canvasFromRow(r: Row, userId: string): CanvasRow {
     seq: Number(r["seq"]),
     createdAt: r["created_at"] as Date,
     updatedAt: r["updated_at"] as Date,
-    deletedAt: (r["deleted_at"] as Date | null) ?? null,
+    archivedAt: (r["archived_at"] as Date | null) ?? null,
     access: accessLevel({
       userId,
       ownerId,
@@ -136,7 +136,7 @@ export function canvasFromRow(r: Row, userId: string): CanvasRow {
 }
 
 /**
- * The canvas with the caller's access. No row, no access, or a trashed canvas (unless includeDeleted) is a 404;
+ * The canvas with the caller's access. No row, no access, or an archived canvas (unless includeArchived) is a 404;
  * access below `need` is a 403.
  */
 export async function loadCanvas(
@@ -144,13 +144,13 @@ export async function loadCanvas(
   userId: string,
   rawId: string,
   need: AccessLevel,
-  opts: { includeDeleted?: boolean } = {},
+  opts: { includeArchived?: boolean } = {},
 ): Promise<CanvasRow | Response> {
   const id = uuidOr404(rawId, NO_CANVAS);
   if (typeof id !== "string") return id;
   const rows =
     await sql`SELECT c.id::text AS id, c.title, c.owner_id::text AS owner_id, c.project_id::text AS project_id,
-       p.key AS project_key, c.created_by::text AS created_by, c.seq, c.created_at, c.updated_at, c.deleted_at,
+       p.key AS project_key, c.created_by::text AS created_by, c.seq, c.created_at, c.updated_at, c.archived_at,
        m.role AS project_role, s.role AS share_role,
        EXISTS (SELECT 1 FROM user_roles r WHERE r.user_id = ${userId}::text::uuid AND r.role = 'admin') AS global_admin
   FROM canvases c
@@ -162,7 +162,7 @@ export async function loadCanvas(
   if (!row) return notFound(NO_CANVAS);
   const canvas = canvasFromRow(row, userId);
   if (canvas.access === "none") return notFound(NO_CANVAS);
-  if (canvas.deletedAt !== null && !opts.includeDeleted) return notFound(NO_CANVAS);
+  if (canvas.archivedAt !== null && !opts.includeArchived) return notFound(NO_CANVAS);
   if (!atLeast(canvas.access, need)) {
     return forbidden(
       need === "manage"
@@ -217,10 +217,10 @@ export async function quotaUsage(
     scope === "User"
       ? await q`SELECT COALESCE(sum(a.bytes), 0)::bigint AS used FROM canvas_assets a
            JOIN canvases c ON c.id = a.canvas_id
-          WHERE c.deleted_at IS NULL AND c.owner_id = ${subjectId}::text::uuid`
+          WHERE c.owner_id = ${subjectId}::text::uuid`
       : await q`SELECT COALESCE(sum(a.bytes), 0)::bigint AS used FROM canvas_assets a
            JOIN canvases c ON c.id = a.canvas_id
-          WHERE c.deleted_at IS NULL AND c.project_id = ${subjectId}::text::uuid`;
+          WHERE c.project_id = ${subjectId}::text::uuid`;
   const limits = await q`SELECT limit_bytes FROM storage_quotas
      WHERE scope = ${scope}::text AND subject_id = ${subjectId}::text::uuid`;
   const row = limits[0] as Row | undefined;
@@ -254,7 +254,7 @@ export function canvasView(c: CanvasRow) {
     seq: c.seq,
     created_at: c.createdAt.toISOString(),
     updated_at: c.updatedAt.toISOString(),
-    deleted: c.deletedAt !== null,
+    archived: c.archivedAt !== null,
     my_access: c.access,
   };
 }

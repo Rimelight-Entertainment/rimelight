@@ -3,6 +3,7 @@
 -- project clears owner_id and sets project_id; the id and the R2 keys stay the same.
 -- Asset bytes live in the R2 bucket BLOB under space/canvases/{canvas_id}/assets/{sha256}.{ext}; thumbnails under
 -- space/canvases/{canvas_id}/thumbs/{sha256}-{px}.webp.
+-- Archiving keeps a canvas and its images (archived_at set). Deleting is permanent: the row (and by cascade its items, assets and shares) and every R2 object under its prefix are removed.
 -- Not idempotent: applied once.
 
 CREATE TABLE canvases (
@@ -14,12 +15,12 @@ CREATE TABLE canvases (
     seq         bigint NOT NULL DEFAULT 0 CHECK (seq >= 0),   -- last op sequence applied by the live room
     created_at  timestamptz NOT NULL DEFAULT now(),
     updated_at  timestamptz NOT NULL DEFAULT now(),
-    deleted_at  timestamptz NULL,
+    archived_at timestamptz NULL,
     CONSTRAINT canvases_one_home CHECK ((owner_id IS NULL) <> (project_id IS NULL))
 );
 
-CREATE INDEX canvases_owner_idx ON canvases (owner_id) WHERE deleted_at IS NULL;
-CREATE INDEX canvases_project_idx ON canvases (project_id) WHERE deleted_at IS NULL;
+CREATE INDEX canvases_owner_idx ON canvases (owner_id) WHERE archived_at IS NULL;
+CREATE INDEX canvases_project_idx ON canvases (project_id) WHERE archived_at IS NULL;
 
 -- Personal canvases only. The API enforces this: a canvas with a project_id has no rows here.
 CREATE TABLE canvas_shares (
@@ -69,7 +70,7 @@ CREATE TABLE canvas_assets (
 );
 
 -- A missing row means the default: 1 GB for a user's personal canvases, 10 GB for a project.
--- Usage is the sum of canvas_assets.bytes over the scope's canvases that are not deleted.
+-- Usage is the sum of canvas_assets.bytes over all the scope's canvases, archived ones included (their images are kept). Deleting a canvas removes its rows and its R2 objects, which frees the space.
 CREATE TABLE storage_quotas (
     scope        text NOT NULL CHECK (scope IN ('User', 'Project')),
     subject_id   uuid NOT NULL,   -- employees.id for User, projects.id for Project

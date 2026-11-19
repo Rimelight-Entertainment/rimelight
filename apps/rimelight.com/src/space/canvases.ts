@@ -1,9 +1,10 @@
 /**
- * Rimelight Space canvas routes on the website Worker (CV.1, decision 0045): list, create, read, rename, trash,
- * restore, move to a project, sharing of personal canvases, the snapshot the live room starts from, and storage
- * quotas. Mounted under /v1 by the Space API. Asset bytes and thumbnails are in canvas-assets.ts.
+ * Rimelight Space canvas routes on the website Worker (CV.1, decision 0045): list, create, read, rename, archive,
+ * unarchive, delete for good, move to a project, sharing of personal canvases, the snapshot the live room starts
+ * from, and storage quotas. Mounted under /v1 by the Space API. Asset bytes and thumbnails are in canvas-assets.ts.
  */
 import { Hono } from "hono";
+import { env } from "cloudflare:workers";
 import { getDb } from "../db/index.ts";
 import { caller, isResponse } from "./session.ts";
 import {
@@ -34,10 +35,17 @@ const NO_PERSON = "There is no such person.";
 const NO_SHARE = "That person has no access.";
 const NO_SUBJECT = "There is no such quota subject.";
 const TEN_TB = 10 * 1024 * 1024 * 1024 * 1024;
+const blobBucket = (): R2Bucket => (env as unknown as { BLOB: R2Bucket }).BLOB;
 
 /** The canvas as the caller sees it, with a status (201 after a create). */
-async function viewOf(sql: Sql, userId: string, id: string, status = 200): Promise<Response> {
-  const canvas = await loadCanvas(sql, userId, id, "view");
+async function viewOf(
+  sql: Sql,
+  userId: string,
+  id: string,
+  status = 200,
+  includeArchived = false,
+): Promise<Response> {
+  const canvas = await loadCanvas(sql, userId, id, "view", { includeArchived });
   if (isResponse(canvas)) return canvas;
   return json(canvasView(canvas), status);
 }
@@ -63,8 +71,8 @@ async function quotaView(sql: Q, scope: QuotaScope, subjectId: string) {
 const canvases = new Hono();
 
 /**
- * GET /v1/canvases?scope=personal|shared|project&project=KEY&include_deleted=true: the canvases in a list,
- * most recently updated first. The trash (include_deleted) is for personal and project canvases; in a project
+ * GET /v1/canvases?scope=personal|shared|project&project=KEY&archived=true: the canvases in a list,
+ * most recently updated first. The archived list (archived=true) is for personal and project canvases; in a project
  * only the canvases the caller may manage are in it.
  */
 canvases.get("/canvases", async (c) => {
@@ -76,35 +84,35 @@ canvases.get("/canvases", async (c) => {
     if (scope !== "personal" && scope !== "shared" && scope !== "project") {
       return badRequest("scope is personal, shared or project.");
     }
-    const includeDeleted = c.req.query("include_deleted") === "true";
-    if (includeDeleted && scope === "shared") {
-      return badRequest("The trash is only for personal and project canvases.");
+    const includeArchived = c.req.query("archived") === "true";
+    if (includeArchived && scope === "shared") {
+      return badRequest("Archived canvases are only listed for personal and project canvases.");
     }
 
     let rows: Row[];
     if (scope === "personal") {
       rows =
         await sql`SELECT c.id::text AS id, c.title, c.owner_id::text AS owner_id, c.project_id::text AS project_id,
-             p.key AS project_key, c.created_by::text AS created_by, c.seq, c.created_at, c.updated_at, c.deleted_at,
+             p.key AS project_key, c.created_by::text AS created_by, c.seq, c.created_at, c.updated_at, c.archived_at,
              m.role AS project_role, s.role AS share_role,
              EXISTS (SELECT 1 FROM user_roles r WHERE r.user_id = ${who.id}::text::uuid AND r.role = 'admin') AS global_admin
         FROM canvases c
         LEFT JOIN projects p ON p.id = c.project_id
         LEFT JOIN project_members m ON m.project_id = c.project_id AND m.user_id = ${who.id}::text::uuid AND m.deleted_at IS NULL
         LEFT JOIN canvas_shares s ON s.canvas_id = c.id AND s.user_id = ${who.id}::text::uuid
-       WHERE c.owner_id = ${who.id}::text::uuid AND ((c.deleted_at IS NOT NULL) = ${includeDeleted}::boolean)
+       WHERE c.owner_id = ${who.id}::text::uuid AND ((c.archived_at IS NOT NULL) = ${includeArchived}::boolean)
        ORDER BY c.updated_at DESC, c.id`;
     } else if (scope === "shared") {
       rows =
         await sql`SELECT c.id::text AS id, c.title, c.owner_id::text AS owner_id, c.project_id::text AS project_id,
-             p.key AS project_key, c.created_by::text AS created_by, c.seq, c.created_at, c.updated_at, c.deleted_at,
+             p.key AS project_key, c.created_by::text AS created_by, c.seq, c.created_at, c.updated_at, c.archived_at,
              m.role AS project_role, s.role AS share_role,
              EXISTS (SELECT 1 FROM user_roles r WHERE r.user_id = ${who.id}::text::uuid AND r.role = 'admin') AS global_admin
         FROM canvas_shares s
         JOIN canvases c ON c.id = s.canvas_id
         LEFT JOIN projects p ON p.id = c.project_id
         LEFT JOIN project_members m ON m.project_id = c.project_id AND m.user_id = ${who.id}::text::uuid AND m.deleted_at IS NULL
-       WHERE s.user_id = ${who.id}::text::uuid AND c.deleted_at IS NULL
+       WHERE s.user_id = ${who.id}::text::uuid AND c.archived_at IS NULL
        ORDER BY c.updated_at DESC, c.id`;
     } else {
       const key = c.req.query("project");
@@ -113,21 +121,21 @@ canvases.get("/canvases", async (c) => {
       if (isResponse(project)) return project;
       rows =
         await sql`SELECT c.id::text AS id, c.title, c.owner_id::text AS owner_id, c.project_id::text AS project_id,
-             p.key AS project_key, c.created_by::text AS created_by, c.seq, c.created_at, c.updated_at, c.deleted_at,
+             p.key AS project_key, c.created_by::text AS created_by, c.seq, c.created_at, c.updated_at, c.archived_at,
              m.role AS project_role, s.role AS share_role,
              EXISTS (SELECT 1 FROM user_roles r WHERE r.user_id = ${who.id}::text::uuid AND r.role = 'admin') AS global_admin
         FROM canvases c
         LEFT JOIN projects p ON p.id = c.project_id
         LEFT JOIN project_members m ON m.project_id = c.project_id AND m.user_id = ${who.id}::text::uuid AND m.deleted_at IS NULL
         LEFT JOIN canvas_shares s ON s.canvas_id = c.id AND s.user_id = ${who.id}::text::uuid
-       WHERE c.project_id = ${project.projectId}::text::uuid AND ((c.deleted_at IS NOT NULL) = ${includeDeleted}::boolean)
+       WHERE c.project_id = ${project.projectId}::text::uuid AND ((c.archived_at IS NOT NULL) = ${includeArchived}::boolean)
        ORDER BY c.updated_at DESC, c.id`;
     }
 
     let list: CanvasRow[] = rows
       .map((r) => canvasFromRow(r, who.id))
       .filter((x) => x.access !== "none");
-    if (scope === "project" && includeDeleted) {
+    if (scope === "project" && includeArchived) {
       list = list.filter((x) => x.access === "manage");
     }
     return json({ canvases: list.map((x) => canvasView(x)) });
@@ -179,12 +187,15 @@ canvases.post("/canvases", async (c) => {
   }
 });
 
-/** GET /v1/canvases/{id}: the canvas, with the caller's access. Needs view access. */
+/**
+ * GET /v1/canvases/{id}: the canvas, with the caller's access. Needs view access. An archived canvas is returned
+ * too (`archived: true`); it opens read-only, since the live room refuses ops on it.
+ */
 canvases.get("/canvases/:id", async (c) => {
   const who = await caller(c);
   if (isResponse(who)) return who;
   try {
-    return await viewOf(getDb().$client, who.id, c.req.param("id"));
+    return await viewOf(getDb().$client, who.id, c.req.param("id"), 200, true);
   } catch (err) {
     console.error("space GET /canvases/:id failed", err);
     return apiError(500, "server_error", "Something went wrong. Try again in a moment.");
@@ -213,40 +224,88 @@ canvases.patch("/canvases/:id", async (c) => {
   }
 });
 
-/** DELETE /v1/canvases/{id}: moves the canvas to the trash. Needs manage access. */
-canvases.delete("/canvases/:id", async (c) => {
-  const who = await caller(c);
-  if (isResponse(who)) return who;
-  try {
-    const sql = getDb().$client;
-    const found = await loadCanvas(sql, who.id, c.req.param("id"), "manage");
-    if (isResponse(found)) return found;
-    await sql`UPDATE canvases SET deleted_at = now(), updated_at = now()
-       WHERE id = ${found.id}::text::uuid AND deleted_at IS NULL`;
-    return new Response(null, { status: 204, headers: { "Cache-Control": "no-store" } });
-  } catch (err) {
-    console.error("space DELETE /canvases/:id failed", err);
-    return apiError(500, "server_error", "Something went wrong. Try again in a moment.");
-  }
-});
-
-/** POST /v1/canvases/{id}/restore: takes a canvas out of the trash. Needs manage access. */
-canvases.post("/canvases/:id/restore", async (c) => {
+/**
+ * POST /v1/canvases/{id}/archive: archives the canvas. Its images and thumbnails are kept. Needs manage access.
+ */
+canvases.post("/canvases/:id/archive", async (c) => {
   const who = await caller(c);
   if (isResponse(who)) return who;
   try {
     const sql = getDb().$client;
     const found = await loadCanvas(sql, who.id, c.req.param("id"), "manage", {
-      includeDeleted: true,
+      includeArchived: true,
     });
     if (isResponse(found)) return found;
-    if (found.deletedAt === null)
-      return apiError(409, "conflict", "This canvas is not in the trash.");
-    await sql`UPDATE canvases SET deleted_at = NULL, updated_at = now()
+    if (found.archivedAt !== null) {
+      return apiError(409, "conflict", "This canvas is already archived.");
+    }
+    await sql`UPDATE canvases SET archived_at = now(), updated_at = now()
+       WHERE id = ${found.id}::text::uuid AND archived_at IS NULL`;
+    return await viewOf(sql, who.id, found.id, 200, true);
+  } catch (err) {
+    console.error("space POST /canvases/:id/archive failed", err);
+    return apiError(500, "server_error", "Something went wrong. Try again in a moment.");
+  }
+});
+
+/** POST /v1/canvases/{id}/unarchive: takes a canvas out of the archive. Needs manage access. */
+canvases.post("/canvases/:id/unarchive", async (c) => {
+  const who = await caller(c);
+  if (isResponse(who)) return who;
+  try {
+    const sql = getDb().$client;
+    const found = await loadCanvas(sql, who.id, c.req.param("id"), "manage", {
+      includeArchived: true,
+    });
+    if (isResponse(found)) return found;
+    if (found.archivedAt === null) {
+      return apiError(409, "conflict", "This canvas is not archived.");
+    }
+    await sql`UPDATE canvases SET archived_at = NULL, updated_at = now()
        WHERE id = ${found.id}::text::uuid`;
     return await viewOf(sql, who.id, found.id);
   } catch (err) {
-    console.error("space POST /canvases/:id/restore failed", err);
+    console.error("space POST /canvases/:id/unarchive failed", err);
+    return apiError(500, "server_error", "Something went wrong. Try again in a moment.");
+  }
+});
+
+/**
+ * DELETE /v1/canvases/{id}: deletes the canvas for good, with its items, images and thumbnails (R2 objects under
+ * space/canvases/{id}/). Archive (POST .../archive) keeps them instead. Needs manage access.
+ */
+canvases.delete("/canvases/:id", async (c) => {
+  const who = await caller(c);
+  if (isResponse(who)) return who;
+  try {
+    const sql = getDb().$client;
+    const found = await loadCanvas(sql, who.id, c.req.param("id"), "manage", {
+      includeArchived: true,
+    });
+    if (isResponse(found)) return found;
+    // Items, assets and shares go by ON DELETE CASCADE.
+    await sql`DELETE FROM canvases WHERE id = ${found.id}::text::uuid`;
+    const prefix = `space/canvases/${found.id}/`;
+    try {
+      const bucket = blobBucket();
+      let cursor: string | undefined;
+      for (;;) {
+        const listed = await bucket.list(
+          cursor === undefined ? { prefix, limit: 1000 } : { prefix, cursor, limit: 1000 },
+        );
+        if (listed.objects.length > 0) {
+          await bucket.delete(listed.objects.map((o) => o.key));
+        }
+        if (listed.truncated) cursor = listed.cursor;
+        else break;
+      }
+    } catch (err) {
+      // The row is gone; the bytes are orphaned under a known prefix.
+      console.error("space DELETE /canvases/:id R2 cleanup failed", found.id, err);
+    }
+    return new Response(null, { status: 204, headers: { "Cache-Control": "no-store" } });
+  } catch (err) {
+    console.error("space DELETE /canvases/:id failed", err);
     return apiError(500, "server_error", "Something went wrong. Try again in a moment.");
   }
 });
@@ -289,7 +348,7 @@ canvases.post("/canvases/:id/move", async (c) => {
       if (message !== null) return message;
       await tx`UPDATE canvases SET owner_id = NULL, project_id = ${projectId}::text::uuid, updated_at = now()
          WHERE id = ${found.id}::text::uuid AND owner_id = ${who.id}::text::uuid AND project_id IS NULL
-           AND deleted_at IS NULL`;
+           AND archived_at IS NULL`;
       await tx`DELETE FROM canvas_shares WHERE canvas_id = ${found.id}::text::uuid`;
       return null;
     });
@@ -399,7 +458,9 @@ canvases.get("/canvases/:id/snapshot", async (c) => {
   if (isResponse(who)) return who;
   try {
     const sql = getDb().$client;
-    const found = await loadCanvas(sql, who.id, c.req.param("id"), "view");
+    const found = await loadCanvas(sql, who.id, c.req.param("id"), "view", {
+      includeArchived: true,
+    });
     if (isResponse(found)) return found;
     const items = await sql`SELECT i.id::text AS id, i.kind, i.z, i.version, i.props,
          i.updated_by::text AS updated_by, i.updated_at
