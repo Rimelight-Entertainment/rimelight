@@ -22,6 +22,7 @@ import locations from "./locations.ts";
 import areas from "./areas.ts";
 import canvases from "./canvases.ts";
 import canvasAssets from "./canvas-assets.ts";
+import canvasLive from "./canvas-live.ts";
 
 const space = new Hono();
 
@@ -39,6 +40,7 @@ space.route("/", locations);
 space.route("/", areas);
 space.route("/", canvases);
 space.route("/", canvasAssets);
+space.route("/", canvasLive);
 
 /** SHA-256 of the token, the same bytes the Rust backend stores in `sessions.token_hash`. */
 async function hashToken(token: string): Promise<Uint8Array> {

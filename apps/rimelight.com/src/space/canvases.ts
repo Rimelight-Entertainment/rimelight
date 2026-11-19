@@ -30,6 +30,7 @@ import {
   uuidOr404,
 } from "./canvas-access.ts";
 import { quotaRefusal } from "./canvas-image.ts";
+import { notifyRoom } from "./canvas-live.ts";
 
 const NO_PERSON = "There is no such person.";
 const NO_SHARE = "That person has no access.";
@@ -217,6 +218,7 @@ canvases.patch("/canvases/:id", async (c) => {
     if (title === null) return badRequest("A title is 1 to 200 characters.");
     await sql`UPDATE canvases SET title = ${title}::text, updated_at = now()
        WHERE id = ${found.id}::text::uuid`;
+    await notifyRoom(found.id, { type: "title", title });
     return await viewOf(sql, who.id, found.id);
   } catch (err) {
     console.error("space PATCH /canvases/:id failed", err);
@@ -241,6 +243,7 @@ canvases.post("/canvases/:id/archive", async (c) => {
     }
     await sql`UPDATE canvases SET archived_at = now(), updated_at = now()
        WHERE id = ${found.id}::text::uuid AND archived_at IS NULL`;
+    await notifyRoom(found.id, { type: "archived" });
     return await viewOf(sql, who.id, found.id, 200, true);
   } catch (err) {
     console.error("space POST /canvases/:id/archive failed", err);
@@ -263,6 +266,7 @@ canvases.post("/canvases/:id/unarchive", async (c) => {
     }
     await sql`UPDATE canvases SET archived_at = NULL, updated_at = now()
        WHERE id = ${found.id}::text::uuid`;
+    await notifyRoom(found.id, { type: "unarchived" });
     return await viewOf(sql, who.id, found.id);
   } catch (err) {
     console.error("space POST /canvases/:id/unarchive failed", err);
@@ -285,6 +289,7 @@ canvases.delete("/canvases/:id", async (c) => {
     if (isResponse(found)) return found;
     // Items, assets and shares go by ON DELETE CASCADE.
     await sql`DELETE FROM canvases WHERE id = ${found.id}::text::uuid`;
+    await notifyRoom(found.id, { type: "deleted" });
     const prefix = `space/canvases/${found.id}/`;
     try {
       const bucket = blobBucket();
@@ -355,6 +360,7 @@ canvases.post("/canvases/:id/move", async (c) => {
     if (refusal !== null) {
       return json({ error: "quota_exceeded", message: refusal }, 413);
     }
+    await notifyRoom(found.id, { type: "reconnect" });
     return await viewOf(sql, who.id, found.id);
   } catch (err) {
     console.error("space POST /canvases/:id/move failed", err);
@@ -416,6 +422,7 @@ canvases.put("/canvases/:id/shares/:user", async (c) => {
     await sql`INSERT INTO canvas_shares (canvas_id, user_id, role, created_by)
        VALUES (${found.id}::text::uuid, ${target}::text::uuid, ${role}::text, ${who.id}::text::uuid)
        ON CONFLICT (canvas_id, user_id) DO UPDATE SET role = EXCLUDED.role`;
+    await notifyRoom(found.id, { type: "reconnect" });
     return json({
       user_id: target,
       name: person["name"] as string,
@@ -442,6 +449,7 @@ canvases.delete("/canvases/:id/shares/:user", async (c) => {
        WHERE canvas_id = ${found.id}::text::uuid AND user_id = ${target}::text::uuid
        RETURNING user_id`;
     if (removed.length === 0) return notFound(NO_SHARE);
+    await notifyRoom(found.id, { type: "reconnect" });
     return new Response(null, { status: 204, headers: { "Cache-Control": "no-store" } });
   } catch (err) {
     console.error("space DELETE /canvases/:id/shares/:user failed", err);

@@ -24,3 +24,6 @@ app.route("/api", api);
 app.all("*", (c) => handleRequest(c.req.raw));
 
 export default app;
+
+// The Durable Object class must be exported from the Worker's entry module (Space CV.3, decision 0045).
+export { CanvasRoom } from "./space/canvas-room.ts";

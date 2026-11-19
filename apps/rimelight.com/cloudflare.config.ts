@@ -1,4 +1,4 @@
-import { bindings, defineConfig } from "cf/config";
+import { bindings, defineConfig, exports as workerExports } from "cf/config";
 
 export default defineConfig({
   worker: {
@@ -18,6 +18,10 @@ export default defineConfig({
       enabled: true,
     },
     domains: ["rimelight.com", "www.rimelight.com"],
+    // Canvases live room, one per canvas (Space CV.3, decision 0045).
+    exports: {
+      CanvasRoom: workerExports.durableObject({ storage: "sqlite" }),
+    },
     env: {
       ASSETS: bindings.assets(),
       IMAGES: bindings.images(),
@@ -57,6 +61,10 @@ export default defineConfig({
         id: "5889fcb4d3034e909c0f060f18975597",
       }),
       GITHUB_TOKEN: bindings.secret(),
+      CANVAS_ROOM: bindings.durableObject({
+        worker: "rimelight-dot-com",
+        exportName: "CanvasRoom",
+      }),
     },
   },
 });
