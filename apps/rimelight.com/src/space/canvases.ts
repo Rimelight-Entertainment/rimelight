@@ -288,7 +288,8 @@ canvases.post("/canvases/:id/move", async (c) => {
       const message = quotaRefusal(usage, limit, bytes);
       if (message !== null) return message;
       await tx`UPDATE canvases SET owner_id = NULL, project_id = ${projectId}::text::uuid, updated_at = now()
-         WHERE id = ${found.id}::text::uuid`;
+         WHERE id = ${found.id}::text::uuid AND owner_id = ${who.id}::text::uuid AND project_id IS NULL
+           AND deleted_at IS NULL`;
       await tx`DELETE FROM canvas_shares WHERE canvas_id = ${found.id}::text::uuid`;
       return null;
     });
