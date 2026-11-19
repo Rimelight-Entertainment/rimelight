@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vite-plus/test";
-import { type AccessFacts, accessLevel, atLeast, cleanTitle } from "../src/space/canvas-access";
+import {
+  type AccessFacts,
+  accessLevel,
+  atLeast,
+  cleanTitle,
+  iso,
+} from "../src/space/canvas-access";
 
 const base: AccessFacts = {
   userId: "u-me",
@@ -93,5 +99,16 @@ describe("cleanTitle", () => {
 
   it("refuses a title that is not text", () => {
     expect(cleanTitle(5)).toBeNull();
+  });
+});
+
+describe("iso", () => {
+  it("formats a Date, a Postgres text timestamp and epoch milliseconds the same way", () => {
+    const expected = "2026-11-19T14:53:50.522Z";
+    expect(iso(new Date(expected))).toBe(expected);
+    expect(iso("2026-11-19 14:53:50.522+00")).toBe(expected);
+    expect(iso("2026-11-19 11:53:50.522-03")).toBe(expected);
+    expect(iso("2026-11-19T14:53:50.522Z")).toBe(expected);
+    expect(iso(Date.parse(expected))).toBe(expected);
   });
 });

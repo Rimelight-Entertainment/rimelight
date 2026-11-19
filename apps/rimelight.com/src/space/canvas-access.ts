@@ -101,9 +101,10 @@ export type CanvasRow = {
   projectKey: string | null;
   createdBy: string;
   seq: number;
-  createdAt: Date;
-  updatedAt: Date;
-  archivedAt: Date | null;
+  /** ISO 8601 timestamps. */
+  createdAt: string;
+  updatedAt: string;
+  archivedAt: string | null;
   access: AccessLevel;
 };
 
@@ -120,9 +121,9 @@ export function canvasFromRow(r: Row, userId: string): CanvasRow {
     projectKey: (r["project_key"] as string | null) ?? null,
     createdBy,
     seq: Number(r["seq"]),
-    createdAt: r["created_at"] as Date,
-    updatedAt: r["updated_at"] as Date,
-    archivedAt: (r["archived_at"] as Date | null) ?? null,
+    createdAt: iso(r["created_at"]),
+    updatedAt: iso(r["updated_at"]),
+    archivedAt: r["archived_at"] == null ? null : iso(r["archived_at"]),
     access: accessLevel({
       userId,
       ownerId,
@@ -252,11 +253,27 @@ export function canvasView(c: CanvasRow) {
     project_key: c.projectKey,
     created_by: c.createdBy,
     seq: c.seq,
-    created_at: c.createdAt.toISOString(),
-    updated_at: c.updatedAt.toISOString(),
+    created_at: c.createdAt,
+    updated_at: c.updatedAt,
     archived: c.archivedAt !== null,
     my_access: c.access,
   };
+}
+
+/**
+ * A timestamp column as ISO 8601. postgres.js gives a `Date` in Node but a string through Hyperdrive in the
+ * Worker (seen 2026-11-19: `.toISOString()` on the row value threw in production), so accept both, and numbers.
+ */
+export function iso(value: unknown): string {
+  if (value instanceof Date) return value.toISOString();
+  if (typeof value === "string" || typeof value === "number") {
+    // Postgres text form: "2026-11-19 14:53:50.522+00" (space separator, two-digit offset).
+    const text =
+      typeof value === "string" ? value.replace(" ", "T").replace(/([+-]\d\d)$/, "$1:00") : value;
+    const parsed = new Date(text);
+    if (!Number.isNaN(parsed.getTime())) return parsed.toISOString();
+  }
+  return String(value);
 }
 
 /** The public shape of a canvas asset, with its URL. `r` is a canvas_assets row. */
@@ -276,7 +293,7 @@ export function assetView(canvasId: string, r: Row) {
       .map(Number)
       .sort((a, b) => a - b),
     url: `/v1/canvases/${canvasId}/assets/${id}`,
-    created_at: (r["created_at"] as Date).toISOString(),
+    created_at: iso(r["created_at"]),
   };
 }
 

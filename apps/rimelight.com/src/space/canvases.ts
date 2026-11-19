@@ -20,6 +20,7 @@ import {
   canvasView,
   cleanTitle,
   forbidden,
+  iso,
   json,
   lockQuota,
   loadCanvas,
@@ -487,7 +488,7 @@ canvases.get("/canvases/:id/snapshot", async (c) => {
         version: Number(r["version"]),
         props: r["props"],
         updated_by: r["updated_by"] as string,
-        updated_at: (r["updated_at"] as Date).toISOString(),
+        updated_at: iso(r["updated_at"]),
       })),
       assets: assets.map((r) => assetView(found.id, r as Row)),
     });
