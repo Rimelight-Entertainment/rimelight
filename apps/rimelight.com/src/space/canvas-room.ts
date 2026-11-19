@@ -9,7 +9,7 @@
  * Only the Worker calls this object (canvas-live.ts), on internal paths: /ticket, /connect, /event.
  */
 import { DurableObject } from "cloudflare:workers";
-import { getDb } from "../db/index.ts";
+import { getSql } from "../db/index.ts";
 import {
   type Access,
   type ItemState,
@@ -424,7 +424,7 @@ export class CanvasRoom extends DurableObject {
     }
 
     // A Durable Object outlives requests, so every client it opens is closed after use.
-    const sql = getDb().$client;
+    const sql = getSql();
     let canvasRows: Awaited<ReturnType<typeof sql.unsafe>>;
     let rows: Awaited<ReturnType<typeof sql.unsafe>>;
     try {
@@ -489,7 +489,7 @@ export class CanvasRoom extends DurableObject {
     if (dirty.length === 0 && seq === flushedSeq) return;
 
     try {
-      const pg = getDb().$client;
+      const pg = getSql();
       const deleted = await pg
         .begin(async (tx) => {
           const touched =

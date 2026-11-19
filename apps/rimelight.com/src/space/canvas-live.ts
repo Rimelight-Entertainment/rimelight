@@ -8,7 +8,7 @@
  */
 import { Hono } from "hono";
 import { env } from "cloudflare:workers";
-import { getDb } from "../db/index.ts";
+import { getSql } from "../db/index.ts";
 import { loadCanvas, json, serverError, uuidOr404 } from "./canvas-access.ts";
 import { caller, isResponse } from "./session.ts";
 
@@ -38,7 +38,7 @@ live.post("/canvases/:id/live-ticket", async (c) => {
   const who = await caller(c);
   if (isResponse(who)) return who;
   try {
-    const sql = getDb().$client;
+    const sql = getSql();
     const canvas = await loadCanvas(sql, who.id, c.req.param("id"), "view", {
       includeArchived: true,
     });

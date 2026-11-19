@@ -6,7 +6,7 @@
 import { Hono } from "hono";
 import type { Context } from "hono";
 import { env } from "cloudflare:workers";
-import { getDb } from "../db/index.ts";
+import { getSql } from "../db/index.ts";
 import { caller, isResponse } from "./session.ts";
 import {
   type CanvasRow,
@@ -247,7 +247,7 @@ canvasAssets.post("/canvases/:id/assets", async (c) => {
   const who = await caller(c);
   if (isResponse(who)) return who;
   try {
-    const sql = getDb().$client;
+    const sql = getSql();
     const canvas = await loadCanvas(sql, who.id, c.req.param("id"), "edit");
     if (isResponse(canvas)) return canvas;
     if (declaredLength(c) > CANVAS_ASSET_MAX_BYTES) {
@@ -271,7 +271,7 @@ canvasAssets.post("/canvases/:id/assets/from-url", async (c) => {
   const who = await caller(c);
   if (isResponse(who)) return who;
   try {
-    const sql = getDb().$client;
+    const sql = getSql();
     const canvas = await loadCanvas(sql, who.id, c.req.param("id"), "edit");
     if (isResponse(canvas)) return canvas;
     const body = await readBody(c);
@@ -294,7 +294,7 @@ canvasAssets.get("/canvases/:id/assets/:asset", async (c) => {
   const who = await caller(c);
   if (isResponse(who)) return who;
   try {
-    const sql = getDb().$client;
+    const sql = getSql();
     const canvas = await loadCanvas(sql, who.id, c.req.param("id"), "view");
     if (isResponse(canvas)) return canvas;
     const assetId = uuidOr404(c.req.param("asset"), NO_IMAGE);
@@ -322,7 +322,7 @@ canvasAssets.get("/canvases/:id/assets/:asset/thumbs/:px", async (c) => {
   const who = await caller(c);
   if (isResponse(who)) return who;
   try {
-    const sql = getDb().$client;
+    const sql = getSql();
     const canvas = await loadCanvas(sql, who.id, c.req.param("id"), "view");
     if (isResponse(canvas)) return canvas;
     const px = parseThumbSize(c.req.param("px"));
@@ -355,7 +355,7 @@ canvasAssets.put("/canvases/:id/assets/:asset/thumbs/:px", async (c) => {
   const who = await caller(c);
   if (isResponse(who)) return who;
   try {
-    const sql = getDb().$client;
+    const sql = getSql();
     const canvas = await loadCanvas(sql, who.id, c.req.param("id"), "edit");
     if (isResponse(canvas)) return canvas;
     const px = parseThumbSize(c.req.param("px"));

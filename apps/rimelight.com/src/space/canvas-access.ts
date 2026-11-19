@@ -5,10 +5,10 @@
  */
 import type { Context } from "hono";
 import type postgres from "postgres";
-import type { getDb } from "../db/index.ts";
+import type { getSql } from "../db/index.ts";
 import { DEFAULT_PROJECT_QUOTA_BYTES, DEFAULT_USER_QUOTA_BYTES } from "./canvas-image.ts";
 
-export type Sql = ReturnType<typeof getDb>["$client"];
+export type Sql = ReturnType<typeof getSql>;
 // biome-ignore lint/suspicious/noExplicitAny: postgres.js rows are untyped
 export type Row = Record<string, any>;
 export type Q = Sql | postgres.TransactionSql<{}>;

@@ -4,7 +4,7 @@
  * expiry to 30 days from now.
  */
 import type { Context } from "hono";
-import { getDb } from "../db/index.ts";
+import { getSql } from "../db/index.ts";
 
 export type Caller = {
   id: string;
@@ -36,7 +36,7 @@ export async function caller(c: Context): Promise<Caller | Response> {
     const digest = new Uint8Array(
       await crypto.subtle.digest("SHA-256", new TextEncoder().encode(token.trim())),
     );
-    const sql = getDb().$client;
+    const sql = getSql();
     const rows = await sql`
       UPDATE sessions s
          SET last_used_at = now(),

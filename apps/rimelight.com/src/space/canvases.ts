@@ -5,7 +5,7 @@
  */
 import { Hono } from "hono";
 import { env } from "cloudflare:workers";
-import { getDb } from "../db/index.ts";
+import { getSql } from "../db/index.ts";
 import { caller, isResponse } from "./session.ts";
 import {
   type CanvasRow,
@@ -81,7 +81,7 @@ canvases.get("/canvases", async (c) => {
   const who = await caller(c);
   if (isResponse(who)) return who;
   try {
-    const sql = getDb().$client;
+    const sql = getSql();
     const scope = c.req.query("scope");
     if (scope !== "personal" && scope !== "shared" && scope !== "project") {
       return badRequest("scope is personal, shared or project.");
@@ -155,7 +155,7 @@ canvases.post("/canvases", async (c) => {
   const who = await caller(c);
   if (isResponse(who)) return who;
   try {
-    const sql = getDb().$client;
+    const sql = getSql();
     const body = await readBody(c);
     if (body === null) return badRequest("The body must be a JSON object.");
     const title = cleanTitle(body["title"]);
@@ -197,7 +197,7 @@ canvases.get("/canvases/:id", async (c) => {
   const who = await caller(c);
   if (isResponse(who)) return who;
   try {
-    return await viewOf(getDb().$client, who.id, c.req.param("id"), 200, true);
+    return await viewOf(getSql(), who.id, c.req.param("id"), 200, true);
   } catch (err) {
     console.error("space GET /canvases/:id failed", err);
     return apiError(500, "server_error", "Something went wrong. Try again in a moment.");
@@ -209,7 +209,7 @@ canvases.patch("/canvases/:id", async (c) => {
   const who = await caller(c);
   if (isResponse(who)) return who;
   try {
-    const sql = getDb().$client;
+    const sql = getSql();
     const found = await loadCanvas(sql, who.id, c.req.param("id"), "manage");
     if (isResponse(found)) return found;
     const body = await readBody(c);
@@ -234,7 +234,7 @@ canvases.post("/canvases/:id/archive", async (c) => {
   const who = await caller(c);
   if (isResponse(who)) return who;
   try {
-    const sql = getDb().$client;
+    const sql = getSql();
     const found = await loadCanvas(sql, who.id, c.req.param("id"), "manage", {
       includeArchived: true,
     });
@@ -257,7 +257,7 @@ canvases.post("/canvases/:id/unarchive", async (c) => {
   const who = await caller(c);
   if (isResponse(who)) return who;
   try {
-    const sql = getDb().$client;
+    const sql = getSql();
     const found = await loadCanvas(sql, who.id, c.req.param("id"), "manage", {
       includeArchived: true,
     });
@@ -283,7 +283,7 @@ canvases.delete("/canvases/:id", async (c) => {
   const who = await caller(c);
   if (isResponse(who)) return who;
   try {
-    const sql = getDb().$client;
+    const sql = getSql();
     const found = await loadCanvas(sql, who.id, c.req.param("id"), "manage", {
       includeArchived: true,
     });
@@ -324,7 +324,7 @@ canvases.post("/canvases/:id/move", async (c) => {
   const who = await caller(c);
   if (isResponse(who)) return who;
   try {
-    const sql = getDb().$client;
+    const sql = getSql();
     const found = await loadCanvas(sql, who.id, c.req.param("id"), "manage");
     if (isResponse(found)) return found;
     if (found.projectId !== null) {
@@ -374,7 +374,7 @@ canvases.get("/canvases/:id/shares", async (c) => {
   const who = await caller(c);
   if (isResponse(who)) return who;
   try {
-    const sql = getDb().$client;
+    const sql = getSql();
     const found = await loadCanvas(sql, who.id, c.req.param("id"), "manage");
     if (isResponse(found)) return found;
     const rows = await sql`SELECT s.user_id::text AS user_id, e.name, e.email, s.role
@@ -401,7 +401,7 @@ canvases.put("/canvases/:id/shares/:user", async (c) => {
   const who = await caller(c);
   if (isResponse(who)) return who;
   try {
-    const sql = getDb().$client;
+    const sql = getSql();
     const found = await loadCanvas(sql, who.id, c.req.param("id"), "manage");
     if (isResponse(found)) return found;
     if (found.projectId !== null) {
@@ -441,7 +441,7 @@ canvases.delete("/canvases/:id/shares/:user", async (c) => {
   const who = await caller(c);
   if (isResponse(who)) return who;
   try {
-    const sql = getDb().$client;
+    const sql = getSql();
     const found = await loadCanvas(sql, who.id, c.req.param("id"), "manage");
     if (isResponse(found)) return found;
     const target = uuidOr404(c.req.param("user"), NO_SHARE);
@@ -466,7 +466,7 @@ canvases.get("/canvases/:id/snapshot", async (c) => {
   const who = await caller(c);
   if (isResponse(who)) return who;
   try {
-    const sql = getDb().$client;
+    const sql = getSql();
     const found = await loadCanvas(sql, who.id, c.req.param("id"), "view", {
       includeArchived: true,
     });
@@ -503,7 +503,7 @@ canvases.get("/me/quota", async (c) => {
   const who = await caller(c);
   if (isResponse(who)) return who;
   try {
-    return json(await quotaView(getDb().$client, "User", who.id));
+    return json(await quotaView(getSql(), "User", who.id));
   } catch (err) {
     console.error("space GET /me/quota failed", err);
     return apiError(500, "server_error", "Something went wrong. Try again in a moment.");
@@ -515,7 +515,7 @@ canvases.get("/projects/:key/quota", async (c) => {
   const who = await caller(c);
   if (isResponse(who)) return who;
   try {
-    const sql = getDb().$client;
+    const sql = getSql();
     const project = await projectAccess(sql, who.id, c.req.param("key"));
     if (isResponse(project)) return project;
     return json(await quotaView(sql, "Project", project.projectId));
@@ -530,7 +530,7 @@ canvases.put("/admin/quotas/:scope/:subject", async (c) => {
   const who = await caller(c);
   if (isResponse(who)) return who;
   try {
-    const sql = getDb().$client;
+    const sql = getSql();
     if (!(await isGlobalAdmin(sql, who.id))) return forbidden("You need the admin role.");
     const raw = c.req.param("scope");
     if (raw !== "User" && raw !== "Project") return badRequest("scope is User or Project.");
@@ -562,7 +562,7 @@ canvases.delete("/admin/quotas/:scope/:subject", async (c) => {
   const who = await caller(c);
   if (isResponse(who)) return who;
   try {
-    const sql = getDb().$client;
+    const sql = getSql();
     if (!(await isGlobalAdmin(sql, who.id))) return forbidden("You need the admin role.");
     const raw = c.req.param("scope");
     if (raw !== "User" && raw !== "Project") return badRequest("scope is User or Project.");
