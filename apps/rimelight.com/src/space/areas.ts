@@ -206,7 +206,7 @@ areas.get("/issue-types", async (c) => {
     const sql = getDb().$client;
     const rows: Row[] = await sql`
       SELECT name, color FROM issue_type_colors
-       ORDER BY CASE name WHEN 'task' THEN 1 WHEN 'bug' THEN 2 WHEN 'feature' THEN 3 ELSE 4 END`;
+       ORDER BY CASE name WHEN 'Task' THEN 1 WHEN 'Bug' THEN 2 WHEN 'Feature' THEN 3 ELSE 4 END`;
     return c.json(
       rows.map((row) => ({ name: String(row.name), color: String(row.color) })),
       200,
@@ -227,7 +227,7 @@ areas.patch("/admin/issue-types/:name", (c) =>
     const color = await requireColor(c);
     const sql = getDb().$client;
     const rows: Row[] = await sql`
-      UPDATE issue_type_colors SET color = ${color}::text WHERE name = ${name}::text RETURNING name, color`;
+      UPDATE issue_type_colors SET color = ${color}::text WHERE lower(name) = lower(${name}::text) RETURNING name, color`;
     if (rows.length === 0) fail(404, "not_found", "There is no such issue type.");
     return c.json({ name: String(rows[0].name), color: String(rows[0].color) }, 200, {
       "Cache-Control": "no-store",

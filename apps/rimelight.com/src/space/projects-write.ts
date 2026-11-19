@@ -34,11 +34,11 @@ const U32_MAX = 4294967295;
 const I32_MAX = 2147483647;
 
 const PROJECT_ROLES = ["admin", "member", "viewer"];
-const STATE_CATEGORIES = ["unstarted", "started", "done", "cancelled"];
-const ISSUE_TYPES = ["task", "bug", "feature", "epic"];
-const PRIORITIES = ["critical", "high", "normal", "low"];
+const STATE_CATEGORIES = ["Unstarted", "Started", "Done", "Cancelled"];
+const ISSUE_TYPES = ["Task", "Bug", "Feature", "Epic"];
+const PRIORITIES = ["Critical", "High", "Normal", "Low"];
 const LINK_KINDS = ["relates", "blocks", "duplicates"];
-const SPRINT_STATES = ["planned", "active", "closed"];
+const SPRINT_STATES = ["Planned", "Active", "Closed"];
 
 /* ---------- errors ---------- */
 
@@ -243,8 +243,11 @@ function optionalDate(field: string, raw: string | undefined): string | null | u
   throw invalid(field, "use the form YYYY-MM-DD");
 }
 
-function checkIn(field: string, value: string, allowed: string[]): void {
-  if (!allowed.includes(value)) throw invalid(field, `use one of: ${allowed.join(", ")}`);
+/** The canonical (capitalised) spelling of a choice, matched without regard to case; refuses anything else. */
+function checkIn(field: string, value: string, allowed: string[]): string {
+  const match = allowed.find((a) => a.toLowerCase() === value.toLowerCase());
+  if (match === undefined) throw invalid(field, `use one of: ${allowed.join(", ")}`);
+  return match;
 }
 
 /** Validated tags: trimmed, no empties, no repeats, each at most TAG_MAX characters, at most TAGS_MAX in all. */
@@ -814,8 +817,7 @@ async function setMember(c: Context): Promise<Response> {
   const { project, access } = await loadProject(sql, who, param(c, "key"));
   requireManage(access);
   const body = await readBody(c, ["role"]);
-  const role = reqStr(body, "role");
-  checkIn("role", role, PROJECT_ROLES);
+  const role = checkIn("role", reqStr(body, "role"), PROJECT_ROLES);
   const userId = await activePerson(sql, "user_id", param(c, "user"));
   await sql`INSERT INTO project_members (project_id, user_id, role, created_at, updated_at)
      VALUES (${project.id}::text::uuid, ${userId}::text::uuid, ${role}::text, to_timestamp(${now}::bigint), to_timestamp(${now}::bigint))
@@ -841,7 +843,7 @@ async function removeMember(c: Context): Promise<Response> {
   const openRows =
     await sql`SELECT EXISTS (SELECT 1 FROM issues i JOIN workflow_states s ON s.id = i.state_id
      WHERE i.project_id = ${project.id}::text::uuid AND i.assignee_id = ${userId}::text::uuid
-       AND i.deleted_at IS NULL AND s.category NOT IN ('done', 'cancelled')) AS open`;
+       AND i.deleted_at IS NULL AND s.category NOT IN ('Done', 'Cancelled')) AS open`;
   if (openRows[0]?.["open"] === true) {
     throw conflict(
       "member_has_open_issues",
@@ -864,11 +866,10 @@ async function createState(c: Context): Promise<Response> {
   requireManage(access);
   const body = await readBody(c, ["name", "category", "position"]);
   const name = reqStr(body, "name");
-  const category = reqStr(body, "category");
+  const category = checkIn("category", reqStr(body, "category"), STATE_CATEGORIES);
   const position = optInt(body, "position", -I32_MAX, I32_MAX);
 
   const stateName = requiredField("name", name, STATE_NAME_MAX);
-  checkIn("category", category, STATE_CATEGORIES);
   const states = await workflowOf(sql, project.id);
   let pos: number;
   if (position !== undefined && position < 1) throw invalid("position", "is at least 1");
@@ -907,17 +908,18 @@ async function updateState(c: Context): Promise<Response> {
   const stateId = pathId(param(c, "state"), "state");
   const body = await readBody(c, ["name", "category", "position"]);
   const nameRaw = optStr(body, "name");
-  const category = optStr(body, "category");
+  const categoryRaw = optStr(body, "category");
   const position = optInt(body, "position", -I32_MAX, I32_MAX);
 
   const workflow = await workflowOf(sql, project.id);
   const current = workflow.find((s) => s.id === stateId);
   if (!current) throw notFound("There is no such state.");
   const name = nameRaw === undefined ? null : requiredField("name", nameRaw, STATE_NAME_MAX);
+  const category =
+    categoryRaw === undefined ? undefined : checkIn("category", categoryRaw, STATE_CATEGORIES);
   if (category !== undefined) {
-    checkIn("category", category, STATE_CATEGORIES);
-    const unstarted = workflow.filter((s) => s.category === "unstarted").length;
-    if (current.category === "unstarted" && category !== "unstarted" && unstarted <= 1) {
+    const unstarted = workflow.filter((s) => s.category === "Unstarted").length;
+    if (current.category === "Unstarted" && category !== "Unstarted" && unstarted <= 1) {
       throw conflict(
         "last_unstarted",
         "A project needs at least one unstarted state for new issues.",
@@ -974,9 +976,9 @@ async function deleteState(c: Context): Promise<Response> {
       "Issues still use this state. Move them to another state first.",
     );
   }
-  if (category === "unstarted") {
+  if (category === "Unstarted") {
     const count = await sql`SELECT count(*)::int AS n FROM workflow_states
-       WHERE project_id = ${project.id}::text::uuid AND category = 'unstarted' AND deleted_at IS NULL`;
+       WHERE project_id = ${project.id}::text::uuid AND category = 'Unstarted' AND deleted_at IS NULL`;
     if (Number(count[0]?.["n"] ?? 0) <= 1) {
       throw conflict(
         "last_unstarted",
@@ -1027,10 +1029,8 @@ async function createIssue(c: Context): Promise<Response> {
 
   const summary = requiredField("summary", summaryRaw, SUMMARY_MAX);
   const desc = textField("description", description, DESCRIPTION_MAX) ?? "";
-  const issueType = typeRaw ?? "task";
-  checkIn("type", issueType, ISSUE_TYPES);
-  const priority = priorityRaw ?? "normal";
-  checkIn("priority", priority, PRIORITIES);
+  const issueType = checkIn("type", typeRaw ?? "Task", ISSUE_TYPES);
+  const priority = checkIn("priority", priorityRaw ?? "Normal", PRIORITIES);
 
   let stateId: string;
   if (stateRaw !== undefined && stateRaw.trim() !== "") {
@@ -1038,7 +1038,7 @@ async function createIssue(c: Context): Promise<Response> {
   } else {
     let first: { id: string; position: number } | null = null;
     for (const s of project.workflow) {
-      if (s.category === "unstarted" && (first === null || s.position < first.position)) first = s;
+      if (s.category === "Unstarted" && (first === null || s.position < first.position)) first = s;
     }
     if (!first) throw conflict("no_unstarted_state", "The project has no unstarted state.");
     stateId = first.id;
@@ -1151,14 +1151,8 @@ async function updateIssue(c: Context): Promise<Response> {
     }
     values.description = description;
   }
-  if (typeRaw !== undefined) {
-    checkIn("type", typeRaw, ISSUE_TYPES);
-    values.issue_type = typeRaw;
-  }
-  if (priorityRaw !== undefined) {
-    checkIn("priority", priorityRaw, PRIORITIES);
-    values.priority = priorityRaw;
-  }
+  if (typeRaw !== undefined) values.issue_type = checkIn("type", typeRaw, ISSUE_TYPES);
+  if (priorityRaw !== undefined) values.priority = checkIn("priority", priorityRaw, PRIORITIES);
   if (stateRaw !== undefined && stateRaw.trim() !== "") {
     values.state_id = stateIn(loaded.project.workflow, "state_id", stateRaw);
   }
@@ -1195,7 +1189,7 @@ async function updateIssue(c: Context): Promise<Response> {
   // A state in a finished category stamps resolved_at once; leaving it clears it.
   const oldCategory = current.state.category;
   const newCategory = loaded.project.workflow.find((s) => s.id === values.state_id)?.category ?? "";
-  const finished = (cat: string) => cat === "done" || cat === "cancelled";
+  const finished = (cat: string) => cat === "Done" || cat === "Cancelled";
   if (finished(newCategory)) {
     values.resolved_at = finished(oldCategory) ? current.resolved_at : now;
   } else {
@@ -1476,8 +1470,7 @@ async function addLink(c: Context): Promise<Response> {
   requireEdit(loaded.access);
   const body = await readBody(c, ["target", "kind"]);
   const targetRaw = reqStr(body, "target");
-  const kind = reqStr(body, "kind");
-  checkIn("kind", kind, LINK_KINDS);
+  const kind = checkIn("kind", reqStr(body, "kind"), LINK_KINDS);
   const parsed = parseIssueKey(targetRaw);
   if (!parsed) throw invalid("target", "use an issue key such as EMB-12");
   const [targetKey, targetNumber] = parsed;
@@ -1698,8 +1691,7 @@ async function createSprint(c: Context): Promise<Response> {
   if (!isIsoDate(startDate)) throw invalid("start_date", "use the form YYYY-MM-DD");
   if (!isIsoDate(endDate)) throw invalid("end_date", "use the form YYYY-MM-DD");
   if (endDate < startDate) throw invalid("end_date", "is before start_date");
-  const state = stateRaw ?? "planned";
-  checkIn("state", state, SPRINT_STATES);
+  const state = checkIn("state", stateRaw ?? "Planned", SPRINT_STATES);
 
   const created = await withConflict(
     "active_sprint_exists",
@@ -1758,10 +1750,10 @@ async function updateSprint(c: Context): Promise<Response> {
   const effectiveStart = startDate ?? current.start_date;
   const effectiveEnd = endDate ?? current.end_date;
   if (effectiveEnd < effectiveStart) throw invalid("end_date", "is before start_date");
-  if (stateRaw !== undefined) checkIn("state", stateRaw, SPRINT_STATES);
-  const effectiveState = stateRaw ?? current.state;
-  if (stateRaw === "active" && current.state !== "active") {
-    if (sprints.some((s) => s.state === "active" && s.id !== sprintId)) {
+  const stateCanon = stateRaw === undefined ? undefined : checkIn("state", stateRaw, SPRINT_STATES);
+  const effectiveState = stateCanon ?? current.state;
+  if (stateCanon === "Active" && current.state !== "Active") {
+    if (sprints.some((s) => s.state === "Active" && s.id !== sprintId)) {
       throw conflict(
         "active_sprint_exists",
         "Another sprint is already active in this project. Close it first.",
@@ -1771,7 +1763,7 @@ async function updateSprint(c: Context): Promise<Response> {
   // undefined: not moving. null: move to the backlog. string: move to that sprint.
   let moveUnfinished: string | null | undefined;
   if (moveRaw !== undefined) {
-    if (effectiveState !== "closed") {
+    if (effectiveState !== "Closed") {
       throw invalid("move_unfinished_to", "is only used when the sprint is closed");
     }
     if (moveRaw === "backlog") {
@@ -1798,13 +1790,13 @@ async function updateSprint(c: Context): Promise<Response> {
              goal = COALESCE(${goal}::text, goal),
              start_date = COALESCE(${startDate}::text::date, start_date),
              end_date = COALESCE(${endDate}::text::date, end_date),
-             state = COALESCE(${stateRaw ?? null}::text, state),
+             state = COALESCE(${stateCanon ?? null}::text, state),
              updated_at = to_timestamp(${now}::bigint)
            WHERE id = ${sprintId}::text::uuid AND project_id = ${project.id}::text::uuid AND deleted_at IS NULL`;
         if (moveUnfinished !== undefined) {
           await tx`UPDATE issues SET sprint_id = ${moveUnfinished}::text::uuid, updated_at = to_timestamp(${now}::bigint)
              WHERE sprint_id = ${sprintId}::text::uuid AND project_id = ${project.id}::text::uuid AND deleted_at IS NULL
-               AND state_id IN (SELECT id FROM workflow_states WHERE category NOT IN ('done', 'cancelled'))`;
+               AND state_id IN (SELECT id FROM workflow_states WHERE category NOT IN ('Done', 'Cancelled'))`;
         }
       });
       const rows =

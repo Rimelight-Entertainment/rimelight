@@ -22,8 +22,8 @@ const projectsRead = new Hono();
 const NO_STORE = { "Cache-Control": "no-store" };
 const ROLE_ADMIN = "admin";
 const PROJECT_ROLES = ["admin", "member", "viewer"];
-const ISSUE_TYPES = ["task", "bug", "feature", "epic"];
-const PRIORITIES = ["critical", "high", "normal", "low"];
+const ISSUE_TYPES = ["Task", "Bug", "Feature", "Epic"];
+const PRIORITIES = ["Critical", "High", "Normal", "Low"];
 const DEFAULT_PAGE_LIMIT = 50;
 const MAX_PAGE_LIMIT = 100;
 const U32_MAX = 4294967295;
@@ -449,7 +449,7 @@ function listOrder(sql: Sql, sort: ListSort): Frag {
     case "rank":
       return sql`ORDER BY i.backlog_rank COLLATE "C" ASC, i.number ASC`;
     case "priority":
-      return sql`ORDER BY CASE i.priority WHEN 'critical' THEN 0 WHEN 'high' THEN 1 WHEN 'normal' THEN 2 ELSE 3 END ASC, i.number ASC`;
+      return sql`ORDER BY CASE i.priority WHEN 'Critical' THEN 0 WHEN 'High' THEN 1 WHEN 'Normal' THEN 2 ELSE 3 END ASC, i.number ASC`;
     case "updated":
       return sql`ORDER BY i.updated_at DESC, i.number DESC`;
   }
@@ -958,10 +958,11 @@ function checkProject(v: Value): Value {
 
 function checkChoice(v: Value, what: string, allowed: string[]): Value {
   const lower = asciiLower(v.text);
-  if (!allowed.includes(lower)) {
+  const canonical = allowed.find((a) => asciiLower(a) === lower);
+  if (canonical === undefined) {
     throw new QueryError(`\`${v.text}\` is not a ${what}. Use ${allowed.join(", ")}`, v.span);
   }
-  return { ...v, text: lower };
+  return { ...v, text: canonical };
 }
 
 /** `EMB-12`: the project part is checked after upper-casing (as check_project), the number must be 1 or more. */
@@ -1352,7 +1353,7 @@ function leafSql(sql: Sql, leaf: Leaf): Frag {
       return sql`lower(ws.name) = ${name}`;
     }
     case "category": {
-      const states = leaf.unresolved ? ["unstarted", "started"] : ["done", "cancelled"];
+      const states = leaf.unresolved ? ["Unstarted", "Started"] : ["Done", "Cancelled"];
       return sql`ws.category = ANY(${states}::text[])`;
     }
     case "assignee":
@@ -1375,7 +1376,7 @@ function leafSql(sql: Sql, leaf: Leaf): Frag {
       return sql`lower(sp.name) = ${name}`;
     }
     case "sprintCurrent":
-      return sql`sp.state = 'active'`;
+      return sql`sp.state = 'Active'`;
     case "parent": {
       const key = leaf.key;
       const number = leaf.number;
@@ -1446,7 +1447,7 @@ function orderSql(sql: Sql, sort: SortKey[]): Frag {
     const dir = key.descending ? sql`DESC` : sql`ASC`;
     switch (key.field) {
       case "priority":
-        return sql`CASE i.priority WHEN 'critical' THEN 4 WHEN 'high' THEN 3 WHEN 'normal' THEN 2 ELSE 1 END ${dir}`;
+        return sql`CASE i.priority WHEN 'Critical' THEN 4 WHEN 'High' THEN 3 WHEN 'Normal' THEN 2 ELSE 1 END ${dir}`;
       case "updated":
         return sql`i.updated_at ${dir}`;
       case "created":
@@ -1515,16 +1516,14 @@ async function issueListQuery(
   let issueType: string | undefined;
   const typeRaw = param("type");
   if (typeRaw !== undefined) {
-    if (!ISSUE_TYPES.includes(typeRaw))
-      return invalid("type", `use one of: ${ISSUE_TYPES.join(", ")}`);
-    issueType = typeRaw;
+    issueType = ISSUE_TYPES.find((t) => asciiLower(t) === asciiLower(typeRaw));
+    if (issueType === undefined) return invalid("type", `use one of: ${ISSUE_TYPES.join(", ")}`);
   }
   let priority: string | undefined;
   const priorityRaw = param("priority");
   if (priorityRaw !== undefined) {
-    if (!PRIORITIES.includes(priorityRaw))
-      return invalid("priority", `use one of: ${PRIORITIES.join(", ")}`);
-    priority = priorityRaw;
+    priority = PRIORITIES.find((p) => asciiLower(p) === asciiLower(priorityRaw));
+    if (priority === undefined) return invalid("priority", `use one of: ${PRIORITIES.join(", ")}`);
   }
   let sprintId: string | undefined;
   let backlogOnly = false;
