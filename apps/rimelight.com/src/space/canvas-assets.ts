@@ -390,4 +390,71 @@ canvasAssets.put("/canvases/:id/assets/:asset/thumbs/:px", async (c) => {
   }
 });
 
+/**
+ * GET /v1/canvases/{id}/assets: every image of the canvas, each with how many live items use it (`uses`), for
+ * the manage-images dialog. Archived canvases are listed too. Needs view access.
+ */
+canvasAssets.get("/canvases/:id/assets", async (c) => {
+  const who = await caller(c);
+  if (isResponse(who)) return who;
+  try {
+    const sql = getSql();
+    const canvas = await loadCanvas(sql, who.id, c.req.param("id"), "view", {
+      includeArchived: true,
+    });
+    if (isResponse(canvas)) return canvas;
+    const rows = await sql`SELECT a.*, (SELECT count(*)::int FROM canvas_items i
+         WHERE i.canvas_id = a.canvas_id AND NOT i.deleted AND i.props->>'asset' = a.id::text) AS uses
+       FROM canvas_assets a
+       WHERE a.canvas_id = ${canvas.id}::text::uuid
+       ORDER BY a.created_at`;
+    const assets = rows.map((r) => ({
+      ...assetView(canvas.id, r as Row),
+      uses: Number((r as Row)["uses"]),
+    }));
+    return json({ assets }, 200);
+  } catch (err) {
+    console.error("space GET /canvases/:id/assets failed", err);
+    return serverError();
+  }
+});
+
+/**
+ * DELETE /v1/canvases/{id}/assets/{asset}: removes an image no live item uses. 409 `in_use` while one does. The
+ * row goes first; then its original and every thumbnail are removed from R2 (R2 errors are logged, not returned).
+ * Needs edit access. 204 when deleted.
+ */
+canvasAssets.delete("/canvases/:id/assets/:asset", async (c) => {
+  const who = await caller(c);
+  if (isResponse(who)) return who;
+  try {
+    const sql = getSql();
+    const canvas = await loadCanvas(sql, who.id, c.req.param("id"), "edit");
+    if (isResponse(canvas)) return canvas;
+    const assetId = uuidOr404(c.req.param("asset"), NO_IMAGE);
+    if (isResponse(assetId)) return assetId;
+    const row = await assetRow(sql, canvas.id, assetId);
+    if (!row) return notFound(NO_IMAGE);
+
+    const counted = await sql`SELECT count(*)::int AS uses FROM canvas_items i
+       WHERE i.canvas_id = ${canvas.id}::text::uuid AND NOT i.deleted AND i.props->>'asset' = ${assetId}::text`;
+    if (Number((counted[0] as Row | undefined)?.["uses"] ?? 0) > 0) {
+      return apiError(409, "in_use", "This image is still used on the canvas.");
+    }
+
+    await sql`DELETE FROM canvas_assets
+       WHERE id = ${assetId}::text::uuid AND canvas_id = ${canvas.id}::text::uuid`;
+    const thumbKeys = Object.values((row["thumb_keys"] ?? {}) as Record<string, string>);
+    for (const key of [row["object_key"] as string, ...thumbKeys]) {
+      await blobBucket()
+        .delete(key)
+        .catch((err: unknown) => console.error("space canvas asset delete failed", key, err));
+    }
+    return new Response(null, { status: 204, headers: { "Cache-Control": "no-store" } });
+  } catch (err) {
+    console.error("space DELETE /canvases/:id/assets/:asset failed", err);
+    return serverError();
+  }
+});
+
 export default canvasAssets;
