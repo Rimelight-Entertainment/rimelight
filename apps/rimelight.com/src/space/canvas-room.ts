@@ -13,7 +13,9 @@ import { getSql } from "../db/index.ts";
 import {
   type Access,
   type ItemState,
+  type MediaState,
   TICKET_TTL_MS,
+  applyMedia,
   applyOp,
   colorFor,
   newHexId,
@@ -82,6 +84,8 @@ function peerOf(conn: Conn) {
 
 export class CanvasRoom extends DurableObject {
   private items: Map<string, ItemState> | null = null;
+  /** The shared video playback per item. Kept in memory only: a room that hibernates forgets it. */
+  private media = new Map<string, MediaState>();
   private seq = 0;
   private archived = false;
   private title = "";
@@ -215,6 +219,7 @@ export class CanvasRoom extends DurableObject {
       canvas: { title: this.title, archived: this.archived },
       items,
       peers,
+      media: [...this.media.values()],
     });
     this.broadcast({ t: "join", peer: peerOf(conn) }, server);
     return new Response(null, { status: 101, webSocket: client });
@@ -291,7 +296,7 @@ export class CanvasRoom extends DurableObject {
       this.pruneStale(ws);
 
       if (msg.t === "ping") {
-        this.send(ws, { t: "pong" });
+        this.send(ws, { t: "pong", now: Date.now() });
         return;
       }
 
@@ -301,6 +306,24 @@ export class CanvasRoom extends DurableObject {
         conn.viewport = msg.viewport;
         ws.serializeAttachment(conn);
         this.broadcast({ t: "presence", ...peerOf(conn) }, ws);
+        return;
+      }
+
+      if (msg.t === "media") {
+        const canvasId = this.meta("canvas_id");
+        if (canvasId === null) throw new Error("the room has no canvas");
+        await this.ensureLoaded(canvasId);
+        const result = applyMedia(this.media, this.requireItems(), msg, {
+          connId: conn.conn_id,
+          access: conn.access,
+          now: Date.now(),
+        });
+        if (!result.ok) {
+          this.send(ws, { t: "error", message: result.message });
+          return;
+        }
+        // Everyone, the sender included, follows the shared playback.
+        this.broadcast({ t: "media", ...result.event });
         return;
       }
 
@@ -555,6 +578,7 @@ export class CanvasRoom extends DurableObject {
     }
     await this.ctx.storage.deleteAll();
     this.items = null;
+    this.media.clear();
     this.seq = 0;
     this.archived = false;
     this.title = "";

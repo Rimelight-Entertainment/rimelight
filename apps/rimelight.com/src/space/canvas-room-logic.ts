@@ -11,6 +11,10 @@ export const MAX_MESSAGE_CHARS = 65536;
 export const MAX_PROPS_CHARS = 262144;
 /** The most ids one presence message may select. */
 export const MAX_SELECTION = 1000;
+/** The longest item id of one media message, in characters. */
+export const MAX_MEDIA_ITEM_ID_CHARS = 64;
+/** The largest position of a shared video, in milliseconds (24 hours). */
+export const MAX_MEDIA_POSITION_MS = 24 * 60 * 60 * 1000;
 export const TICKET_TTL_MS = 60_000;
 export type Access = "view" | "edit" | "manage";
 
@@ -50,12 +54,32 @@ export type ClientPresence = {
   viewport: Viewport | null;
 };
 
-export type ClientMessage = ClientOp | ClientPresence | { t: "ping" };
+/** A play, pause, seek or end of a shared video, sent by a person who can edit the canvas. */
+export type ClientMedia = {
+  t: "media";
+  item_id: string;
+  playing: boolean;
+  position_ms: number;
+  ended: boolean;
+};
+
+/** The shared playback of one item as the room keeps and sends it. at is the server time (ms since epoch); by is the sender's conn_id. */
+export type MediaState = {
+  item_id: string;
+  playing: boolean;
+  position_ms: number;
+  at: number;
+  by: string;
+  ended: boolean;
+};
+
+export type ClientMessage = ClientOp | ClientPresence | ClientMedia | { t: "ping" };
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const Z_ORDER = /^[0-9A-Za-z]{1,64}$/;
 const PRESENCE_ERROR = "The presence message is not valid.";
 const OP_ERROR = "The op is not valid.";
+const MEDIA_ERROR = "The media message is not valid.";
 
 /** True for a plain JSON object: not null and not an array. */
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -145,6 +169,30 @@ function parseOp(data: Record<string, unknown>): ClientOp | null {
   };
 }
 
+/** Reads a media message; null when any field is wrong. The item id is kept in lower case, like op ids. */
+function parseMedia(data: Record<string, unknown>): ClientMedia | null {
+  const itemId = data["item_id"];
+  const playing = data["playing"];
+  const positionMs = data["position_ms"];
+  const ended = data["ended"];
+
+  if (typeof itemId !== "string" || itemId.length < 1 || itemId.length > MAX_MEDIA_ITEM_ID_CHARS) {
+    return null;
+  }
+  if (typeof playing !== "boolean" || typeof ended !== "boolean") return null;
+  if (!isFiniteNumber(positionMs) || positionMs < 0 || positionMs > MAX_MEDIA_POSITION_MS) {
+    return null;
+  }
+
+  return {
+    t: "media",
+    item_id: itemId.toLowerCase(),
+    playing,
+    position_ms: Math.round(positionMs),
+    ended,
+  };
+}
+
 /**
  * Parses the text of one client WebSocket message. Returns the message with only its known fields, or { error } with a message the client can show. Rejects text longer than MAX_MESSAGE_CHARS before parsing.
  */
@@ -162,7 +210,36 @@ export function parseClientMessage(raw: string): ClientMessage | { error: string
   if (t === "ping") return { t: "ping" };
   if (t === "presence") return parsePresence(data) ?? { error: PRESENCE_ERROR };
   if (t === "op") return parseOp(data) ?? { error: OP_ERROR };
+  if (t === "media") return parseMedia(data) ?? { error: MEDIA_ERROR };
   return { error: "Unknown message type." };
+}
+
+export type MediaResult = { ok: true; event: MediaState } | { ok: false; message: string };
+
+/**
+ * Applies one media message from a connection. Viewers are refused, and so is an item that is missing or deleted. On success it sets the shared state of the item in `media`, or removes it when the message ends the playback, and returns the state to send to everyone. On failure it never changes the maps.
+ */
+export function applyMedia(
+  media: Map<string, MediaState>,
+  items: Map<string, ItemState>,
+  msg: ClientMedia,
+  ctx: { connId: string; access: Access; now: number },
+): MediaResult {
+  if (ctx.access === "view") return { ok: false, message: "Viewers cannot control playback." };
+  const item = items.get(msg.item_id);
+  if (!item || item.deleted) return { ok: false, message: "That item is not on this canvas." };
+
+  const event: MediaState = {
+    item_id: msg.item_id,
+    playing: msg.playing,
+    position_ms: msg.position_ms,
+    at: ctx.now,
+    by: ctx.connId,
+    ended: msg.ended,
+  };
+  if (msg.ended) media.delete(msg.item_id);
+  else media.set(msg.item_id, event);
+  return { ok: true, event };
 }
 
 export type ApplyResult =

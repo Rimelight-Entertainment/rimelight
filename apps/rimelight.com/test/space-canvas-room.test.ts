@@ -2,12 +2,16 @@ import { describe, expect, it } from "vite-plus/test";
 import {
   type Access,
   type ApplyResult,
+  applyMedia,
   applyOp,
+  type ClientMedia,
   type ClientOp,
   colorFor,
   type ItemState,
   liveCount,
+  MAX_MEDIA_POSITION_MS,
   MAX_PROPS_CHARS,
+  type MediaState,
   newHexId,
   parseClientMessage,
 } from "../src/space/canvas-room-logic";
@@ -304,6 +308,141 @@ describe("applyOp", () => {
     expect(oldProps).toEqual(snapshot);
     expect(updated.props).not.toBe(oldProps);
     expect(updated.props).toEqual({ a: 9 });
+  });
+});
+
+describe("parseClientMessage media", () => {
+  const media = (over: Record<string, unknown> = {}): string =>
+    JSON.stringify({
+      t: "media",
+      item_id: ITEM,
+      playing: true,
+      position_ms: 1500,
+      ended: false,
+      ...over,
+    });
+
+  it("parses a valid media message and keeps the item id in lower case", () => {
+    expect(parseClientMessage(media({ item_id: ITEM.toUpperCase() }))).toEqual({
+      t: "media",
+      item_id: ITEM,
+      playing: true,
+      position_ms: 1500,
+      ended: false,
+    });
+  });
+
+  it("accepts a position at the 24 hour limit and refuses one past it", () => {
+    expect(parseClientMessage(media({ position_ms: MAX_MEDIA_POSITION_MS }))).toMatchObject({
+      t: "media",
+    });
+    expect(parseClientMessage(media({ position_ms: MAX_MEDIA_POSITION_MS + 1 }))).toEqual({
+      error: "The media message is not valid.",
+    });
+  });
+
+  it("refuses a bad position: negative, not finite or not a number", () => {
+    for (const position_ms of [-1, Number.NaN, "1500", null]) {
+      expect(parseClientMessage(media({ position_ms }))).toEqual({
+        error: "The media message is not valid.",
+      });
+    }
+  });
+
+  it("refuses an empty item id, one longer than 64 characters, and non-boolean flags", () => {
+    const bad: string[] = [
+      media({ item_id: "" }),
+      media({ item_id: "a".repeat(65) }),
+      media({ playing: "yes" }),
+      media({ ended: 1 }),
+    ];
+    for (const raw of bad) {
+      expect(parseClientMessage(raw)).toEqual({ error: "The media message is not valid." });
+    }
+  });
+
+  it("refuses a media message with a missing field", () => {
+    const raw = JSON.stringify({ t: "media", item_id: ITEM, playing: true, ended: false });
+    expect(parseClientMessage(raw)).toEqual({ error: "The media message is not valid." });
+  });
+});
+
+describe("applyMedia", () => {
+  const MEDIA_ITEM = ITEM;
+  const CONN = "abcdef0123456789";
+
+  const msg = (over: Partial<ClientMedia> = {}): ClientMedia => ({
+    t: "media",
+    item_id: MEDIA_ITEM,
+    playing: true,
+    position_ms: 2000,
+    ended: false,
+    ...over,
+  });
+
+  /** A room with one live video item. */
+  const roomWithItem = (): Map<string, ItemState> => {
+    const items = new Map<string, ItemState>();
+    okItem(applyOp(items, createOp(MEDIA_ITEM), ctx()));
+    return items;
+  };
+
+  const mediaCtx = (access: "view" | "edit" | "manage" = "edit") => ({
+    connId: CONN,
+    access,
+    now: 5_000,
+  });
+
+  it("sets the shared state and returns it for everyone, with the server time and sender", () => {
+    const media = new Map<string, MediaState>();
+    const result = applyMedia(media, roomWithItem(), msg(), mediaCtx());
+    expect(result).toEqual({
+      ok: true,
+      event: {
+        item_id: MEDIA_ITEM,
+        playing: true,
+        position_ms: 2000,
+        at: 5_000,
+        by: CONN,
+        ended: false,
+      },
+    });
+    expect(media.get(MEDIA_ITEM)).toEqual(result.ok ? result.event : undefined);
+  });
+
+  it("replaces the shared state on a later pause", () => {
+    const media = new Map<string, MediaState>();
+    const items = roomWithItem();
+    applyMedia(media, items, msg(), mediaCtx());
+    applyMedia(media, items, msg({ playing: false, position_ms: 3000 }), mediaCtx());
+    expect(media.get(MEDIA_ITEM)).toMatchObject({ playing: false, position_ms: 3000 });
+    expect(media.size).toBe(1);
+  });
+
+  it("removes the shared state and still returns it with ended true", () => {
+    const media = new Map<string, MediaState>();
+    const items = roomWithItem();
+    applyMedia(media, items, msg(), mediaCtx());
+    const result = applyMedia(media, items, msg({ ended: true }), mediaCtx());
+    expect(media.size).toBe(0);
+    expect(result).toMatchObject({ ok: true, event: { ended: true, item_id: MEDIA_ITEM } });
+  });
+
+  it("refuses a viewer and leaves the map unchanged", () => {
+    const media = new Map<string, MediaState>();
+    const result = applyMedia(media, roomWithItem(), msg(), mediaCtx("view"));
+    expect(result).toEqual({ ok: false, message: "Viewers cannot control playback." });
+    expect(media.size).toBe(0);
+  });
+
+  it("refuses an item that is missing or deleted", () => {
+    const media = new Map<string, MediaState>();
+    const missing = applyMedia(media, new Map(), msg(), mediaCtx());
+    expect(missing).toMatchObject({ ok: false });
+    const items = roomWithItem();
+    okItem(applyOp(items, deleteOp(MEDIA_ITEM), ctx()));
+    expect(applyMedia(media, items, msg(), mediaCtx())).toMatchObject({ ok: false });
+    expect(media.size).toBe(0);
   });
 });
 
