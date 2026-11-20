@@ -2,7 +2,7 @@
  * Pure rules for Rimelight Space canvas rooms (CV.2, decision 0045): parsing of client WebSocket messages, applying item operations in arrival order and the presence colours. No I/O, so it is unit tested. The Durable Object room holds the items and sends the results.
  */
 
-export const ITEM_KINDS = ["Image", "Text", "Shape", "Stroke", "Frame"] as const;
+export const ITEM_KINDS = ["Image", "Text", "Shape", "Stroke", "Frame", "Video"] as const;
 export type ItemKind = (typeof ITEM_KINDS)[number];
 export const MAX_LIVE_ITEMS = 1000;
 /** The longest raw text of one client message, in characters. */
