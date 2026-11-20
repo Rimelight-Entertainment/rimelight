@@ -3,6 +3,15 @@
  */
 
 export const CANVAS_ASSET_MAX_BYTES = 50 * 1024 * 1024;
+/** The largest video file: 500 MB (CV-V, decision 0046). */
+export const CANVAS_VIDEO_MAX_BYTES = 500 * 1024 * 1024;
+/**
+ * The size of each part of a video upload (the last one may be smaller). Cloudflare caps a request body at 100 MB
+ * on the Free plan, and R2 needs every part but the last to be the same size and at least 5 MB.
+ */
+export const VIDEO_PART_BYTES = 64 * 1024 * 1024;
+/** The longest video a canvas accepts: 24 hours. */
+export const MAX_VIDEO_MS = 24 * 60 * 60 * 1000;
 /** Quota for a personal canvas: 1 GB. */
 export const DEFAULT_USER_QUOTA_BYTES = 1024 * 1024 * 1024;
 /** Quota for a project's canvases: 10 GB. */
@@ -310,4 +319,158 @@ export function checkImportUrl(
     return { ok: false, message: ADDRESS_REFUSAL };
   }
   return { ok: true, url };
+}
+
+/* ---------- video (CV-V, decision 0046) ---------- */
+
+/** A media type the canvas accepts for a video. */
+export type VideoMime = "video/mp4" | "video/quicktime" | "video/webm" | "video/x-matroska";
+
+/** The container a video's first bytes show. */
+export type VideoInfo = { mime: VideoMime; ext: "mp4" | "mov" | "webm" | "mkv" };
+
+/** ISO BMFF brands that are still images (HEIF, AVIF), not video. */
+const IMAGE_BRANDS = new Set(["heic", "heix", "heim", "heis", "mif1", "msf1", "avif", "avis"]);
+
+/**
+ * The video container from the file's first bytes (a few hundred are enough), or null. MP4 and MOV start with an
+ * ISO BMFF `ftyp` box (brand "qt  " is MOV); WebM and Matroska start with an EBML header whose DocType is "webm"
+ * or "matroska".
+ */
+export function inspectVideo(b: Uint8Array): VideoInfo | null {
+  if (matchesAt(b, 4, ascii("ftyp"))) {
+    const brand = String.fromCharCode(...b.slice(8, 12));
+    if (brand.length < 4 || IMAGE_BRANDS.has(brand)) return null;
+    return brand === "qt  "
+      ? { mime: "video/quicktime", ext: "mov" }
+      : { mime: "video/mp4", ext: "mp4" };
+  }
+  if (matchesAt(b, 0, [0x1a, 0x45, 0xdf, 0xa3])) {
+    // The DocType element (ID 0x4282) sits in the EBML header; its size is one VINT byte for these short names.
+    const head = b.slice(0, Math.min(b.length, 64));
+    for (let i = 4; i + 3 < head.length; i += 1) {
+      if (head[i] !== 0x42 || head[i + 1] !== 0x82) continue;
+      const size = (head[i + 2] ?? 0) & 0x7f;
+      const name = String.fromCharCode(...head.slice(i + 3, i + 3 + size));
+      if (name === "webm") return { mime: "video/webm", ext: "webm" };
+      if (name === "matroska") return { mime: "video/x-matroska", ext: "mkv" };
+      return null;
+    }
+  }
+  return null;
+}
+
+/** The file extension of a video media type, or null when the type is not a video the canvas accepts. */
+export function videoExt(mime: string): VideoInfo["ext"] | null {
+  switch (mime) {
+    case "video/mp4":
+      return "mp4";
+    case "video/quicktime":
+      return "mov";
+    case "video/webm":
+      return "webm";
+    case "video/x-matroska":
+      return "mkv";
+    default:
+      return null;
+  }
+}
+
+/** How many parts a video of `bytes` is uploaded in (each VIDEO_PART_BYTES, the last one smaller). */
+export function videoPartCount(bytes: number): number {
+  return Math.max(1, Math.ceil(bytes / VIDEO_PART_BYTES));
+}
+
+/** What the client says about a video it uploads; it reads these with FFmpeg, the Worker cannot decode video. */
+export type VideoMeta = {
+  sha256: string;
+  mime: VideoMime;
+  bytes: number;
+  fileName: string;
+  width: number;
+  height: number;
+  durationMs: number;
+  hasAudio: boolean;
+};
+
+/** The video metadata of a request body, or a message saying what is wrong. */
+export function parseVideoMeta(
+  body: Record<string, unknown>,
+): { ok: true; meta: VideoMeta } | { ok: false; message: string } {
+  const sha = body["sha256"];
+  if (typeof sha !== "string" || !/^[0-9a-f]{64}$/.test(sha)) {
+    return { ok: false, message: "sha256 is the file's SHA-256 in lower-case hex." };
+  }
+  const mime = body["mime"];
+  if (typeof mime !== "string" || videoExt(mime) === null) {
+    return {
+      ok: false,
+      message: "mime is video/mp4, video/quicktime, video/webm or video/x-matroska.",
+    };
+  }
+  const bytes = body["bytes"];
+  if (typeof bytes !== "number" || !Number.isSafeInteger(bytes) || bytes < 1) {
+    return { ok: false, message: "bytes is the file size." };
+  }
+  const dims = [body["width"], body["height"]];
+  if (
+    dims.some((d) => typeof d !== "number" || !Number.isInteger(d) || d < 1 || d > MAX_IMAGE_SIDE)
+  ) {
+    return { ok: false, message: `width and height are whole pixels from 1 to ${MAX_IMAGE_SIDE}.` };
+  }
+  const duration = body["duration_ms"];
+  if (
+    typeof duration !== "number" ||
+    !Number.isInteger(duration) ||
+    duration < 1 ||
+    duration > MAX_VIDEO_MS
+  ) {
+    return { ok: false, message: "duration_ms is the length in milliseconds, at most 24 hours." };
+  }
+  const hasAudio = body["has_audio"];
+  if (typeof hasAudio !== "boolean") return { ok: false, message: "has_audio is true or false." };
+  const fileName = typeof body["file_name"] === "string" ? body["file_name"] : "";
+  return {
+    ok: true,
+    meta: {
+      sha256: sha,
+      mime: mime as VideoMime,
+      bytes,
+      fileName,
+      width: dims[0] as number,
+      height: dims[1] as number,
+      durationMs: duration,
+      hasAudio,
+    },
+  };
+}
+
+/** One byte range of a file: `length` bytes from `offset`. */
+export type ByteRange = { offset: number; length: number };
+
+/**
+ * The single byte range a `Range` header asks for in a file of `total` bytes: "bytes=a-b", "bytes=a-" or
+ * "bytes=-n". null means no range (send the whole file: no header, another unit, or several ranges);
+ * "unsatisfiable" means a 416 answer.
+ */
+export function parseRange(
+  header: string | undefined,
+  total: number,
+): ByteRange | "unsatisfiable" | null {
+  if (header === undefined) return null;
+  const m = /^bytes=(\d*)-(\d*)$/.exec(header.trim());
+  if (m === null) return null;
+  const [, a = "", b = ""] = m;
+  if (a === "" && b === "") return null;
+  if (a === "") {
+    const n = Number(b);
+    if (n === 0) return "unsatisfiable";
+    const length = Math.min(n, total);
+    return { offset: total - length, length };
+  }
+  const start = Number(a);
+  if (start >= total) return "unsatisfiable";
+  const end = b === "" ? total - 1 : Math.min(Number(b), total - 1);
+  if (end < start) return "unsatisfiable";
+  return { offset: start, length: end - start + 1 };
 }

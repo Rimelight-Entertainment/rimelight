@@ -1,12 +1,18 @@
 import { describe, expect, it } from "vite-plus/test";
 import {
+  CANVAS_VIDEO_MAX_BYTES,
+  VIDEO_PART_BYTES,
   assetObjectKey,
   checkImportUrl,
   inspectImage,
+  inspectVideo,
+  parseRange,
   parseThumbSize,
+  parseVideoMeta,
   quotaRefusal,
   sha256Hex,
   thumbObjectKey,
+  videoPartCount,
 } from "../src/space/canvas-image";
 
 const ascii = (s: string): number[] => Array.from(s, (c) => c.charCodeAt(0));
@@ -202,4 +208,71 @@ describe("checkImportUrl", () => {
       expect(checkImportUrl(raw).ok).toBe(false);
     });
   }
+});
+
+describe("video (CV-V.1)", () => {
+  it("inspectVideo reads MP4, MOV, WebM and Matroska, and refuses HEIF/AVIF and junk", () => {
+    expect(inspectVideo(bytes(u32be(32), ascii("ftyp"), ascii("isom"), zeros(20)))).toEqual({
+      mime: "video/mp4",
+      ext: "mp4",
+    });
+    expect(inspectVideo(bytes(u32be(20), ascii("ftyp"), ascii("qt  "), zeros(8)))).toEqual({
+      mime: "video/quicktime",
+      ext: "mov",
+    });
+    expect(inspectVideo(bytes(u32be(24), ascii("ftyp"), ascii("avif"), zeros(12)))).toBeNull();
+    expect(inspectVideo(bytes(u32be(24), ascii("ftyp"), ascii("heic"), zeros(12)))).toBeNull();
+    const ebml = (doc: string): Uint8Array =>
+      bytes(
+        [0x1a, 0x45, 0xdf, 0xa3, 0x9f],
+        [0x42, 0x86, 0x81, 0x01],
+        [0x42, 0x82, 0x80 | doc.length],
+        ascii(doc),
+      );
+    expect(inspectVideo(ebml("webm"))).toEqual({ mime: "video/webm", ext: "webm" });
+    expect(inspectVideo(ebml("matroska"))).toEqual({ mime: "video/x-matroska", ext: "mkv" });
+    expect(inspectVideo(ebml("other"))).toBeNull();
+    expect(inspectVideo(bytes(ascii("not a video at all")))).toBeNull();
+  });
+
+  it("videoPartCount splits by 64 MB parts", () => {
+    expect(videoPartCount(1)).toBe(1);
+    expect(videoPartCount(VIDEO_PART_BYTES)).toBe(1);
+    expect(videoPartCount(VIDEO_PART_BYTES + 1)).toBe(2);
+    expect(videoPartCount(CANVAS_VIDEO_MAX_BYTES)).toBe(8);
+  });
+
+  it("parseVideoMeta checks every field", () => {
+    const good = {
+      sha256: "a".repeat(64),
+      mime: "video/mp4",
+      bytes: 1000,
+      file_name: "clip.mp4",
+      width: 1920,
+      height: 1080,
+      duration_ms: 5000,
+      has_audio: true,
+    };
+    const ok = parseVideoMeta(good);
+    expect(ok.ok && ok.meta.durationMs).toBe(5000);
+    expect(parseVideoMeta({ ...good, sha256: "XYZ" }).ok).toBe(false);
+    expect(parseVideoMeta({ ...good, mime: "image/png" }).ok).toBe(false);
+    expect(parseVideoMeta({ ...good, bytes: 0 }).ok).toBe(false);
+    expect(parseVideoMeta({ ...good, width: 0 }).ok).toBe(false);
+    expect(parseVideoMeta({ ...good, duration_ms: 25 * 3600 * 1000 }).ok).toBe(false);
+    expect(parseVideoMeta({ ...good, has_audio: "yes" }).ok).toBe(false);
+  });
+
+  it("parseRange reads one byte range", () => {
+    expect(parseRange(undefined, 100)).toBeNull();
+    expect(parseRange("bytes=0-9", 100)).toEqual({ offset: 0, length: 10 });
+    expect(parseRange("bytes=90-", 100)).toEqual({ offset: 90, length: 10 });
+    expect(parseRange("bytes=95-200", 100)).toEqual({ offset: 95, length: 5 });
+    expect(parseRange("bytes=-10", 100)).toEqual({ offset: 90, length: 10 });
+    expect(parseRange("bytes=-500", 100)).toEqual({ offset: 0, length: 100 });
+    expect(parseRange("bytes=100-", 100)).toBe("unsatisfiable");
+    expect(parseRange("bytes=9-3", 100)).toBe("unsatisfiable");
+    expect(parseRange("bytes=0-1,5-6", 100)).toBeNull();
+    expect(parseRange("items=0-1", 100)).toBeNull();
+  });
 });

@@ -289,6 +289,12 @@ export function assetView(canvasId: string, r: Row) {
       .sort((a, b) => a - b),
     url: `/v1/canvases/${canvasId}/assets/${id}`,
     created_at: iso(r["created_at"]),
+    // CV-V (decision 0046): "Image" or "Video"; a video's length and whether it has sound. Rows from before the
+    // video migration read as images.
+    media: (r["media"] as string | undefined) ?? "Image",
+    duration_ms:
+      r["duration_ms"] === null || r["duration_ms"] === undefined ? null : Number(r["duration_ms"]),
+    has_audio: r["has_audio"] === true || r["has_audio"] === "t",
   };
 }
 
