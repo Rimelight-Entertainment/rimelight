@@ -32,7 +32,12 @@ type Conn = {
   cursor: { x: number; y: number } | null;
   selection: string[];
   viewport: Viewport | null;
+  /** When the room last heard from this connection (ms). Older attachments have none and count as silent. */
+  seen?: number;
 };
+
+/** A connection silent this long is gone (the app pings every 25 s), so a closed app does not stay as a ghost. */
+const STALE_MS = 80_000;
 
 /** What the Worker stores with a ticket. */
 type TicketData = { canvas_id: string; user_id: string; name: string; access: Access };
@@ -183,14 +188,18 @@ export class CanvasRoom extends DurableObject {
       cursor: null,
       selection: [],
       viewport: null,
+      seen: Date.now(),
     };
     server.serializeAttachment(conn);
+    this.pruneStale(server);
 
     const peers: ReturnType<typeof peerOf>[] = [];
     for (const other of this.ctx.getWebSockets()) {
       if (other === server) continue;
       const otherConn = connOf(other);
-      if (otherConn !== null) peers.push(peerOf(otherConn));
+      // A socket closed as stale a moment ago can still be listed; it is not a peer.
+      if (otherConn !== null && (otherConn.seen ?? 0) >= Date.now() - STALE_MS)
+        peers.push(peerOf(otherConn));
     }
     const items = [...this.requireItems().values()].filter((item) => !item.deleted);
     this.send(server, {
@@ -277,6 +286,9 @@ export class CanvasRoom extends DurableObject {
         this.send(ws, { t: "error", message: "This connection is not in a canvas." });
         return;
       }
+      conn.seen = Date.now();
+      ws.serializeAttachment(conn);
+      this.pruneStale(ws);
 
       if (msg.t === "ping") {
         this.send(ws, { t: "pong" });
@@ -554,6 +566,22 @@ export class CanvasRoom extends DurableObject {
   }
 
   /* ---------- helpers ---------- */
+
+  /** Closes the connections the room has not heard from for STALE_MS (an app that was closed without a close frame). */
+  private pruneStale(except: WebSocket): void {
+    const cutoff = Date.now() - STALE_MS;
+    for (const ws of this.ctx.getWebSockets()) {
+      if (ws === except) continue;
+      const conn = connOf(ws);
+      if (conn !== null && (conn.seen ?? 0) >= cutoff) continue;
+      this.leave(ws);
+      try {
+        ws.close(4002, "stale");
+      } catch {
+        // The socket is already closing.
+      }
+    }
+  }
 
   private leave(ws: WebSocket): void {
     const conn = connOf(ws);

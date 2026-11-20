@@ -35,8 +35,6 @@ import { notifyRoom } from "./canvas-live.ts";
 
 const NO_PERSON = "There is no such person.";
 const NO_SHARE = "That person has no access.";
-const NO_SUBJECT = "There is no such quota subject.";
-const TEN_TB = 10 * 1024 * 1024 * 1024 * 1024;
 const blobBucket = (): R2Bucket => (env as unknown as { BLOB: R2Bucket }).BLOB;
 
 /** The canvas as the caller sees it, with a status (201 after a create). */
@@ -52,13 +50,7 @@ async function viewOf(
   return json(canvasView(canvas), status);
 }
 
-async function isGlobalAdmin(sql: Sql, userId: string): Promise<boolean> {
-  const rows = await sql`SELECT EXISTS (SELECT 1 FROM user_roles r
-     WHERE r.user_id = ${userId}::text::uuid AND r.role = 'admin') AS admin`;
-  return (rows[0] as Row | undefined)?.["admin"] === true;
-}
-
-/** The quota shape: usage, limit and whether the limit is the default. */
+/** The quota shape: usage and limit. */
 async function quotaView(sql: Q, scope: QuotaScope, subjectId: string) {
   const q = await quotaUsage(sql, scope, subjectId);
   return {
@@ -66,7 +58,6 @@ async function quotaView(sql: Q, scope: QuotaScope, subjectId: string) {
     subject_id: subjectId,
     usage_bytes: q.usage,
     limit_bytes: q.limit,
-    is_default: q.isDefault,
   };
 }
 
@@ -521,58 +512,6 @@ canvases.get("/projects/:key/quota", async (c) => {
     return json(await quotaView(sql, "Project", project.projectId));
   } catch (err) {
     console.error("space GET /projects/:key/quota failed", err);
-    return apiError(500, "server_error", "Something went wrong. Try again in a moment.");
-  }
-});
-
-/** PUT /v1/admin/quotas/{scope}/{subject} { limit_bytes }: sets a quota. Global admins only. */
-canvases.put("/admin/quotas/:scope/:subject", async (c) => {
-  const who = await caller(c);
-  if (isResponse(who)) return who;
-  try {
-    const sql = getSql();
-    if (!(await isGlobalAdmin(sql, who.id))) return forbidden("You need the admin role.");
-    const raw = c.req.param("scope");
-    if (raw !== "User" && raw !== "Project") return badRequest("scope is User or Project.");
-    const scope: QuotaScope = raw;
-    const subject = uuidOr404(c.req.param("subject"), NO_SUBJECT);
-    if (isResponse(subject)) return subject;
-    const body = await readBody(c);
-    if (body === null) return badRequest("The body must be a JSON object.");
-    const limit = body["limit_bytes"];
-    if (typeof limit !== "number" || !Number.isSafeInteger(limit) || limit < 1 || limit > TEN_TB) {
-      return badRequest("limit_bytes is a whole number of bytes from 1 to 10 TB.");
-    }
-
-    await sql`INSERT INTO storage_quotas (scope, subject_id, limit_bytes, updated_by)
-       VALUES (${scope}::text, ${subject}::text::uuid, ${limit}::bigint, ${who.id}::text::uuid)
-       ON CONFLICT (scope, subject_id) DO UPDATE SET
-         limit_bytes = EXCLUDED.limit_bytes,
-         updated_by = EXCLUDED.updated_by,
-         updated_at = now()`;
-    return json(await quotaView(sql, scope, subject));
-  } catch (err) {
-    console.error("space PUT /admin/quotas/:scope/:subject failed", err);
-    return apiError(500, "server_error", "Something went wrong. Try again in a moment.");
-  }
-});
-
-/** DELETE /v1/admin/quotas/{scope}/{subject}: removes a quota so the default applies. Global admins only. */
-canvases.delete("/admin/quotas/:scope/:subject", async (c) => {
-  const who = await caller(c);
-  if (isResponse(who)) return who;
-  try {
-    const sql = getSql();
-    if (!(await isGlobalAdmin(sql, who.id))) return forbidden("You need the admin role.");
-    const raw = c.req.param("scope");
-    if (raw !== "User" && raw !== "Project") return badRequest("scope is User or Project.");
-    const subject = uuidOr404(c.req.param("subject"), NO_SUBJECT);
-    if (isResponse(subject)) return subject;
-    await sql`DELETE FROM storage_quotas
-       WHERE scope = ${raw}::text AND subject_id = ${subject}::text::uuid`;
-    return new Response(null, { status: 204, headers: { "Cache-Control": "no-store" } });
-  } catch (err) {
-    console.error("space DELETE /admin/quotas/:scope/:subject failed", err);
     return apiError(500, "server_error", "Something went wrong. Try again in a moment.");
   }
 });

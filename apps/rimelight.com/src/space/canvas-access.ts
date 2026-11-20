@@ -208,12 +208,12 @@ export async function projectAccess(
 
 export type QuotaScope = "User" | "Project";
 
-/** Bytes used by the scope's live canvases, and the scope's limit (its row, or the default). */
+/** Bytes used by the scope's live canvases, and the scope's limit: fixed in code, 1 GB per person and 10 GB per project. */
 export async function quotaUsage(
   q: Q,
   scope: QuotaScope,
   subjectId: string,
-): Promise<{ usage: number; limit: number; isDefault: boolean }> {
+): Promise<{ usage: number; limit: number }> {
   const used =
     scope === "User"
       ? await q`SELECT COALESCE(sum(a.bytes), 0)::bigint AS used FROM canvas_assets a
@@ -222,14 +222,9 @@ export async function quotaUsage(
       : await q`SELECT COALESCE(sum(a.bytes), 0)::bigint AS used FROM canvas_assets a
            JOIN canvases c ON c.id = a.canvas_id
           WHERE c.project_id = ${subjectId}::text::uuid`;
-  const limits = await q`SELECT limit_bytes FROM storage_quotas
-     WHERE scope = ${scope}::text AND subject_id = ${subjectId}::text::uuid`;
-  const row = limits[0] as Row | undefined;
-  const fallback = scope === "User" ? DEFAULT_USER_QUOTA_BYTES : DEFAULT_PROJECT_QUOTA_BYTES;
   return {
     usage: Number(used[0]?.["used"] ?? 0),
-    limit: row ? Number(row["limit_bytes"]) : fallback,
-    isDefault: row === undefined,
+    limit: scope === "User" ? DEFAULT_USER_QUOTA_BYTES : DEFAULT_PROJECT_QUOTA_BYTES,
   };
 }
 
