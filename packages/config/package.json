@@ -1,6 +1,6 @@
 {
   "name": "@rimelight/config",
-  "version": "0.0.48",
+  "version": "0.0.49",
   "private": false,
   "description": "Rimelight Entertainment's Shared Configuration Package",
   "homepage": "https://rimelight.com/docs",
