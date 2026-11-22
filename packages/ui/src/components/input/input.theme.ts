@@ -16,19 +16,31 @@ export const RLInputTheme = defineTheme("input", {
       },
     },
     size: {
-      xs: { input: "text-xs leading-none px-2 py-1", leading: "left-2", trailing: "right-2" },
+      xs: {
+        input: "text-xs leading-none px-2 h-[var(--rl-size-control-xs)]",
+        leading: "left-2",
+        trailing: "right-2",
+      },
       sm: {
-        input: "text-xs leading-none px-2.5 py-1.5",
+        input: "text-xs leading-none px-2.5 h-[var(--rl-size-control-sm)]",
         leading: "left-2.5",
         trailing: "right-2.5",
       },
       md: {
-        input: "text-sm leading-none px-2.5 py-1.5",
+        input: "text-sm leading-none px-2.5 h-[var(--rl-size-control-md)]",
         leading: "left-2.5",
         trailing: "right-2.5",
       },
-      lg: { input: "text-sm leading-none px-3 py-2", leading: "left-3", trailing: "right-3" },
-      xl: { input: "text-base leading-none px-3 py-2", leading: "left-3", trailing: "right-3" },
+      lg: {
+        input: "text-sm leading-none px-3 h-[var(--rl-size-control-lg)]",
+        leading: "left-3",
+        trailing: "right-3",
+      },
+      xl: {
+        input: "text-base leading-none px-3 h-[var(--rl-size-control-xl)]",
+        leading: "left-3",
+        trailing: "right-3",
+      },
     },
     hasLeading: {
       true: { input: "pl-9" },

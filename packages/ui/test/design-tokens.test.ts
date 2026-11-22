@@ -117,3 +117,24 @@ describe("role utilities (ST3.2)", () => {
     expect(css).toContain("var(--rl-color-text-primary)");
   });
 });
+
+describe("control heights come from the design sizes (ST3.4)", () => {
+  it("Button and Input heights reference the control size tokens", async () => {
+    const { readFileSync } = await import("node:fs");
+    const button = readFileSync(
+      new URL("../src/components/button/button.theme.ts", import.meta.url),
+      "utf8",
+    );
+    const input = readFileSync(
+      new URL("../src/components/input/input.theme.ts", import.meta.url),
+      "utf8",
+    );
+    for (const z of ["xs", "sm", "md", "lg", "xl"]) {
+      expect(button).toContain(`h-[var(--rl-size-control-${z})]`);
+      expect(input).toContain(`h-[var(--rl-size-control-${z})]`);
+    }
+    const uno = await createGenerator({ presets: [rimelightUiPreset()] });
+    const { css } = await uno.generate("h-[var(--rl-size-control-md)]", { preflights: false });
+    expect(css).toContain("height:var(--rl-size-control-md)");
+  });
+});

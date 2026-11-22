@@ -2289,70 +2289,70 @@ export const componentMeta: ComponentMetaMap = {
           shape: ["rounded", "pill"],
           size: "xs",
           class: {
-            root: "px-2 py-1",
+            root: "h-[var(--rl-size-control-xs)] px-2",
           },
         },
         {
           shape: "square",
           size: "xs",
           class: {
-            root: "p-1",
+            root: "aspect-square h-[var(--rl-size-control-xs)] p-0",
           },
         },
         {
           shape: ["rounded", "pill"],
           size: "sm",
           class: {
-            root: "px-2.5 py-1.5",
+            root: "h-[var(--rl-size-control-sm)] px-2.5",
           },
         },
         {
           shape: "square",
           size: "sm",
           class: {
-            root: "p-1.5",
+            root: "aspect-square h-[var(--rl-size-control-sm)] p-0",
           },
         },
         {
           shape: ["rounded", "pill"],
           size: "md",
           class: {
-            root: "px-2.5 py-1.5",
+            root: "h-[var(--rl-size-control-md)] px-2.5",
           },
         },
         {
           shape: "square",
           size: "md",
           class: {
-            root: "p-1.5",
+            root: "aspect-square h-[var(--rl-size-control-md)] p-0",
           },
         },
         {
           shape: ["rounded", "pill"],
           size: "lg",
           class: {
-            root: "px-3 py-2",
+            root: "h-[var(--rl-size-control-lg)] px-3",
           },
         },
         {
           shape: "square",
           size: "lg",
           class: {
-            root: "p-2",
+            root: "aspect-square h-[var(--rl-size-control-lg)] p-0",
           },
         },
         {
           shape: ["rounded", "pill"],
           size: "xl",
           class: {
-            root: "px-3 py-2",
+            root: "h-[var(--rl-size-control-xl)] px-3",
           },
         },
         {
           shape: "square",
           size: "xl",
           class: {
-            root: "p-2",
+            root: "aspect-square h-[var(--rl-size-control-xl)] p-0",
           },
         },
         {
@@ -8594,27 +8594,27 @@ export const componentMeta: ComponentMetaMap = {
         },
         size: {
           xs: {
-            input: "text-xs leading-none px-2 py-1",
+            input: "text-xs leading-none px-2 h-[var(--rl-size-control-xs)]",
             leading: "left-2",
             trailing: "right-2",
           },
           sm: {
-            input: "text-xs leading-none px-2.5 py-1.5",
+            input: "text-xs leading-none px-2.5 h-[var(--rl-size-control-sm)]",
             leading: "left-2.5",
             trailing: "right-2.5",
           },
           md: {
-            input: "text-sm leading-none px-2.5 py-1.5",
+            input: "text-sm leading-none px-2.5 h-[var(--rl-size-control-md)]",
             leading: "left-2.5",
             trailing: "right-2.5",
           },
           lg: {
-            input: "text-sm leading-none px-3 py-2",
+            input: "text-sm leading-none px-3 h-[var(--rl-size-control-lg)]",
             leading: "left-3",
             trailing: "right-3",
           },
           xl: {
-            input: "text-base leading-none px-3 py-2",
+            input: "text-base leading-none px-3 h-[var(--rl-size-control-xl)]",
             leading: "left-3",
             trailing: "right-3",
           },
