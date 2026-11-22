@@ -101,3 +101,19 @@ describe("role variables are emitted in the preflight", () => {
     }
   });
 });
+
+describe("role utilities (ST3.2)", () => {
+  it("bg-elevated resolves to the surface-raised role variable", async () => {
+    const uno = await createGenerator({ presets: [rimelightUiPreset()] });
+    const { css } = await uno.generate("bg-elevated bg-surface-raised", { preflights: false });
+    expect(css).toContain("var(--rl-color-surface-raised)");
+    expect(css).not.toContain("--rl-neutral-200");
+  });
+
+  it("role colours are theme colours with their design key", async () => {
+    const uno = await createGenerator({ presets: [rimelightUiPreset()] });
+    const { css } = await uno.generate("ring-focus text-ink", { preflights: false });
+    expect(css).toContain("var(--rl-color-focus-ring)");
+    expect(css).toContain("var(--rl-color-text-primary)");
+  });
+});

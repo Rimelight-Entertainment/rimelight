@@ -166,9 +166,11 @@ describe("@rimelight/ui preset intent shortcuts", () => {
     const { css } = await uno.generate(
       "text-muted bg-elevated border-accented ring-dimmed bg-inverted text-muted/50",
     );
-    expect(css).toContain("var(--rl-neutral-600)");
-    expect(css).toContain("var(--rl-neutral-200)");
-    expect(css).toContain("var(--rl-neutral-400)");
+    // text-muted and bg-elevated are role-backed (ST3.2): same colour as the role variable.
+    expect(css).toContain("var(--rl-color-text-muted)");
+    expect(css).toContain("var(--rl-color-surface-raised)");
+    expect(css).toContain("var(--rl-color-border-strong)");
+    expect(css).toContain("var(--rl-color-border-strong)");
     expect(css).toContain("var(--rl-neutral-950)");
     expect(css).toContain("var(--rl-neutral-50)");
     expect(css).not.toContain("--colors-");

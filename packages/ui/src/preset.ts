@@ -94,14 +94,57 @@ const SHADES = {
 
 const SHADE_ENTRIES = Object.entries(SHADES);
 
+// Role colours (ST3.2). The design package names each colour by role. The utility key is the
+// role without its group: `surface.raised` -> `surface-raised`, `text.primary` -> `ink`
+// (the palette `primary` already owns that name), `accent.default` -> `accent`, `focus.ring` -> `focus`.
+// Each one is a theme colour, so `bg-surface-raised`, `text-muted` and `ring-focus` work.
+const ROLE_PATH = /^color\.(surface|text|border|accent|focus|status|disabled)\.(.+)$/;
+const roleKeyFor = (path: string): string | undefined => {
+  const m = ROLE_PATH.exec(path);
+  if (!m) return undefined;
+  const group = m[1]!;
+  const rest = m[2]!;
+  if (group === "text") return rest === "primary" ? "ink" : rest;
+  if (group === "accent" && rest === "default") return "accent";
+  if (group === "focus") return "focus";
+  return `${group}-${rest}`;
+};
+
+// Role key -> the CSS variable that holds its light/dark value (generated/tokens.css).
+export const ROLE_VARS: Record<string, string> = {};
+for (const [path, token] of Object.entries(DESIGN)) {
+  const key = token.$type === "color" ? roleKeyFor(path) : undefined;
+  if (key) ROLE_VARS[key] = `--rl-${path.replace(/\./g, "-")}`;
+}
+
+// Intent slot -> role. A slot without a role keeps its neutral shade from the legacy table.
+// `bg-elevated` therefore resolves to the same colour as the Rust `surface-raised`.
+type IntentSlot = "text" | "bg" | "border" | "ring";
+const INTENT_ROLES: Record<string, Partial<Record<IntentSlot, string>>> = {
+  default: { text: "ink", bg: "surface-base", border: "border-subtle", ring: "focus" },
+  muted: { text: "muted", bg: "surface-hover", border: "border-subtle", ring: "focus" },
+  elevated: { text: "ink", bg: "surface-raised", border: "border-subtle", ring: "focus" },
+  accented: { text: "ink", bg: "surface-pressed", border: "border-strong", ring: "focus" },
+  dimmed: { text: "faint", bg: "surface-sunken", border: "border-subtle", ring: "focus" },
+};
+
+/**
+ * Legacy intent table: neutral shades by slot. Intents in this table with no role
+ * (`toned`, `highlighted`, `inverted`) are deprecated: their slots stay on shades, and
+ * they will be removed in the next major version. Use roles instead.
+ * @deprecated Use role utilities (`bg-surface-raised`, `text-muted`, `ring-focus`, ...).
+ */
 export const INTENTS: Record<string, Record<string, string>> = {
   default: { text: "800", bg: "50", border: "200", ring: "300" },
   muted: { text: "600", bg: "100", border: "200", ring: "300" },
   elevated: { text: "800", bg: "200", border: "300", ring: "400" },
   accented: { text: "900", bg: "300", border: "400", ring: "500" },
   dimmed: { text: "500", bg: "100", border: "200", ring: "400" },
+  /** @deprecated No role yet. Use `surface-hover` or another role. */
   toned: { text: "800", bg: "200", border: "300", ring: "600" },
+  /** @deprecated No role yet. Use `ink` with a role surface. */
   highlighted: { text: "950", bg: "200", border: "800", ring: "950" },
+  /** @deprecated No role yet. Use `surface-overlay` or `ink` explicitly. */
   inverted: { text: "50", bg: "950", border: "800", ring: "700" },
 };
 
@@ -158,6 +201,10 @@ function resolveTokens(custom: Record<string, ColorModeInput> = {}) {
   return { themeColors, tokenVarLines };
 }
 
+const ROLE_COLORS = Object.fromEntries(
+  Object.entries(ROLE_VARS).map(([key, v]) => [key, `var(${v})`]),
+);
+
 export function rimelightUiPreset({ colors, icons, fonts, presets = {} }: UIConfig = {}): Preset {
   const { themeColors, tokenVarLines } = resolveTokens(colors);
   const webFontsPreset =
@@ -182,7 +229,7 @@ export function rimelightUiPreset({ colors, icons, fonts, presets = {} }: UIConf
         name: "rimelight-theme",
         theme: {
           spacing: { md: "1rem" },
-          colors: { ...themeColors, scrim: "#000000", "on-scrim": "#ffffff" },
+          colors: { ...themeColors, ...ROLE_COLORS, scrim: "#000000", "on-scrim": "#ffffff" },
         },
       },
     ].filter(Boolean) as Preset[],
@@ -190,6 +237,8 @@ export function rimelightUiPreset({ colors, icons, fonts, presets = {} }: UIConf
       [
         /^(text|bg|ring|border)-([a-z-]+)(?:\/(\d+))?$/,
         ([, p, n, o]) => {
+          const role = INTENT_ROLES[n!]?.[p as IntentSlot];
+          if (role) return `${p}-[var(${ROLE_VARS[role]})]${o ? `/${o}` : ""}`;
           const s = INTENTS[n!]?.[p!];
           if (!s) return;
           const base = `${p}-neutral-${s}${o ? `/${o}` : ""}`;

@@ -26,7 +26,7 @@ describe("rimelight token architecture", () => {
       preflights: true,
     });
     expect(css).toContain(".text-highlighted{color:color-mix(in srgb, var(--rl-neutral-950)");
-    expect(css).toContain(".text-muted{color:color-mix(in srgb, var(--rl-neutral-600)");
+    expect(css).toContain(".text-muted{color:var(--rl-color-text-muted)");
     expect(css).not.toContain("--colors-");
     expect(css).not.toContain("--rl-neutral-950: oklch(14.5%");
   });
