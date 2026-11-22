@@ -3,13 +3,14 @@ import type { RLAvatarProps } from "../avatar/avatar.types";
 import { RLButtonTheme } from "./button.theme";
 import { createMemo, createSignal, Show, type Component } from "solid-js";
 
+import { resolveLinkAttrs } from "../link/link.helpers";
 import {
   isThenable,
+  resolveButtonVariant,
   resolveKeyboardAction,
   runClickHandlers,
   toClickHandlers,
 } from "./button.helpers";
-import { resolveLinkAttrs } from "../link/link.helpers";
 import { uiT } from "../../locale";
 import { RLIcon } from "../icon/RLIcon";
 import { RLAvatar } from "../avatar/RLAvatar";
@@ -114,8 +115,10 @@ export const RLButton: Component<RLButtonProps> = (props) => {
     );
 
   const buttonVariants = (s: ButtonSlotPresence, childrenAccessor: () => unknown) => ({
-    variant: props.active && props.activeVariant ? props.activeVariant : props.variant,
-    color: props.active && props.activeColor ? props.activeColor : props.color,
+    ...resolveButtonVariant(
+      props.active && props.activeVariant ? props.activeVariant : props.variant,
+      props.active && props.activeColor ? props.activeColor : props.color,
+    ),
     size: props.size,
     justify: props.justify,
     block: props.block,

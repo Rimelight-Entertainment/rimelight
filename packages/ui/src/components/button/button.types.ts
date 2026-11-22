@@ -2,6 +2,7 @@ import type { JSX } from "@solidjs/web";
 import type { InferThemeProps } from "../../resolver";
 import type { RLAvatarProps } from "../avatar/avatar.types";
 import type { RLButtonTheme } from "./button.theme";
+import type { LegacyButtonVariant } from "./button.helpers";
 
 export type ButtonClickHandler = (event: MouseEvent) => unknown;
 
@@ -18,7 +19,13 @@ export type ButtonSlotPresence = {
 /**
  * Button that renders as a `<button>`, or as an `<a>` when `href` is set.
  */
-export type RLButtonProps = Omit<ButtonVariants, "ref"> & {
+export type RLButtonProps = Omit<ButtonVariants, "ref" | "variant"> & {
+  /**
+   * Visual variant. `primary`, `secondary` and `danger` are deprecated aliases for `solid`/`outline` with a colour.
+   * @default "solid"
+   */
+  variant?: ButtonVariants["variant"] | LegacyButtonVariant;
+
   /**
    * The text label displayed inside the button.
    * @default undefined

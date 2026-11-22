@@ -1885,6 +1885,14 @@ export const componentMeta: ComponentMetaMap = {
     frameworks: ["solid"],
     props: [
       {
+        name: "variant",
+        type: 'ButtonVariants["variant"] | LegacyButtonVariant',
+        required: false,
+        description:
+          "Visual variant. `primary`, `secondary` and `danger` are deprecated aliases for `solid`/`outline` with a colour.",
+        default: '"solid"',
+      },
+      {
         name: "label",
         type: "string | undefined",
         required: false,

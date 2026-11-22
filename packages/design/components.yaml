@@ -55,7 +55,7 @@
         ],
     }
   media: { status: done, path: ui/widgets.slint#Button, props: [text, icon, kind, enabled] }
-  notes: "Web label/leadingIcon vs Slint text/leading-icon. Variants: Slint primary/secondary/ghost/danger/link; Media ButtonKind primary/secondary/ghost/danger."
+  notes: "Web label/leadingIcon vs Slint text/leading-icon. Variants: Slint primary/secondary/ghost/danger/link; Media ButtonKind primary/secondary/ghost/danger. ST3.3 (web): the web Button already uses the D5 vocabulary (variant solid/outline/soft/subtle/ghost/link/unstyled, colour from the palettes, size xs-xl, defaults solid/primary/md). The web had no primary/secondary/danger variants; consumers passed them, so they are now deprecated aliases (solid+primary, outline+neutral, solid+error). Slint and Media still use the old names: change them under WS2, not here."
 
 - name: IconButton
   aliases: [icon-button, IconButton]
