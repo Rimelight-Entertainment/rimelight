@@ -1,0 +1,2408 @@
+# Rimelight cross-platform component catalogue (draft)
+# Counts (distinct concepts):
+#   total concepts:           153
+#   done on web and slint:    55
+#   web-only (web done):      71
+#   slint-only (slint done):  24
+#   media-only (media done):  3  (Tile, RecentList, ActionRow)
+# Sources: packages/ui/src/components (web), crates/rimelight_ui/ui/components (slint),
+#          rimelight-media/ui/widgets.slint (media). Read-only research.
+# Unclassified (no component export): Slint ClipboardWriter, ConnectionState, InputFocus;
+#          Media globals TipBounds, ShortcutsCtl (only a helper global for the Shortcuts dialog).
+
+# ---------- action ----------
+
+- name: Button
+  aliases: [button, Button]
+  category: action
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/button,
+      props:
+        [
+          label,
+          leadingIcon,
+          trailingIcon,
+          loading,
+          loadingAuto,
+          active,
+          activeVariant,
+          shape,
+          avatar,
+        ],
+    }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/button.slint,
+      props:
+        [
+          text,
+          variant,
+          size,
+          leading-icon,
+          trailing-icon,
+          loading,
+          checkable,
+          selected,
+          enabled,
+          full-width,
+          square,
+          grouped,
+          ghost-toggle,
+          on-sidebar,
+        ],
+    }
+  media: { status: done, path: ui/widgets.slint#Button, props: [text, icon, kind, enabled] }
+  notes: "Web label/leadingIcon vs Slint text/leading-icon. Variants: Slint primary/secondary/ghost/danger/link; Media ButtonKind primary/secondary/ghost/danger."
+
+- name: IconButton
+  aliases: [icon-button, IconButton]
+  category: action
+  web: { status: none }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/icon-button.slint,
+      props: [icon, label, tooltip, tooltip-placement, tooltip-shortcut],
+    }
+  media:
+    {
+      status: done,
+      path: ui/widgets.slint#IconButton,
+      props: [icon, label, active, enabled, size, icon-size, tip-above, tint, on-stage],
+    }
+  notes: "Web has no icon-only button component; use web Button with icon. Slint tooltip is stored but not drawn yet."
+
+- name: ButtonGroup
+  aliases: [button-group]
+  category: action
+  web: { status: none }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/button-group.slint,
+      props: [segments, variant, size, full-width, forced-focus],
+    }
+  media: { status: none }
+  notes: "Segmented button row. Slint-only; web has no segmented control."
+
+- name: Menu
+  aliases: [dropdown-menu, menu, MenuList, ChoicePopup]
+  category: action
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/dropdown-menu,
+      props:
+        [
+          label,
+          icon,
+          avatar,
+          src,
+          shortcut,
+          kbds,
+          type,
+          color,
+          checked,
+          disabled,
+          href,
+          target,
+          onSelect,
+        ],
+    }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/menu.slint,
+      props: [items, highlighted, expanded-id, menu-width, item-height, accessible-name, leading],
+    }
+  media: { status: done, path: ui/widgets.slint#ChoicePopup, props: [choices, heading] }
+  notes: "Slint Menu expands submenus one level inline. Media ChoicePopup is a popup choice list with a heading; treated as the same concept."
+
+- name: ContextMenu
+  aliases: [context-menu, ContextMenu]
+  category: action
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/context-menu,
+      props:
+        [
+          x,
+          y,
+          label,
+          description,
+          icon,
+          kbds,
+          color,
+          type,
+          checked,
+          disabled,
+          href,
+          target,
+          onSelect,
+        ],
+    }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/menu.slint,
+      props: [items, accessible-name],
+    }
+  media: { status: none }
+  notes: "Web is positioned by x/y; Slint opens on pointer right press, Menu key or Shift+F10."
+
+- name: Link
+  aliases: [link, Link]
+  category: navigation
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/link,
+      props:
+        [
+          label,
+          leadingIcon,
+          trailingIcon,
+          href,
+          external,
+          externalIcon,
+          noExternalIcon,
+          target,
+          rel,
+          current,
+          active,
+          disabled,
+        ],
+    }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/link.slint,
+      props: [text, external, on-sidebar],
+    }
+  media: { status: none }
+  notes: "Slint Link has role button (no link role in Slint)."
+
+- name: LinkGroup
+  aliases: [link-group]
+  category: navigation
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/link-group,
+      props: [label, leadingIcon, trailingIcon, href, links],
+    }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only group of links."
+
+- name: Share
+  aliases: [share]
+  category: action
+  web: { status: done, path: packages/ui/src/components/share, props: [] }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web share button; no typed props in the types file."
+
+- name: CopyMarkdown
+  aliases: [copy-markdown]
+  category: action
+  web: { status: done, path: packages/ui/src/components/copy-markdown, props: [raw, onClick] }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only copy-to-clipboard control for markdown content."
+
+- name: SpeedDial
+  aliases: [speed-dial]
+  category: action
+  web: { status: done, path: packages/ui/src/components/speed-dial, props: [] }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only floating action fan-out."
+
+- name: FloatingAction
+  aliases: [floating-action]
+  category: action
+  web: { status: done, path: packages/ui/src/components/floating-action, props: [] }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only floating action button."
+
+- name: ScrollToTop
+  aliases: [scroll-to-top]
+  category: action
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/scroll-to-top,
+      props: [isVisible, scrollPercentage, threshold, progressWidth, hasProgress],
+    }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only; shows once the page is scrolled past a threshold."
+
+- name: LocaleSelector
+  aliases: [locale-selector]
+  category: action
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/locale-selector,
+      props: [code, label, href, locales, currentLocale, mode, leadingIcon, size, variant],
+    }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only. Slint language pick lives inside the status bar and more drawer, not as a component."
+
+- name: ThemeSelector
+  aliases: [theme-selector]
+  category: action
+  web: { status: done, path: packages/ui/src/components/theme-selector, props: [mode, color, size] }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only. Slint theme pick lives inside the status bar and more drawer."
+
+- name: Toolbar
+  aliases: [toolbar, dashboard-toolbar, ToolBar]
+  category: action
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/dashboard-toolbar,
+      props: [leadingSlot, trailingSlot],
+    }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/toolbar.slint,
+      props: [items, focus-index, accessible-name, forced-state],
+    }
+  media: { status: done, path: ui/widgets.slint#ToolBar, props: [] }
+  notes: "Web is a slot container; Slint is roving-focus items with icon labels. Media ToolBar has no typed props."
+
+- name: ActionRow
+  aliases: [ActionRow]
+  category: action
+  web: { status: none }
+  slint: { status: none }
+  media:
+    {
+      status: done,
+      path: ui/widgets.slint#ActionRow,
+      props: [show-confirm, confirm-text, cancel-text, confirm-enabled],
+    }
+  notes: "Media-only confirm and cancel row used beside dialogs and forms."
+
+# ---------- input ----------
+
+- name: Input
+  aliases: [input, password, Input]
+  category: input
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/input,
+      props:
+        [
+          type,
+          autocomplete,
+          value,
+          placeholder,
+          disabled,
+          readonly,
+          name,
+          required,
+          invalid,
+          leadingIcon,
+          trailingIcon,
+          leadingSlot,
+          trailingSlot,
+        ],
+    }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/input.slint,
+      props:
+        [
+          label,
+          text,
+          placeholder,
+          icon,
+          leading-icon,
+          password,
+          revealed,
+          clearable,
+          invalid,
+          read-only,
+          size,
+          trailing-addon,
+          enabled,
+        ],
+    }
+  media: { status: none }
+  notes: "Web password folder is merged here as type=password. Slint password is a flag with reveal and hide labels."
+
+- name: SearchField
+  aliases: [search-field, SearchField]
+  category: input
+  web: { status: none }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/search-field.slint,
+      props: [placeholder, shortcut-hint, clear-label, text, size, enabled],
+    }
+  media: { status: none }
+  notes: "Slint preset over Input. Web uses Input with type search."
+
+- name: Textarea
+  aliases: [textarea, Textarea]
+  category: input
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/textarea,
+      props: [value, placeholder, disabled, readonly, required, name, rows, autoGrow, invalid],
+    }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/textarea.slint,
+      props: [text, placeholder, rows, max-rows, read-only, invalid, enabled],
+    }
+  media: { status: none }
+  notes: "Slint auto-grow counts lines in Rust and ignores soft-wrapped lines."
+
+- name: NumberInput
+  aliases: [input-number, number-input]
+  category: input
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/input-number,
+      props: [value, min, max, step, size, placeholder, disabled, readonly, required, name],
+    }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/number-input.slint,
+      props:
+        [
+          value,
+          minimum,
+          maximum,
+          step,
+          size,
+          increase-label,
+          decrease-label,
+          invalid,
+          read-only,
+          enabled,
+        ],
+    }
+  media: { status: none }
+  notes: "Web value is a number; Slint keeps only number-like text."
+
+- name: PinInput
+  aliases: [input-pin]
+  category: input
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/input-pin,
+      props: [length, value, type, disabled, required, name],
+    }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only one-time-code input."
+
+- name: DatePicker
+  aliases: [input-date, date-picker, DatePicker]
+  category: input
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/input-date,
+      props: [value, min, max, step, size, placeholder, disabled, readonly, required, name],
+    }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/date-picker.slint,
+      props: [days, focus-index, placeholder, text, title, weekday-labels, enabled],
+    }
+  media: { status: none }
+  notes: "Web is a native date field; Slint is a calendar popover with text."
+
+- name: DateRangePicker
+  aliases: [date-range-picker, DateRangePicker]
+  category: input
+  web: { status: none }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/date-range-picker.slint,
+      props: [days, focus-index, placeholder, range-complete, text, title, weekday-labels, enabled],
+    }
+  media: { status: none }
+  notes: "Slint-only. Web Calendar has a range mode but no picker field."
+
+- name: TimePicker
+  aliases: [input-time, time-picker, TimePicker]
+  category: input
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/input-time,
+      props: [value, min, max, step, size, placeholder, disabled, readonly, required, name],
+    }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/time-picker.slint,
+      props: [hour, minute, enabled],
+    }
+  media: { status: none }
+  notes: "Web is a native time field; Slint has hour and minute spinners."
+
+- name: Calendar
+  aliases: [calendar, CalendarGrid]
+  category: input
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/calendar,
+      props:
+        [
+          type,
+          weekdayFormat,
+          weekStartsOn,
+          locale,
+          value,
+          placeholder,
+          range,
+          multiple,
+          preventDeselect,
+          maximumDays,
+          allowNonContiguousRanges,
+        ],
+    }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/calendar-grid.slint,
+      props:
+        [title, days, focus-index, weekday-labels, previous-label, next-label, accessible-name],
+    }
+  media: { status: none }
+  notes: "Web Calendar is the full grid with range support. Slint CalendarGrid is the grid only; the picker fields wrap it."
+
+- name: Select
+  aliases: [select, multiselect, MultiSelect, Select]
+  category: input
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/select,
+      props:
+        [
+          label,
+          value,
+          placeholder,
+          multiple,
+          required,
+          name,
+          size,
+          variant,
+          items,
+          leadingIcon,
+          disabled,
+          color,
+          layout,
+          defaultValue,
+        ],
+    }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/select.slint,
+      props:
+        [options, value, placeholder, max-visible, clearable, invalid, size, enabled, row-height],
+    }
+  media: { status: none }
+  notes: "Slint MultiSelect (multiselect.slint: options, query, summary, toggled) is merged here as the multiple mode. Web multiple is a prop."
+
+- name: Combobox
+  aliases: [input-menu, combobox, Combobox]
+  category: input
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/input-menu,
+      props: [label, value, items, placeholder, disabled, name, defaultValue],
+    }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/combobox.slint,
+      props:
+        [
+          options,
+          value,
+          placeholder,
+          filter-placeholder,
+          no-results-text,
+          max-visible,
+          invalid,
+          size,
+          enabled,
+        ],
+    }
+  media: { status: none }
+  notes: "Web input-menu is a filterable menu input. Slint Combobox opens on click and filters on typing."
+
+- name: Checkbox
+  aliases: [checkbox, Checkbox]
+  category: input
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/checkbox,
+      props:
+        [label, description, color, layout, size, side, highlight, disabled, required, name, value],
+    }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/checkbox.slint,
+      props: [text, check-state, size, invalid, enabled],
+    }
+  media: { status: none }
+  notes: "Slint indeterminate is check-state mixed."
+
+- name: CheckboxGroup
+  aliases: [checkbox-group]
+  category: input
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/checkbox-group,
+      props:
+        [
+          label,
+          description,
+          disabled,
+          value,
+          items,
+          defaultValue,
+          size,
+          layout,
+          orientation,
+          color,
+        ],
+    }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only group. Slint composes Checkbox instances in the caller."
+
+- name: RadioGroup
+  aliases: [radio-group, RadioGroup]
+  category: input
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/radio-group,
+      props: [value, label, description, disabled, items, defaultValue, orientation, name],
+    }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/radio-group.slint,
+      props: [options, value, selected, orientation, label, invalid, enabled, accessible-name],
+    }
+  media: { status: none }
+  notes: "Slint arrows select and wrap, skipping disabled options."
+
+- name: Switch
+  aliases: [switch, toggle, Toggle, Switch]
+  category: input
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/switch,
+      props: [checked, defaultChecked, disabled, name, value, label],
+    }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/switch.slint,
+      props: [checked, label-side, size, enabled, text],
+    }
+  media: { status: done, path: ui/widgets.slint#Toggle, props: [text, detail] }
+  notes: "Media Toggle is the Switch concept with a detail line."
+
+- name: Slider
+  aliases: [slider, Slider]
+  category: input
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/slider,
+      props: [value, min, max, step, name, orientation, disabled],
+    }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/slider.slint,
+      props: [value, minimum, maximum, step, show-value, value-suffix, enabled],
+    }
+  media:
+    {
+      status: done,
+      path: ui/widgets.slint#Slider,
+      props: [range-start, range-end, show-range, on-stage],
+    }
+  notes: "Media Slider is a range slider; Web and Slint are single-value."
+
+- name: ColorPicker
+  aliases: [color-picker, ColorPicker]
+  category: input
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/color-picker,
+      props: [value, defaultValue, disabled],
+    }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/color-picker.slint,
+      props: [color, presets, selected, label, accessible-name],
+    }
+  media: { status: none }
+  notes: "Slint ColorPicker and ColorField share color-picker.slint."
+
+- name: ColorField
+  aliases: [color-field, ColorField]
+  category: input
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/color-field,
+      props: [channel, colorSpace, value, placeholder, readonly, required, name, disabled, step],
+    }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/color-picker.slint,
+      props: [color, label, accessible-name],
+    }
+  media: { status: none }
+  notes: "Hex text field on the Slint side; web also takes a channel."
+
+- name: ColorArea
+  aliases: [color-area]
+  category: input
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/color-area,
+      props:
+        [
+          hue,
+          sat,
+          light,
+          bright,
+          colorSpace,
+          value,
+          defaultValue,
+          disabled,
+          name,
+          xChannel,
+          yChannel,
+        ],
+    }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only two-axis colour pad."
+
+- name: ColorSlider
+  aliases: [color-slider]
+  category: input
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/color-slider,
+      props:
+        [channel, colorSpace, value, defaultValue, disabled, inverted, name, orientation, step],
+    }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only channel slider."
+
+- name: Knob
+  aliases: [knob]
+  category: input
+  web: { status: done, path: packages/ui/src/components/knob, props: [] }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only rotary control."
+
+- name: Rating
+  aliases: [rating, input-rating]
+  category: input
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/input-rating,
+      props:
+        [
+          value,
+          defaultValue,
+          length,
+          step,
+          orientation,
+          clearable,
+          hoverable,
+          icon,
+          emptyIcon,
+          size,
+          disabled,
+          readonly,
+          required,
+          name,
+        ],
+    }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web merges the rating folder and input-rating. Slint has none."
+
+- name: TagsInput
+  aliases: [input-tags]
+  category: input
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/input-tags,
+      props: [label, value, items, displayLimit, hasInput, name, placeholder],
+    }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only free-text tags entry."
+
+- name: FileUpload
+  aliases: [file-upload]
+  category: input
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/file-upload,
+      props: [accept, multiple, title, description, icon],
+    }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only dropzone. Slint uses AttachmentTile for display only."
+
+- name: Editor
+  aliases: [editor]
+  category: input
+  web: { status: done, path: packages/ui/src/components/editor, props: [] }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only rich text editor; no typed props extracted."
+
+- name: Field
+  aliases: [form-field, Field]
+  category: input
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/form-field,
+      props:
+        [
+          id,
+          label,
+          description,
+          error,
+          required,
+          labelSlot,
+          descriptionSlot,
+          errorSlot,
+          helpSlot,
+          hintSlot,
+        ],
+    }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/field.slint,
+      props: [label, error, help, required],
+    }
+  media: { status: none }
+  notes: "Label, help and error wrapper. Slint Field and Form share field.slint."
+
+- name: Form
+  aliases: [form, Form]
+  category: input
+  web: { status: done, path: packages/ui/src/components/form, props: [onSubmit] }
+  slint: { status: done, path: crates/rimelight_ui/ui/components/field.slint, props: [] }
+  media: { status: none }
+  notes: "Thin wrapper on both sides."
+
+- name: Fieldset
+  aliases: [fieldset]
+  category: input
+  web: { status: done, path: packages/ui/src/components/fieldset, props: [] }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only grouping of fields."
+
+- name: FieldGroup
+  aliases: [field-group]
+  category: input
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/field-group,
+      props: [leadingSlot, trailingSlot],
+    }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only input with addons. Slint Input has trailing-addon."
+
+- name: Label
+  aliases: [label]
+  category: input
+  web: { status: done, path: packages/ui/src/components/label, props: [for] }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only standalone label. Slint labels are props on Field and Input."
+
+# ---------- data ----------
+
+- name: Table
+  aliases: [table, Table]
+  category: data
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/table,
+      props: [accessorKey, accessorFn, header, cell, row, column, table, actions, colspan, rowspan],
+    }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/table.slint,
+      props:
+        [
+          columns,
+          rows,
+          sort-column,
+          sort-descending,
+          focus-row,
+          header-column,
+          row-menu,
+          forced-state,
+          accessible-name,
+        ],
+    }
+  media: { status: none }
+  notes: "Web is headless (TanStack-style column definitions). Slint is row data with sort and selection in Rust."
+
+- name: List
+  aliases: [listbox, list, List]
+  category: data
+  web: { status: done, path: packages/ui/src/components/listbox, props: [] }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/list.slint,
+      props: [rows, focus-row, accessible-name, forced-state],
+    }
+  media: { status: none }
+  notes: "Web listbox props not extracted from types. Slint List emits picked(row)."
+
+- name: Tree
+  aliases: [tree, Tree]
+  category: navigation
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/tree,
+      props:
+        [id, label, icon, disabled, children, items, value, expanded, defaultExpanded, itemClass],
+    }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/tree.slint,
+      props: [rows, focus-row, selected-node, accessible-name, forced-state],
+    }
+  media: { status: none }
+  notes: "Slint tree is one Tab stop with roving keys; Slint caller supplies visible rows."
+
+- name: Timeline
+  aliases: [timeline, Timeline]
+  category: data
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/timeline,
+      props: [date, title, description, icon, avatar, value, items, orientation, reverse, size],
+    }
+  slint: { status: done, path: crates/rimelight_ui/ui/components/timeline.slint, props: [events] }
+  media: { status: none }
+  notes: "Web timeline has a date and icon per item; Slint events carry when, title and body."
+
+- name: Stat
+  aliases: [stat, Stat]
+  category: data
+  web: { status: none }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/stat.slint,
+      props: [label, value, delta, direction, caption],
+    }
+  media: { status: none }
+  notes: "Slint-only KPI tile. Web Chart and Meter do not cover it."
+
+- name: DescriptionList
+  aliases: [description-list, DescriptionList]
+  category: data
+  web: { status: none }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/description-list.slint,
+      props: [items, columns],
+    }
+  media: { status: none }
+  notes: "Slint-only term and value list."
+
+- name: Chart
+  aliases: [chart]
+  category: data
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/chart,
+      props: [label, value, color, type, data, title, height, style],
+    }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only. Charts in Slint are not yet in the component set."
+
+- name: QrCode
+  aliases: [qr-code]
+  category: data
+  web: { status: done, path: packages/ui/src/components/qr-code, props: [] }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only QR renderer."
+
+- name: Avatar
+  aliases: [avatar, Avatar]
+  category: data
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/avatar,
+      props: [src, alt, icon, text, badge, chip, position, loading, height, width],
+    }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/avatar.slint,
+      props: [name, initials, source, size, presence],
+    }
+  media: { status: none }
+  notes: "Web has more image-load props; Slint presence dot is built in."
+
+- name: AvatarStack
+  aliases: [avatar-group, AvatarStack]
+  category: data
+  web: { status: done, path: packages/ui/src/components/avatar-group, props: [items, max] }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/avatar.slint,
+      props: [people, max, size],
+    }
+  media: { status: none }
+  notes: "Same concept, overflow count in both."
+
+- name: User
+  aliases: [user]
+  category: data
+  web: { status: done, path: packages/ui/src/components/user, props: [] }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only user identity display; no typed props extracted."
+
+- name: PresenceDot
+  aliases: [presence-dot, PresenceDot]
+  category: data
+  web: { status: none }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/presence-dot.slint,
+      props: [presence, accessible-name],
+    }
+  media: { status: none }
+  notes: "Slint-only. Same presence states as Avatar."
+
+- name: Kbd
+  aliases: [kbd, Kbd]
+  category: data
+  web: { status: done, path: packages/ui/src/components/kbd, props: [] }
+  slint: { status: done, path: crates/rimelight_ui/ui/components/kbd.slint, props: [keys] }
+  media: { status: none }
+  notes: "Slint takes keys as an array because Slint cannot split strings."
+
+- name: Tag
+  aliases: [chip, tag, Tag]
+  category: data
+  web: { status: done, path: packages/ui/src/components/chip, props: [text, show, labelSlot] }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/tag.slint,
+      props: [label, tone, removable, remove-label, on-sidebar],
+    }
+  media: { status: none }
+  notes: "Chip is Tag. Slint has tone and a remove button when removable."
+
+- name: Badge
+  aliases: [badge, Badge]
+  category: feedback
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/badge,
+      props: [label, icon, avatar, leadingIcon, trailingIcon],
+    }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/badge.slint,
+      props: [count, dot, max, tone, accessible-name],
+    }
+  media: { status: none }
+  notes: "Slint Badge also covers counts and dots."
+
+- name: StatusDot
+  aliases: [status-dot, StatusDot]
+  category: feedback
+  web: { status: none }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/status-dot.slint,
+      props: [label, tone, accessible-name],
+    }
+  media: { status: none }
+  notes: "Slint-only read-only status indicator."
+
+- name: Card
+  aliases: [card, Card]
+  category: layout
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/card,
+      props: [title, description, mediaSrc, href, target, rel, role],
+    }
+  slint:
+    { status: done, path: crates/rimelight_ui/ui/components/card.slint, props: [title, surface] }
+  media: { status: done, path: ui/widgets.slint#Card, props: [] }
+  notes: "Web card is a link-capable content card; Slint is a raised or sunken surface. Media Card has no typed props."
+
+- name: Tile
+  aliases: [Tile]
+  category: navigation
+  web: { status: none }
+  slint: { status: none }
+  media: { status: done, path: ui/widgets.slint#Tile, props: [icon, title, detail, keys, accent] }
+  notes: "Media-only launch tile with a keyboard hint."
+  scope: app-specific
+  home: kit
+
+- name: FileTile
+  aliases: [attachment-tile, AttachmentTile, FileKindTile]
+  category: data
+  web: { status: none }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/attachment-tile.slint,
+      props: [item, items, columns, tile-width],
+    }
+  media: { status: done, path: ui/widgets.slint#FileKindTile, props: [kind, tile-size] }
+  notes: "Slint AttachmentTile and Media FileKindTile are file tiles; Slint also has a grid."
+
+- name: RecentList
+  aliases: [RecentRow, RecentBlock]
+  category: navigation
+  web: { status: none }
+  slint: { status: none }
+  media: { status: done, path: ui/widgets.slint#RecentBlock, props: [recents, ink, muted] }
+  notes: "Media-only recents list with clear action."
+  scope: app-specific
+  home: kit
+
+- name: EmptyState
+  aliases: [empty, empty-state, EmptyState]
+  category: feedback
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/empty,
+      props: [label, icon, href, avatar, title, description, actions, footerSlot],
+    }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/empty-state.slint,
+      props: [title, description, icon, action-label, compact],
+    }
+  media:
+    {
+      status: done,
+      path: ui/widgets.slint#EmptyState,
+      props: [icon, title, formats, hint, open-text, new-text, recents, on-stage],
+    }
+  notes: "Media EmptyState includes a recents list and open/new actions. Web and Slint keep one action slot."
+
+- name: ErrorState
+  aliases: [error, error-state, ErrorState]
+  category: feedback
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/error,
+      props:
+        [label, icon, color, variant, href, title, status, error, description, hideStatus, actions],
+    }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/error-state.slint,
+      props: [title, description, details, icon, retry-label],
+    }
+  media: { status: none }
+  notes: "Web error renders HTTP-like status pages. Slint ErrorState has retry only."
+
+- name: ErrorBoundary
+  aliases: [error-boundary]
+  category: feedback
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/error-boundary,
+      props:
+        [children, fallbackSlot, resetKey, onError, errorProps, retryLabel, homeLabel, homeHref],
+    }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only runtime wrapper."
+
+- name: PageState
+  aliases: [page-state, PageState]
+  category: feedback
+  web: { status: none }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/page-state.slint,
+      props:
+        [
+          state,
+          icon,
+          loading-text,
+          empty-title,
+          empty-description,
+          error-title,
+          error-description,
+          error-details,
+          retry-label,
+        ],
+    }
+  media: { status: none }
+  notes: "Slint-only switch between loading, empty and error."
+
+- name: Progress
+  aliases: [progress, Progress]
+  category: feedback
+  web: { status: done, path: packages/ui/src/components/progress, props: [value, max] }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/progress.slint,
+      props: [value, indeterminate, tone, accessible-name],
+    }
+  media: { status: none }
+  notes: "Same concept."
+
+- name: Meter
+  aliases: [meter]
+  category: feedback
+  web: { status: done, path: packages/ui/src/components/meter, props: [] }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only gauge. Slint has no gauge."
+
+- name: Skeleton
+  aliases: [skeleton, Skeleton]
+  category: feedback
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/skeleton,
+      props: [loading, width, height, borderRadius, tag, element, fallbackBorderRadius],
+    }
+  slint:
+    { status: done, path: crates/rimelight_ui/ui/components/skeleton.slint, props: [shape, pulse] }
+  media: { status: none }
+  notes: "Same concept."
+
+- name: Spinner
+  aliases: [spinner, Spinner]
+  category: feedback
+  web: { status: done, path: packages/ui/src/components/spinner, props: [] }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/spinner.slint,
+      props: [size, running, ink],
+    }
+  media: { status: none }
+  notes: "Same concept."
+
+- name: Banner
+  aliases: [banner, callout, Banner]
+  category: feedback
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/banner,
+      props:
+        [title, icon, actions, dismissible, label, href, external, sticky, fixed, hideOnScroll],
+    }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/banner.slint,
+      props: [title, description, tone, action-label, dismiss-label, compact],
+    }
+  media: { status: none }
+  notes: "Web callout folder is merged here. Slint Banner never hides itself; caller removes it. Web banner is a sticky page strip."
+
+- name: Toast
+  aliases: [toast, toaster, ToastStack]
+  category: feedback
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/toast,
+      props: [color, title, description, duration, dismissible, id],
+    }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/toast.slint,
+      props: [toasts, newest, label, host-width],
+    }
+  media: { status: none }
+  notes: "Web toaster folder is merged here. Slint keeps the queue in Rust with F6 focus to newest."
+
+- name: Tooltip
+  aliases: [tooltip, Tooltip]
+  category: feedback
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/tooltip,
+      props: [body, placement, open, defaultOpen],
+    }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/tooltip.slint,
+      props: [text, placement, shortcut, forced-open],
+    }
+  media: { status: none }
+  notes: "Slint shows on focus and hover after a rest, not clamped to the window."
+
+- name: RouteAnnouncer
+  aliases: [route-announcer]
+  category: feedback
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/route-announcer,
+      props: [color, size, class, prefix, progress],
+    }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only screen-reader route announcement."
+
+- name: Tour
+  aliases: [tour]
+  category: feedback
+  web: { status: done, path: packages/ui/src/components/tour, props: [] }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only guided onboarding."
+
+- name: Placeholder
+  aliases: [placeholder]
+  category: feedback
+  web: { status: done, path: packages/ui/src/components/placeholder, props: [] }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only placeholder block for missing content."
+
+# ---------- overlay ----------
+
+- name: Dialog
+  aliases: [modal, confirm, dialog, Dialog, ConfirmDialog]
+  category: overlay
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/modal,
+      props:
+        [
+          title,
+          description,
+          open,
+          size,
+          backdrop,
+          scrollable,
+          fullscreen,
+          dismissible,
+          triggerLabel,
+          role,
+        ],
+    }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/dialog.slint,
+      props: [title, description, size, dismissible, confirm-label, cancel-label, danger, actions],
+    }
+  media:
+    {
+      status: done,
+      path: ui/widgets.slint#ConfirmDialog,
+      props: [title, name, detail, primary-text, secondary-text],
+    }
+  notes: "Web confirm folder is merged here (AlertDialog). Web modal = Slint Dialog. Media ConfirmDialog is a yes or no dialog with a name."
+
+- name: Sheet
+  aliases: [drawer, slideover, sheet, Sheet]
+  category: overlay
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/drawer,
+      props: [side, open, title, description, triggerLabel, dismissible],
+    }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/sheet.slint,
+      props: [placement, size, title, description, dismissible, actions],
+    }
+  media: { status: none }
+  notes: "Web slideover folder is merged here. Slint placement is right, left or bottom."
+
+- name: Popover
+  aliases: [popover, Popover]
+  category: overlay
+  web: { status: done, path: packages/ui/src/components/popover, props: [mode, open, triggerLabel] }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/popover.slint,
+      props: [align-end, panel-width, gap, content-padding, accessible-name],
+    }
+  media: { status: none }
+  notes: "Slint Popover takes height from the caller."
+
+- name: HoverCard
+  aliases: [hover-card]
+  category: overlay
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/hover-card,
+      props: [triggerLabel, side, open, defaultOpen],
+    }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only hover-triggered card."
+
+- name: ShortcutsDialog
+  aliases: [shortcuts, shortcuts-dialog, ShortcutsDialog]
+  category: overlay
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/shortcuts,
+      props: [key, label, items, categories, open, defaultOpen],
+    }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/shortcuts-dialog.slint,
+      props: [title, label, keys, mac-keys, other-keys, has-other, planned],
+    }
+  media: { status: none }
+  notes: "Media ShortcutsCtl is a global helper for this dialog, not a component."
+
+- name: ImageViewer
+  aliases: [image-viewer, ImageViewer]
+  category: media
+  web: { status: none }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/image-viewer.slint,
+      props: [images, current-index, is-open, next-label, previous-label, close-label],
+    }
+  media: { status: none }
+  notes: "Slint-only lightbox. Web gallery is a separate grid."
+
+- name: CommandPalette
+  aliases: [command-palette, dashboard-search, dashboard-search-button, CommandPalette]
+  category: navigation
+  web: { status: done, path: packages/ui/src/components/command-palette, props: [] }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/command-palette.slint,
+      props: [query, rows, highlight, empty-text, search-label, panel-width],
+    }
+  media: { status: none }
+  notes: "Web dashboard-search and its trigger are merged here. Slint Ctrl+K opens from any focus."
+
+- name: SearchDialog
+  aliases: [search]
+  category: navigation
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/search,
+      props: [title, url, sourceType, snippet, endpoint, placeholder, messages, open, defaultOpen],
+    }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only search dialog with results and an endpoint."
+
+# ---------- navigation / layout / shell ----------
+
+- name: Breadcrumbs
+  aliases: [breadcrumb, breadcrumbs, Breadcrumbs]
+  category: navigation
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/breadcrumb,
+      props: [label, icon, href, active, disabled, onSelect, external],
+    }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/breadcrumbs.slint,
+      props: [items, max-visible],
+    }
+  media: { status: none }
+  notes: "Slint collapses by count not width."
+
+- name: Pagination
+  aliases: [pagination, Pagination]
+  category: navigation
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/pagination,
+      props: [page, defaultPage, totalPages],
+    }
+  slint:
+    { status: done, path: crates/rimelight_ui/ui/components/pagination.slint, props: [page, total] }
+  media: { status: none }
+  notes: "Web is 1-based page with totalPages; Slint is 1-based page with total."
+
+- name: Tabs
+  aliases: [tabs, content-tabs, Tabs]
+  category: navigation
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/tabs,
+      props:
+        [label, value, icon, badge, content, disabled, items, defaultValue, maxTabs, unmountOnHide],
+    }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/content-tabs.slint,
+      props: [tabs, active, accessible-name, forced-state],
+    }
+  media: { status: none }
+  notes: "Content tabs. Slint roving focus; arrows never activate."
+
+- name: TabBar
+  aliases: [tab-bar, TabBar]
+  category: navigation
+  web: { status: none }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/tab-bar.slint,
+      props: [items, selected],
+    }
+  media: { status: none }
+  notes: "Slint-only bar of tabs."
+
+- name: TabStrip
+  aliases: [TabStrip]
+  category: shell
+  web: { status: none }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/tabs.slint,
+      props: [tabs, active, pinned-count, accent-underline, strip-height, accessible-name],
+    }
+  media: { status: none }
+  notes: "Browser-style open tabs with drag and pin. Shell piece, not the content Tabs."
+  scope: app-specific
+  home: shell
+
+- name: ViewSwitcher
+  aliases: [view-switcher, ViewSwitcher]
+  category: navigation
+  web: { status: none }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/view-switcher.slint,
+      props: [options, active, trigger-height, accessible-name],
+    }
+  media: { status: none }
+  notes: "Slint-only view picker."
+
+- name: Stepper
+  aliases: [stepper, steps, Stepper]
+  category: navigation
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/stepper,
+      props: [title, description, value, items, linear, defaultValue, onNext, onPrev],
+    }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/stepper.slint,
+      props: [steps, current, clickable, done-clickable, label, phase],
+    }
+  media: { status: none }
+  notes: "Web steps folder is merged here (size only). Slint clickable steps are done steps only."
+
+- name: TableOfContents
+  aliases: [table-of-contents]
+  category: navigation
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/table-of-contents,
+      props: [depth, slug, text, minHeadingLevel, maxHeadingLevel, headings, collapsible],
+    }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only heading index."
+
+- name: NavigationMenu
+  aliases: [navigation-menu]
+  category: navigation
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/navigation-menu,
+      props: [label, description, icon, href, active, items, panels],
+    }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only top-level site nav with panels."
+
+- name: Dock
+  aliases: [dock]
+  category: navigation
+  web: { status: done, path: packages/ui/src/components/dock, props: [] }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only macOS-style dock."
+
+- name: PrevNext
+  aliases: [surround]
+  category: navigation
+  web: { status: done, path: packages/ui/src/components/surround, props: [label, href, prev, next] }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only previous and next pager."
+
+- name: Accordion
+  aliases: [accordion, Accordion]
+  category: layout
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/accordion,
+      props:
+        [
+          label,
+          value,
+          icon,
+          content,
+          disabled,
+          items,
+          defaultValue,
+          collapsible,
+          onValueChange,
+          unmountOnHide,
+          type,
+        ],
+    }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/accordion.slint,
+      props: [items, multiple, open-index, open-when-single, title, body],
+    }
+  media: { status: none }
+  notes: "Web single or multiple via type; Slint single via open-index or multiple."
+
+- name: Collapsible
+  aliases: [collapsible]
+  category: layout
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/collapsible,
+      props: [open, disabled, defaultOpen, unmountOnHide, triggerSlot, bodySlot],
+    }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only single disclosure."
+
+- name: Spoiler
+  aliases: [spoiler]
+  category: layout
+  web: { status: done, path: packages/ui/src/components/spoiler, props: [] }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only show-more reveal."
+
+- name: Container
+  aliases: [container]
+  category: layout
+  web: { status: done, path: packages/ui/src/components/container, props: [] }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only width container."
+
+- name: Grid
+  aliases: [grid, layout-grid]
+  category: layout
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/layout-grid,
+      props: [cols, smCols, mdCols, lgCols, xlCols, gutter, margin, maxWidth],
+    }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web grid folder is merged here. Slint has no grid layout component."
+
+- name: Page
+  aliases: [page, page-aside, page-body, page-header]
+  category: layout
+  web: { status: done, path: packages/ui/src/components/page, props: [leadingSlot, trailingSlot] }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web page folder and its sub-parts (aside, body, header) are merged here."
+
+- name: Section
+  aliases: [section, page-section, Section]
+  category: layout
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/page-section,
+      props: [layout, ctaVariant, headline, icon, title, description, links, orientation, reverse],
+    }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/section.slint,
+      props: [title, description],
+    }
+  media: { status: none }
+  notes: "Slint Section has no surface. Web page-section is a marketing section."
+
+- name: Main
+  aliases: [main]
+  category: layout
+  web: { status: done, path: packages/ui/src/components/main, props: [] }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only landmark."
+
+- name: StickySurface
+  aliases: [sticky-surface]
+  category: layout
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/sticky-surface,
+      props: [stuckShadow, offsetTop, zIndex, style],
+    }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only sticky container."
+
+- name: Marquee
+  aliases: [marquee]
+  category: layout
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/marquee,
+      props: [orientation, reverse, speed, pauseOnHover, gap],
+    }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only scrolling ticker."
+
+- name: AspectRatio
+  aliases: [aspect-ratio]
+  category: layout
+  web: { status: done, path: packages/ui/src/components/aspect-ratio, props: [ratio] }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only."
+
+- name: Divider
+  aliases: [separator, divider, ToolDivider, Divider]
+  category: layout
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/separator,
+      props: [decorative, label, icon, avatar],
+    }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/divider.slint,
+      props: [label, vertical, on-sidebar],
+    }
+  media: { status: done, path: ui/widgets.slint#ToolDivider, props: [] }
+  notes: "Media ToolDivider is merged here."
+
+- name: ScrollArea
+  aliases: [scroll-area, ScrollArea]
+  category: layout
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/scroll-area,
+      props: [orientation, scrollHideDelay, height],
+    }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/scroll-area.slint,
+      props: [forced-state, accessible-name],
+    }
+  media: { status: none }
+  notes: "Slint is a token scrollbar over ScrollView."
+
+- name: SplitPane
+  aliases: [splitter, split-pane, SplitPane]
+  category: layout
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/splitter,
+      props: [orientation, startPos, collapsed, size, percentage, resizing, collapse, expand],
+    }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/split-pane.slint,
+      props: [ratio, vertical, min-first, min-second],
+    }
+  media: { status: none }
+  notes: "Web splitter has collapse and expand; Slint is ratio only."
+
+- name: ResizablePanel
+  aliases: [dashboard-panel, dashboard-resize-handle, resizable-panel, ResizablePanel]
+  category: layout
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/dashboard-panel,
+      props: [resizable, headerSlot, bodySlot, footerSlot, handleSlot],
+    }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/resizable-panel.slint,
+      props: [size, min-size, max-size, edge, accessible-name],
+    }
+  media: { status: none }
+  notes: "Web dashboard panel and resize handle merged here. Slint handle is one Tab stop."
+
+- name: Header
+  aliases: [header, dashboard-navbar, Header]
+  category: shell
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/header,
+      props:
+        [
+          contain,
+          sticky,
+          fixed,
+          stackIndex,
+          hideOnScroll,
+          layerType,
+          leadingSlot,
+          centerSlot,
+          trailingSlot,
+        ],
+    }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web dashboard-navbar is merged here."
+
+- name: Footer
+  aliases: [footer]
+  category: marketing
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/footer,
+      props: [contain, leadingSlot, centerSlot, trailingSlot],
+    }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only site footer."
+
+- name: Sidebar
+  aliases:
+    [
+      sidebar,
+      dashboard-sidebar,
+      dashboard-group,
+      dashboard-sidebar-collapse,
+      dashboard-sidebar-toggle,
+      Sidebar,
+    ]
+  category: shell
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/dashboard-sidebar,
+      props:
+        [
+          side,
+          collapsible,
+          collapsed,
+          defaultCollapsed,
+          openMobile,
+          defaultOpenMobile,
+          headerSlot,
+          footerSlot,
+        ],
+    }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/sidebar.slint,
+      props: [items, current-key, expanded, selected, switcher, show-collapse, sidebar-width],
+    }
+  media: { status: none }
+  notes: "Web dashboard sidebar and its toggle and group parts are merged here. Slint sidebar includes the project switcher."
+
+- name: Rail
+  aliases: [rail, Rail]
+  category: shell
+  web: { status: none }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/rail.slint,
+      props: [items, selected, badges],
+    }
+  media: { status: none }
+  notes: "Slint-only icon rail for app sections."
+  scope: app-specific
+  home: shell
+
+- name: StatusBar
+  aliases: [status-bar, StatusBar]
+  category: shell
+  web: { status: none }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/status-bar.slint,
+      props: [current, title, clock-text, timer-text, zoom-percent, theme-label, language-names],
+    }
+  media: { status: done, path: ui/widgets.slint#StatusBar, props: [left-text, center-text] }
+  notes: "Slint StatusBar is the desktop footer with record, zoom, language and theme. Media StatusBar has left and centre text only."
+
+- name: MoreDrawer
+  aliases: [more-drawer, MoreDrawer]
+  category: shell
+  web: { status: none }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/more-drawer.slint,
+      props: [areas, jobs, language-names, theme-label, timer-text, value],
+    }
+  media: { status: none }
+  notes: "Slint-only overflow drawer of app actions."
+  scope: app-specific
+  home: shell
+
+- name: ProfileMenu
+  aliases: [profile-menu, ProfileMenu]
+  category: shell
+  web: { status: none }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/profile-menu.slint,
+      props: [user-name, user-email, user-initials, presence],
+    }
+  media: { status: none }
+  notes: "Slint-only account menu with sign-out."
+  scope: app-specific
+  home: shell
+
+- name: SignInScreen
+  aliases: [sign-in-screen, SignInScreen]
+  category: shell
+  web: { status: none }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/sign-in-screen.slint,
+      props:
+        [
+          phase,
+          product-name,
+          sign-in-label,
+          cancel-label,
+          retry-label,
+          waiting-text,
+          loading-text,
+          error-text,
+          unreachable-title,
+          unreachable-text,
+        ],
+    }
+  media: { status: none }
+  notes: "Slint-only sign-in state screen."
+  scope: app-specific
+  home: shell
+
+- name: QuickAction
+  aliases: [quick-action, QuickAction]
+  category: action
+  web: { status: none }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/quick-action.slint,
+      props: [categories, item-count, open-request],
+    }
+  media: { status: none }
+  notes: "Slint-only quick-action launcher for Space."
+  scope: app-specific
+  home: space
+
+- name: IssueCard
+  aliases: [issue-card, IssueCard]
+  category: data
+  web: { status: none }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/issue-card.slint,
+      props: [card, column, column-names],
+    }
+  media: { status: none }
+  notes: "Slint-only Space issue card with drag and drop."
+  scope: app-specific
+  home: space
+
+- name: KanbanBoard
+  aliases: [kanban-board, kanban-column, KanbanBoard, KanbanColumn]
+  category: data
+  web: { status: none }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/kanban-board.slint,
+      props: [board, board-names, column-width],
+    }
+  media: { status: none }
+  notes: "Slint kanban-board.slint and kanban-column.slint are merged here. Uses the Space issue model."
+  scope: app-specific
+  home: space
+
+- name: ActivityFeed
+  aliases: [activity-feed, ActivityFeed]
+  category: data
+  web: { status: none }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/activity-feed.slint,
+      props: [items, has-more],
+    }
+  media: { status: none }
+  notes: "Slint-only activity list with Load more."
+  scope: app-specific
+  home: space
+
+# ---------- marketing / mockups / media / chat ----------
+
+- name: BrowserMockup
+  aliases: [browser-mockup]
+  category: marketing
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/browser-mockup,
+      props: [controls, navigation, url, urlIcon, urlPrefix],
+    }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only device frame."
+
+- name: WindowMockup
+  aliases: [window-mockup]
+  category: marketing
+  web: { status: done, path: packages/ui/src/components/window-mockup, props: [] }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only window frame."
+
+- name: PhoneMockup
+  aliases: [phone-mockup]
+  category: marketing
+  web: { status: done, path: packages/ui/src/components/phone-mockup, props: [] }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only phone frame."
+
+- name: Keyboard
+  aliases: [keyboard]
+  category: marketing
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/keyboard,
+      props:
+        [
+          keys,
+          color,
+          label,
+          width,
+          height,
+          keyGap,
+          sectionGap,
+          keySize,
+          layout,
+          highlightedKeys,
+          groups,
+        ],
+    }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only on-screen keyboard diagram."
+
+- name: Gamepad
+  aliases: [gamepad]
+  category: marketing
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/gamepad,
+      props: [buttons, color, highlightedButtons, groups, highlightColor, backgroundColor],
+    }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only controller diagram."
+
+- name: Logo
+  aliases: [logo]
+  category: marketing
+  web:
+    { status: done, path: packages/ui/src/components/logo, props: [variant, mode, src, alt, href] }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only brand logo."
+
+- name: Quote
+  aliases: [quote]
+  category: marketing
+  web: { status: done, path: packages/ui/src/components/quote, props: [quoteSlot, captionSlot] }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only testimonial."
+
+- name: Post
+  aliases: [post]
+  category: marketing
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/post,
+      props: [title, description, date, image, href, badge, badgeColor],
+    }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only blog card."
+
+- name: PricingPlan
+  aliases: [pricing-plan]
+  category: marketing
+  web: { status: done, path: packages/ui/src/components/pricing-plan, props: [] }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only single plan card."
+
+- name: PricingTable
+  aliases: [pricing-table]
+  category: marketing
+  web: { status: done, path: packages/ui/src/components/pricing-table, props: [] }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only plan comparison."
+
+- name: Prose
+  aliases: [prose]
+  category: marketing
+  web: { status: done, path: packages/ui/src/components/prose, props: [] }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only typography wrapper."
+
+- name: PackageManagers
+  aliases: [package-managers]
+  category: marketing
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/package-managers,
+      props: [pkg, dev, args, comment, prefix, type, managers],
+    }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only install command tabs."
+
+- name: Watermark
+  aliases: [watermark]
+  category: marketing
+  web: { status: done, path: packages/ui/src/components/watermark, props: [] }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only."
+
+- name: Compare
+  aliases: [compare]
+  category: media
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/compare,
+      props: [value, min, max, step, beforeSrc, afterSrc, beforeAlt, afterAlt, showLabels],
+    }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only before and after slider."
+
+- name: Carousel
+  aliases: [carousel]
+  category: media
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/carousel,
+      props: [src, alt, title, description, delay, stopOnMouseEnter, speed, items, index],
+    }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only slide carousel."
+
+- name: Gallery
+  aliases: [gallery]
+  category: media
+  web: { status: done, path: packages/ui/src/components/gallery, props: [] }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only image grid."
+
+- name: Image
+  aliases: [image]
+  category: media
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/image,
+      props:
+        [src, alt, width, height, formats, widths, sizes, densities, loading, decoding, caption],
+    }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only responsive image."
+
+- name: Audio
+  aliases: [audio]
+  category: media
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/audio,
+      props:
+        [
+          src,
+          type,
+          kind,
+          srclang,
+          label,
+          title,
+          description,
+          artwork,
+          duration,
+          transcript,
+          tracks,
+        ],
+    }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only audio player."
+
+- name: Video
+  aliases: [video]
+  category: media
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/video,
+      props: [src, title, icon, thumbnail, iconSlot, transcriptSlot],
+    }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only video player."
+
+- name: Icon
+  aliases: [icon]
+  category: data
+  web: { status: done, path: packages/ui/src/components/icon, props: [name] }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Slint icons are a function (icon::icon), not a component."
+
+- name: ChatMessage
+  aliases: [chat, chat-message, chat-messages]
+  category: chat
+  web: { status: done, path: packages/ui/src/components/chat-message, props: [from] }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web chat, chat-message and chat-messages folders are merged here."
+
+- name: ChatPrompt
+  aliases: [chat-prompt, chat-prompt-submit]
+  category: chat
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/chat-prompt,
+      props: [value, defaultValue, placeholder, name, disabled, status, onStop, onSubmit],
+    }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web submit button is merged here."
+
+- name: ChatReasoning
+  aliases: [chat-reasoning]
+  category: chat
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/chat-reasoning,
+      props: [label, streaming, defaultOpen],
+    }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only collapsible reasoning trace."
+
+- name: ChatTool
+  aliases: [chat-tool]
+  category: chat
+  web:
+    {
+      status: done,
+      path: packages/ui/src/components/chat-tool,
+      props: [toolName, status, defaultOpen],
+    }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only tool-call display."
+
+- name: ChatShimmer
+  aliases: [chat-shimmer]
+  category: chat
+  web: { status: done, path: packages/ui/src/components/chat-shimmer, props: [] }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only streaming placeholder."
+
+- name: ChatPalette
+  aliases: [chat-palette]
+  category: chat
+  web: { status: done, path: packages/ui/src/components/chat-palette, props: [] }
+  slint: { status: none }
+  media: { status: none }
+  notes: "Web-only chat palette."
+
+- name: FilterBar
+  aliases: [filter-bar, FilterBar]
+  category: data
+  web: { status: none }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/filter-bar.slint,
+      props: [query, chips, placeholder, search-label, clear-all-label],
+    }
+  media: { status: none }
+  notes: "Slint-only search with removable filter chips."
