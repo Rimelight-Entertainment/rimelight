@@ -1,3 +1,6 @@
+// Keys are the built-in palette names. The colours now come from @rimelight/design
+// (generated/tokens.json), and preset.ts emits those values. The [chroma, hue] pairs are
+// only the inputs to the OKLCH fallback algorithm: they are not used for built-in shades.
 export const PALETTES = {
   neutral: [0, 0],
   primary: [0.21, 260],

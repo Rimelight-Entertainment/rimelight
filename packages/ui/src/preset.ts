@@ -1,10 +1,82 @@
 import { presetIcons, presetTypography, presetWind4, type Preset } from "unocss";
+import designTokens from "@rimelight/design/tokens.json" with { type: "json" };
 import type { ColorModeInput, UIConfig } from "./types";
 import { DEFAULT_ICONS, toIconClass } from "./constants/icons";
 import { resolveWebFontsPreset } from "./fonts";
 import { PALETTES } from "./constants/palettes";
 
 export { PALETTES };
+
+type DesignPair = { light: string; dark: string };
+type DesignToken = { $type: string; $value: any };
+
+// Resolved values from @rimelight/design (generated/tokens.json). Built-in palettes and
+// role variables come from here; nothing in this file recomputes them.
+const DESIGN = designTokens as unknown as Record<string, DesignToken>;
+
+const lc = (hex: string) => hex.toLowerCase();
+
+// `ramp.<palette>.<shade>` -> per-shade light/dark pair.
+const DESIGN_RAMPS: Record<string, Record<string, DesignPair>> = {};
+for (const [path, token] of Object.entries(DESIGN)) {
+  const m = /^ramp\.([a-z]+)\.(\d+)$/.exec(path);
+  if (m) (DESIGN_RAMPS[m[1]!] ??= {})[m[2]!] = token.$value as DesignPair;
+}
+
+const fontList = (v: string | string[]): string =>
+  (Array.isArray(v) ? v : [v]).map((f) => (/\s/.test(f) ? JSON.stringify(f) : f)).join(", ");
+
+// Role variables (`--rl-color-*`, `--rl-size-*`, `--rl-radius-*`, `--rl-motion-*`, ...),
+// named exactly as generated/tokens.css names them. Ramp entries are handled above.
+const ROLE_LINES: string[] = [];
+const MOTION_VARS: string[] = [];
+for (const [path, token] of Object.entries(DESIGN)) {
+  if (path.startsWith("$") || path.startsWith("ramp.")) continue;
+  const name = `--rl-${path.replace(/\./g, "-")}`;
+  const v = token.$value;
+  switch (token.$type) {
+    case "color":
+      ROLE_LINES.push(`${name}: light-dark(${lc(v.light)}, ${lc(v.dark)});`);
+      break;
+    case "dimension":
+    case "number":
+      ROLE_LINES.push(`${name}: ${v};`);
+      break;
+    case "duration":
+      ROLE_LINES.push(`${name}: ${v};`);
+      MOTION_VARS.push(name);
+      break;
+    case "cubicBezier":
+      ROLE_LINES.push(`${name}: cubic-bezier(${(v as number[]).join(", ")});`);
+      break;
+    case "fontFamily":
+      ROLE_LINES.push(`${name}: ${fontList(v)};`);
+      break;
+    case "typography":
+      for (const [key, sub] of Object.entries(v as Record<string, any>)) {
+        const sn = `${name}-${key.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`)}`;
+        ROLE_LINES.push(`${sn}: ${key === "fontFamily" ? fontList(sub) : sub};`);
+      }
+      break;
+    case "shadow":
+      ROLE_LINES.push(`${name}-offset-x: ${v.offsetX};`);
+      ROLE_LINES.push(`${name}-offset-y: ${v.offsetY};`);
+      ROLE_LINES.push(`${name}-blur: ${v.blur};`);
+      ROLE_LINES.push(`${name}-spread: ${v.spread};`);
+      ROLE_LINES.push(`${name}-color: light-dark(${lc(v.color.light)}, ${lc(v.color.dark)});`);
+      ROLE_LINES.push(
+        `${name}: ${v.offsetX} ${v.offsetY} ${v.blur} ${v.spread} light-dark(${lc(v.color.light)}, ${lc(v.color.dark)});`,
+      );
+      break;
+    default:
+      throw new Error(`@rimelight/design: unsupported token type "${token.$type}" at ${path}`);
+  }
+}
+
+const REDUCED_MOTION_CSS =
+  MOTION_VARS.length > 0
+    ? `@media (prefers-reduced-motion: reduce) {\n  :root {\n${MOTION_VARS.map((n) => `    ${n}: 0ms;`).join("\n")}\n  }\n}`
+    : "";
 
 const SHADES = {
   "50": [0.985, 0.1, 0.145, 0.2],
@@ -60,6 +132,19 @@ function resolveTokens(custom: Record<string, ColorModeInput> = {}) {
 
   for (const [name, val] of Object.entries({ ...PALETTES, ...custom })) {
     themeColors[name] = createThemeShades(name);
+
+    // A built-in palette takes its shades from @rimelight/design unless the caller passed
+    // the same name in `colors`, which then wins and goes through the OKLCH/custom path.
+    const designRamp = Object.hasOwn(custom, name) ? undefined : DESIGN_RAMPS[name];
+    if (designRamp) {
+      for (const [s] of SHADE_ENTRIES) {
+        const pair = designRamp[s];
+        if (!pair) throw new Error(`@rimelight/design: ramp ${name} has no shade ${s}`);
+        tokenVarLines.push(`--rl-${name}-${s}: light-dark(${lc(pair.light)}, ${lc(pair.dark)});`);
+      }
+      continue;
+    }
+
     const getShade = Array.isArray(val)
       ? createOklchShadeGetter(val)
       : createCustomShadeGetter(val);
@@ -330,7 +415,9 @@ export function rimelightUiPreset({ colors, icons, fonts, presets = {} }: UIConf
   --rl-header-height: 4rem;
   --rl-container: 90rem;
   ${tokenVarLines.join("\n  ")}
+  ${ROLE_LINES.join("\n  ")}
 }
+${REDUCED_MOTION_CSS}
 [data-theme="dark"] { color-scheme: dark; }
 [data-theme="light"] { color-scheme: light; }
 body { background-color: var(--rl-neutral-50); color: var(--rl-neutral-950); }

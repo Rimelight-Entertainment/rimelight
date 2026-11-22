@@ -431,6 +431,8 @@ importers:
         specifier: ^1.0.0
         version: 1.6.0(@types/node@26.6.5)(@vitest/ui@5.1.0)(happy-dom@21.0.4)(jiti@2.7.0)(typescript@7.1.0-beta)
 
+  packages/design: {}
+
   packages/i18n:
     dependencies:
       vite-plus:
@@ -490,6 +492,9 @@ importers:
       '@iconify-json/lucide':
         specifier: 1.2.155
         version: 1.2.155
+      '@rimelight/design':
+        specifier: workspace:*
+        version: link:../design
       '@unocss/vite':
         specifier: 66.13.0
         version: 66.13.0(@voidzero-dev/vite-plus-core@1.6.0(@types/node@26.6.5)(jiti@2.7.0)(typescript@7.1.0-beta))(cac@7.1.0)(srvx@1.0.7)
