@@ -6,7 +6,8 @@
 //   node generate.ts --source <path>       read another tokens.json
 //   node generate.ts --out <dir>           write outputs under another root (same relative layout)
 
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { spawnSync } from "node:child_process";
 import { dirname, join, resolve } from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
@@ -875,6 +876,29 @@ function parseArgs(argv: string[]): Args {
   return args;
 }
 
+// The repo's formatter (vp fmt) owns the layout of the CSS, JSON and Markdown outputs, so the committed files are what
+// the pre-commit hook would produce. Rust and Slint outputs are not formatted by it.
+const FORMATTED = /.(css|json|md)$/;
+
+function writeAll(dir: string, files: Map<string, string> | Array<[string, string]>): string[] {
+  const written: string[] = [];
+  for (const [rel, content] of files) {
+    const abs = join(dir, rel);
+    mkdirSync(dirname(abs), { recursive: true });
+    writeFileSync(abs, content, "utf8");
+    written.push(abs);
+  }
+  return written;
+}
+
+function formatFiles(paths: string[]): void {
+  const targets = paths.filter((p) => FORMATTED.test(p));
+  if (targets.length === 0) return;
+  const quoted = targets.map((p) => JSON.stringify(p)).join(" ");
+  const r = spawnSync(`pnpm exec vp fmt ${quoted}`, { cwd: HERE, shell: true, encoding: "utf8" });
+  if (r.status !== 0) fail(`vp fmt failed: ${r.stderr || r.stdout}`);
+}
+
 function main(): void {
   const args = parseArgs(process.argv.slice(2));
   const text = readFileSync(args.source, "utf8");
@@ -883,11 +907,20 @@ function main(): void {
   const summary = `contrast: ${checks.length} checks, ${checks.filter((c) => c.status === "PASS").length} PASS, ${failing.length} FAIL, ${checks.filter((c) => c.status === "EXEMPT").length} EXEMPT`;
 
   if (args.check) {
+    // Generate into a scratch folder inside the package (so the repo's formatter config applies), format, compare.
+    const scratch = join(HERE, ".check");
+    rmSync(scratch, { recursive: true, force: true });
     const differ: string[] = [];
-    for (const [rel, content] of files) {
-      const abs = join(args.outDir, rel);
-      if (!existsSync(abs)) differ.push(`${rel} (missing)`);
-      else if (readFileSync(abs, "utf8") !== content) differ.push(`${rel} (differs)`);
+    try {
+      formatFiles(writeAll(scratch, files));
+      for (const [rel] of files) {
+        const abs = join(args.outDir, rel);
+        const expected = readFileSync(join(scratch, rel), "utf8");
+        if (!existsSync(abs)) differ.push(`${rel} (missing)`);
+        else if (readFileSync(abs, "utf8") !== expected) differ.push(`${rel} (differs)`);
+      }
+    } finally {
+      rmSync(scratch, { recursive: true, force: true });
     }
     for (const d of differ) console.error(`out of date: ${d}`);
     for (const c of failing)
@@ -901,12 +934,9 @@ function main(): void {
     return;
   }
 
-  for (const [rel, content] of files) {
-    const abs = join(args.outDir, rel);
-    mkdirSync(dirname(abs), { recursive: true });
-    writeFileSync(abs, content, "utf8");
-    console.log(`wrote ${abs}`);
-  }
+  const written = writeAll(args.outDir, files);
+  formatFiles(written);
+  for (const abs of written) console.log(`wrote ${abs}`);
   console.log(summary);
   for (const c of failing)
     console.error(`FAIL: ${c.label} [${c.theme}] ratio ${c.ratio.toFixed(2)} < ${c.min}`);
