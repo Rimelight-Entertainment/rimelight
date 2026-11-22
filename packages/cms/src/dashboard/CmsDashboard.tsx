@@ -1,4 +1,12 @@
-import { For, Show, createMemo, createSignal, onSettled, type Component } from "solid-js";
+import {
+  For,
+  Show,
+  createEffect,
+  createMemo,
+  createSignal,
+  onSettled,
+  type Component,
+} from "solid-js";
 import type { JSX } from "@solidjs/web";
 import { useLocation, useNavigate } from "@solidjs/router";
 import type { BlockDefinition } from "../core/blocks/registry";
@@ -49,9 +57,13 @@ function splitPath(pathname: string) {
  */
 export const CmsDashboard: Component<CmsDashboardProps> = (props) => {
   const [mounted, setMounted] = createSignal(false);
-  onSettled(() => {
-    setMounted(true);
-  });
+  // onSettled does not fire during SSR hydration, which left the dashboard stuck on its loading frame.
+  createEffect(
+    () => {},
+    () => {
+      setMounted(true);
+    },
+  );
   return (
     <div class="rimelight-cms h-dvh w-full overflow-hidden bg-default text-default">
       <Show when={mounted()} fallback={<div class="h-full w-full" aria-busy="true" />}>
