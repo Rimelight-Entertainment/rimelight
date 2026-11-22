@@ -127,8 +127,9 @@ Keys `xs`, `sm`, `md`, `lg`, `xl`, with values 22, 28, 34, 40, 46 px (audit Q9 a
     `system`, and `in-out property <bool> reduced-motion`.
   - Property names are the path joined by `-` with the group dropped for colours: `surface-raised`, `text-muted`,
     `primary-solid`, `ramp-primary-500`.
-  - Colours are written as `dark ? #… : #…`, durations as `reduced-motion ? 0ms : 120ms`, and easings as properties
-    of type `easing` (`cubic-bezier(a, b, c, d)`, supported by Slint 1.18).
+  - Colours are written as `dark ? #… : #…`, and durations as `reduced-motion ? 0ms : 120ms`. Easings are **not** emitted to
+    Slint: Slint cannot expose `easing` properties to Rust, and apps export `Tokens`. Slint components use the
+    built-in curves by rule (`rules.md`, "Motion curves").
   - Zoom and text scale, as in Rimelight Space's `Tokens` global: `in-out property <int> zoom-percent: 100`,
     `out property <float> zoom-factor` (`zoom-percent / 100`), `in-out property <int> text-scale-percent: 100` and
     `out property <float> text-factor`. Every length token (`px`, including radii, shadow offset and blur, and type

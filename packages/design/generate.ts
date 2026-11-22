@@ -751,9 +751,8 @@ function slintOutput(leaves: Leaf[]): string {
         lines.push(`    out property <duration> ${id}: reduced-motion ? 0ms : ${fmt(l.value)}ms;`);
         break;
       case "easing":
-        lines.push(
-          `    out property <easing> ${id}: cubic-bezier(${l.value.map(fmt).join(", ")});`,
-        );
+        // Not emitted to Slint: Slint cannot expose easing properties to Rust, and the Tokens global is exported. Slint
+        // components use the built-in curves by rule (rules.md, "Motion curves"). CSS and Rust still get the values.
         break;
       case "font":
         // Slint takes one family name. CSS keeps the full list.

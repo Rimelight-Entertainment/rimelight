@@ -154,6 +154,20 @@ Names follow [SA] section 8.8 (line 2401) and [SAG]. Space is the only source wi
 
 ---
 
+### Motion curves (owner, 2026-11-22; replaces audit Q16)
+
+Animations use built-in curves, not easing tokens:
+
+| Movement                                                                       | Curve         |
+| ------------------------------------------------------------------------------ | ------------- |
+| Something appears or opens (menu, popover, dialog, sheet, toast)               | `ease-out`    |
+| Something moves or resizes in place (drag settle, panel resize, tab underline) | `ease-in-out` |
+| Something disappears or closes                                                 | `ease-in`     |
+| Loops (spinner, skeleton pulse, indeterminate progress)                        | `linear`      |
+
+Durations still come from the motion tokens (fast, base, slow, loop) and drop to 0 under reduced motion. The web keeps
+the `--rl-motion-ease-*` CSS variables, and Rust keeps the `motion::EASE_*` constants, but neither is required.
+
 ## 4. Accessibility
 
 ### Contrast
