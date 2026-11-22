@@ -441,7 +441,7 @@ body { background-color: var(--rl-neutral-50); color: var(--rl-neutral-950); }
 /* Text selection uses the primary colour. */
 ::selection {
   background-color: var(--rl-primary-500);
-  color: #fff;
+  color: var(--rl-color-text-on-accent);
 }
 
 /* Reduced motion - disable all animations for users who prefer it */
