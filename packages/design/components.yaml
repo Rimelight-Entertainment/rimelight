@@ -3,8 +3,8 @@
 #   total concepts:           153
 #   done on web and slint:    55
 #   web-only (web done):      71
-#   slint-only (slint done):  24
-#   media-only (media done):  3  (Tile, RecentList, ActionRow)
+#   slint-only (slint done):  27  (ActionRow, Tile and RecentList added in WS4 ST4.2)
+#   media-only (media done):  0  (Tile, RecentList and ActionRow now also in rimelight_ui)
 # Sources: packages/ui/src/components (web), crates/rimelight_ui/ui/components (slint),
 #          rimelight-media/ui/widgets.slint (media). Read-only research.
 # Unclassified (no component export): Slint ClipboardWriter, ConnectionState, InputFocus;
@@ -281,20 +281,25 @@
       props: [items, focus-index, accessible-name, forced-state],
     }
   media: { status: done, path: ui/widgets.slint#ToolBar, props: [] }
-  notes: "Web is a slot container; Slint is roving-focus items with icon labels. Media ToolBar has no typed props."
+  notes: "Web is a slot container; Slint is roving-focus items with icon labels. The children-based bar Media uses (left and right split with a spacer) is ToolbarRow in the same Slint file; Media ToolBar maps to ToolbarRow. Media ToolBar has no typed props."
 
 - name: ActionRow
   aliases: [ActionRow]
   category: action
   web: { status: none }
-  slint: { status: none }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/action-row.slint,
+      props: [show-confirm, confirm-text, cancel-text, confirm-enabled],
+    }
   media:
     {
       status: done,
       path: ui/widgets.slint#ActionRow,
       props: [show-confirm, confirm-text, cancel-text, confirm-enabled],
     }
-  notes: "Media-only confirm and cancel row used beside dialogs and forms."
+  notes: "Confirm and cancel row used beside dialogs and forms. Shared in rimelight_ui (WS4 ST4.2) with the same props as Media."
 
 # ---------- input ----------
 
@@ -640,10 +645,9 @@
     {
       status: done,
       path: crates/rimelight_ui/ui/components/switch.slint,
-      props: [checked, label-side, size, enabled, text],
+      props: [checked, label-side, size, enabled, text, detail],
     }
-  media: { status: done, path: ui/widgets.slint#Toggle, props: [text, detail] }
-  notes: "Media Toggle is the Switch concept with a detail line."
+  notes: "Slint Switch takes an optional detail line under the label; Media's Toggle wrapper was removed and Media uses the Switch."
 
 - name: Slider
   aliases: [slider, Slider]
@@ -658,15 +662,25 @@
     {
       status: done,
       path: crates/rimelight_ui/ui/components/slider.slint,
-      props: [value, minimum, maximum, step, show-value, value-suffix, enabled],
+      props:
+        [
+          value,
+          minimum,
+          maximum,
+          step,
+          show-value,
+          value-suffix,
+          enabled,
+          released,
+          controlled,
+          on-stage,
+          show-range,
+          range-start,
+          range-end,
+          range-colour,
+        ],
     }
-  media:
-    {
-      status: done,
-      path: ui/widgets.slint#Slider,
-      props: [range-start, range-end, show-range, on-stage],
-    }
-  notes: "Media Slider is a range slider; Web and Slint are single-value."
+  notes: "Web is single-value. Slint adds a release callback, a trim range (show-range, range-start, range-end), a dark-stage look (on-stage) and controlled, for a value bound from the app; Media's sliders use it."
 
 - name: ColorPicker
   aliases: [color-picker, ColorPicker]
@@ -1128,8 +1142,14 @@
   category: navigation
   web: { status: none }
   slint: { status: none }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/tile.slint,
+      props: [icon, title, detail, keys, accent],
+    }
   media: { status: done, path: ui/widgets.slint#Tile, props: [icon, title, detail, keys, accent] }
-  notes: "Media-only launch tile with a keyboard hint."
+  notes: "Launch tile with a keyboard hint. Shared in rimelight_ui (WS4 ST4.2) with the same props as Media."
   scope: app-specific
   home: kit
 
@@ -1144,15 +1164,25 @@
       props: [item, items, columns, tile-width],
     }
   media: { status: done, path: ui/widgets.slint#FileKindTile, props: [kind, tile-size] }
-  notes: "Slint AttachmentTile and Media FileKindTile are file tiles; Slint also has a grid."
+  notes: "Slint AttachmentTile and Media FileKindTile are file tiles; Slint also has a grid. The Slint FileKindTile (WS4 ST4.2) is in tile.slint, with top-colour and bottom-colour overridable (defaults from the extension-file-kind tokens and palette ramps)."
 
 - name: RecentList
   aliases: [RecentRow, RecentBlock]
   category: navigation
   web: { status: none }
-  slint: { status: none }
-  media: { status: done, path: ui/widgets.slint#RecentBlock, props: [recents, ink, muted] }
-  notes: "Media-only recents list with clear action."
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/recent-list.slint,
+      props: [recents, title, clear-text, empty-text, ink, muted, file-kind-styles],
+    }
+  media:
+    {
+      status: done,
+      path: ui/widgets.slint#EmptyState,
+      props: [recents, ink, muted, file-kind-styles],
+    }
+  notes: "Recents list with clear action. title, clear-text and empty-text are props; file-kind-styles sets each file kind's tile colours and glyph (Media passes its own, the shared look is the default)."
   scope: app-specific
   home: kit
 
@@ -1817,7 +1847,7 @@
       props: [label, vertical, on-sidebar],
     }
   media: { status: done, path: ui/widgets.slint#ToolDivider, props: [] }
-  notes: "Media ToolDivider is merged here."
+  notes: "Media ToolDivider is merged here. The Slint ToolDivider (a vertical divider for ToolbarRow) is in toolbar.slint, not divider.slint."
 
 - name: ScrollArea
   aliases: [scroll-area, ScrollArea]
