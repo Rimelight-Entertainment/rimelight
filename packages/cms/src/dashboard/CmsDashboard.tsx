@@ -1,8 +1,8 @@
 import {
   For,
   Show,
-  createEffect,
   createMemo,
+  createRenderEffect,
   createSignal,
   onSettled,
   type Component,
@@ -58,8 +58,8 @@ function splitPath(pathname: string) {
 export const CmsDashboard: Component<CmsDashboardProps> = (props) => {
   const [mounted, setMounted] = createSignal(false);
   // onSettled does not fire during SSR hydration, which left the dashboard stuck on its loading frame.
-  createEffect(
-    () => {},
+  createRenderEffect(
+    () => true,
     () => {
       setMounted(true);
     },
