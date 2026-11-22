@@ -247,3 +247,32 @@ Each item lists the sources that disagree. Owner decides which rule holds.
 19. **Phone header.** [SA:1475] moves primary and Share into the overflow on phone. [SA:1439-1440] keeps them on the right on desktop. Confirm that phone and desktop differ on purpose.
 20. **Toolbar and status-bar heights.** Space gives control and row heights [SA:1896]. No source gives toolbar or status-bar heights. Needs a value.
 21. **Media design rules.** Media's sources have only layout and dialog rules [MH:16-18, 23-31]. No contrast, motion, text-scale, theme or keyboard policy is written down. These need an owner decision before media can claim the shared language.
+
+## 8. Answers (owner, 2026-11-22)
+
+Every conflict in section 7 is settled. Where an answer changes a rule in sections 1 to 6, the answer here wins until
+those sections are rewritten.
+
+| #   | Rule now                                                                                                                                                                                                 |
+| --- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Docked bars (top bar, edit row, status bar) split left and right and are never centred. Floating tool palettes, such as the canvas toolbar, may be centred                                               |
+| 2   | The primary action goes at the far right: Cancel, then Primary, both flush right. Space's New issue dialog becomes Cancel, Create; Media's `ask` buttons are reordered on screen                         |
+| 3   | The focus ring shows on keyboard focus only (focus-visible), never after a mouse click                                                                                                                   |
+| 4   | A tab strip is one Tab stop. Arrows move between tabs, and Ctrl+Tab / Ctrl+Shift+Tab switch document tabs. Media's "Tab switches tabs" becomes Ctrl+Tab                                                  |
+| 5   | An empty state has an icon, a title, a hint, one primary action, an optional secondary action, and an optional content slot below (for example Media's recent files)                                     |
+| 6   | Follow the build: connection state shows only as the full-window overlay (decision 0040). The status bar holds Record, Full screen, Shortcuts, Language and Theme. Fix the archive text                  |
+| 7   | The top bar gets a token background, as the spec says (a gap in the build, to fix)                                                                                                                       |
+| 8   | **Keep the notifications button (bell)** in the top bar now. Its panel comes in a later Notifications slice; until then it opens a placeholder                                                           |
+| 9   | Breadcrumbs never wrap. They collapse their middle items into an ellipsis menu by available width. Space's count-based collapse is upgraded                                                              |
+| 10  | About, Report Issue and Settings live on the rail. Remove the stale "sidebar bottom section" text from the archive                                                                                       |
+| 11  | Neither library claims screen-reader support until it has been tested on that platform. Change the web README wording                                                                                    |
+| 12  | Reduced motion follows the OS setting by default, read through the audited platform module (decision 0008). The in-app toggle overrides it                                                               |
+| 13  | `@rimelight/ui` keeps per-slot and per-instance overrides as a library feature for outside users. Rimelight's own apps (web and native) use the fixed theme: no accent, theme-file or branding overrides |
+| 14  | No literal exceptions. Easings (audit Q16) and the focus ring width and offset (audit Q18) become tokens                                                                                                 |
+| 15  | The lint for colour, size and font literals in `.slint` files (Space's deferred P0.18) is scheduled with ST2.3 and runs in every consumer's CI                                                           |
+| 16  | Media moves to the facade: it imports only the shared `rimelight_ui` (WS4)                                                                                                                               |
+| 17  | OS file pickers (open, save, choose folder) are allowed. Questions, confirmations and errors are in-app dialogs only, never native message boxes                                                         |
+| 18  | Shortcut help opens on `?` when focus is not in a text field, and on Ctrl+/ everywhere, in every app                                                                                                     |
+| 19  | Phone and desktop differ on purpose: on phone, primary and Share move into the overflow menu; on desktop they stay on the right of the page header                                                       |
+| 20  | Bar heights are the shared component tokens from audit Q24: toolbar 44, action row 44, status bar 36 (Space's bars to be compared first)                                                                 |
+| 21  | Media adopts the whole shared language (contrast, motion, text scale, theme, keyboard) as part of WS4                                                                                                    |
