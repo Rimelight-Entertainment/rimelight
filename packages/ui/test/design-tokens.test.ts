@@ -138,3 +138,24 @@ describe("control heights come from the design sizes (ST3.4)", () => {
     expect(css).toContain("height:var(--rl-size-control-md)");
   });
 });
+
+describe("sized controls take their height from the control size tokens (ST3.4)", () => {
+  it("Select, Textarea, InputMenu and Tabs heights reference the control size tokens", async () => {
+    const { readFileSync } = await import("node:fs");
+    const files = {
+      select: "../src/components/select/select.theme.ts",
+      textarea: "../src/components/textarea/textarea.theme.ts",
+      inputMenu: "../src/components/input-menu/input-menu.theme.ts",
+      tabs: "../src/components/tabs/tabs.theme.ts",
+    };
+    for (const [name, path] of Object.entries(files)) {
+      const source = readFileSync(new URL(path, import.meta.url), "utf8");
+      for (const z of ["xs", "sm", "md", "lg", "xl"]) {
+        expect(source, `${name} ${z}`).toContain(`--rl-size-control-${z})]`);
+      }
+    }
+    const uno = await createGenerator({ presets: [rimelightUiPreset()] });
+    const { css } = await uno.generate("min-h-[var(--rl-size-control-md)]", { preflights: false });
+    expect(css).toContain("min-height:var(--rl-size-control-md)");
+  });
+});

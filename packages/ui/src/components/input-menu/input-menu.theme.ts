@@ -33,28 +33,28 @@ export const RLInputMenuTheme = defineTheme("input-menu", {
   variants: {
     size: {
       xs: {
-        trigger: "text-xs leading-none px-2 py-1",
-        input: "text-xs leading-none px-2 py-1",
+        trigger: "text-xs leading-none px-2 h-[var(--rl-size-control-xs)]",
+        input: "text-xs leading-none px-2 h-[var(--rl-size-control-xs)]",
         item: "py-1 px-1.5 text-xs",
       },
       sm: {
-        trigger: "text-xs leading-none px-2.5 py-1.5",
-        input: "text-xs leading-none px-2.5 py-1.5",
+        trigger: "text-xs leading-none px-2.5 h-[var(--rl-size-control-sm)]",
+        input: "text-xs leading-none px-2.5 h-[var(--rl-size-control-sm)]",
         item: "py-1 px-1.5 text-xs",
       },
       md: {
-        trigger: "text-sm leading-none px-2.5 py-1.5",
-        input: "text-sm leading-none px-2.5 py-1.5",
+        trigger: "text-sm leading-none px-2.5 h-[var(--rl-size-control-md)]",
+        input: "text-sm leading-none px-2.5 h-[var(--rl-size-control-md)]",
         item: "py-1.5 px-2 text-sm",
       },
       lg: {
-        trigger: "text-sm leading-none px-3 py-2",
-        input: "text-sm leading-none px-3 py-2",
+        trigger: "text-sm leading-none px-3 h-[var(--rl-size-control-lg)]",
+        input: "text-sm leading-none px-3 h-[var(--rl-size-control-lg)]",
         item: "py-2 px-2.5 text-sm",
       },
       xl: {
-        trigger: "text-base leading-none px-3 py-2",
-        input: "text-base leading-none px-3 py-2",
+        trigger: "text-base leading-none px-3 h-[var(--rl-size-control-xl)]",
+        input: "text-base leading-none px-3 h-[var(--rl-size-control-xl)]",
         item: "py-2.5 px-3 text-base",
       },
     },

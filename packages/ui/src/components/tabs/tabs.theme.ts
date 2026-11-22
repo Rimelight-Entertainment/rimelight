@@ -50,7 +50,7 @@ export const RLTabsTheme = defineTheme("tabs", {
       },
       link: {
         list: "bg-transparent border-b border-default p-0 gap-2 -mb-px",
-        trigger: "rounded-md data-[state=active]:text-primary pb-2 pt-1 px-3 z-10",
+        trigger: "rounded-md data-[state=active]:text-primary px-3 z-10",
         indicator:
           "bg-transparent after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:bg-primary after:rounded-full",
       },
@@ -68,11 +68,26 @@ export const RLTabsTheme = defineTheme("tabs", {
       },
     },
     size: {
-      xs: { trigger: "text-xs leading-none px-2 py-1 gap-1", leadingIcon: "size-3.5" },
-      sm: { trigger: "text-xs leading-none px-2.5 py-1.5 gap-1.5", leadingIcon: "size-4" },
-      md: { trigger: "text-sm leading-none px-2.5 py-1.5 gap-1.5", leadingIcon: "size-4" },
-      lg: { trigger: "text-sm leading-none px-3 py-2 gap-2", leadingIcon: "size-5" },
-      xl: { trigger: "text-base leading-none px-3 py-2 gap-2", leadingIcon: "size-5" },
+      xs: {
+        trigger: "text-xs leading-none px-2 h-[var(--rl-size-control-xs)] gap-1",
+        leadingIcon: "size-3.5",
+      },
+      sm: {
+        trigger: "text-xs leading-none px-2.5 h-[var(--rl-size-control-sm)] gap-1.5",
+        leadingIcon: "size-4",
+      },
+      md: {
+        trigger: "text-sm leading-none px-2.5 h-[var(--rl-size-control-md)] gap-1.5",
+        leadingIcon: "size-4",
+      },
+      lg: {
+        trigger: "text-sm leading-none px-3 h-[var(--rl-size-control-lg)] gap-2",
+        leadingIcon: "size-5",
+      },
+      xl: {
+        trigger: "text-base leading-none px-3 h-[var(--rl-size-control-xl)] gap-2",
+        leadingIcon: "size-5",
+      },
     },
   },
   defaultVariants: {

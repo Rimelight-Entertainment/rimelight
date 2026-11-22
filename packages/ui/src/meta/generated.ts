@@ -8918,28 +8918,28 @@ export const componentMeta: ComponentMetaMap = {
       variants: {
         size: {
           xs: {
-            trigger: "text-xs leading-none px-2 py-1",
-            input: "text-xs leading-none px-2 py-1",
+            trigger: "text-xs leading-none px-2 h-[var(--rl-size-control-xs)]",
+            input: "text-xs leading-none px-2 h-[var(--rl-size-control-xs)]",
             item: "py-1 px-1.5 text-xs",
           },
           sm: {
-            trigger: "text-xs leading-none px-2.5 py-1.5",
-            input: "text-xs leading-none px-2.5 py-1.5",
+            trigger: "text-xs leading-none px-2.5 h-[var(--rl-size-control-sm)]",
+            input: "text-xs leading-none px-2.5 h-[var(--rl-size-control-sm)]",
             item: "py-1 px-1.5 text-xs",
           },
           md: {
-            trigger: "text-sm leading-none px-2.5 py-1.5",
-            input: "text-sm leading-none px-2.5 py-1.5",
+            trigger: "text-sm leading-none px-2.5 h-[var(--rl-size-control-md)]",
+            input: "text-sm leading-none px-2.5 h-[var(--rl-size-control-md)]",
             item: "py-1.5 px-2 text-sm",
           },
           lg: {
-            trigger: "text-sm leading-none px-3 py-2",
-            input: "text-sm leading-none px-3 py-2",
+            trigger: "text-sm leading-none px-3 h-[var(--rl-size-control-lg)]",
+            input: "text-sm leading-none px-3 h-[var(--rl-size-control-lg)]",
             item: "py-2 px-2.5 text-sm",
           },
           xl: {
-            trigger: "text-base leading-none px-3 py-2",
-            input: "text-base leading-none px-3 py-2",
+            trigger: "text-base leading-none px-3 h-[var(--rl-size-control-xl)]",
+            input: "text-base leading-none px-3 h-[var(--rl-size-control-xl)]",
             item: "py-2.5 px-3 text-base",
           },
         },
@@ -12692,70 +12692,70 @@ export const componentMeta: ComponentMetaMap = {
           layout: "default",
           size: "xs",
           class: {
-            select: "px-2 py-1 leading-none",
+            select: "h-[var(--rl-size-control-xs)] px-2 leading-none",
           },
         },
         {
           layout: "default",
           size: "sm",
           class: {
-            select: "px-2.5 py-1.5 leading-none",
+            select: "h-[var(--rl-size-control-sm)] px-2.5 leading-none",
           },
         },
         {
           layout: "default",
           size: "md",
           class: {
-            select: "px-2.5 py-1.5 leading-none",
+            select: "h-[var(--rl-size-control-md)] px-2.5 leading-none",
           },
         },
         {
           layout: "default",
           size: "lg",
           class: {
-            select: "px-3 py-2 leading-none",
+            select: "h-[var(--rl-size-control-lg)] px-3 leading-none",
           },
         },
         {
           layout: "default",
           size: "xl",
           class: {
-            select: "px-3 py-2 leading-none",
+            select: "h-[var(--rl-size-control-xl)] px-3 leading-none",
           },
         },
         {
           layout: "icon",
           size: "xs",
           class: {
-            select: "p-1",
+            select: "aspect-square h-[var(--rl-size-control-xs)] p-0",
           },
         },
         {
           layout: "icon",
           size: "sm",
           class: {
-            select: "p-1.5",
+            select: "aspect-square h-[var(--rl-size-control-sm)] p-0",
           },
         },
         {
           layout: "icon",
           size: "md",
           class: {
-            select: "p-2",
+            select: "aspect-square h-[var(--rl-size-control-md)] p-0",
           },
         },
         {
           layout: "icon",
           size: "lg",
           class: {
-            select: "p-2.5",
+            select: "aspect-square h-[var(--rl-size-control-lg)] p-0",
           },
         },
         {
           layout: "icon",
           size: "xl",
           class: {
-            select: "p-2",
+            select: "aspect-square h-[var(--rl-size-control-xl)] p-0",
           },
         },
       ],
@@ -14668,7 +14668,7 @@ export const componentMeta: ComponentMetaMap = {
           },
           link: {
             list: "bg-transparent border-b border-default p-0 gap-2 -mb-px",
-            trigger: "rounded-md data-[state=active]:text-primary pb-2 pt-1 px-3 z-10",
+            trigger: "rounded-md data-[state=active]:text-primary px-3 z-10",
             indicator:
               "bg-transparent after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:bg-primary after:rounded-full",
           },
@@ -14687,23 +14687,23 @@ export const componentMeta: ComponentMetaMap = {
         },
         size: {
           xs: {
-            trigger: "text-xs leading-none px-2 py-1 gap-1",
+            trigger: "text-xs leading-none px-2 h-[var(--rl-size-control-xs)] gap-1",
             leadingIcon: "size-3.5",
           },
           sm: {
-            trigger: "text-xs leading-none px-2.5 py-1.5 gap-1.5",
+            trigger: "text-xs leading-none px-2.5 h-[var(--rl-size-control-sm)] gap-1.5",
             leadingIcon: "size-4",
           },
           md: {
-            trigger: "text-sm leading-none px-2.5 py-1.5 gap-1.5",
+            trigger: "text-sm leading-none px-2.5 h-[var(--rl-size-control-md)] gap-1.5",
             leadingIcon: "size-4",
           },
           lg: {
-            trigger: "text-sm leading-none px-3 py-2 gap-2",
+            trigger: "text-sm leading-none px-3 h-[var(--rl-size-control-lg)] gap-2",
             leadingIcon: "size-5",
           },
           xl: {
-            trigger: "text-base leading-none px-3 py-2 gap-2",
+            trigger: "text-base leading-none px-3 h-[var(--rl-size-control-xl)] gap-2",
             leadingIcon: "size-5",
           },
         },
@@ -14846,19 +14846,19 @@ export const componentMeta: ComponentMetaMap = {
       variants: {
         size: {
           xs: {
-            textarea: "text-xs px-2 py-1 min-h-[60px]",
+            textarea: "text-xs px-2 py-1 min-h-[var(--rl-size-control-xs)]",
           },
           sm: {
-            textarea: "text-xs px-2.5 py-1.5 min-h-[60px]",
+            textarea: "text-xs px-2.5 py-1.5 min-h-[var(--rl-size-control-sm)]",
           },
           md: {
-            textarea: "text-sm px-2.5 py-1.5 min-h-[80px]",
+            textarea: "text-sm px-2.5 py-1.5 min-h-[var(--rl-size-control-md)]",
           },
           lg: {
-            textarea: "text-sm px-3 py-2 min-h-[100px]",
+            textarea: "text-sm px-3 py-2 min-h-[var(--rl-size-control-lg)]",
           },
           xl: {
-            textarea: "text-base px-3 py-2 min-h-[120px]",
+            textarea: "text-base px-3 py-2 min-h-[var(--rl-size-control-xl)]",
           },
         },
         invalid: {

@@ -9,11 +9,11 @@ export const RLTextareaTheme = defineTheme("textarea", {
   },
   variants: {
     size: {
-      xs: { textarea: "text-xs px-2 py-1 min-h-[60px]" },
-      sm: { textarea: "text-xs px-2.5 py-1.5 min-h-[60px]" },
-      md: { textarea: "text-sm px-2.5 py-1.5 min-h-[80px]" },
-      lg: { textarea: "text-sm px-3 py-2 min-h-[100px]" },
-      xl: { textarea: "text-base px-3 py-2 min-h-[120px]" },
+      xs: { textarea: "text-xs px-2 py-1 min-h-[var(--rl-size-control-xs)]" },
+      sm: { textarea: "text-xs px-2.5 py-1.5 min-h-[var(--rl-size-control-sm)]" },
+      md: { textarea: "text-sm px-2.5 py-1.5 min-h-[var(--rl-size-control-md)]" },
+      lg: { textarea: "text-sm px-3 py-2 min-h-[var(--rl-size-control-lg)]" },
+      xl: { textarea: "text-base px-3 py-2 min-h-[var(--rl-size-control-xl)]" },
     },
     invalid: {
       true: { root: "border-error focus-within:ring-error/50" },
