@@ -1,0 +1,20 @@
+{
+  "name": "@rimelight/design",
+  "version": "0.0.0",
+  "private": true,
+  "license": "MIT",
+  "files": [
+    "generated",
+    "tokens.json",
+    "SCHEMA.md"
+  ],
+  "type": "module",
+  "exports": {
+    "./tokens.css": "./generated/tokens.css",
+    "./tokens.json": "./generated/tokens.json"
+  },
+  "scripts": {
+    "generate": "node generate.ts",
+    "check": "node generate.ts --check"
+  }
+}
