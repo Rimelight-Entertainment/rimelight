@@ -683,8 +683,27 @@ function jsonOutput(
   return JSON.stringify(obj, null, 2) + "\n";
 }
 
+// Slint names that Space's Tokens global uses where the generated path gives another name. Only clear role names are
+// taken over from Space. The control and icon scales keep the design names; space-rename-map.json lists those.
+function spaceName(key: string): string | undefined {
+  const button = /^component\.(button|tooltip)\.(.+)$/.exec(key);
+  if (button) return `${button[1]}-${button[2]!.replace(/\./g, "-")}`;
+  const brand = /^extension\.brand\.(rail|sidebar)\.(.+)$/.exec(key);
+  if (brand) return `${brand[1]}-${brand[2]}`;
+  const status = /^color\.status\.(success|warning|danger|info|neutral)-text$/.exec(key);
+  if (status) return `status-${status[1]}-text-on-surface`;
+  const type = /^type\.([a-z-]+)\.font-(family|size|weight)$/.exec(key);
+  if (type) return `type-${type[1]}-${type[2]}`;
+  const panel = /^extension\.panel-light\.(surface|text|muted)$/.exec(key);
+  if (panel) return `panel-light-${panel[1]}`;
+  if (key === "shadow.overlay.color") return "shadow-overlay";
+  if (key === "size.breakpoint.phone") return "size-phone-breakpoint";
+  return undefined;
+}
+
 function slintOutput(leaves: Leaf[]): string {
   const lines: string[] = [];
+  const ids = new Set<string>();
   lines.push(`// ${HEADER}`);
   lines.push('import { Palette } from "std-widgets.slint";');
   lines.push("");
@@ -695,12 +714,29 @@ function slintOutput(leaves: Leaf[]): string {
   lines.push(
     "    out property <bool> dark: theme == ThemeChoice.dark || (theme == ThemeChoice.system && Palette.color-scheme == ColorScheme.dark);",
   );
+  lines.push(
+    "    // Manual reduced-motion flag. Set from Rust; the OS setting is not readable from Slint.",
+  );
   lines.push("    in-out property <bool> reduced-motion: false;");
+  // Text scale is read by the app's Type global (text sizes are multiplied by text-factor there, not in Tokens).
+  lines.push(
+    "    // Text scale in percent: 100, 125, 150 or 200. The app's Type global multiplies type sizes by text-factor.",
+  );
+  lines.push("    in-out property <int> text-scale-percent: 100;");
+  lines.push("    out property <float> text-factor: text-scale-percent * 1.0 / 100.0;");
+  lines.push(
+    "    // Interface zoom in percent (the status bar slider, 50 to 150, Ctrl+plus and Ctrl+minus). Multiplies every length.",
+  );
+  lines.push("    in-out property <int> zoom-percent: 100;");
+  lines.push("    out property <float> zoom-factor: zoom-percent * 1.0 / 100.0;");
   lines.push("");
   for (const l of leaves) {
     // Colour names drop the leading "color" group.
     const segs = l.kind === "color" && l.path[0] === "color" ? l.path.slice(1) : l.path;
-    const id = slintId(segs);
+    if (l.kind === "shadow") continue;
+    const id = spaceName(l.path.join(".")) ?? slintId(segs);
+    if (ids.has(id)) fail(`internal: two tokens map to the Slint name ${id}`);
+    ids.add(id);
     switch (l.kind) {
       case "color":
         lines.push(
@@ -708,7 +744,8 @@ function slintOutput(leaves: Leaf[]): string {
         );
         break;
       case "px":
-        lines.push(`    out property <length> ${id}: ${fmt(l.value)}px;`);
+        // Every length is multiplied by the interface zoom, as Space's codegen does.
+        lines.push(`    out property <length> ${id}: ${fmt(l.value)}px * zoom-factor;`);
         break;
       case "ms":
         lines.push(`    out property <duration> ${id}: reduced-motion ? 0ms : ${fmt(l.value)}ms;`);
@@ -719,7 +756,8 @@ function slintOutput(leaves: Leaf[]): string {
         );
         break;
       case "font":
-        lines.push(`    out property <string> ${id}: ${JSON.stringify(l.value.join(", "))};`);
+        // Slint takes one family name. CSS keeps the full list.
+        lines.push(`    out property <string> ${id}: ${JSON.stringify(l.value[0])};`);
         break;
       case "int":
         lines.push(`    out property <int> ${id}: ${l.value};`);

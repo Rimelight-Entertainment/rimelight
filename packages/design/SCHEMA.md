@@ -129,5 +129,20 @@ Keys `xs`, `sm`, `md`, `lg`, `xl`, with values 22, 28, 34, 40, 46 px (audit Q9 a
     `primary-solid`, `ramp-primary-500`.
   - Colours are written as `dark ? #… : #…`, durations as `reduced-motion ? 0ms : 120ms`, and easings as properties
     of type `easing` (`cubic-bezier(a, b, c, d)`, supported by Slint 1.18).
+  - Zoom and text scale, as in Rimelight Space's `Tokens` global: `in-out property <int> zoom-percent: 100`,
+    `out property <float> zoom-factor` (`zoom-percent / 100`), `in-out property <int> text-scale-percent: 100` and
+    `out property <float> text-factor`. Every length token (`px`, including radii, shadow offset and blur, and type
+    sizes and line heights) is written `Npx * zoom-factor`. `text-factor` is only declared here: the app's `Type` global
+    reads it, so text sizes are multiplied by it outside `Tokens`.
+  - Font families: Slint takes one family name, so a `fontFamily` is written as its first list entry (`"Noto Sans"`,
+    `"JetBrains Mono"`). CSS keeps the full list (`"Noto Sans", sans-serif`).
+  - Slint names that differ from the path. Where Space's `Tokens` already uses a clear role name, the Slint name is
+    Space's, so the Space switch renames less: `button-*` and `tooltip-*` (the `component.` prefix is dropped),
+    `rail-*` and `sidebar-*` (the `extension.brand.` prefix is dropped), `status-<tone>-text-on-surface`,
+    `shadow-overlay` (the colour of `shadow.overlay`), `size-phone-breakpoint`, `panel-light-*`, and
+    `type-<style>-family`, `-size`, `-weight`. The control and icon scales keep the design names
+    (`size-control-md`, `icon-small`); `packages/design/space-rename-map.json` maps Space's names for those. The
+    mapping is in `spaceName()` in `generate.ts`. Two tokens with the same Slint name fail the build. CSS names are not
+    changed by any of this (`--rl-type-display-font-family` and so on).
 - **Rust:** a `pub mod tokens` with `pub const` values (`Rgba { r, g, b, a }`, `f32` pixels, `u32` ms,
   `[f32; 4]` easings) and a `pub const ROLES: &[(&str, Rgba, Rgba)]` table (name, light, dark).

@@ -219,6 +219,9 @@
   --rl-component-tooltip-text: light-dark(#101014, #f2f1ee);
   --rl-component-tooltip-border: light-dark(#bdbfc4, #2f3540);
   --rl-component-avatar-initials: light-dark(#101014, #0b0b0c);
+  --rl-extension-panel-light-surface: light-dark(#ffffff, #ffffff);
+  --rl-extension-panel-light-text: light-dark(#101014, #101014);
+  --rl-extension-panel-light-muted: light-dark(#5e6b7c, #5e6b7c);
   --rl-extension-brand-sidebar-bg: light-dark(#0f4e94, #0f4e94);
   --rl-extension-brand-sidebar-text: light-dark(#e1e8f2, #e1e8f2);
   --rl-extension-brand-sidebar-text-muted: light-dark(#d0dcef, #d0dcef);
@@ -399,6 +402,7 @@
   --rl-extension-zoom-default: 100;
   --rl-extension-zoom-min: 50;
   --rl-extension-zoom-max: 150;
+  --rl-extension-zoom-step: 10;
   --rl-neutral-0: var(--rl-ramp-neutral-0);
   --rl-neutral-50: var(--rl-ramp-neutral-50);
   --rl-neutral-100: var(--rl-ramp-neutral-100);

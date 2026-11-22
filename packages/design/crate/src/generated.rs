@@ -582,6 +582,9 @@ pub mod tokens {
     pub mod extension {
         pub mod light {
             use crate::generated::Rgba;
+            pub const PANEL_LIGHT_SURFACE: Rgba = Rgba { r: 255, g: 255, b: 255, a: 255 };
+            pub const PANEL_LIGHT_TEXT: Rgba = Rgba { r: 16, g: 16, b: 20, a: 255 };
+            pub const PANEL_LIGHT_MUTED: Rgba = Rgba { r: 94, g: 107, b: 124, a: 255 };
             pub const BRAND_SIDEBAR_BG: Rgba = Rgba { r: 15, g: 78, b: 148, a: 255 };
             pub const BRAND_SIDEBAR_TEXT: Rgba = Rgba { r: 225, g: 232, b: 242, a: 255 };
             pub const BRAND_SIDEBAR_TEXT_MUTED: Rgba = Rgba { r: 208, g: 220, b: 239, a: 255 };
@@ -607,6 +610,9 @@ pub mod tokens {
         }
         pub mod dark {
             use crate::generated::Rgba;
+            pub const PANEL_LIGHT_SURFACE: Rgba = Rgba { r: 255, g: 255, b: 255, a: 255 };
+            pub const PANEL_LIGHT_TEXT: Rgba = Rgba { r: 16, g: 16, b: 20, a: 255 };
+            pub const PANEL_LIGHT_MUTED: Rgba = Rgba { r: 94, g: 107, b: 124, a: 255 };
             pub const BRAND_SIDEBAR_BG: Rgba = Rgba { r: 15, g: 78, b: 148, a: 255 };
             pub const BRAND_SIDEBAR_TEXT: Rgba = Rgba { r: 225, g: 232, b: 242, a: 255 };
             pub const BRAND_SIDEBAR_TEXT_MUTED: Rgba = Rgba { r: 208, g: 220, b: 239, a: 255 };
@@ -633,6 +639,7 @@ pub mod tokens {
         pub const ZOOM_DEFAULT: u32 = 100;
         pub const ZOOM_MIN: u32 = 50;
         pub const ZOOM_MAX: u32 = 150;
+        pub const ZOOM_STEP: u32 = 10;
     }
 
     pub mod space {

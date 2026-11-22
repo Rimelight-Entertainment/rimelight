@@ -16,13 +16,16 @@ contrast check fails. Contrast results are written to `generated/contrast.md`.
 
 ## Outputs
 
-| Path                     | Consumer                                                                        |
-| ------------------------ | ------------------------------------------------------------------------------- |
-| `generated/tokens.css`   | Web (`@rimelight/ui`): CSS variables with `light-dark()`, `[data-theme]` switch |
-| `generated/tokens.json`  | Web preset: every token resolved to a value                                     |
-| `generated/contrast.md`  | Human review of every checked colour pair                                       |
-| `crate/ui/tokens.slint`  | Slint apps: `Tokens` global and `ThemeChoice`                                   |
-| `crate/src/generated.rs` | Rust: `tokens` constants and the `ROLES` table                                  |
+| Path                     | Consumer                                                                            |
+| ------------------------ | ----------------------------------------------------------------------------------- |
+| `generated/tokens.css`   | Web (`@rimelight/ui`): CSS variables with `light-dark()`, `[data-theme]` switch     |
+| `generated/tokens.json`  | Web preset: every token resolved to a value                                         |
+| `generated/contrast.md`  | Human review of every checked colour pair                                           |
+| `crate/ui/tokens.slint`  | Slint apps: `Tokens` global (zoom, text scale, names as in Space) and `ThemeChoice` |
+| `crate/src/generated.rs` | Rust: `tokens` constants and the `ROLES` table                                      |
+
+`space-rename-map.json` is not generated. It lists the Rimelight Space property names that still differ from the Slint
+names here (the control and icon scales). `node generate.ts --check` does not read it.
 
 ## Consumers
 
