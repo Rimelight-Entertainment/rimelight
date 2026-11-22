@@ -1,8 +1,21 @@
 {
   "name": "@rimelight/design",
-  "version": "0.0.0",
-  "private": true,
+  "version": "0.0.1",
+  "private": false,
+  "description": "Rimelight design tokens: one source for the web UI and the Rust/Slint apps",
+  "homepage": "https://rimelight.com/docs",
+  "bugs": {
+    "url": "https://github.com/Rimelight-Entertainment/rimelight/issues"
+  },
   "license": "MIT",
+  "author": {
+    "name": "Rimelight Entertainment"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rimelight-Entertainment/rimelight.git",
+    "directory": "packages/design"
+  },
   "files": [
     "generated",
     "tokens.json",
@@ -12,6 +25,9 @@
   "exports": {
     "./tokens.css": "./generated/tokens.css",
     "./tokens.json": "./generated/tokens.json"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
     "generate": "node generate.ts",
