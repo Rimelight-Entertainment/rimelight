@@ -57,6 +57,7 @@
     "@solidjs/web": "2.0.3",
     "drizzle-orm": "1.0.0-rc.5",
     "hono": "5.0.0-rc.1",
+    "loro-crdt": "~1.18.0",
     "postgres": "4.1.1",
     "solid-js": "2.0.3",
     "zod": "4.6.7"

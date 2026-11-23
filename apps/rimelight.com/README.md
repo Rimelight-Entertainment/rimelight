@@ -12,7 +12,7 @@ The company website for Rimelight Entertainment. It hosts company pages, the doc
 - **Authentication**: sign-in, sign-up, and sign-out through Auth0.
 - **Localization**: English, Portuguese, and Spanish.
 - **Developer showcase**: component, localization, security, and SEO demos under `/dev`.
-- **Custom CMS blocks**: screenplay blocks (`ScriptBlock`, `DialogueBlock`, `SceneBlock`, and others) defined in `cms.config.ts`.
+- **CMS blocks**: screenplay blocks are built into `@rimelight/cms`; `cms.config.ts` supplies the site renderers for the API documentation and live preview blocks.
 
 ## Stack
 
@@ -41,7 +41,7 @@ The company website for Rimelight Entertainment. It hosts company pages, the doc
 │   └── fetch.ts            # Worker entry: middleware chain and SSR handler
 ├── .dev.vars.example
 ├── cloudflare.config.ts    # Worker name, bindings, routes
-├── cms.config.ts           # CMS locales and custom blocks
+├── cms.config.ts           # CMS locales and site block renderers
 ├── drizzle.config.ts
 ├── vite.config.ts
 ├── package.json

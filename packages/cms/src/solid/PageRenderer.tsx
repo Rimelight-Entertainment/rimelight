@@ -22,10 +22,10 @@ export interface PageRendererProps {
 export const PageRenderer: Component<PageRendererProps> = (props) => {
   // Read config at render time: cms.config.ts imports @rimelight/cms/solid, so it may not be
   // initialised yet when this module is first evaluated.
-  const registry = createBlockRegistry([
-    ...(config.blocks ?? []),
-    ...(props.blockDefinitions ?? []),
-  ]);
+  const registry = createBlockRegistry(
+    [...(config.blocks ?? []), ...(props.blockDefinitions ?? [])],
+    config.renderers,
+  );
   const blocks = () => filterBlocksForReader(normalizeBlocks(props.blocks ?? []), props.session);
   return (
     <BlockRegistryContext value={registry}>

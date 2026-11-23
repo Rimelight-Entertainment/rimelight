@@ -24,6 +24,11 @@ import canvases from "./canvases.ts";
 import canvasAssets from "./canvas-assets.ts";
 import canvasLive from "./canvas-live.ts";
 import releases from "./releases.ts";
+import contentPages from "./content/content-pages.ts";
+import contentDrafts from "./content/content-drafts.ts";
+import contentReview from "./content/content-review.ts";
+import contentComments from "./content/content-comments.ts";
+import contentLive from "./content/content-live.ts";
 
 const space = new Hono();
 
@@ -43,6 +48,11 @@ space.route("/", canvases);
 space.route("/", canvasAssets);
 space.route("/", canvasLive);
 space.route("/", releases);
+space.route("/", contentPages);
+space.route("/", contentDrafts);
+space.route("/", contentReview);
+space.route("/", contentComments);
+space.route("/", contentLive);
 
 /** SHA-256 of the token, the same bytes the Rust backend stores in `sessions.token_hash`. */
 async function hashToken(token: string): Promise<Uint8Array> {

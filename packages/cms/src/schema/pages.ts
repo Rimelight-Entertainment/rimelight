@@ -44,6 +44,14 @@ export const pages: PgTableWithColumns<any> = pgTable(
     publishedVersionId: uuid("published_version_id").references(() => pageVersions.id, {
       onDelete: "set null",
     }),
+    /** Space scope (migration 0017): Project, Team, Department or Company. scope_id is NULL only for Company. */
+    scopeKind: text("scope_kind")
+      .$type<"Project" | "Team" | "Department" | "Company">()
+      .default("Company")
+      .notNull(),
+    scopeId: uuid("scope_id"),
+    /** Internal pages are seen only inside Space; Public pages may be read by the website. */
+    visibility: text("visibility").$type<"Internal" | "Public">().default("Internal").notNull(),
     postedAt: timestamp("posted_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(() => new Date()),

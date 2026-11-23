@@ -338,6 +338,20 @@ ALTER TABLE "cms_users" ADD COLUMN "role_managed" integer DEFAULT 0 NOT NULL;
 UPDATE "cms_users" SET "role_managed" = 1, "name_managed" = CASE WHEN "name" IS NULL THEN 0 ELSE 1 END WHERE "subject" IS NULL;
 `,
   },
+  {
+    name: "0014_space_scope_and_visibility",
+    sql: `ALTER TABLE "pages" ADD COLUMN "scope_kind" text DEFAULT 'Company' NOT NULL;
+--> statement-breakpoint
+ALTER TABLE "pages" ADD COLUMN "scope_id" text;
+--> statement-breakpoint
+ALTER TABLE "pages" ADD COLUMN "visibility" text DEFAULT 'Internal' NOT NULL;
+--> statement-breakpoint
+-- Pages that existed before Space owned content are shown on the website, so they stay public (decision 0049).
+UPDATE "pages" SET "visibility" = 'Public';
+--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "pages_scope_idx" ON "pages" ("scope_kind", "scope_id");
+`,
+  },
 ];
 
 export const PG_CMS_MIGRATIONS = [
@@ -702,6 +716,26 @@ ALTER TABLE "cms_users" ADD COLUMN "role_managed" boolean DEFAULT false NOT NULL
 --> statement-breakpoint
 -- Accounts without a subject were pre-created by an admin invite: their role (and any name) is admin-set.
 UPDATE "cms_users" SET "role_managed" = true, "name_managed" = ("name" IS NOT NULL) WHERE "subject" IS NULL;
+`,
+  },
+  {
+    name: "0014_space_scope_and_visibility",
+    sql: `ALTER TABLE "pages" ADD COLUMN "scope_kind" text DEFAULT 'Company' NOT NULL;
+--> statement-breakpoint
+ALTER TABLE "pages" ADD COLUMN "scope_id" uuid;
+--> statement-breakpoint
+ALTER TABLE "pages" ADD COLUMN "visibility" text DEFAULT 'Internal' NOT NULL;
+--> statement-breakpoint
+ALTER TABLE "pages" ADD CONSTRAINT "pages_scope_kind_check" CHECK ("scope_kind" IN ('Project', 'Team', 'Department', 'Company'));
+--> statement-breakpoint
+ALTER TABLE "pages" ADD CONSTRAINT "pages_visibility_check" CHECK ("visibility" IN ('Internal', 'Public'));
+--> statement-breakpoint
+ALTER TABLE "pages" ADD CONSTRAINT "pages_scope_id_matches_kind" CHECK (("scope_kind" = 'Company') = ("scope_id" IS NULL));
+--> statement-breakpoint
+-- Pages that existed before Space owned content are shown on the website, so they stay public (decision 0049).
+UPDATE "pages" SET "visibility" = 'Public';
+--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "pages_scope_idx" ON "pages" ("scope_kind", "scope_id");
 `,
   },
 ];

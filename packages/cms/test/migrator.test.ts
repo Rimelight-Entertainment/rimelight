@@ -16,6 +16,7 @@ describe("migrator", () => {
       "0011_byline_fields",
       "0012_cms_users",
       "0013_cms_users_managed_fields",
+      "0014_space_scope_and_visibility",
     ]);
   });
 

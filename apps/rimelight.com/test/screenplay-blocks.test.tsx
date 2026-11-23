@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it } from "vite-plus/test";
 import { render } from "@solidjs/web";
 import { BlockRegistry, builtinBlocks, type BaseBlock } from "@rimelight/cms";
 import cmsConfig from "../cms.config";
-import { DialogueBlock, ScriptBlock, SceneBlock } from "../src/components/blocks";
+import { DialogueBlock, ScriptBlock, SceneBlock } from "@rimelight/cms/solid";
 
 // The same registry the dashboard builds: built-ins plus the site's custom blocks.
 const registry = new BlockRegistry().register(...builtinBlocks, ...(cmsConfig.blocks ?? []));

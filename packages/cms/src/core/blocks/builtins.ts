@@ -107,6 +107,7 @@ export const builtinBlocks: BlockDefinition<any>[] = [
     icon: "i-lucide-dot",
     category: "text",
     nestedOnly: true,
+    children: ["UnorderedListBlock", "OrderedListBlock"],
     parents: ["UnorderedListBlock", "OrderedListBlock"],
     defaultProps: { content: [] },
     inlineText: "content",
@@ -354,6 +355,116 @@ export const builtinBlocks: BlockDefinition<any>[] = [
     fields: {
       url: { type: "url", label: { en: "URL", es: "URL", pt: "URL" }, required: true },
       caption: { type: "text", label: { en: "Caption", es: "Caption", pt: "Caption" } },
+    },
+  }),
+  defineBlock({
+    type: "ScriptBlock",
+    label: { en: "Script", es: "Script", pt: "Script" },
+    icon: "i-lucide-clapperboard",
+    category: "screenplay",
+    defaultProps: { title: "", synopsis: "", characters: [] },
+    fields: {
+      title: { type: "text", label: { en: "Title", es: "Title", pt: "Title" } },
+      synopsis: { type: "textarea", label: { en: "Synopsis", es: "Synopsis", pt: "Synopsis" } },
+      characters: { type: "tags", label: { en: "Characters", es: "Characters", pt: "Characters" } },
+      aPlot: { type: "textarea", label: { en: "A plot", es: "A plot", pt: "A plot" } },
+      bPlot: { type: "textarea", label: { en: "B plot", es: "B plot", pt: "B plot" } },
+      cPlot: { type: "textarea", label: { en: "C plot", es: "C plot", pt: "C plot" } },
+      stinger: { type: "textarea", label: { en: "Stinger", es: "Stinger", pt: "Stinger" } },
+    },
+    children: ["SceneBlock"],
+  }),
+  defineBlock({
+    type: "SceneBlock",
+    label: { en: "Scene", es: "Scene", pt: "Scene" },
+    icon: "i-lucide-film",
+    category: "screenplay",
+    // Scenes only exist inside a script: they can't be created or dropped anywhere else.
+    parents: ["ScriptBlock"],
+    defaultProps: {
+      location: "",
+      timeOfDay: "MORNING",
+      setting: "INTERIOR",
+      transition: "CUT_TO",
+      description: [],
+    },
+    fields: {
+      location: { type: "text", label: { en: "Location", es: "Location", pt: "Location" } },
+      setting: {
+        type: "select",
+        label: { en: "Setting", es: "Setting", pt: "Setting" },
+        options: ["INTERIOR", "EXTERIOR", "OTHER"].map((v) => ({ value: v, label: v })),
+      },
+      timeOfDay: {
+        type: "select",
+        label: { en: "Time of day", es: "Time of day", pt: "Time of day" },
+        options: ["MORNING", "NOON", "AFTERNOON", "EVENING", "NIGHT", "OTHER"].map((v) => ({
+          value: v,
+          label: v,
+        })),
+      },
+      transition: {
+        type: "select",
+        label: { en: "Transition", es: "Transition", pt: "Transition" },
+        options: ["CUT_TO", "CUT_BACK_TO", "FADE_TO", "NONE"].map((v) => ({ value: v, label: v })),
+      },
+      description: {
+        type: "richtext",
+        label: { en: "Description", es: "Description", pt: "Description" },
+      },
+    },
+    children: ["DialogueBlock", "ParagraphBlock", "CalloutBlock"],
+  }),
+  defineBlock({
+    type: "DialogueBlock",
+    label: { en: "Dialogue", es: "Dialogue", pt: "Dialogue" },
+    icon: "i-lucide-message-square-quote",
+    category: "screenplay",
+    parents: ["SceneBlock"],
+    // Rich text so a speaker can be a mention of their Character page, or plain text when the
+    // character has no page.
+    defaultProps: { character: [], parenthetical: "", line: [] },
+    fields: {
+      character: {
+        type: "richtext",
+        label: { en: "Character", es: "Character", pt: "Character" },
+      },
+      parenthetical: {
+        type: "text",
+        label: { en: "Parenthetical", es: "Parenthetical", pt: "Parenthetical" },
+      },
+    },
+    inlineText: "line",
+    richText: true,
+  }),
+  defineBlock({
+    type: "ApiDocumentationBlock",
+    label: { en: "API documentation", es: "API documentation", pt: "API documentation" },
+    description: {
+      en: "A component's props, slots, emits and theme, generated from its source.",
+      es: "A component's props, slots, emits and theme, generated from its source.",
+      pt: "A component's props, slots, emits and theme, generated from its source.",
+    },
+    icon: "i-lucide-book-open",
+    category: "embed",
+    defaultProps: {
+      componentName: "",
+      sections: { props: true, slots: true, emits: true, theme: true, changelog: false },
+      hide: [],
+      show: [],
+    },
+    fields: {
+      componentName: {
+        type: "text",
+        label: { en: "Component", es: "Component", pt: "Component" },
+        required: true,
+      },
+      sections: { type: "json", label: { en: "Sections", es: "Sections", pt: "Sections" } },
+      hide: { type: "tags", label: { en: "Hide props", es: "Hide props", pt: "Hide props" } },
+      show: {
+        type: "tags",
+        label: { en: "Only show props", es: "Only show props", pt: "Only show props" },
+      },
     },
   }),
 ];

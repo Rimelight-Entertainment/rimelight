@@ -7,6 +7,7 @@ export const CmsDashboardRoute: Component = () => (
   <CmsDashboard
     apiBase={options.apiPath ?? "/api/cms"}
     blocks={config.blocks ?? []}
+    renderers={config.renderers}
     locales={config.locales ?? ["en"]}
   />
 );

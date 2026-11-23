@@ -21,6 +21,8 @@ export default defineConfig({
     // Canvases live room, one per canvas (Space CV.3, decision 0045).
     exports: {
       CanvasRoom: workerExports.durableObject({ storage: "sqlite" }),
+      // Content documents: the page main room and one room per author draft (Space CMS.3, decision 0049).
+      DocRoom: workerExports.durableObject({ storage: "sqlite" }),
     },
     env: {
       ASSETS: bindings.assets(),
@@ -64,6 +66,10 @@ export default defineConfig({
       CANVAS_ROOM: bindings.durableObject({
         worker: "rimelight-dot-com",
         exportName: "CanvasRoom",
+      }),
+      DOC_ROOM: bindings.durableObject({
+        worker: "rimelight-dot-com",
+        exportName: "DocRoom",
       }),
     },
   },

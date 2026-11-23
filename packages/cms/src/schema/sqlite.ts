@@ -150,6 +150,13 @@ export const pages: SQLiteTableWithColumns<any> = sqliteTable(
       }>()
       .notNull(),
     status: text("status").$type<EntryStatus>().default("published").notNull(),
+    /** Space scope (migration 0017), as in the Postgres schema. */
+    scopeKind: text("scope_kind")
+      .$type<"Project" | "Team" | "Department" | "Company">()
+      .default("Company")
+      .notNull(),
+    scopeId: text("scope_id"),
+    visibility: text("visibility").$type<"Internal" | "Public">().default("Internal").notNull(),
     scheduledAt: integer("scheduled_at", { mode: "timestamp" }),
     publishedVersionId: text("published_version_id").references(() => pageVersions.id, {
       onDelete: "set null",

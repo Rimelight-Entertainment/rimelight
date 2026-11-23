@@ -233,6 +233,9 @@ importers:
       hono:
         specifier: 5.0.0-rc.1
         version: 5.0.0-rc.1
+      loro-crdt:
+        specifier: ~1.18.0
+        version: 1.18.0
       postgres:
         specifier: 4.1.1
         version: 4.1.1
@@ -2605,6 +2608,9 @@ packages:
     resolution: {integrity: sha512-WkUDrojuJs0xkgGf2udWxa3yGBRxPtxUkB79i6aCZLRgc7PM8fZe9TosfPDcvEpQZbuFASnHYmRLBLUbmLOIIA==}
     engines: {node: '>= 12.0.0'}
 
+  loro-crdt@1.18.0:
+    resolution: {integrity: sha512-e/96j7B6MUMVc+AilrY6c/Q4+0uNGhBIqhRosadqeEM1d9+IMpxYKy2mL22NIj6ILuZfP0fF5cYTkipxgbddHg==}
+
   lru-cache@5.1.1:
     resolution: {integrity: sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w==}
 
@@ -4747,6 +4753,8 @@ snapshots:
       lightningcss-linux-x64-musl: 1.33.0
       lightningcss-win32-arm64-msvc: 1.33.0
       lightningcss-win32-x64-msvc: 1.33.0
+
+  loro-crdt@1.18.0: {}
 
   lru-cache@5.1.1:
     dependencies:

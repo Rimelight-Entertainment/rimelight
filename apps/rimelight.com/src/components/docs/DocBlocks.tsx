@@ -5,7 +5,7 @@ import { BlockRenderer, type PublicEntry } from "@rimelight/cms/solid";
 import { componentMeta as meta } from "@rimelight/ui/meta";
 import { generateThemeCode } from "#docs/utils";
 import ComponentShowcase from "#components/ComponentShowcase";
-import { rimelightCustomBlocks } from "#components/blocks";
+import { siteBlockRenderers } from "#components/blocks";
 
 /**
  * Renders a doc's blocks. Two docs-specific extras on top of the normal block renderers:
@@ -162,7 +162,7 @@ const ShowcaseBlock: Component<{ block: PublicEntry["blocks"][number] }> = (prop
 };
 
 /** Renderer overrides for docs: site blocks + live showcases (applied at every depth). */
-const DOCS_COMPONENTS = { ...rimelightCustomBlocks, ComponentShowcaseBlock: ShowcaseBlock };
+const DOCS_COMPONENTS = { ...siteBlockRenderers, ComponentShowcaseBlock: ShowcaseBlock };
 
 export const DocBlocks: Component<{ blocks: PublicEntry["blocks"]; locale: string }> = (props) => (
   <For each={props.blocks}>

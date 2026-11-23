@@ -1,5 +1,6 @@
 import type { StorageConfig } from "./storage/index";
 import type { CmsAccessConfig } from "./auth/access";
+import type { Component } from "solid-js";
 import type { BlockDefinition } from "./core/blocks/registry";
 
 /**
@@ -11,6 +12,8 @@ import type { BlockDefinition } from "./core/blocks/registry";
 export interface CmsConfig {
   /** Custom blocks in addition to the built-ins. */
   blocks?: BlockDefinition<any>[];
+  /** Solid renderers by block type, for built-in or custom blocks whose renderer the site supplies. */
+  renderers?: Record<string, Component<any>>;
   /** Content locales. First is the default. */
   locales?: string[];
   storage?: StorageConfig;

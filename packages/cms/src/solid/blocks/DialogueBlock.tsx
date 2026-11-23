@@ -1,10 +1,10 @@
 import type { Component } from "solid-js";
-import type { BaseBlock } from "@rimelight/cms/blocks";
-import { RichText } from "@rimelight/cms/solid";
+import type { BaseBlock } from "../../core/types/blocks";
+import { RichText } from "./inlines";
 
 export interface DialogueBlockProps {
   block: BaseBlock;
-  locale?: string;
+  locale?: string | undefined;
 }
 
 export const DialogueBlock: Component<DialogueBlockProps> = (props) => {

@@ -1,15 +1,13 @@
-import { ScriptBlock } from "./ScriptBlock";
-import { SceneBlock } from "./SceneBlock";
-import { DialogueBlock } from "./DialogueBlock";
 import { ApiDocumentationBlock } from "./ApiDocumentationBlock";
 import { LivePreviewBlock } from "./LivePreviewBlock";
 
-export const rimelightCustomBlocks: Record<string, any> = {
-  ScriptBlock,
-  SceneBlock,
-  DialogueBlock,
+/**
+ * Site renderers for built-in block types whose renderer needs site-only code. Passed to
+ * `defineCmsConfig({ renderers })` and to the docs renderer. Screenplay blocks are package built-ins.
+ */
+export const siteBlockRenderers: Record<string, any> = {
   ApiDocumentationBlock,
   LivePreviewBlock,
 };
 
-export { ScriptBlock, SceneBlock, DialogueBlock, ApiDocumentationBlock, LivePreviewBlock };
+export { ApiDocumentationBlock, LivePreviewBlock };

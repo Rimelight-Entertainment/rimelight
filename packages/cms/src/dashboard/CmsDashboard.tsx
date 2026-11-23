@@ -41,6 +41,8 @@ export interface CmsDashboardProps {
   apiBase?: string;
   /** Custom blocks (normally `config.blocks` from cms.config.ts). */
   blocks?: BlockDefinition<any>[];
+  /** Renderers by block type (normally `config.renderers` from cms.config.ts). */
+  renderers?: Record<string, Component<any>> | undefined;
   locales?: string[];
 }
 
@@ -77,7 +79,7 @@ const DashboardApp: Component<CmsDashboardProps> = (props) => {
   const location = useLocation();
   const routerNavigate = useNavigate();
   const api = createApi(props.apiBase);
-  const registry = createBlockRegistry(props.blocks ?? []);
+  const registry = createBlockRegistry(props.blocks ?? [], props.renderers);
 
   const [user, setUser] = createSignal<CmsActor | null>(null);
   const [authError, setAuthError] = createSignal<string | null>(null);

@@ -94,5 +94,8 @@ export default defineConfig({
   test: {
     environment: "happy-dom",
     include: ["test/**/*.test.{ts,tsx}"],
+    // Tests run in Node: use loro-crdt's Node build. The Worker keeps its default (bundler) build, which
+    // imports the .wasm directly and does not start under Node.
+    alias: { "loro-crdt": "loro-crdt/nodejs" },
   },
 });
