@@ -1,9 +1,9 @@
 # Rimelight cross-platform component catalogue (draft)
 # Counts (distinct concepts):
 #   total concepts:           156
-#   done on web and slint:    55
-#   web-only (web done):      71
-#   slint-only (slint done):  30  (ActionRow, Tile and RecentList added in WS4 ST4.2; ListPage, BoardPage, DetailPage in WS5 ST5.4)
+#   done on web and slint:    56
+#   web-only (web done):      70
+#   slint-only (slint done):  30  (AttachmentGrid catalogued; IssueCard and KanbanBoard removed; ActionRow, Tile and RecentList added in WS4 ST4.2; ListPage, BoardPage, DetailPage in WS5 ST5.4)
 #   media-only (media done):  0  (Tile, RecentList and ActionRow now also in rimelight_ui)
 # Sources: packages/ui/src/components (web), crates/rimelight_ui/ui/components (slint),
 #          rimelight-media/ui/widgets.slint (media). Read-only research.
@@ -1179,10 +1179,23 @@
     {
       status: done,
       path: crates/rimelight_ui/ui/components/attachment-tile.slint,
-      props: [item, items, columns, tile-width],
+      props: [item, tile-width],
     }
   media: { status: done, path: ui/widgets.slint#FileKindTile, props: [kind, tile-size] }
-  notes: "Slint AttachmentTile and Media FileKindTile are file tiles; Slint also has a grid. The Slint FileKindTile (WS4 ST4.2) is in tile.slint, with top-colour and bottom-colour overridable (defaults from the extension-file-kind tokens and palette ramps)."
+  notes: "Slint AttachmentTile and Media FileKindTile are file tiles; Slint also has a grid (see AttachmentGrid). The Slint FileKindTile (WS4 ST4.2) is in tile.slint, with top-colour and bottom-colour overridable (defaults from the extension-file-kind tokens and palette ramps)."
+
+- name: AttachmentGrid
+  aliases: [attachment-grid, AttachmentGrid]
+  category: data
+  web: { status: none }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/attachment-tile.slint,
+      props: [items, columns, tile-width],
+    }
+  media: { status: none }
+  notes: "Slint-only grid of AttachmentTile (same file). Callbacks: open(index) for images, download(index) for other files, delete(index). Web has only the dropzone."
 
 - name: RecentList
   aliases: [RecentRow, RecentBlock]
@@ -1509,7 +1522,7 @@
   slint:
     {
       status: done,
-      path: crates/rimelight_ui/ui/components/shortcuts-dialog.slint,
+      path: crates/rimelight_shell/ui/components/shortcuts-dialog.slint,
       props: [title, label, keys, mac-keys, other-keys, has-other, planned],
     }
   media: { status: none }
@@ -1535,7 +1548,7 @@
   slint:
     {
       status: done,
-      path: crates/rimelight_ui/ui/components/command-palette.slint,
+      path: crates/rimelight_shell/ui/components/command-palette.slint,
       props: [query, rows, highlight, empty-text, search-label, panel-width],
     }
   media: { status: none }
@@ -1614,7 +1627,7 @@
   slint:
     {
       status: done,
-      path: crates/rimelight_ui/ui/components/tab-bar.slint,
+      path: crates/rimelight_shell/ui/components/tab-bar.slint,
       props: [items, selected],
     }
   media: { status: none }
@@ -1897,7 +1910,7 @@
   slint:
     {
       status: done,
-      path: crates/rimelight_ui/ui/components/split-pane.slint,
+      path: crates/rimelight_shell/ui/components/split-pane.slint,
       props: [ratio, vertical, min-first, min-second],
     }
   media: { status: none }
@@ -1988,7 +2001,7 @@
   slint:
     {
       status: done,
-      path: crates/rimelight_ui/ui/components/sidebar.slint,
+      path: crates/rimelight_shell/ui/components/sidebar.slint,
       props: [items, current-key, expanded, selected, switcher, show-collapse, sidebar-width],
     }
   media: { status: none }
@@ -2001,7 +2014,7 @@
   slint:
     {
       status: done,
-      path: crates/rimelight_ui/ui/components/rail.slint,
+      path: crates/rimelight_shell/ui/components/rail.slint,
       props: [items, selected, badges],
     }
   media: { status: none }
@@ -2016,7 +2029,7 @@
   slint:
     {
       status: done,
-      path: crates/rimelight_ui/ui/components/status-bar.slint,
+      path: crates/rimelight_shell/ui/components/status-bar.slint,
       props: [current, title, clock-text, timer-text, zoom-percent, theme-label, language-names],
     }
   media: { status: done, path: ui/widgets.slint#StatusBar, props: [left-text, center-text] }
@@ -2029,7 +2042,7 @@
   slint:
     {
       status: done,
-      path: crates/rimelight_ui/ui/components/more-drawer.slint,
+      path: crates/rimelight_shell/ui/components/more-drawer.slint,
       props: [areas, jobs, language-names, theme-label, timer-text, value],
     }
   media: { status: none }
@@ -2037,18 +2050,18 @@
   scope: app-specific
   home: shell
 
-- name: ProfileMenu
-  aliases: [profile-menu, ProfileMenu]
+- name: AccountMenu
+  aliases: [account-menu, profile-menu, ProfileMenu]
   category: shell
   web: { status: none }
   slint:
     {
       status: done,
-      path: crates/rimelight_ui/ui/components/profile-menu.slint,
+      path: crates/rimelight_shell/ui/components/account-menu.slint,
       props: [user-name, user-email, user-initials, presence],
     }
   media: { status: none }
-  notes: "Slint-only account menu with sign-out."
+  notes: "Slint-only account menu with presence picker, settings, feedback and sign-out. Moved to rimelight_shell (ST2.5b); ProfileMenu is the old name."
   scope: app-specific
   home: shell
 
@@ -2059,7 +2072,7 @@
   slint:
     {
       status: done,
-      path: crates/rimelight_ui/ui/components/sign-in-screen.slint,
+      path: crates/rimelight_shell/ui/components/sign-in-screen.slint,
       props:
         [
           phase,
@@ -2086,41 +2099,11 @@
   slint:
     {
       status: done,
-      path: crates/rimelight_ui/ui/components/quick-action.slint,
+      path: crates/rimelight_shell/ui/components/quick-action.slint,
       props: [categories, item-count, open-request],
     }
   media: { status: none }
   notes: "Slint-only quick-action launcher for Space."
-  scope: app-specific
-  home: space
-
-- name: IssueCard
-  aliases: [issue-card, IssueCard]
-  category: data
-  web: { status: none }
-  slint:
-    {
-      status: done,
-      path: crates/rimelight_ui/ui/components/issue-card.slint,
-      props: [card, column, column-names],
-    }
-  media: { status: none }
-  notes: "Slint-only Space issue card with drag and drop."
-  scope: app-specific
-  home: space
-
-- name: KanbanBoard
-  aliases: [kanban-board, kanban-column, KanbanBoard, KanbanColumn]
-  category: data
-  web: { status: none }
-  slint:
-    {
-      status: done,
-      path: crates/rimelight_ui/ui/components/kanban-board.slint,
-      props: [board, board-names, column-width],
-    }
-  media: { status: none }
-  notes: "Slint kanban-board.slint and kanban-column.slint are merged here. Uses the Space issue model."
   scope: app-specific
   home: space
 
@@ -2513,7 +2496,7 @@
         ],
     }
   media: { status: none }
-  notes: "ST5.4 page template (T-BOARD): columns of cards, drag between columns (column-at callback, wired to board::drop_column), Left and Right keys, Add card per column, move-error banner. Callbacks: moved, add-card, picked, opened, retry. State in rimelight_ui_kit (board, page_state). The Space kanban component is separate and not yet on this template."
+  notes: "ST5.4 page template (T-BOARD): columns of cards, drag between columns (column-at callback, wired to board::drop_column), Left and Right keys, Add card per column, move-error banner. Callbacks: moved, add-card, picked, opened, retry. State in rimelight_ui_kit (board, page_state). Space uses this template (its own kanban files are gone). BoardItem fields: key, title, detail, badge, kind, priority, meta, assignee, chips (BoardChip text and color). A card moves by drag or by the Move to popover (show-move)."
   scope: shell
   home: shell
 
