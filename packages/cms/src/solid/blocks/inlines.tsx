@@ -17,7 +17,7 @@ import { RLIcon } from "@rimelight/ui/components/icon/RLIcon.tsx";
 export type RichTextCollection = Pick<CollectionDefinition, "slug"> &
   Partial<Pick<CollectionDefinition, "color" | "icon" | "label" | "features">>;
 
-/** Only needed where content isn't delivered by the content API (e.g. the dashboard preview). */
+/** Only needed where content isn't delivered by the content API. */
 export interface RichTextConfig {
   /** Collections — gives unresolved mentions their colour and URL pattern. */
   collections?: RichTextCollection[] | undefined;
@@ -39,7 +39,7 @@ export const RichTextProvider: Component<RichTextConfig & { children: JSX.Elemen
 
 /**
  * Colour and href for a mention. Content from the delivery API arrives resolved (`color`, and
- * `href` only when the target is published). Unresolved nodes (e.g. drafts in the dashboard
+ * `href` only when the target is published). Unresolved nodes (e.g. drafts in editor previews
  * preview) fall back to the context's collections, then to the slug-derived colour.
  */
 export function useMentionInfo() {

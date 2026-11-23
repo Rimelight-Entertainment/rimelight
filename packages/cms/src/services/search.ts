@@ -63,7 +63,10 @@ export async function searchEntries(
   const query = q.trim();
   if (!query) return [];
   const s = ctx.t.searchIndex;
-  const scope = collection ? eq(s.sourceType, collection) : undefined;
+  // Only Public pages are searchable: Space-internal pages never reach the website.
+  const p = ctx.t.pages;
+  const publicOnly = sql`${s.sourceId} in (select cast(${p.id} as text) from ${p} where ${p.visibility} = 'Public')`;
+  const scope = and(publicOnly, collection ? eq(s.sourceType, collection) : undefined);
 
   if (ctx.dialect === "pg") {
     const terms = query

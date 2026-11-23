@@ -62,7 +62,7 @@ export async function getTaxonomy(ctx: CmsContext, slug: string): Promise<Taxono
   return toTaxonomy(rows[0]);
 }
 
-/** Presets available to scaffold a taxonomy from. Plain data, safe to send to the dashboard. */
+/** Presets available to scaffold a taxonomy from. Plain data. */
 export function listTaxonomyPresets(): TaxonomyPreset[] {
   return taxonomyPresets;
 }

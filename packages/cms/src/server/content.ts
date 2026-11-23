@@ -6,11 +6,14 @@ import { buildDocsNavFromPages } from "../docs/config";
 import type { Cms } from "../services/index";
 import type { Entry, EntrySummary } from "../services/entries";
 import { handleCmsError } from "./errors";
-import { cmsForRequest, resolveIdentity, type CmsServerOptions } from "./context";
+import { cmsForRequest, type CmsServerOptions } from "./context";
 
 export interface ContentRouterOptions extends CmsServerOptions {}
 
-/** An entry as public readers see it: published content only, role-gated blocks removed. */
+/**
+ * An entry as website readers see it: published content only, Space-internal and role-gated
+ * blocks removed. Readers are anonymous, so role-gated blocks never reach the response.
+ */
 export interface PublicEntry {
   id: string;
   collection: string;
@@ -27,7 +30,7 @@ export interface PublicEntry {
   terms: { taxonomy: string; slug: string; label: Record<string, string> | string }[];
 }
 
-function publicEntry(entry: Entry | EntrySummary, roles?: string[]): PublicEntry {
+function publicEntry(entry: Entry | EntrySummary): PublicEntry {
   const published = entry.published ?? { blocks: [], properties: {} };
   return {
     id: entry.id,
@@ -39,10 +42,7 @@ function publicEntry(entry: Entry | EntrySummary, roles?: string[]): PublicEntry
     bylines: entry.bylines,
     publishedAt: entry.postedAt,
     updatedAt: entry.updatedAt,
-    blocks: filterBlocksForReader(
-      published.blocks,
-      roles ? { userId: "", roles, permissions: [] } : undefined,
-    ),
+    blocks: filterBlocksForReader(published.blocks),
     properties: published.properties,
     terms: [],
   };
@@ -67,8 +67,9 @@ export interface ContentRouter {
 }
 
 /**
- * Public, read-only delivery API. Only `published` entries are visible, except when a valid
- * `?preview=<token>` is supplied, which returns the draft of that one entry.
+ * Public, read-only delivery API. Only `published` entries with `visibility` `Public` are served.
+ * A valid `?preview=<token>` returns the draft of that one entry, still subject to the same
+ * visibility rule.
  */
 export function createContentRouter(options: ContentRouterOptions = {}): ContentRouter {
   const content = new Hono();
@@ -83,25 +84,10 @@ export function createContentRouter(options: ContentRouterOptions = {}): Content
       `public, max-age=${seconds}, s-maxage=${seconds * 5}, stale-while-revalidate=86400`,
     );
 
-  /**
-   * Roles for public visibility filters, taken from the verified identity's groups. Identity-only:
-   * a site visitor never provisions a CMS account. Any failure renders the page as anonymous.
-   */
-  const readerRoles = async (c: Context): Promise<string[] | undefined> => {
-    try {
-      const identity = await resolveIdentity(c.req.raw, options);
-      if (!identity?.emailVerified) return undefined;
-      return identity.groups.length ? identity.groups : ["member"];
-    } catch (err) {
-      console.warn("[@rimelight/cms] reader roles unavailable; rendering as anonymous", err);
-      return undefined;
-    }
-  };
-
   async function findPublished(cms: Cms, c: Context, slug: string, collection?: string) {
     const token = c.req.query("preview");
     const entry = await cms.entries.getEntry(slug, collection).catch(() => null);
-    if (!entry || entry.deletedAt) return null;
+    if (!entry || entry.deletedAt || entry.visibility !== "Public") return null;
     if (token) {
       const secret = cms.ctx.previewSecret;
       if (secret && (await verifyPreviewToken(entry.id, token, secret))) {
@@ -118,6 +104,7 @@ export function createContentRouter(options: ContentRouterOptions = {}): Content
     const { entries, total } = await cms.entries.listEntries({
       collection: c.req.param("collection"),
       status: "published",
+      visibility: "Public",
       orderBy: (c.req.query("orderBy") as any) ?? "posted",
       includeContent: c.req.query("content") !== "false",
       limit: Number(c.req.query("limit") ?? 50),
@@ -126,11 +113,10 @@ export function createContentRouter(options: ContentRouterOptions = {}): Content
         ? { taxonomy: { taxonomy: c.req.query("taxonomy")!, term: c.req.query("term")! } }
         : {}),
     });
-    const roles = await readerRoles(c);
     const resolved = await cms.mentions.resolveMentions(
       await withTerms(
         cms,
-        entries.map((e: any) => publicEntry(e, roles)),
+        entries.map((e: any) => publicEntry(e)),
       ),
       c.req.query("locale") ?? "en",
     );
@@ -150,7 +136,7 @@ export function createContentRouter(options: ContentRouterOptions = {}): Content
     );
     if (!entry) return asMarkdown ? c.text("Not Found", 404) : c.json({ entry: null }, 404);
     const [pub] = (await cms.mentions.resolveMentions(
-      await withTerms(cms, [publicEntry(entry, await readerRoles(c))]),
+      await withTerms(cms, [publicEntry(entry)]),
       c.req.query("locale") ?? "en",
     )) as PublicEntry[];
     if (!pub) return asMarkdown ? c.text("Not Found", 404) : c.json({ entry: null }, 404);
@@ -179,6 +165,7 @@ export function createContentRouter(options: ContentRouterOptions = {}): Content
     const { entries } = await cms.entries.listEntries({
       collection: c.req.query("collection") ?? "doc",
       status: "published",
+      visibility: "Public",
       orderBy: "slug",
       includeContent: true,
       limit: 1000,

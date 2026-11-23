@@ -1,6 +1,6 @@
 /**
  * Auth0 flows for the Rimelight website and the game's headless login. Verification of incoming
- * tokens lives in `@rimelight/cms/identity`; this module only talks to the tenant.
+ * tokens lives in `#auth/jwt`; this module only talks to the tenant.
  */
 
 export interface Auth0Config {

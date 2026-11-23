@@ -3,7 +3,7 @@ import type { CollectionDefinition } from "./types";
 
 /**
  * A starting point for a new collection. Presets are never active on their own: a project starts
- * with no collections, and a preset scaffolds one when someone creates it (dashboard "Start from a
+ * with no collections, and a preset scaffolds one when someone creates it (Space "Start from a
  * preset", or `createCollectionFromPreset`). Once created it's an ordinary database collection and
  * the preset is no longer referenced.
  */

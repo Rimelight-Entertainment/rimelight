@@ -1,9 +1,11 @@
-import { readdirSync, readFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { LoroDoc } from "loro-crdt";
 import { describe, expect, it } from "vite-plus/test";
 import {
   catchUp,
+  configure,
   exportPage,
   forkDraft,
   importPage,
@@ -138,5 +140,39 @@ describe("collab: drafts", () => {
     catchUp(draft, main);
     expect(exportPage(draft)).toEqual(exportPage(main));
     expect(exportPage(draft).meta["templateVersion"]).toBe(7);
+  });
+});
+
+// Cross-language check (MAPPING.md section 4): Loro bytes written by either side export to the same JSON.
+// `fixtures/content/loro/<name>.ts.bin` is written here and `<name>.rust.bin` by rimelight-rs's
+// `rimelight_content` tests, each when RIMELIGHT_WRITE_LORO_FIXTURES=1; the files are copied between the
+// two repos and committed.
+describe("collab: Loro bytes from both languages", () => {
+  const loroDir = `${fixturesDir}loro/`;
+  const names = fixtureFiles.map((file) => file.replace(/\.page\.json$/, ""));
+
+  it("export to the normal form of their fixture", () => {
+    if (process.env["RIMELIGHT_WRITE_LORO_FIXTURES"] === "1") {
+      mkdirSync(loroDir, { recursive: true });
+      for (const name of names) {
+        const doc = importPage(readFixture(`${name}.page.json`));
+        writeFileSync(`${loroDir}${name}.ts.bin`, doc.export({ mode: "snapshot" }));
+      }
+    }
+    let checked = 0;
+    for (const name of names) {
+      for (const side of ["rust", "ts"]) {
+        const path = `${loroDir}${name}.${side}.bin`;
+        if (!existsSync(path)) continue;
+        const doc = new LoroDoc();
+        configure(doc);
+        doc.import(new Uint8Array(readFileSync(path)));
+        expect(exportPage(doc), `${name} from ${side} bytes`).toEqual(
+          normalizePage(readFixture(`${name}.page.json`)),
+        );
+        checked += 1;
+      }
+    }
+    expect(checked).toBeGreaterThan(0);
   });
 });

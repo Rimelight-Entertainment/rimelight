@@ -1,84 +1,13 @@
 import { describe, expect, it } from "vite-plus/test";
 import {
-  htmlToInline,
-  inlineToHtml,
-  mentionHtml,
-  toInlineNodes,
-  toPlainText,
-} from "../src/editor/inline";
-import {
   collectMentionIds,
   collectMentions,
-  compactRichText,
+  inlineToPlainText,
   resolveRichText,
   stripResolvedMentions,
   updateRichText,
 } from "../src/core/richtext";
 import type { InlineNode } from "../src/core/types/inline";
-
-/** Render → DOM → parse: what the user sees and types, read back into the stored AST. */
-function roundTrip(nodes: InlineNode[]): InlineNode[] {
-  const host = document.createElement("div");
-  host.innerHTML = inlineToHtml(nodes);
-  return htmlToInline(host);
-}
-
-describe("inline marks", () => {
-  it("round-trips every mark, including stacked marks", () => {
-    const nodes: InlineNode[] = [
-      { type: "text", text: "b", marks: ["bold"] },
-      { type: "text", text: "i", marks: ["italic"] },
-      { type: "text", text: "u", marks: ["underline"] },
-      { type: "text", text: "s", marks: ["strikethrough"] },
-      { type: "text", text: "c", marks: ["code"] },
-      { type: "text", text: "bi", marks: ["bold", "italic"] },
-    ];
-    expect(roundTrip(nodes)).toEqual(compactRichText(nodes));
-  });
-
-  it("keeps plain text that looks like markup as text", () => {
-    const nodes: InlineNode[] = [{ type: "text", text: '<b>not bold</b> & "quotes"' }];
-    expect(roundTrip(nodes)).toEqual(nodes);
-  });
-
-  it("reads a pasted <strong> and <em> as marks", () => {
-    const host = document.createElement("div");
-    host.innerHTML = "<strong>a</strong><em>b</em>";
-    expect(htmlToInline(host)).toEqual([
-      { type: "text", text: "a", marks: ["bold"] },
-      { type: "text", text: "b", marks: ["italic"] },
-    ]);
-  });
-
-  it("turns a trailing <br> into no newline, but keeps inner line breaks", () => {
-    const host = document.createElement("div");
-    host.innerHTML = "one<br>two<br>";
-    expect(htmlToInline(host)).toEqual([{ type: "text", text: "one\ntwo" }]);
-  });
-});
-
-describe("links", () => {
-  it("round-trips a link with marked children and its new-tab flag", () => {
-    const nodes: InlineNode[] = [
-      {
-        type: "link",
-        url: "https://rimelight.com",
-        openInNewTab: true,
-        children: [
-          { type: "text", text: "go", marks: ["bold"] },
-          { type: "text", text: " now" },
-        ],
-      },
-    ];
-    expect(roundTrip(nodes)).toEqual(nodes);
-  });
-
-  it("unwraps a link without a URL into plain text", () => {
-    const host = document.createElement("div");
-    host.innerHTML = "<a>just text</a>";
-    expect(htmlToInline(host)).toEqual([{ type: "text", text: "just text" }]);
-  });
-});
 
 describe("mentions", () => {
   const mention: InlineNode = {
@@ -88,26 +17,6 @@ describe("mentions", () => {
     slug: "aleph",
     title: "Aleph Lightbringer",
   };
-
-  it("round-trips the stored fields", () => {
-    expect(roundTrip([mention])).toEqual([mention]);
-  });
-
-  it("derives the colour from the collection at render time, never stores it", () => {
-    const html = mentionHtml(mention, {
-      mentionColor: (c) => (c === "character" ? "#f00" : "#000"),
-    });
-    expect(html).toContain("color:#f00");
-    // Parsing the rendered span drops the colour: it is not part of the stored node.
-    const host = document.createElement("div");
-    host.innerHTML = html;
-    expect(htmlToInline(host)).toEqual([mention]);
-  });
-
-  it("is not editable and shows the title, falling back to the slug", () => {
-    expect(mentionHtml(mention)).toContain('contenteditable="false"');
-    expect(mentionHtml({ ...mention, title: undefined })).toContain(">aleph<");
-  });
 
   it("strips delivery-only colour and href before saving", () => {
     const delivered = { ...mention, color: "#f00", href: "/characters/aleph" };
@@ -122,28 +31,14 @@ describe("mentions", () => {
     ]);
   });
 
-  it("counts as text in plain-text output (title, then slug)", () => {
-    expect(toPlainText([{ type: "text", text: "Hi " }, mention])).toBe("Hi Aleph Lightbringer");
-  });
-});
-
-describe("emoji and icons", () => {
-  it("round-trip as atomic nodes", () => {
-    const nodes: InlineNode[] = [
-      { type: "emoji", emoji: "🔥", shortcode: "fire" },
-      { type: "text", text: " " },
-      { type: "icon", name: "i-lucide-star", label: "Star" },
-    ];
-    expect(roundTrip(nodes)).toEqual(nodes);
+  it("counts as text in plain-text output (title)", () => {
+    expect(inlineToPlainText([{ type: "text", text: "Hi " }, mention])).toBe(
+      "Hi Aleph Lightbringer",
+    );
   });
 });
 
 describe("plain and rich values", () => {
-  it("turns a plain string into one text node and back", () => {
-    expect(toInlineNodes("hello")).toEqual([{ type: "text", text: "hello" }]);
-    expect(toPlainText("hello")).toBe("hello");
-  });
-
   it("resolves a localized value with fallback, then the first locale present", () => {
     const value = { pt: [{ type: "text", text: "olá" }], en: [{ type: "text", text: "hi" }] };
     expect(resolveRichText(value, "pt")).toEqual([{ type: "text", text: "olá" }]);

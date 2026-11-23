@@ -28,16 +28,12 @@ export * from "./auth/permissions";
 export * from "./auth/filter-blocks";
 export * from "./auth/editor-guards";
 export * from "./auth/filter-templates";
-export type { CmsAccessConfig } from "./auth/access";
-export type { AccessIdentity, IdentifyFn } from "./identity/types";
 
 // ─── Docs engine ─────────────────────────────────────────────────────────────
 export * from "./docs/index";
 
 // ─── Delivery ────────────────────────────────────────────────────────────────
 export * from "./cron/scheduled";
-export * from "./mcp/index";
-export * from "./storage/index";
 export * from "./server/index";
 
 // ─── Database ────────────────────────────────────────────────────────────────

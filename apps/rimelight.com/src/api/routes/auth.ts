@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { setCookie, deleteCookie } from "hono/cookie";
-import { decodeJwt } from "@rimelight/cms/identity";
+import { decodeJwt } from "#auth/jwt";
 import {
   ambientEnv,
   createAuthorizeUrl,

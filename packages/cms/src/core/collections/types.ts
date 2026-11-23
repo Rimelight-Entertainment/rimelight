@@ -123,7 +123,7 @@ export interface CollectionDefinition {
   initialBlocks?: BaseBlock[] | (() => BaseBlock[]);
 }
 
-/** A collection after defaults are applied. This is what services and the dashboard consume. */
+/** A collection after defaults are applied. This is what the services consume. */
 export interface ResolvedCollection extends CollectionDefinition {
   kind: CollectionKind;
   /** Always set: the explicit colour or the derived one. */

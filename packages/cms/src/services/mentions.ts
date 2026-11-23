@@ -93,7 +93,7 @@ export async function resolveMentions<T extends { blocks: BaseBlock[]; propertie
 }
 
 /**
- * Titles of the given entries in `locale`, for the dashboard editor (same fallback as delivery:
+ * Titles of the given entries in `locale`, for editor previews (same fallback as delivery:
  * requested locale, then `en`, then the first one present). Unknown ids are left out.
  */
 export async function mentionTitles(

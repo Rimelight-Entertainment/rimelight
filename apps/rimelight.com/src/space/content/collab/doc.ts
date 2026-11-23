@@ -66,18 +66,45 @@ export function importPage(page: Json): LoroDoc {
       setPlain(metaMap, key, value);
     }
   }
-  const props = metaMap.setContainer("properties", new LoroMap());
-  for (const [key, value] of Object.entries(content.properties as Json)) {
-    setPlain(props, key, value);
-  }
+  writeProperties(metaMap, content.properties as Json);
 
   const tree = doc.getTree("blocks");
   tree.enableFractionalIndex(0);
-  for (const block of content.blocks) {
-    importBlock(tree, undefined, block);
-  }
+  writeBlocks(tree, content.blocks);
   doc.commit();
   return doc;
+}
+
+/**
+ * Replaces the page's content in an existing document (the blocks tree and meta.properties) in one commit. Meta
+ * fields (slug, type, title, description) are kept. The blocks are written by the same code as importPage. The
+ * JSON is checked first, on a scratch document, so a bad block leaves the live document untouched.
+ */
+export function replaceContent(doc: LoroDoc, content: Json): void {
+  importPage({ meta: {}, content });
+
+  doc.commit();
+  const metaMap = doc.getMap("meta");
+  const tree = doc.getTree("blocks");
+  for (const root of tree.roots()) tree.delete(root.id);
+  writeProperties(metaMap, content["properties"] as Json);
+  writeBlocks(tree, content["blocks"]);
+  doc.commit();
+}
+
+/** The properties child map of meta, rebuilt from the JSON (MAPPING section 2). */
+function writeProperties(metaMap: LoroMap, properties: Json): void {
+  const props = metaMap.setContainer("properties", new LoroMap());
+  for (const [key, value] of Object.entries(properties)) {
+    setPlain(props, key, value);
+  }
+}
+
+/** Appends the blocks (and their children) as roots of the tree, in order. */
+function writeBlocks(tree: ReturnType<LoroDoc["getTree"]>, blocks: unknown[]): void {
+  for (const block of blocks) {
+    importBlock(tree, undefined, block);
+  }
 }
 
 /** Published page JSON from a Loro document. Output is in normal form (MAPPING section 4). */

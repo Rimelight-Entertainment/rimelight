@@ -41,6 +41,8 @@ export interface BaseBlock {
    */
   templatedProps?: boolean | string[];
 
+  /** `internal` blocks are Space-internal: the website delivery API drops them for every reader. */
+  visibility?: "public" | "internal";
   allowedRoles?: string[];
   requiredPermission?: string;
   props: Record<string, any>;

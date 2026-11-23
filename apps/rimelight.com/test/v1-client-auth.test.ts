@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from "vite-plus/test";
 const verifyAuth0Jwt = vi.hoisted(() => vi.fn());
 const provisionUser = vi.hoisted(() => vi.fn());
 
-vi.mock("@rimelight/cms/identity", () => ({ verifyAuth0Jwt }));
+vi.mock("#auth/jwt", () => ({ verifyAuth0Jwt }));
 vi.mock("#db", () => ({ getDb: () => ({}) }));
 vi.mock("../src/api/routes/v1/provision", () => {
   class ProvisionConflictError extends Error {}

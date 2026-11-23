@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from "vite-plus/test";
 import { drizzle } from "drizzle-orm/d1";
+import { eq } from "drizzle-orm";
 import { collectionPreflight, migrateCms } from "../src/migrator/index";
 import { createCms, type Cms } from "../src/services/index";
 import { CmsError, type CmsActor } from "../src/services/context";
@@ -415,6 +416,9 @@ describe("taxonomies, bylines, search, templates", () => {
       title: "Dragons",
       blocks: text("Fire-breathing lizards"),
     });
+    // Search returns only Public pages; services leave new pages Internal, so set it as Space does.
+    const { pages } = cms.ctx.t;
+    await cms.ctx.db.update(pages).set({ visibility: "Public" }).where(eq(pages.id, e.id));
     await cms.entries.publishEntry(admin, e.id);
     const hits = await cms.search.searchEntries("lizards");
     expect(hits[0]?.sourceId).toBe(e.id);

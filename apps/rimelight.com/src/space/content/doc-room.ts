@@ -13,7 +13,13 @@
 import { DurableObject } from "cloudflare:workers";
 import { LoroDoc, VersionVector } from "loro-crdt";
 // UNSURE: the collab entry is written by another agent; the signatures are as the brief gave them.
-import { configure, exportPage, forkDraft, importPage } from "./collab/index.ts";
+import {
+  configure,
+  exportPage,
+  forkDraft,
+  importPage,
+  replaceContent as replaceDocContent,
+} from "./collab/index.ts";
 import { getSql } from "../../db/index.ts";
 import {
   FRAME,
@@ -301,6 +307,26 @@ export class DocRoom extends DurableObject {
     if (this.meta("closed") === "1") throw new Error("room_closed");
     const doc = await this.ready();
     doc.import(bytes);
+    this.noteChange();
+    this.broadcast(encodeFrame(FRAME.UPDATE, bytes));
+    await this.scheduleFlush();
+  }
+
+  /**
+   * Replaces a draft's blocks and properties in one change (a REST or MCP edit). Every socket gets the change as an
+   * update frame, exactly like importUpdates, and the change is flushed the same way. Main rooms are not edited.
+   */
+  async replaceContent(content: {
+    blocks: unknown[];
+    properties: Record<string, unknown>;
+  }): Promise<void> {
+    if (this.meta("closed") === "1") throw new Error("room_closed");
+    if (this.requireMeta("kind") !== "draft") throw new Error("only a draft room is edited");
+    const doc = await this.ready();
+    doc.commit();
+    const before = doc.oplogVersion();
+    replaceDocContent(doc, content);
+    const bytes = doc.export({ mode: "update", from: before });
     this.noteChange();
     this.broadcast(encodeFrame(FRAME.UPDATE, bytes));
     await this.scheduleFlush();

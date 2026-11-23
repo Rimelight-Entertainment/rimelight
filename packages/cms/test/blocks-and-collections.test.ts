@@ -11,7 +11,6 @@ import { BlockRegistry } from "../src/core/blocks/registry";
 import { builtinBlocks } from "../src/core/blocks/builtins";
 import { resolveCollection } from "../src/core/collections/define";
 import { validateProperties } from "../src/core/collections/validate";
-import { inlineToHtml, toInlineNodes } from "../src/editor/inline";
 import type { BaseBlock } from "../src/core/types/blocks";
 
 const p = (id: string): BaseBlock => ({ id, type: "ParagraphBlock", props: {} });
@@ -99,17 +98,5 @@ describe("collections", () => {
     expect(
       validateProperties(c, { price: { amount: 1 }, name: { en: "too long" } }).map((e) => e.field),
     ).toEqual(["name"]);
-  });
-});
-
-describe("inline text", () => {
-  it("normalizes strings and node arrays", () => {
-    expect(toInlineNodes("hi")).toEqual([{ type: "text", text: "hi" }]);
-    expect(toInlineNodes([{ type: "text", text: "a" }])).toHaveLength(1);
-  });
-  it("renders marks and escapes html", () => {
-    expect(inlineToHtml([{ type: "text", text: "<b>", marks: ["bold"] }])).toBe(
-      "<strong>&lt;b&gt;</strong>",
-    );
   });
 });

@@ -177,6 +177,79 @@ export async function openableDraft(
   return { draft };
 }
 
+/**
+ * The caller's open (or in review) draft on a page, created if there is none. The caller must already have edit on
+ * the page (the route checks it with loadPage). `created` is false when the draft existed.
+ */
+export async function openDraft(
+  sql: Sql,
+  caller: { id: string },
+  pageId: string,
+): Promise<{ draft: DraftRow; created: boolean } | Response> {
+  const existing = await sql`SELECT id::text AS id FROM content_drafts
+     WHERE page_id = ${pageId}::text::uuid AND author_id = ${caller.id}::text::uuid
+       AND status IN ('Open', 'InReview')`;
+  let draftId = existing[0]?.["id"] as string | undefined;
+  let created = false;
+  if (!draftId) {
+    const inserted = await sql`INSERT INTO content_drafts (page_id, author_id)
+       VALUES (${pageId}::text::uuid, ${caller.id}::text::uuid)
+       ON CONFLICT (page_id, author_id) WHERE status IN ('Open', 'InReview') DO NOTHING
+       RETURNING id::text AS id`;
+    draftId = inserted[0]?.["id"] as string | undefined;
+    created = draftId !== undefined;
+    if (!draftId) {
+      const again = await sql`SELECT id::text AS id FROM content_drafts
+         WHERE page_id = ${pageId}::text::uuid AND author_id = ${caller.id}::text::uuid
+           AND status IN ('Open', 'InReview')`;
+      draftId = again[0]?.["id"] as string;
+    }
+  }
+  const draft = await loadDraft(sql, draftId);
+  if (draft instanceof Response) return draft;
+  return { draft, created };
+}
+
+export type PublishResult = {
+  status: "in_review" | "published";
+  version_id: string;
+  draft_id: string;
+};
+
+/**
+ * Publishes a draft the caller may open: the author or a member. With approval rules on the page's template, the
+ * draft goes to review (status in_review, the pending version); otherwise it is published now. Returns a Response
+ * for every refusal (404, 403, 409). Shared by the publish route and the MCP publish_draft tool.
+ */
+export async function publishDraft(
+  sql: Sql,
+  caller: { id: string },
+  draftId: string,
+  summary: string | null,
+): Promise<PublishResult | Response> {
+  const found = await openableDraft(sql, caller.id, draftId);
+  if (found instanceof Response) return found;
+  const { draft } = found;
+  if (draft.status !== "Open") {
+    return apiError(
+      409,
+      "conflict",
+      draft.status === "InReview"
+        ? "This draft is already waiting for approval."
+        : "This draft is closed.",
+    );
+  }
+
+  const staged = await stageDraft(draft);
+  const minApprovals = await minApprovalsOf(sql, draft.pageId);
+  if (minApprovals > 0) {
+    const versionId = await sendForReview(sql, draft, staged, summary);
+    return { status: "in_review", version_id: versionId, draft_id: draft.id };
+  }
+  const versionId = await publishStaged(sql, draft, staged, { summary });
+  return { status: "published", version_id: versionId, draft_id: draft.id };
+}
+
 const drafts = new Hono();
 
 /** POST /v1/content/pages/:id/drafts: the caller's open (or in review) draft on the page, created if there is none. */
@@ -187,30 +260,9 @@ drafts.post("/content/pages/:id/drafts", async (c) => {
     const sql = getSql();
     const found = await loadPage(sql, who.id, c.req.param("id"), "edit");
     if (found instanceof Response) return found;
-    const pageId = found.page.id;
-
-    const existing = await sql`SELECT id::text AS id FROM content_drafts
-       WHERE page_id = ${pageId}::text::uuid AND author_id = ${who.id}::text::uuid
-         AND status IN ('Open', 'InReview')`;
-    let draftId = existing[0]?.["id"] as string | undefined;
-    let created = false;
-    if (!draftId) {
-      const inserted = await sql`INSERT INTO content_drafts (page_id, author_id)
-         VALUES (${pageId}::text::uuid, ${who.id}::text::uuid)
-         ON CONFLICT (page_id, author_id) WHERE status IN ('Open', 'InReview') DO NOTHING
-         RETURNING id::text AS id`;
-      draftId = inserted[0]?.["id"] as string | undefined;
-      created = draftId !== undefined;
-      if (!draftId) {
-        const again = await sql`SELECT id::text AS id FROM content_drafts
-           WHERE page_id = ${pageId}::text::uuid AND author_id = ${who.id}::text::uuid
-             AND status IN ('Open', 'InReview')`;
-        draftId = again[0]?.["id"] as string;
-      }
-    }
-    const draft = await loadDraft(sql, draftId);
-    if (draft instanceof Response) return draft;
-    return json(draftView(draft), created ? 201 : 200);
+    const opened = await openDraft(sql, who, found.page.id);
+    if (opened instanceof Response) return opened;
+    return json(draftView(opened.draft), opened.created ? 201 : 200);
   } catch (err) {
     console.error("space POST /content/pages/:id/drafts failed", err);
     return apiError(500, "server_error", "Something went wrong. Try again in a moment.");
@@ -352,18 +404,6 @@ drafts.post("/content/drafts/:id/publish", async (c) => {
   if (isResponse(who)) return who;
   try {
     const sql = getSql();
-    const found = await openableDraft(sql, who.id, c.req.param("id"));
-    if (found instanceof Response) return found;
-    const { draft } = found;
-    if (draft.status !== "Open") {
-      return apiError(
-        409,
-        "conflict",
-        draft.status === "InReview"
-          ? "This draft is already waiting for approval."
-          : "This draft is closed.",
-      );
-    }
     const body = await readBody(c);
     if (body === null) return badRequest("The body must be a JSON object.");
     const rawSummary = typeof body["summary"] === "string" ? body["summary"].trim() : "";
@@ -371,14 +411,9 @@ drafts.post("/content/drafts/:id/publish", async (c) => {
       return badRequest("summary is at most 1000 characters.");
     const summary = rawSummary === "" ? null : rawSummary;
 
-    const staged = await stageDraft(draft);
-    const minApprovals = await minApprovalsOf(sql, draft.pageId);
-    if (minApprovals > 0) {
-      const versionId = await sendForReview(sql, draft, staged, summary);
-      return json({ status: "in_review", version_id: versionId, draft_id: draft.id }, 201);
-    }
-    const versionId = await publishStaged(sql, draft, staged, { summary });
-    return json({ status: "published", version_id: versionId, draft_id: draft.id }, 201);
+    const result = await publishDraft(sql, who, c.req.param("id"), summary);
+    if (result instanceof Response) return result;
+    return json(result, 201);
   } catch (err) {
     console.error("space POST /content/drafts/:id/publish failed", err);
     return apiError(500, "server_error", "Something went wrong. Try again in a moment.");

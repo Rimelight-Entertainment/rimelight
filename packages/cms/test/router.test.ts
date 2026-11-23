@@ -1,205 +1,95 @@
 import { beforeEach, describe, expect, it } from "vite-plus/test";
 import { drizzle } from "drizzle-orm/d1";
+import { eq } from "drizzle-orm";
 import { migrateCms } from "../src/migrator/index";
+import { createCms, type Cms, type CmsActor } from "../src/services/index";
 import { createCmsApi } from "../src/server/router";
-import { CMS_MCP_TOOLS } from "../src/mcp/index";
 import { createMockD1 } from "./helpers/d1";
 
+const admin: CmsActor = { userId: "admin-1", name: "Ada", roles: ["admin"], permissions: [] };
+
+let cms: Cms;
 let app: ReturnType<typeof createCmsApi>;
 
 beforeEach(async () => {
   const { binding } = createMockD1();
   await migrateCms(binding);
-  app = createCmsApi({
-    db: drizzle(binding),
-    // Tests authenticate with a header instead of cookies. The identity goes through the same
-    // identify → provisioning path a real provider uses; the first user provisioned becomes admin.
-    identify: async (req) => {
-      const role = req.headers.get("x-role");
-      return role
-        ? {
-            subject: `${role}-sub`,
-            email: `${role}@test.local`,
-            emailVerified: !req.headers.get("x-unverified"),
-            name: role,
-            groups: [role],
-          }
-        : null;
-    },
-    access: { roleMapping: { admin: "admin", editor: "editor", viewer: "viewer" } },
-  });
+  cms = createCms({ db: drizzle(binding), dialect: "sqlite" });
+  app = createCmsApi({ db: drizzle(binding) });
   // Nothing is built in: scaffold the collections these tests write to from presets.
-  for (const preset of ["blog", "page", "doc"])
-    await call("POST", "/cms/collections/from-preset", { preset });
+  for (const preset of ["blog", "page"])
+    await cms.collections.createCollectionFromPreset(admin, preset);
 });
 
-const call = (method: string, path: string, body?: unknown, role: string | null = "admin") =>
-  app.request(path, {
-    method,
-    headers: {
-      "X-Rimelight-Request": "1",
-      ...(role ? { "x-role": role } : {}),
-      ...(body ? { "content-type": "application/json" } : {}),
-    },
-    ...(body ? { body: JSON.stringify(body) } : {}),
-  });
+const get = (path: string) => app.request(path, { method: "GET" });
 
-describe("admin API", () => {
-  it("lists presets, and only admins can scaffold from them", async () => {
-    const presets = (await (await call("GET", "/cms/collection-presets")).json()) as any;
-    expect(presets.presets.map((p: any) => p.id)).toContain("blog");
-    const denied = await call("POST", "/cms/collections/from-preset", { preset: "wiki" }, "editor");
-    expect(denied.status).toBe(403);
-  });
+/** Creates a published entry; `visibility` is set directly, as Space does, since services leave it Internal. */
+async function publish(
+  collection: string,
+  title: string,
+  blocks: unknown[],
+  visibility: "Public" | "Internal",
+): Promise<string> {
+  const entry = await cms.entries.createEntry(admin, { collection, title });
+  await cms.entries.saveDraft(admin, entry.id, { blocks } as any);
+  await cms.entries.publishEntry(admin, entry.id);
+  const { pages } = cms.ctx.t;
+  await cms.ctx.db.update(pages).set({ visibility }).where(eq(pages.id, entry.id));
+  return entry.id;
+}
 
-  it("requires authentication", async () => {
-    expect((await call("GET", "/cms/entries", undefined, null)).status).toBe(401);
-    expect((await call("POST", "/cms/mcp", { method: "tools/list" }, null)).status).toBe(401);
-  });
+const paragraph = (text: string, extra: Record<string, unknown> = {}) => ({
+  id: crypto.randomUUID(),
+  type: "ParagraphBlock",
+  props: { text: [{ type: "text", text }] },
+  ...extra,
+});
 
-  it("runs create → draft → publish over HTTP and serves it publicly", async () => {
-    const created = await call("POST", "/cms/entries", { collection: "blog", title: "Launch" });
-    expect(created.status).toBe(201);
-    const { entry } = (await created.json()) as any;
+describe("public delivery: page visibility", () => {
+  it("serves only Public pages from collection lists and single pages", async () => {
+    await publish("blog", "Public launch", [paragraph("open")], "Public");
+    await publish("blog", "Internal launch", [paragraph("secret")], "Internal");
 
-    // Not public yet.
-    expect((await call("GET", "/content/collections/blog/launch", undefined, null)).status).toBe(
-      404,
-    );
-
-    const blocks = [
-      {
-        id: crypto.randomUUID(),
-        type: "ParagraphBlock",
-        props: { text: [{ type: "text", text: "We're live" }] },
-      },
-    ];
-    expect((await call("PUT", `/cms/entries/${entry.id}/draft`, { blocks })).status).toBe(200);
-    expect((await call("POST", `/cms/entries/${entry.id}/publish`, {})).status).toBe(200);
-
-    const pub = await call("GET", "/content/collections/blog/launch", undefined, null);
-    expect(pub.status).toBe(200);
-    const { entry: live } = (await pub.json()) as any;
-    expect(live.collection).toBe("blog");
-    expect(live.blocks[0].props.text[0].text).toBe("We're live");
-    const md = await call("GET", "/content/collections/blog/launch.md", undefined, null);
-    expect(await md.text()).toContain("We're live");
-
-    const list = (await (
-      await call("GET", "/content/collections/blog", undefined, null)
-    ).json()) as any;
+    const list = (await (await get("/content/collections/blog")).json()) as any;
     expect(list.total).toBe(1);
+    expect(list.entries.map((e: any) => e.slug)).toEqual(["public-launch"]);
+
+    expect((await get("/content/collections/blog/internal-launch")).status).toBe(404);
+    expect((await get("/content/collections/blog/internal-launch.md")).status).toBe(404);
+    expect((await get("/content/collections/blog/public-launch")).status).toBe(200);
   });
 
-  it("maps service errors to HTTP statuses", async () => {
-    expect((await call("GET", "/cms/entries/does-not-exist")).status).toBe(404);
-    expect(
-      (await call("POST", "/cms/collections", { slug: "x", label: "X" }, "editor")).status,
-    ).toBe(403);
-    expect((await call("POST", "/cms/entries", { collection: "nope", title: "x" })).status).toBe(
-      404,
+  it("keeps Internal pages out of search", async () => {
+    await publish("blog", "Quarterly roadmap", [paragraph("roadmap text")], "Internal");
+    const hits = (await (await get("/search?q=roadmap")).json()) as any[];
+    expect(hits).toEqual([]);
+  });
+});
+
+describe("public delivery: block visibility", () => {
+  it("drops internal blocks, including nested children, for every reader", async () => {
+    const section = {
+      id: crypto.randomUUID(),
+      type: "SectionBlock",
+      props: {},
+      children: [paragraph("kept inside"), paragraph("hidden inside", { visibility: "internal" })],
+    };
+    await publish(
+      "page",
+      "Mixed",
+      [
+        paragraph("public"),
+        paragraph("hidden", { visibility: "internal" }),
+        paragraph("staff", { allowedRoles: ["employee"] }),
+        section,
+      ],
+      "Public",
     );
-  });
 
-  it("filters role-restricted blocks for anonymous readers", async () => {
-    const { entry } = (await (
-      await call("POST", "/cms/entries", { collection: "page", title: "Secret" })
-    ).json()) as any;
-    const blocks = [
-      {
-        id: crypto.randomUUID(),
-        type: "ParagraphBlock",
-        props: { text: [{ type: "text", text: "public" }] },
-      },
-      {
-        id: crypto.randomUUID(),
-        type: "ParagraphBlock",
-        props: { text: [{ type: "text", text: "staff" }] },
-        allowedRoles: ["employee"],
-      },
-    ];
-    await call("PUT", `/cms/entries/${entry.id}/draft`, { blocks });
-    await call("POST", `/cms/entries/${entry.id}/publish`, {});
-    const { entry: page } = (await (
-      await call("GET", "/content/collections/page/secret", undefined, null)
-    ).json()) as any;
-    expect(page.blocks).toHaveLength(1);
-  });
-});
-
-describe("MCP", () => {
-  it("lists tools and calls them with the caller's permissions", async () => {
-    const list = (await (
-      await call("POST", "/cms/mcp", { jsonrpc: "2.0", id: 1, method: "tools/list" })
-    ).json()) as any;
-    expect(list.result.tools.map((t: any) => t.name)).toEqual(CMS_MCP_TOOLS.map((t) => t.name));
-
-    const created = (await (
-      await call("POST", "/cms/mcp", {
-        jsonrpc: "2.0",
-        id: 2,
-        method: "tools/call",
-        params: {
-          name: "cms_create_entry",
-          arguments: { collection: "doc", title: { en: "MCP doc" } },
-        },
-      })
-    ).json()) as any;
-    expect(JSON.parse(created.result.content[0].text).slug).toBe("mcp-doc");
-
-    const denied = (await (
-      await call(
-        "POST",
-        "/cms/mcp",
-        {
-          jsonrpc: "2.0",
-          id: 3,
-          method: "tools/call",
-          params: { name: "cms_create_collection", arguments: { slug: "x", label: "X" } },
-        },
-        "editor",
-      )
-    ).json()) as any;
-    expect(denied.result.isError).toBe(true);
-
-    const missing = (await (
-      await call("POST", "/cms/mcp", {
-        jsonrpc: "2.0",
-        id: 4,
-        method: "tools/call",
-        params: { name: "cms_get_entry", arguments: {} },
-      })
-    ).json()) as any;
-    expect(missing.error.code).toBe(-32602);
-  });
-});
-
-describe("CSRF gate and identity checks", () => {
-  const post = (headers: Record<string, string>) =>
-    app.request("/cms/entries", {
-      method: "POST",
-      headers: { "content-type": "application/json", ...headers },
-      body: JSON.stringify({ collection: "blog", title: "Gate" }),
-    });
-
-  it("rejects a state-changing request that lacks X-Rimelight-Request", async () => {
-    const res = await post({ "x-role": "admin" });
-    expect(res.status).toBe(403);
-    expect(await res.json()).toMatchObject({ code: "CSRF_REJECTED" });
-  });
-
-  it("lets a Bearer client past the CSRF gate", async () => {
-    const res = await post({ authorization: "Bearer not-a-session" });
-    expect(res.status).toBe(401);
-  });
-
-  it("treats an unverified identity as anonymous", async () => {
-    const res = await post({ "X-Rimelight-Request": "1", "x-role": "admin", "x-unverified": "1" });
-    expect(res.status).toBe(401);
-  });
-
-  it("does not CSRF-gate safe reads", async () => {
-    const res = await app.request("/cms/entries", { headers: { "x-role": "admin" } });
-    expect(res.status).toBe(200);
+    const { entry } = (await (await get("/content/collections/page/mixed")).json()) as any;
+    expect(entry.blocks.map((b: any) => b.type)).toEqual(["ParagraphBlock", "SectionBlock"]);
+    expect(entry.blocks[0].props.text[0].text).toBe("public");
+    expect(entry.blocks[1].children).toHaveLength(1);
+    expect(entry.blocks[1].children[0].props.text[0].text).toBe("kept inside");
   });
 });

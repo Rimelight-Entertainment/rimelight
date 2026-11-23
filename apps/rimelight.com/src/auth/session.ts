@@ -3,7 +3,7 @@
  * a request. A Bearer Auth0 token takes precedence over the cookie.
  */
 import { sign } from "hono/jwt";
-import { verifyAuth0Jwt, verifySessionToken } from "@rimelight/cms/identity";
+import { verifyAuth0Jwt, verifySessionToken } from "#auth/jwt";
 import { mapClaimsToSession, type Auth0Config, type UserSession } from "./auth0";
 
 const SESSION_TTL_SECONDS = 7 * 24 * 60 * 60;

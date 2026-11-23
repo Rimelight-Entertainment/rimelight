@@ -28,10 +28,32 @@ type RoomBindings = { DOC_ROOM: DurableObjectNamespace<DocRoom> };
 /** An event the REST routes send to an open room. "closed" closes the room; the others reach every socket. */
 export type DocEvent = { type: string };
 
+/** A page document as JSON (`exportPage`'s result). */
+export type PageJson = { meta: Record<string, unknown>; content: Record<string, unknown> };
+
+/**
+ * The `DocRoom` RPC surface the routes call. Written out because the type the Workers runtime infers for
+ * a Durable Object stub is too deep for the type checker on some return types.
+ */
+export interface DocRoomRpc {
+  fetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response>;
+  init(p: { kind: "main" | "draft"; pageId: string; draftId?: string }): Promise<void>;
+  versionVector(): Promise<Uint8Array>;
+  exportUpdatesSince(vv: Uint8Array | null): Promise<Uint8Array>;
+  importUpdates(bytes: Uint8Array): Promise<void>;
+  replaceContent(content: {
+    blocks: unknown[];
+    properties: Record<string, unknown>;
+  }): Promise<void>;
+  previewMerge(bytes: Uint8Array): Promise<PageJson>;
+  snapshotJson(): Promise<PageJson>;
+  close(reason: string): Promise<void>;
+}
+
 /** The room for one document: a Durable Object named by the room name. */
-export function docRoomStub(name: string) {
+export function docRoomStub(name: string): DocRoomRpc {
   const ns = (env as unknown as RoomBindings).DOC_ROOM;
-  return ns.get(ns.idFromName(name));
+  return ns.get(ns.idFromName(name)) as unknown as DocRoomRpc;
 }
 
 const live = new Hono();

@@ -509,28 +509,3 @@ export const mediaAssets: SQLiteTableWithColumns<any> = sqliteTable("media_asset
     .notNull(),
   updatedAt: integer("updated_at", { mode: "timestamp" }).$onUpdate(() => new Date()),
 });
-/** CMS accounts: one row per verified identity that has been provisioned (see auth/provision.ts). */
-export const cmsUsers: SQLiteTableWithColumns<any> = sqliteTable(
-  "cms_users",
-  {
-    id: text("id").primaryKey(),
-    email: text("email").notNull(),
-    name: text("name"),
-    role: text("role").notNull(),
-    subject: text("subject"),
-    disabled: integer("disabled", { mode: "boolean" }).default(false).notNull(),
-    /** Set when an admin edits the name; IdP sync then leaves it alone. */
-    nameManaged: integer("name_managed", { mode: "boolean" }).default(false).notNull(),
-    /** Set when an admin sets the role (including invites); IdP role sync then leaves it alone. */
-    roleManaged: integer("role_managed", { mode: "boolean" }).default(false).notNull(),
-    createdAt: integer("created_at", { mode: "timestamp" })
-      .$defaultFn(() => new Date())
-      .notNull(),
-    updatedAt: integer("updated_at", { mode: "timestamp" })
-      .$defaultFn(() => new Date())
-      .notNull(),
-  },
-  (table) => [uniqueIndex("cms_users_email_idx").on(table.email)],
-);
-
-export type CmsUser = typeof cmsUsers.$inferSelect;

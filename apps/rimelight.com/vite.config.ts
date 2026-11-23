@@ -84,10 +84,6 @@ export default defineConfig({
 
     cms({
       autoMigrate: true,
-      devBypassAuth: true,
-      access: {
-        roleMapping: { owner: "owner", admin: "admin", editor: "editor", viewer: "viewer" },
-      },
     }),
   ],
 

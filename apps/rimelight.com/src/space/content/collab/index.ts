@@ -1,7 +1,15 @@
 export { textKind } from "./registry";
 export { normalizePage, normalizeRich } from "./normalize";
 export { importRich, exportRich } from "./richtext";
-export { configure, importPage, exportPage, forkDraft, mergeDraft, catchUp } from "./doc";
+export {
+  configure,
+  importPage,
+  exportPage,
+  forkDraft,
+  mergeDraft,
+  catchUp,
+  replaceContent,
+} from "./doc";
 export type {
   Block,
   InlineNode,

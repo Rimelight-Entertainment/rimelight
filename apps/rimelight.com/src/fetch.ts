@@ -4,7 +4,6 @@ import { seo } from "@rimelight/seo/middleware";
 import { cms } from "@rimelight/cms/middleware";
 import { i18n } from "@rimelight/i18n/middleware";
 import api from "#api/server";
-import { identify } from "#auth/identity";
 import { ambientEnv, getAuth0Config } from "#auth/auth0";
 import { getSession } from "#auth/session";
 import space from "./space/api.ts";
@@ -29,7 +28,7 @@ app.use(async (c, next) => {
 });
 
 app.use(seo());
-app.use(cms({ identify }));
+app.use(cms());
 app.use(i18n());
 
 app.route("/api", api);

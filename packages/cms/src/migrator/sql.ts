@@ -352,6 +352,11 @@ UPDATE "pages" SET "visibility" = 'Public';
 CREATE INDEX IF NOT EXISTS "pages_scope_idx" ON "pages" ("scope_kind", "scope_id");
 `,
   },
+  {
+    name: "0015_drop_cms_users",
+    sql: `DROP TABLE IF EXISTS "cms_users";
+`,
+  },
 ];
 
 export const PG_CMS_MIGRATIONS = [
@@ -736,6 +741,11 @@ ALTER TABLE "pages" ADD CONSTRAINT "pages_scope_id_matches_kind" CHECK (("scope_
 UPDATE "pages" SET "visibility" = 'Public';
 --> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "pages_scope_idx" ON "pages" ("scope_kind", "scope_id");
+`,
+  },
+  {
+    name: "0015_drop_cms_users",
+    sql: `DROP TABLE IF EXISTS "cms_users";
 `,
   },
 ];

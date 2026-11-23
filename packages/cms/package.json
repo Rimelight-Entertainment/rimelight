@@ -48,10 +48,6 @@
       "types": "./dist/middleware/index.d.mts",
       "import": "./dist/middleware/index.mjs"
     },
-    "./identity": {
-      "types": "./dist/identity/index.d.mts",
-      "import": "./dist/identity/index.mjs"
-    },
     "./plugin": {
       "types": "./dist/plugin.d.mts",
       "import": "./dist/plugin.mjs"
@@ -59,14 +55,6 @@
     "./migrator": {
       "types": "./dist/migrator/index.d.mts",
       "import": "./dist/migrator/index.mjs"
-    },
-    "./storage": {
-      "types": "./dist/storage/index.d.mts",
-      "import": "./dist/storage/index.mjs"
-    },
-    "./mcp": {
-      "types": "./dist/mcp/index.d.mts",
-      "import": "./dist/mcp/index.mjs"
     },
     "./cron": {
       "types": "./dist/cron/scheduled.d.mts",
@@ -88,19 +76,11 @@
       "types": "./src/blocks.ts",
       "import": "./src/blocks.ts"
     },
-    "./dashboard": {
-      "types": "./src/dashboard/index.tsx",
-      "import": "./src/dashboard/index.tsx"
-    },
     "./virtual": {
       "types": "./src/client.d.ts"
     },
     "./client/types": {
       "types": "./src/client.d.ts"
-    },
-    "./dashboard/route": {
-      "types": "./src/dashboard/route.tsx",
-      "import": "./src/dashboard/route.tsx"
     }
   },
   "publishConfig": {
@@ -118,24 +98,19 @@
     "drizzle-orm": "1.0.0-rc.5",
     "hono": "5.0.0-rc.1",
     "postgres": "4.1.1",
-    "solid-js": "2.0.3",
-    "sortablejs": "1.15.7",
-    "zod": "4.6.7"
+    "solid-js": "2.0.3"
   },
   "devDependencies": {
     "@rimelight/config": "workspace:*",
     "@rimelight/i18n": "workspace:*",
     "@rimelight/ui": "workspace:*",
-    "@solidjs/router": "2.0.1",
     "@solidjs/vite-plugin": "3.0.1",
-    "@types/sortablejs": "1.15.9",
     "happy-dom": "21.0.4",
     "unocss": "66.13.0"
   },
   "peerDependencies": {
     "@rimelight/i18n": "^0.1.20",
     "@rimelight/ui": "^0.0.96 || ^0.0.97",
-    "@solidjs/router": ">=2.0.0-next.42",
     "solid-js": ">=2.0.0-rc.18",
     "vite-plus": "^1.0.0"
   },

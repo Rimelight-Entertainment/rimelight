@@ -13,6 +13,7 @@ import {
   notFound,
   readBody,
   type Row,
+  type Sql,
   UUID,
 } from "../canvas-access.ts";
 import {
@@ -31,7 +32,7 @@ const SLUG = /^[a-z0-9][a-z0-9-]{0,99}$/;
 const TITLE_MAX = 200;
 
 /** A page as the caller sees it in lists and headers (no content). */
-function pageSummary(p: PageRow, access: string) {
+export function pageSummary(p: PageRow, access: string) {
   return {
     id: p.id,
     slug: p.slug,
@@ -50,7 +51,7 @@ function pageSummary(p: PageRow, access: string) {
 }
 
 /** The scope of a request: kind and id (null for Company). Returns a 400 response when the scope is bad. */
-function scopeFrom(
+export function scopeFrom(
   kindRaw: unknown,
   idRaw: unknown,
 ): { kind: ContentScope; id: string | null } | Response {
@@ -68,6 +69,83 @@ function scopeFrom(
     return badRequest("scopeId is the id of the project, team or department.");
   }
   return { kind, id: idRaw.toLowerCase() };
+}
+
+/**
+ * The pages in a scope the caller can view, optionally of one content type. Shared by GET /v1/content/pages and the
+ * MCP list_pages tool. Returns a Response for a bad scope or no access.
+ */
+export async function pagesInScope(
+  sql: Sql,
+  userId: string,
+  query: { scopeKind: unknown; scopeId: unknown; type: string | null },
+): Promise<{ pages: ReturnType<typeof pageSummary>[] } | Response> {
+  const scope = scopeFrom(query.scopeKind, query.scopeId);
+  if (scope instanceof Response) return scope;
+  const access = await pageAccess(sql, userId, { scopeKind: scope.kind, scopeId: scope.id });
+  if (access === "none") return notFound("There is no such scope.");
+
+  const rows = await sql`SELECT id::text AS id, slug, type, title, description, scope_kind,
+       scope_id::text AS scope_id, visibility, status, published_version_id::text AS published_version_id,
+       content, created_at, updated_at
+     FROM pages
+     WHERE deleted_at IS NULL
+       AND scope_kind = ${scope.kind}::text
+       AND scope_id IS NOT DISTINCT FROM ${scope.id}::text::uuid
+       AND (${query.type}::text IS NULL OR type = ${query.type}::text)
+     ORDER BY updated_at DESC, id`;
+  return {
+    pages: rows.map((r) => pageSummary(pageFromRow(r as Row), access)),
+  };
+}
+
+/**
+ * Creates an empty Internal draft page from a raw body {scopeKind, scopeId, type, slug, title}. Shared by POST
+ * /v1/content/pages and the MCP create_page tool. Needs edit on the scope. Returns a Response for every refusal.
+ */
+export async function createPageFromInput(
+  sql: Sql,
+  userId: string,
+  body: Record<string, unknown>,
+): Promise<ReturnType<typeof pageSummary> | Response> {
+  const scope = scopeFrom(body["scopeKind"], body["scopeId"]);
+  if (scope instanceof Response) return scope;
+
+  const type = body["type"];
+  if (typeof type !== "string" || type.trim() === "")
+    return badRequest("type is a content type slug.");
+  const slug = body["slug"];
+  if (typeof slug !== "string" || !SLUG.test(slug)) {
+    return badRequest("slug is lower-case letters, digits and hyphens, 1 to 100 characters.");
+  }
+  const title = typeof body["title"] === "string" ? body["title"].trim() : "";
+  if (title.length < 1 || Array.from(title).length > TITLE_MAX) {
+    return badRequest("title is 1 to 200 characters.");
+  }
+
+  const access = await pageAccess(sql, userId, { scopeKind: scope.kind, scopeId: scope.id });
+  if (access === "none") return notFound("There is no such scope.");
+  if (access === "view") return forbidden("You can view this scope but not add pages to it.");
+
+  const types = await sql`SELECT 1 FROM content_types WHERE slug = ${type}::text`;
+  if (types.length === 0) return badRequest("There is no such content type.");
+
+  const titleJson = JSON.stringify({ en: title });
+  const contentJson = JSON.stringify({ blocks: [], properties: {} });
+  try {
+    const rows = await sql`INSERT INTO pages (slug, type, title, content, status, visibility,
+         scope_kind, scope_id)
+       VALUES (${slug}::text, ${type}::text, ${titleJson}::jsonb, ${contentJson}::jsonb, 'draft', 'Internal',
+         ${scope.kind}::text, ${scope.id}::text::uuid)
+       RETURNING id::text AS id, slug, type, title, description, scope_kind, scope_id::text AS scope_id,
+         visibility, status, published_version_id::text AS published_version_id, content, created_at, updated_at`;
+    return pageSummary(pageFromRow(rows[0] as Row), access);
+  } catch (err) {
+    if ((err as { code?: string }).code === "23505") {
+      return apiError(409, "conflict", "Another page already uses that slug.");
+    }
+    throw err;
+  }
 }
 
 const content = new Hono();
@@ -102,24 +180,13 @@ content.get("/content/pages", async (c) => {
   if (isResponse(who)) return who;
   try {
     const sql = getSql();
-    const scope = scopeFrom(c.req.query("scopeKind"), c.req.query("scopeId"));
-    if (scope instanceof Response) return scope;
-    const access = await pageAccess(sql, who.id, { scopeKind: scope.kind, scopeId: scope.id });
-    if (access === "none") return notFound("There is no such scope.");
-
-    const type = c.req.query("type") ?? null;
-    const rows = await sql`SELECT id::text AS id, slug, type, title, description, scope_kind,
-         scope_id::text AS scope_id, visibility, status, published_version_id::text AS published_version_id,
-         content, created_at, updated_at
-       FROM pages
-       WHERE deleted_at IS NULL
-         AND scope_kind = ${scope.kind}::text
-         AND scope_id IS NOT DISTINCT FROM ${scope.id}::text::uuid
-         AND (${type}::text IS NULL OR type = ${type}::text)
-       ORDER BY updated_at DESC, id`;
-    return json({
-      pages: rows.map((r) => pageSummary(pageFromRow(r as Row), access)),
+    const listed = await pagesInScope(sql, who.id, {
+      scopeKind: c.req.query("scopeKind"),
+      scopeId: c.req.query("scopeId"),
+      type: c.req.query("type") ?? null,
     });
+    if (listed instanceof Response) return listed;
+    return json(listed);
   } catch (err) {
     console.error("space GET /content/pages failed", err);
     return apiError(500, "server_error", "Something went wrong. Try again in a moment.");
@@ -134,45 +201,9 @@ content.post("/content/pages", async (c) => {
     const sql = getSql();
     const body = await readBody(c);
     if (body === null) return badRequest("The body must be a JSON object.");
-    const scope = scopeFrom(body["scopeKind"], body["scopeId"]);
-    if (scope instanceof Response) return scope;
-
-    const type = body["type"];
-    if (typeof type !== "string" || type.trim() === "")
-      return badRequest("type is a content type slug.");
-    const slug = body["slug"];
-    if (typeof slug !== "string" || !SLUG.test(slug)) {
-      return badRequest("slug is lower-case letters, digits and hyphens, 1 to 100 characters.");
-    }
-    const title = typeof body["title"] === "string" ? body["title"].trim() : "";
-    if (title.length < 1 || Array.from(title).length > TITLE_MAX) {
-      return badRequest("title is 1 to 200 characters.");
-    }
-
-    const access = await pageAccess(sql, who.id, { scopeKind: scope.kind, scopeId: scope.id });
-    if (access === "none") return notFound("There is no such scope.");
-    if (access === "view") return forbidden("You can view this scope but not add pages to it.");
-
-    const types = await sql`SELECT 1 FROM content_types WHERE slug = ${type}::text`;
-    if (types.length === 0) return badRequest("There is no such content type.");
-
-    const titleJson = JSON.stringify({ en: title });
-    const contentJson = JSON.stringify({ blocks: [], properties: {} });
-    try {
-      const rows = await sql`INSERT INTO pages (slug, type, title, content, status, visibility,
-           scope_kind, scope_id)
-         VALUES (${slug}::text, ${type}::text, ${titleJson}::jsonb, ${contentJson}::jsonb, 'draft', 'Internal',
-           ${scope.kind}::text, ${scope.id}::text::uuid)
-         RETURNING id::text AS id, slug, type, title, description, scope_kind, scope_id::text AS scope_id,
-           visibility, status, published_version_id::text AS published_version_id, content, created_at, updated_at`;
-      const page = pageFromRow(rows[0] as Row);
-      return json(pageSummary(page, access), 201);
-    } catch (err) {
-      if ((err as { code?: string }).code === "23505") {
-        return apiError(409, "conflict", "Another page already uses that slug.");
-      }
-      throw err;
-    }
+    const created = await createPageFromInput(sql, who.id, body);
+    if (created instanceof Response) return created;
+    return json(created, 201);
   } catch (err) {
     console.error("space POST /content/pages failed", err);
     return apiError(500, "server_error", "Something went wrong. Try again in a moment.");

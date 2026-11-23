@@ -4,12 +4,10 @@ import * as collections from "./collections";
 import * as entries from "./entries";
 import * as templates from "./templates";
 import * as taxonomies from "./taxonomies";
-import * as media from "./media";
 import * as bylines from "./bylines";
 import * as search from "./search";
 import * as settings from "./site-settings";
 import * as mentions from "./mentions";
-import * as users from "./users";
 
 export * from "./context";
 export * from "./collections";
@@ -20,7 +18,6 @@ export * from "./bylines";
 export * from "./search";
 export * from "./site-settings";
 export * from "./mentions";
-export * from "./users";
 
 type Bound<F> = F extends (ctx: CmsContext, ...args: infer A) => infer R
   ? (...args: A) => R
@@ -86,12 +83,10 @@ export interface Cms {
   entries: BindAll<typeof entries>;
   templates: BindAll<typeof templates>;
   taxonomies: BindAll<typeof taxonomies>;
-  media: BindAll<typeof media>;
   bylines: BindAll<typeof bylines>;
   search: BindAll<typeof search>;
   mentions: BindAll<typeof mentions>;
   settings: BindAll<typeof settings>;
-  users: BindAll<typeof users>;
   stats: () => ReturnType<typeof stats>;
 }
 
@@ -103,12 +98,10 @@ export function createCms(input: CmsContextInput | CmsContext): Cms {
     entries: bind(ctx, entries),
     templates: bind(ctx, templates),
     taxonomies: bind(ctx, taxonomies),
-    media: bind(ctx, media),
     bylines: bind(ctx, bylines),
     search: bind(ctx, search),
     mentions: bind(ctx, mentions),
     settings: bind(ctx, settings),
-    users: bind(ctx, users),
     stats: () => stats(ctx),
   };
 }

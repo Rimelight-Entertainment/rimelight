@@ -3,43 +3,21 @@ import { config, options } from "virtual:rimelight-cms";
 import { createCmsApi } from "../server/router";
 import { migrateCms } from "../migrator/index";
 import { getCmsDb } from "../db/index";
-import type { IdentifyFn } from "../identity/types";
-
-export interface CmsMiddlewareOptions {
-  /**
-   * Resolves the caller's verified identity, e.g. `auth0Identifier(...)` or
-   * `cfAccessIdentifier(...)` from `@rimelight/cms/identity`. Functions cannot go through the Vite
-   * plugin, so the app passes them here.
-   */
-  identify?: IdentifyFn;
-}
 
 /**
- * Hono middleware serving the CMS API (`/api/cms/*`), public content (`/api/content/*`) and
- * search (`/api/search`). Configuration comes from the Vite plugin and `cms.config.ts`.
+ * Hono middleware serving the public delivery API: published content under `/api/content/*` and
+ * search under `/api/search`, and stored media under `/api/cms/media/file/*`. Anonymous; it never
+ * returns Space-internal content.
+ * Configuration comes from the Vite plugin and `cms.config.ts`.
  *
  * @example
  *   import { cms } from "@rimelight/cms/middleware";
- *   import { auth0Identifier } from "@rimelight/cms/identity";
- *   app.use(cms({ identify: auth0Identifier(() => ({ domain: env.AUTH0_DOMAIN })) }));
+ *   app.use(cms());
  */
-export function cms(middlewareOptions: CmsMiddlewareOptions = {}): MiddlewareHandler {
-  const identify = middlewareOptions.identify;
-  // Plugin-level `storage` overrides the config file's, so the bucket can be set in vite.config.ts.
-  const cmsConfig = {
-    ...config,
-    ...(options.storage ? { storage: options.storage } : {}),
-  };
-  const api = createCmsApi({
-    config: cmsConfig,
-    apiPath: (options.apiPath ?? "/api/cms").replace(/\/$/, ""),
-    ...(options.devBypassAuth ? { devBypassAuth: true } : {}),
-    ...(options.access ? { access: options.access } : {}),
-    ...(identify ? { identify } : {}),
-  });
-  const apiPath = (options.apiPath ?? "/api/cms").replace(/\/$/, "");
-  const apiRoot = apiPath.replace(/\/cms$/, "");
-  const prefixes = [apiPath, `${apiRoot}/content`, `${apiRoot}/search`];
+export function cms(): MiddlewareHandler {
+  const api = createCmsApi({ config });
+  const apiRoot = (options.apiPath ?? "/api/cms").replace(/\/$/, "").replace(/\/cms$/, "");
+  const prefixes = [`${apiRoot}/content`, `${apiRoot}/search`, `${apiRoot}/cms/media/file`];
   let ready: Promise<void> | null = null;
 
   const bootstrap = async (c: any) => {

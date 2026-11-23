@@ -50,12 +50,14 @@ export interface EntryContent {
   meta?: DraftMeta;
 }
 
-/** An entry as the admin API and dashboard see it. */
+/** An entry as the services see it. */
 export interface Entry {
   id: string;
   collection: string;
   slug: string;
   status: EntryStatus;
+  /** Space scope visibility: only `Public` pages are served by the website delivery API. */
+  visibility: "Public" | "Internal";
   title: Localized;
   description: Localized | null;
   tags: Localized[];
@@ -126,6 +128,7 @@ function toSummary(row: any): EntrySummary {
     collection: row.type,
     slug: row.slug,
     status: row.status as EntryStatus,
+    visibility: row.visibility === "Public" ? "Public" : "Internal",
     title,
     description: json(row.description, null),
     tags: json(row.tags, []),
@@ -169,6 +172,8 @@ function toEntry(row: any, draftRow: any): Entry {
 export interface ListEntriesOptions {
   collection?: string;
   status?: EntryStatus | EntryStatus[];
+  /** Only pages with this visibility (the website delivery API passes `Public`). */
+  visibility?: "Public" | "Internal";
   /** Matches title or slug. */
   q?: string;
   /** Only entries whose slug starts with this prefix (wiki/doc trees). */
@@ -195,6 +200,7 @@ export async function listEntries(
   const where: SQL[] = [];
   if (!opts.includeDeleted) where.push(isNull(p.deletedAt));
   if (opts.collection) where.push(eq(p.type, opts.collection));
+  if (opts.visibility) where.push(eq(p.visibility, opts.visibility));
   if (opts.status) {
     const statuses = Array.isArray(opts.status) ? opts.status : [opts.status];
     where.push(inArray(p.status, statuses));

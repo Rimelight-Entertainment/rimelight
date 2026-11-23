@@ -66,7 +66,7 @@ export async function getCollection(ctx: CmsContext, slug: string): Promise<Reso
   return fromRow(rows[0]);
 }
 
-/** Presets available to scaffold a collection from. Plain data, safe to send to the dashboard. */
+/** Presets available to scaffold a collection from. Plain data. */
 export function listCollectionPresets(): CollectionPreset[] {
   return collectionPresets;
 }
