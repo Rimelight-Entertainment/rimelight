@@ -281,7 +281,7 @@ function personal(p: PersonRow) {
 }
 
 /** A query id: absent or empty is null, a non-uuid is "invalid", else the lower-case id. */
-function uuidQuery(raw: string | undefined): string | null | "invalid" {
+function uuidQuery(raw: string | undefined): string | null {
   const value = raw?.trim();
   if (!value) return null;
   if (!isUuid(value)) return "invalid";

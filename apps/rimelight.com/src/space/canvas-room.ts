@@ -48,7 +48,8 @@ type SqlRow = Record<string, SqlStorageValue>;
 
 const ACCESS_LEVELS: readonly string[] = ["view", "edit", "manage"];
 
-const str = (row: SqlRow, key: string): string => String(row[key]);
+const str = (row: SqlRow, key: string): string =>
+  String(row[key] as string | number | boolean | null);
 const num = (row: SqlRow, key: string): number => Number(row[key]);
 
 function rowToItem(row: SqlRow): ItemState {

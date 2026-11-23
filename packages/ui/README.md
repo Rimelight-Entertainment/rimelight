@@ -107,7 +107,6 @@ export default function MyComponent() {
 
 ## Useful Links
 
-- [Starter project](https://starter.rimelight.com)
 - [Playground](https://playground.rimelight.com/ui)
 - [Documentation](https://rimelight.com/company/docs/packages/rimelight-ui/)
 - [Changelog](https://rimelight.com/company/docs/packages/rimelight-ui/changelog/)

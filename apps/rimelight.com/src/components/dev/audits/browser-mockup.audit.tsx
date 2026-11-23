@@ -20,7 +20,7 @@ export const BrowserMockupSandbox = (): JSX.Element => {
   const [color, setColor] = createSignal<BrowserMockupColor>("neutral");
   const [controlsVariant, setControlsVariant] =
     createSignal<(typeof CONTROLS_VARIANTS)[number]>("color");
-  const [url, setUrl] = createSignal("https://starter.rimelight.com/dashboard");
+  const [url, setUrl] = createSignal("https://rimelight.com/dashboard");
   const [hasNavigation, setHasNavigation] = createSignal(true);
   const [padded, setPadded] = createSignal(true);
   const [shadow, setShadow] = createSignal(true);

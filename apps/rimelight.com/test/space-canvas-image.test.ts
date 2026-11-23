@@ -16,7 +16,7 @@ import {
 } from "../src/space/canvas-image";
 
 const ascii = (s: string): number[] => Array.from(s, (c) => c.charCodeAt(0));
-const zeros = (n: number): number[] => new Array<number>(n).fill(0);
+const zeros = (n: number): number[] => Array.from({ length: n }, () => 0);
 const u16le = (n: number): number[] => [n & 0xff, (n >> 8) & 0xff];
 const u16be = (n: number): number[] => [(n >> 8) & 0xff, n & 0xff];
 const u24le = (n: number): number[] => [n & 0xff, (n >> 8) & 0xff, (n >> 16) & 0xff];

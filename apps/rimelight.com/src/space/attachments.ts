@@ -107,7 +107,7 @@ function percentDecode(input: string): string {
  */
 function cleanFileName(raw: string | undefined): string {
   const base = (raw ?? "").split(/[\\/]/).pop()?.trim() ?? "";
-  const cleaned = [...base]
+  const cleaned = Array.from(base)
     .slice(0, FILE_NAME_MAX)
     .map((c) => (/^[A-Za-z0-9]$/.test(c) || " .-_()".includes(c) ? c : "_"))
     .join("")

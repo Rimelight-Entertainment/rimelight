@@ -282,7 +282,7 @@ type Person = {
 };
 
 const str = (value: unknown): string | null =>
-  value === null || value === undefined ? null : String(value);
+  value === null || value === undefined ? null : String(value as string | number | boolean);
 
 function toPerson(r: Row): Person {
   return {

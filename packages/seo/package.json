@@ -85,7 +85,7 @@
   "devDependencies": {
     "@rimelight/config": "workspace:*",
     "@rimelight/i18n": "workspace:*",
-    "@solidjs/web": "2.0.0-rc.23",
+    "@solidjs/web": "2.0.3",
     "hono": "5.0.0-rc.1"
   },
   "peerDependencies": {

@@ -110,11 +110,11 @@
   },
   "dependencies": {
     "@neondatabase/serverless": "1.2.1",
-    "@solidjs/web": "2.0.0-rc.23",
+    "@solidjs/web": "2.0.3",
     "drizzle-orm": "1.0.0-rc.5",
     "hono": "5.0.0-rc.1",
     "postgres": "4.1.1",
-    "solid-js": "2.0.0-rc.23",
+    "solid-js": "2.0.3",
     "sortablejs": "1.15.7",
     "zod": "4.6.7"
   },
@@ -123,14 +123,14 @@
     "@rimelight/config": "workspace:*",
     "@rimelight/i18n": "workspace:*",
     "@rimelight/ui": "workspace:*",
-    "@solidjs/router": "2.0.0-next.44",
-    "@solidjs/vite-plugin": "3.0.0-next.57",
+    "@solidjs/router": "2.0.1",
+    "@solidjs/vite-plugin": "3.0.1",
     "@types/sortablejs": "1.15.9",
     "happy-dom": "21.0.4",
     "unocss": "66.13.0"
   },
   "peerDependencies": {
-    "@rimelight/auth": "^0.0.35 || ^0.0.36",
+    "@rimelight/auth": "^0.0.37",
     "@rimelight/i18n": "^0.1.20",
     "@rimelight/ui": "^0.0.96 || ^0.0.97",
     "@solidjs/router": ">=2.0.0-next.42",

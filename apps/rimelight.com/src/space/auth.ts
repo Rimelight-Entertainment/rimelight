@@ -147,7 +147,7 @@ async function openPending(secret: string, sealed: string, now: number): Promise
 // ---- redirect and PKCE rules -------------------------------------------------------------------
 
 function isAllowedRedirect(uri: string, s: Settings): boolean {
-  if (/\s|[\x00-\x1f\x7f]/.test(uri) || uri.includes("#")) return false;
+  if (/\s|\p{Cc}/u.test(uri) || uri.includes("#")) return false;
   if (uri === APP_SCHEME_REDIRECT) return true;
   const loopback = uri.match(/^http:\/\/(127\.0\.0\.1|localhost):(\d{1,5})(\/.*)?$/);
   if (loopback) {

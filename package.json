@@ -23,9 +23,10 @@
   },
   "devDependencies": {
     "@rimelight/config": "workspace:*",
+    "@solidjs/vite-plugin": "3.0.1",
     "pkg-pr-new": "0.0.94",
     "typescript": "7.1.0-beta",
-    "vite-plus": "1.6.0"
+    "vite-plus": "1.7.0"
   },
   "packageManager": "pnpm@12.21.0"
 }

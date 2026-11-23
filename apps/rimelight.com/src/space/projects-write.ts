@@ -164,7 +164,7 @@ function optStrs(body: Body, key: string): string[] | undefined {
 /* ---------- validation helpers ---------- */
 
 export const asciiUpper = (s: string) => s.replace(/[a-z]/g, (ch) => ch.toUpperCase());
-const charCount = (s: string) => [...s].length;
+const charCount = (s: string) => Array.from(s).length;
 /** A route parameter; the router always supplies it. */
 const param = (c: Context, name: string): string => c.req.param(name) ?? "";
 export const nowSecs = () => Math.floor(Date.now() / 1000);
@@ -651,12 +651,12 @@ const RANK_DIGITS = "0123456789abcdef";
 const RANK_MAX_EXTRA = 64;
 
 function rankDigits(rank: string): number[] {
-  return [...rank].map((ch) => RANK_DIGITS.indexOf(ch));
+  return Array.from(rank, (ch) => RANK_DIGITS.indexOf(ch));
 }
 
 /** `digits` as an integer slot followed by `fraction` digits, zero padded on the right. */
 function rankPadded(digits: number[], fraction: number): number[] {
-  const out = new Array<number>(fraction + 1).fill(0);
+  const out = Array.from({ length: fraction + 1 }, () => 0);
   digits.slice(0, fraction).forEach((d, i) => {
     out[i + 1] = d;
   });
@@ -673,7 +673,7 @@ function rankCompare(a: number[], b: number[]): number {
 /** (a + b) / 2 for base-16 numbers of equal length. */
 function rankMidpoint(a: number[], b: number[]): number[] {
   const len = a.length;
-  const sum = new Array<number>(len).fill(0);
+  const sum = Array.from({ length: len }, () => 0);
   let carry = 0;
   for (let i = len - 1; i >= 0; i--) {
     const s = (a[i] ?? 0) + (b[i] ?? 0) + carry;
@@ -681,7 +681,7 @@ function rankMidpoint(a: number[], b: number[]): number[] {
     carry = Math.floor(s / 16);
   }
   sum[0] = (sum[0] ?? 0) + carry;
-  const out = new Array<number>(len).fill(0);
+  const out = Array.from({ length: len }, () => 0);
   let remainder = 0;
   for (let i = 0; i < len; i++) {
     const current = remainder * 16 + (sum[i] ?? 0);
@@ -705,7 +705,8 @@ function rankRender(number: number[]): string {
 
 /** A rank strictly between `lower` and `upper` (null is the end). `null` when there is none. */
 export function betweenRanks(lower: string | null, upper: string | null): string | null {
-  const valid = (r: string) => r.length > 0 && [...r].every((ch) => RANK_DIGITS.includes(ch));
+  const valid = (r: string) =>
+    r.length > 0 && Array.from(r).every((ch) => RANK_DIGITS.includes(ch));
   if ((lower !== null && !valid(lower)) || (upper !== null && !valid(upper))) return null;
   const lowerDigits = lower === null ? [] : rankDigits(lower);
   const upperDigits = upper === null ? null : rankDigits(upper);
@@ -718,7 +719,7 @@ export function betweenRanks(lower: string | null, upper: string | null): string
       hi = rankPadded(upperDigits, width);
     } else {
       // The largest rank is 1.0: integer part 1, fraction all zero.
-      hi = new Array<number>(width + 1).fill(0);
+      hi = Array.from({ length: width + 1 }, () => 0);
       hi[0] = 1;
     }
     if (rankCompare(lo, hi) >= 0) return null;

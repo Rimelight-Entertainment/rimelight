@@ -311,7 +311,7 @@ export function cleanTitle(raw: unknown): string | null {
   if (raw === undefined || raw === null) return "Untitled canvas";
   if (typeof raw !== "string") return null;
   const trimmed = raw.trim();
-  const length = [...trimmed].length;
+  const length = Array.from(trimmed).length;
   return length >= 1 && length <= TITLE_MAX ? trimmed : null;
 }
 
@@ -356,7 +356,7 @@ export function percentDecode(input: string): string {
  */
 export function cleanFileName(raw: string | undefined): string {
   const base = (raw ?? "").split(/[\\/]/).pop()?.trim() ?? "";
-  const cleaned = [...base]
+  const cleaned = Array.from(base)
     .slice(0, FILE_NAME_MAX)
     .map((c) => (/^[A-Za-z0-9]$/.test(c) || " .-_()".includes(c) ? c : "_"))
     .join("")

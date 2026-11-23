@@ -7,10 +7,8 @@ The source for Rimelight Entertainment's websites and the shared packages behind
 ```text
 ├── apps/
 │   ├── rimelight.com/            # Company website
-│   └── starter.rimelight.com/    # Starter template for new sites
 ├── packages/
 │   ├── auth/                     # @rimelight/auth
-│   ├── cli/                      # @rimelight/cli
 │   ├── cms/                      # @rimelight/cms
 │   ├── config/                   # @rimelight/config
 │   ├── i18n/                     # @rimelight/i18n
@@ -24,17 +22,15 @@ The source for Rimelight Entertainment's websites and the shared packages behind
 
 ## Apps
 
-| App                                                             | Description                                                                                        |
-| --------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| [`rimelight.com`](apps/rimelight.com/README.md)                 | The company website: company pages, documentation, the Grand Tale franchise hub, store, and forums |
-| [`starter.rimelight.com`](apps/starter.rimelight.com/README.md) | The starter template that `@rimelight/cli` scaffolds new sites from                                |
+| App                                             | Description                                                                                        |
+| ----------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| [`rimelight.com`](apps/rimelight.com/README.md) | The company website: company pages, documentation, the Grand Tale franchise hub, store, and forums |
 
 ## Packages
 
 | Package                                              | Description                                                                       |
 | ---------------------------------------------------- | --------------------------------------------------------------------------------- |
 | [`@rimelight/auth`](packages/auth/README.md)         | Authentication and identity: Auth0, Cloudflare Access, JWTs, and permissions      |
-| [`@rimelight/cli`](packages/cli/README.md)           | Create, compare, and update Rimelight projects                                    |
 | [`@rimelight/cms`](packages/cms/README.md)           | Content management: collections, blocks, taxonomies, versioning, and a dashboard  |
 | [`@rimelight/config`](packages/config/README.md)     | Shared TypeScript configs                                                         |
 | [`@rimelight/i18n`](packages/i18n/README.md)         | Typed translations, locale URLs, and per-route loading                            |
