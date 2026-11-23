@@ -1,10 +1,10 @@
-﻿import type { UserSessionContext } from "@rimelight/auth";
+﻿import type { UserSession } from "./auth0";
 
 /**
  * Synchronizes an authenticated Auth0 user or employee profile into Postgres. Called from the
  * /api/auth/callback handler after a successful code exchange.
  */
-export async function syncAuth0UserToDb(session: UserSessionContext) {
+export async function syncAuth0UserToDb(session: UserSession) {
   try {
     if (!session.email) return null;
 

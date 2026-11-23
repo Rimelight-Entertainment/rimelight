@@ -1,4 +1,0 @@
-{
-  "extends": "@rimelight/config/tsconfig/base",
-  "include": ["**/*"]
-}

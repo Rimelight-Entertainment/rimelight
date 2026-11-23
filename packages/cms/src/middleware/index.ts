@@ -3,6 +3,16 @@ import { config, options } from "virtual:rimelight-cms";
 import { createCmsApi } from "../server/router";
 import { migrateCms } from "../migrator/index";
 import { getCmsDb } from "../db/index";
+import type { IdentifyFn } from "../identity/types";
+
+export interface CmsMiddlewareOptions {
+  /**
+   * Resolves the caller's verified identity, e.g. `auth0Identifier(...)` or
+   * `cfAccessIdentifier(...)` from `@rimelight/cms/identity`. Functions cannot go through the Vite
+   * plugin, so the app passes them here.
+   */
+  identify?: IdentifyFn;
+}
 
 /**
  * Hono middleware serving the CMS API (`/api/cms/*`), public content (`/api/content/*`) and
@@ -10,9 +20,11 @@ import { getCmsDb } from "../db/index";
  *
  * @example
  *   import { cms } from "@rimelight/cms/middleware";
- *   app.use(cms());
+ *   import { auth0Identifier } from "@rimelight/cms/identity";
+ *   app.use(cms({ identify: auth0Identifier(() => ({ domain: env.AUTH0_DOMAIN })) }));
  */
-export function cms(): MiddlewareHandler {
+export function cms(middlewareOptions: CmsMiddlewareOptions = {}): MiddlewareHandler {
+  const identify = middlewareOptions.identify;
   // Plugin-level `storage` overrides the config file's, so the bucket can be set in vite.config.ts.
   const cmsConfig = {
     ...config,
@@ -23,6 +35,7 @@ export function cms(): MiddlewareHandler {
     apiPath: (options.apiPath ?? "/api/cms").replace(/\/$/, ""),
     ...(options.devBypassAuth ? { devBypassAuth: true } : {}),
     ...(options.access ? { access: options.access } : {}),
+    ...(identify ? { identify } : {}),
   });
   const apiPath = (options.apiPath ?? "/api/cms").replace(/\/$/, "");
   const apiRoot = apiPath.replace(/\/cms$/, "");

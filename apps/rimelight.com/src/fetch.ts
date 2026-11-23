@@ -1,10 +1,12 @@
 import { Hono } from "hono";
 import { security } from "@rimelight/security/middleware";
-import { auth } from "@rimelight/auth/middleware";
 import { seo } from "@rimelight/seo/middleware";
 import { cms } from "@rimelight/cms/middleware";
 import { i18n } from "@rimelight/i18n/middleware";
 import api from "#api/server";
+import { identify } from "#auth/identity";
+import { ambientEnv, getAuth0Config } from "#auth/auth0";
+import { getSession } from "#auth/session";
 import space from "./space/api.ts";
 import { handleRequest } from "virtual:solid-ssr-handler";
 
@@ -14,9 +16,20 @@ const app = new Hono<{ Bindings: Env }>();
 app.route("/v1", space);
 
 app.use(security());
-app.use(auth());
+
+// Sign-in pages are for visitors: signed-in users go home, and bare /auth goes to sign-in.
+app.use(async (c, next) => {
+  const pathname = new URL(c.req.url).pathname;
+  if (pathname === "/auth") return c.redirect("/auth/sign-in");
+  if (pathname.includes("/auth/sign-in") || pathname.includes("/auth/sign-up")) {
+    const session = await getSession(c.req.raw, getAuth0Config(ambientEnv())).catch(() => null);
+    if (session) return c.redirect("/");
+  }
+  return next();
+});
+
 app.use(seo());
-app.use(cms());
+app.use(cms({ identify }));
 app.use(i18n());
 
 app.route("/api", api);

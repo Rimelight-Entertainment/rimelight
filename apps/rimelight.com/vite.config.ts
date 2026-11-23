@@ -4,7 +4,6 @@ import solid from "@solidjs/vite-plugin";
 import { fileRoutes } from "filesystem-routing/vite";
 import { seo } from "@rimelight/seo/plugin";
 import { security } from "@rimelight/security/plugin";
-import { auth } from "@rimelight/auth/plugin";
 import { i18n } from "@rimelight/i18n/plugin";
 import { ui } from "@rimelight/ui/plugin";
 import { cms } from "@rimelight/cms/plugin";
@@ -65,8 +64,6 @@ export default defineConfig({
         ],
       },
     }),
-
-    auth({ provider: "auth0" }),
 
     i18n({ types: ".cloudflare/types/i18n.d.ts" }),
 

@@ -1,5 +1,5 @@
 import { eq, sql } from "drizzle-orm";
-import type { AccessIdentity } from "@rimelight/auth";
+import type { AccessIdentity } from "../identity/types";
 import { tablesFor, type Dialect } from "../db/index";
 import { CmsError, serviceUnavailable } from "../services/context";
 import { resolveMappedRole, type CmsAccessConfig } from "./access";

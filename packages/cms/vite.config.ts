@@ -2,8 +2,6 @@ import { defineConfig } from "vite-plus";
 import solid from "@solidjs/vite-plugin";
 import { ui } from "@rimelight/ui/plugin";
 import { i18n } from "@rimelight/i18n/plugin";
-import { auth } from "@rimelight/auth/plugin";
-
 const setupFiles = ["./test/setup.ts"];
 
 export default defineConfig({
@@ -15,7 +13,7 @@ export default defineConfig({
     projects: [
       {
         extends: true,
-        plugins: [auth(), i18n({ dir: "test/fixtures/i18n", types: false })],
+        plugins: [i18n({ dir: "test/fixtures/i18n", types: false })],
         test: {
           name: "logic",
           include: ["test/**/*.test.ts"],
@@ -24,7 +22,7 @@ export default defineConfig({
         },
       },
       {
-        plugins: [solid(), ui({}), auth(), i18n({ dir: "test/fixtures/i18n", types: false })],
+        plugins: [solid(), ui({}), i18n({ dir: "test/fixtures/i18n", types: false })],
         test: {
           name: "render",
           include: ["test/**/*.test.tsx"],
@@ -43,6 +41,7 @@ export default defineConfig({
       "src/services/index.ts",
       "src/storage/index.ts",
       "src/middleware/index.ts",
+      "src/identity/index.ts",
       "src/server/index.ts",
       "src/migrator/index.ts",
       "src/migrator/cli.ts",

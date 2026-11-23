@@ -1,4 +1,4 @@
-import { auth as defaultAuth, type AccessIdentity } from "@rimelight/auth";
+import type { AccessIdentity } from "../identity/types";
 import type { CmsAccessConfig } from "../auth/access";
 import { provisionCmsUser } from "../auth/provision";
 import { getCmsDb } from "../db/index";
@@ -10,7 +10,10 @@ export interface CmsServerOptions {
   /** Drizzle instance / D1 binding. Defaults to `c.env.DB` or `DATABASE_URL`/Hyperdrive. */
   db?: any;
   config?: CmsConfig;
-  /** Resolves the verified identity behind a request. Defaults to `@rimelight/auth`'s `identify`. */
+  /**
+   * Resolves the verified identity behind a request, e.g. `auth0Identifier(...)` or
+   * `cfAccessIdentifier(...)` from `@rimelight/cms/identity`. Unset means every request is anonymous.
+   */
   identify?: (req: Request) => Promise<AccessIdentity | null>;
   /** How verified identities map onto CMS accounts: provisioning and role mapping. */
   access?: CmsAccessConfig;
@@ -67,8 +70,8 @@ export async function resolveIdentity(
   req: Request,
   options: CmsServerOptions,
 ): Promise<AccessIdentity | null> {
-  const identify =
-    options.identify ?? ((r: Request) => defaultAuth.identify?.(r) ?? Promise.resolve(null));
+  const identify = options.identify;
+  if (!identify) return null;
   try {
     return await identify(req);
   } catch (err) {

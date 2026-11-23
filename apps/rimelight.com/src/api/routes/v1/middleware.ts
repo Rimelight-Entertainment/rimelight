@@ -1,5 +1,5 @@
 import { createMiddleware } from "hono/factory";
-import { verifyAuth0Jwt } from "@rimelight/auth/auth0";
+import { verifyAuth0Jwt } from "@rimelight/cms/identity";
 import { getDb } from "#db";
 import type { AppUser } from "#db/schema/users";
 import { ProvisionConflictError, provisionUser } from "./provision";

@@ -275,7 +275,7 @@ Tenant setup, documented in `docs/auth0-setup.md`:
 ```typescript
 // apps/rimelight.com/src/api/routes/v1/middleware.ts (proposed sketch)
 import { createMiddleware } from "hono/factory";
-import { verifyAuth0Jwt } from "@rimelight/auth/auth0";
+import { verifyAuth0Jwt } from "@rimelight/cms/identity";
 
 export const requireClientToken = createMiddleware<{
   Bindings: Env;

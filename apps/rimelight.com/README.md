@@ -21,7 +21,7 @@ The company website for Rimelight Entertainment. It hosts company pages, the doc
 - Hono on Cloudflare Workers
 - PostgreSQL (Neon) through Cloudflare Hyperdrive, with Drizzle ORM
 - Cloudflare R2 for media, and Rate Limiting
-- Rimelight packages: `@rimelight/auth`, `@rimelight/cms`, `@rimelight/i18n`, `@rimelight/security`, `@rimelight/seo`, `@rimelight/ui`
+- Rimelight packages: `@rimelight/cms`, `@rimelight/i18n`, `@rimelight/security`, `@rimelight/seo`, `@rimelight/ui`
 
 ## Project Structure
 

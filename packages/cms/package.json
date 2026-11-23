@@ -48,6 +48,10 @@
       "types": "./dist/middleware/index.d.mts",
       "import": "./dist/middleware/index.mjs"
     },
+    "./identity": {
+      "types": "./dist/identity/index.d.mts",
+      "import": "./dist/identity/index.mjs"
+    },
     "./plugin": {
       "types": "./dist/plugin.d.mts",
       "import": "./dist/plugin.mjs"
@@ -119,7 +123,6 @@
     "zod": "4.6.7"
   },
   "devDependencies": {
-    "@rimelight/auth": "workspace:*",
     "@rimelight/config": "workspace:*",
     "@rimelight/i18n": "workspace:*",
     "@rimelight/ui": "workspace:*",
@@ -130,7 +133,6 @@
     "unocss": "66.13.0"
   },
   "peerDependencies": {
-    "@rimelight/auth": "^0.0.37",
     "@rimelight/i18n": "^0.1.20",
     "@rimelight/ui": "^0.0.96 || ^0.0.97",
     "@solidjs/router": ">=2.0.0-next.42",

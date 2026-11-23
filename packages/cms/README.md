@@ -34,7 +34,7 @@ pnpm add @rimelight/cms
 | `solid-js`        | `>=2.0.0-rc.18`   |
 | `vite-plus`       | `^1.0.0`          |
 
-`@rimelight/auth`, `@rimelight/i18n`, and `@rimelight/ui` are installed as dependencies.
+`@rimelight/i18n`, and `@rimelight/ui` are installed as dependencies.
 
 ## Usage
 

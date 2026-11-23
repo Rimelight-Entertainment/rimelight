@@ -1,44 +1,35 @@
 import { Hono } from "hono";
 import { setCookie, deleteCookie } from "hono/cookie";
-import { auth } from "@rimelight/auth";
+import { decodeJwt } from "@rimelight/cms/identity";
 import {
-  getAuth0ConfigFromEnv,
-  createAuth0AuthorizeUrl,
-  createAuth0LogoutUrl,
-  createSessionToken,
-  exchangeAuth0Code,
-  loginWithAuth0Password,
-  refreshAuth0Token,
-  mapAuth0PayloadToSession,
-  decodeJwt,
-} from "@rimelight/auth/auth0";
+  ambientEnv,
+  createAuthorizeUrl,
+  createLogoutUrl,
+  exchangeCode,
+  getAuth0Config,
+  loginWithPassword,
+  mapClaimsToSession,
+  refreshAccessToken,
+  type Auth0Config,
+} from "#auth/auth0";
+import { createSessionToken, getSession } from "#auth/session";
 import { syncAuth0UserToDb } from "#auth/sync-user";
 import { t } from "@rimelight/i18n";
 
-const auth0Config = getAuth0ConfigFromEnv();
+const auth0Config = getAuth0Config(ambientEnv());
 const api = new Hono<{ Bindings: Env }>();
 
 /**
  * Headless (game) routes read the Worker bindings on each request. The module-level config above
  * is built once at load time, which may run before the bindings are visible.
  */
-function headlessAuth0Config(env: Env) {
-  return getAuth0ConfigFromEnv({
-    domain: env.AUTH0_DOMAIN,
-    clientId: env.AUTH0_CLIENT_ID,
-    clientSecret: env.AUTH0_CLIENT_SECRET,
-    audience: env.AUTH0_AUDIENCE,
-  });
+function headlessAuth0Config(env: Env): Auth0Config {
+  return getAuth0Config(env as unknown as Record<string, string | undefined>);
 }
 
 function getBaseUrl(c: any): string {
-  const envBase =
-    (typeof import.meta.env !== "undefined"
-      ? import.meta.env["AUTH0_BASE_URL"] || import.meta.env["APP_BASE_URL"]
-      : undefined) ||
-    (typeof process !== "undefined"
-      ? process.env["AUTH0_BASE_URL"] || process.env["APP_BASE_URL"]
-      : undefined);
+  const env = ambientEnv();
+  const envBase = env["AUTH0_BASE_URL"] || env["APP_BASE_URL"];
   if (envBase) return envBase.replace(/\/$/, "");
 
   const url = new URL(c.req.url);
@@ -52,12 +43,11 @@ api.get("/login", (c) => {
   const url = new URL(c.req.url);
   const returnTo = url.searchParams.get("returnTo") || "/";
   const screenHint = url.searchParams.get("screen_hint") || undefined;
-  const baseUrl = getBaseUrl(c);
-  const redirectUri = `${baseUrl}/api/auth/callback`;
+  const redirectUri = `${getBaseUrl(c)}/api/auth/callback`;
 
   const state = btoa(JSON.stringify({ returnTo }));
 
-  const authorizeUrl = createAuth0AuthorizeUrl({
+  const authorizeUrl = createAuthorizeUrl({
     domain: auth0Config.domain,
     clientId: auth0Config.clientId || "default_client_id",
     redirectUri,
@@ -76,10 +66,10 @@ api.get("/login", (c) => {
  * returns the JWT Bearer token and user context directly in JSON.
  */
 const handleHeadlessLogin = async (c: any) => {
-  const auth0Config = headlessAuth0Config(c.env);
+  const config = headlessAuth0Config(c.env);
   // Without an audience the access token is not bound to the game API, and the bearer check
   // would accept tokens minted for any audience. Fail closed.
-  if (!auth0Config.audience) {
+  if (!config.audience) {
     return c.json(
       { error: "Internal Server Error", message: t("api.message.server-misconfigured") },
       500,
@@ -98,25 +88,18 @@ const handleHeadlessLogin = async (c: any) => {
       return c.json({ error: "Bad Request", message: t("api.message.credentials-required") }, 400);
     }
 
-    const tokens = await loginWithAuth0Password({
-      domain: auth0Config.domain,
-      clientId: auth0Config.clientId || "",
-      clientSecret: auth0Config.clientSecret,
+    const tokens = await loginWithPassword({
+      domain: config.domain,
+      clientId: config.clientId,
+      clientSecret: config.clientSecret,
       username,
       password,
-      audience: auth0Config.audience,
+      audience: config.audience,
       scope: "openid profile email offline_access",
     });
 
-    const rawJwt = tokens.id_token || tokens.access_token;
-    const payload = decodeJwt(rawJwt);
-
-    const session = mapAuth0PayloadToSession(payload, {
-      rolesClaim: auth0Config.rolesClaim || "https://rimelight.com/roles",
-      userTypeClaim: auth0Config.userTypeClaim || "https://rimelight.com/user_type",
-      permissionsClaim: auth0Config.permissionsClaim || "permissions",
-      defaultRole: auth0Config.defaultRole || "user",
-    });
+    const payload = decodeJwt(tokens.id_token || tokens.access_token);
+    const session = mapClaimsToSession(payload, config);
 
     // Sync user to database
     await syncAuth0UserToDb(session);
@@ -143,8 +126,8 @@ api.post("/token", handleHeadlessLogin);
  * Exchanges a valid refresh token for a new access token without interrupting gameplay.
  */
 api.post("/refresh", async (c) => {
-  const auth0Config = headlessAuth0Config(c.env);
-  if (!auth0Config.audience) {
+  const config = headlessAuth0Config(c.env);
+  if (!config.audience) {
     return c.json(
       { error: "Internal Server Error", message: t("api.message.server-misconfigured") },
       500,
@@ -164,22 +147,16 @@ api.post("/refresh", async (c) => {
       );
     }
 
-    const tokens = await refreshAuth0Token({
-      domain: auth0Config.domain,
-      clientId: auth0Config.clientId || "",
-      clientSecret: auth0Config.clientSecret,
+    const tokens = await refreshAccessToken({
+      domain: config.domain,
+      clientId: config.clientId,
+      clientSecret: config.clientSecret,
       refreshToken,
     });
 
     let session = null;
     if (tokens.id_token || tokens.access_token) {
-      const payload = decodeJwt(tokens.id_token || tokens.access_token);
-      session = mapAuth0PayloadToSession(payload, {
-        rolesClaim: auth0Config.rolesClaim || "https://rimelight.com/roles",
-        userTypeClaim: auth0Config.userTypeClaim || "https://rimelight.com/user_type",
-        permissionsClaim: auth0Config.permissionsClaim || "permissions",
-        defaultRole: auth0Config.defaultRole || "user",
-      });
+      session = mapClaimsToSession(decodeJwt(tokens.id_token || tokens.access_token), config);
     }
 
     return c.json({
@@ -229,28 +206,21 @@ api.get("/callback", async (c) => {
     } catch {}
   }
 
-  const baseUrl = getBaseUrl(c);
-  const redirectUri = `${baseUrl}/api/auth/callback`;
+  const redirectUri = `${getBaseUrl(c)}/api/auth/callback`;
 
   try {
-    const tokens = await exchangeAuth0Code({
+    const tokens = await exchangeCode({
       domain: auth0Config.domain,
-      clientId: auth0Config.clientId || "",
+      clientId: auth0Config.clientId,
       clientSecret: auth0Config.clientSecret,
       code,
       redirectUri,
     });
 
-    // Decode user payload from ID token or Access token
-    const rawJwt = tokens.id_token || tokens.access_token;
-    const payload = decodeJwt(rawJwt);
-
-    const session = mapAuth0PayloadToSession(payload, {
-      rolesClaim: auth0Config.rolesClaim || "https://rimelight.com/roles",
-      userTypeClaim: auth0Config.userTypeClaim || "https://rimelight.com/user_type",
-      permissionsClaim: auth0Config.permissionsClaim || "permissions",
-      defaultRole: auth0Config.defaultRole || "user",
-    });
+    const session = mapClaimsToSession(
+      decodeJwt(tokens.id_token || tokens.access_token),
+      auth0Config,
+    );
 
     // Sync profile to database (employees or users table)
     await syncAuth0UserToDb(session);
@@ -260,9 +230,9 @@ api.get("/callback", async (c) => {
     if (!sessionSecret) {
       throw new Error("AUTH0_SECRET is not configured; refusing to sign session cookies");
     }
-    const sessionToken = await createSessionToken(session, sessionSecret, "7d");
+    const sessionToken = await createSessionToken(session, sessionSecret);
 
-    setCookie(c, auth0Config.sessionCookieName || "rimelight_session", sessionToken, {
+    setCookie(c, auth0Config.sessionCookieName, sessionToken, {
       path: "/",
       httpOnly: true,
       sameSite: "Lax",
@@ -281,16 +251,15 @@ api.get("/callback", async (c) => {
  * GET /api/auth/logout Clears local session cookie and redirects to Auth0 logout endpoint
  */
 api.get("/logout", (c) => {
-  const baseUrl = getBaseUrl(c);
-  const returnTo = `${baseUrl}/`;
+  const returnTo = `${getBaseUrl(c)}/`;
 
-  deleteCookie(c, auth0Config.sessionCookieName || "rimelight_session", {
+  deleteCookie(c, auth0Config.sessionCookieName, {
     path: "/",
     secure: new URL(c.req.url).protocol === "https:",
   });
 
   if (auth0Config.clientId && auth0Config.clientId !== "default_client_id") {
-    const logoutUrl = createAuth0LogoutUrl({
+    const logoutUrl = createLogoutUrl({
       domain: auth0Config.domain,
       clientId: auth0Config.clientId,
       returnTo,
@@ -305,7 +274,7 @@ api.get("/logout", (c) => {
  * GET /api/auth/session Returns authenticated user/employee context
  */
 api.get("/session", async (c) => {
-  const session = await auth.getSession(c.req.raw);
+  const session = await getSession(c.req.raw, headlessAuth0Config(c.env));
   if (!session) {
     return c.json({ user: null, session: null }, 200);
   }
@@ -324,7 +293,7 @@ api.get("/session", async (c) => {
  * GET /api/auth/me Returns current user context
  */
 api.get("/me", async (c) => {
-  const session = await auth.getSession(c.req.raw);
+  const session = await getSession(c.req.raw, headlessAuth0Config(c.env));
   if (!session) {
     return c.json({ user: null }, 401);
   }

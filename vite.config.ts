@@ -31,7 +31,6 @@ export default defineConfig({
   },
   test: {
     projects: [
-      "packages/auth",
       "packages/cms",
       "packages/config",
       "packages/i18n",

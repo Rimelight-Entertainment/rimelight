@@ -6,11 +6,11 @@ The source for Rimelight Entertainment's websites and the shared packages behind
 
 ```text
 ├── apps/
-│   ├── rimelight.com/            # Company website
+│   └── rimelight.com/            # Company website
 ├── packages/
-│   ├── auth/                     # @rimelight/auth
 │   ├── cms/                      # @rimelight/cms
 │   ├── config/                   # @rimelight/config
+│   ├── design/                   # @rimelight/design
 │   ├── i18n/                     # @rimelight/i18n
 │   ├── security/                 # @rimelight/security
 │   ├── seo/                      # @rimelight/seo
@@ -30,9 +30,9 @@ The source for Rimelight Entertainment's websites and the shared packages behind
 
 | Package                                              | Description                                                                       |
 | ---------------------------------------------------- | --------------------------------------------------------------------------------- |
-| [`@rimelight/auth`](packages/auth/README.md)         | Authentication and identity: Auth0, Cloudflare Access, JWTs, and permissions      |
-| [`@rimelight/cms`](packages/cms/README.md)           | Content management: collections, blocks, taxonomies, versioning, and a dashboard  |
+| [`@rimelight/cms`](packages/cms/README.md)           | Content management, plus identity adapters (Auth0, Cloudflare Access) for the CMS |
 | [`@rimelight/config`](packages/config/README.md)     | Shared TypeScript configs                                                         |
+| `@rimelight/design`                                  | Design tokens shared by the web UI and the Rust/Slint apps                        |
 | [`@rimelight/i18n`](packages/i18n/README.md)         | Typed translations, locale URLs, and per-route loading                            |
 | [`@rimelight/security`](packages/security/README.md) | CSP, SRI, security headers, rate limiting, Turnstile, and construction mode       |
 | [`@rimelight/seo`](packages/seo/README.md)           | Head metadata, sitemaps, robots, RSS, manifest, `llms.txt`, and Open Graph images |

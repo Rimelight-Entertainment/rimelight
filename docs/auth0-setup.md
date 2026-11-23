@@ -121,9 +121,7 @@ response's `access_token` is the bearer for `/api/v1/*`. Decode its header to co
 
 - **`Grant type 'password' not allowed for the client`:** step 3, Grant types.
 - **`Authorization server not configured with default connection`:** step 1, Default Directory.
-- **Access token is `alg: dir` / `enc: A256GCM`:** the app is loading an old build of
-  `packages/auth`. Rebuild it with `vp pack` in `packages/auth`, then restart the dev server. The
-  `dist` folder is gitignored, so every environment has to build it.
+- **Access token is `alg: dir` / `enc: A256GCM`:** the API's JWE toggle is on (step 4). Turn it off.
 - **403 on `/api/v1/*` for a valid login:** step 5, the Login Action isn't attached or isn't
   deployed.
 - **409 on `/api/v1/*`:** the email already belongs to another `users` row with a different
