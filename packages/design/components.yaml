@@ -1,9 +1,9 @@
 # Rimelight cross-platform component catalogue (draft)
 # Counts (distinct concepts):
-#   total concepts:           153
+#   total concepts:           156
 #   done on web and slint:    55
 #   web-only (web done):      71
-#   slint-only (slint done):  27  (ActionRow, Tile and RecentList added in WS4 ST4.2)
+#   slint-only (slint done):  30  (ActionRow, Tile and RecentList added in WS4 ST4.2; ListPage, BoardPage, DetailPage in WS5 ST5.4)
 #   media-only (media done):  0  (Tile, RecentList and ActionRow now also in rimelight_ui)
 # Sources: packages/ui/src/components (web), crates/rimelight_ui/ui/components (slint),
 #          rimelight-media/ui/widgets.slint (media). Read-only research.
@@ -1007,9 +1007,27 @@
       path: packages/ui/src/components/chart,
       props: [label, value, color, type, data, title, height, style],
     }
-  slint: { status: none }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/chart.slint,
+      props: [points, y-min, y-max, unit, x-label-every, colour, empty-text, slices, centre-text],
+    }
   media: { status: none }
-  notes: "Web-only. Charts in Slint are not yet in the component set."
+  notes: "Slint: LineChart, BarChart and DonutChart (chart.slint, with ChartPoint, ChartSlice and ChartPalette). Line and bar take a caller-set value range; hover tooltip on points. Web Chart types line, bar and donut are covered; area and legend are not yet."
+
+- name: ProgressRing
+  aliases: [progress-ring, radial-progress]
+  category: data
+  web: { status: none }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_ui/ui/components/chart.slint,
+      props: [value, colour, centre-text, thickness],
+    }
+  media: { status: none }
+  notes: "Slint-only: a ring with an arc from the top, for one fraction of a goal. Lives in chart.slint with the other charts."
 
 - name: QrCode
   aliases: [qr-code]
@@ -2436,3 +2454,96 @@
     }
   media: { status: none }
   notes: "Slint-only search with removable filter chips."
+
+- name: ListPage
+  aliases: [list-page, ListPage, T-LIST]
+  category: layout
+  web: { status: none }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_shell/ui/templates/list-page.slint,
+      props:
+        [
+          title,
+          state,
+          error,
+          empty-icon,
+          empty-title,
+          empty-description,
+          error-description,
+          search-text,
+          search-placeholder,
+          action-label,
+          bulk-label,
+          selected-count,
+          columns,
+          rows,
+          sort-column,
+          sort-descending,
+          has-more,
+          loading-more,
+        ],
+    }
+  media: { status: none }
+  notes: "ST5.4 page template (T-LIST): header with action, search, filter slot (children), bulk bar, Table, load state and Load more. Callbacks: search, sort, picked, action, bulk-action, load-more, retry, opened. State in rimelight_ui_kit (list, page_state)."
+  scope: shell
+  home: shell
+
+- name: BoardPage
+  aliases: [board-page, BoardPage, kanban-page, T-BOARD]
+  category: layout
+  web: { status: none }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_shell/ui/templates/board-page.slint,
+      props:
+        [
+          title,
+          state,
+          error,
+          empty-icon,
+          empty-title,
+          empty-description,
+          board,
+          column-width,
+          add-label,
+          move-error,
+        ],
+    }
+  media: { status: none }
+  notes: "ST5.4 page template (T-BOARD): columns of cards, drag between columns (column-at callback, wired to board::drop_column), Left and Right keys, Add card per column, move-error banner. Callbacks: moved, add-card, picked, opened, retry. State in rimelight_ui_kit (board, page_state). The Space kanban component is separate and not yet on this template."
+  scope: shell
+  home: shell
+
+- name: DetailPage
+  aliases: [detail-page, DetailPage, record-page, T-DETAIL]
+  category: layout
+  web: { status: none }
+  slint:
+    {
+      status: done,
+      path: crates/rimelight_shell/ui/templates/detail-page.slint,
+      props:
+        [
+          title,
+          subtitle,
+          show-back,
+          back-label,
+          state,
+          error,
+          empty-title,
+          empty-description,
+          action-label,
+          tabs,
+          active-tab,
+          side-title,
+          side-items,
+          wide,
+        ],
+    }
+  media: { status: none }
+  notes: "ST5.4 page template (T-DETAIL): header with Back and an action, tab strip, sections as children, and a side panel of label and value pairs (data, not a slot). Callbacks: opened, retry, back, action, tab-changed."
+  scope: shell
+  home: shell
