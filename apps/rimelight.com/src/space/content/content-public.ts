@@ -18,8 +18,10 @@
  *   stored), publishedAt (= posted_at), updatedAt (= updated_at), blocks and properties (from pages.content, the
  *   published read cache), terms ({ taxonomy, slug, label }). Dates are ISO strings. `content=false` on a list returns
  *   blocks [] and properties {}, as the CMS does.
- * - Blocks: filterBlocks(blocks, [], "public") from content-access.ts. Anonymous readers have no roles, so role- and
- *   permission-gated blocks are dropped; blocks with visibility "internal" are dropped; children are filtered too.
+ * - Blocks: filterBlocks(blocks, readerRoles, "public") from content-access.ts. Blocks with visibility "internal" are
+ *   always dropped. Role- and permission-gated blocks are shown to a signed-in website reader who has the role (the
+ *   website session's roles, or `member` when it has none; owner, 2026-11-23, as the CMS did) and dropped for
+ *   anonymous readers. Children are filtered too. A response filtered for a signed-in reader is `private, no-store`.
  * - Terms: TaxonomyTerm fields as the CMS listTerms returns them (id, taxonomy, slug, label, name, description,
  *   parentId, displayOrder, count, postCount, createdAt, updatedAt). `count` and `postCount` count only Public,
  *   published, undeleted entries (the CMS counts every published entry).
@@ -39,6 +41,8 @@ import { Hono } from "hono";
 // Worker bundle; if the bundle pulls in Node-only code, move these two functions here.
 import { buildDocsNavFromPages, renderPageAsMarkdown } from "@rimelight/cms/docs";
 import { getSql } from "../../db/index.ts";
+import { ambientEnv, getAuth0Config } from "#auth/auth0";
+import { getSession } from "#auth/session";
 import { apiError, badRequest, json, type Row, type Sql, UUID } from "../canvas-access.ts";
 
 import {
@@ -48,6 +52,8 @@ import {
   type CollectionInfo,
   parseJson,
   cacheControl,
+  cacheControlFor,
+  readerRolesFor,
   entryFromRow,
   termView,
   bylineView,
@@ -178,6 +184,26 @@ function cached(body: unknown, seconds = 60): Response {
   return res;
 }
 
+/** An entry response: shared caching for anonymous readers, private when filtered for a signed-in reader. */
+function entriesResponse(body: unknown, readerRoles: string[]): Response {
+  const res = json(body);
+  res.headers.set("Cache-Control", cacheControlFor(readerRoles));
+  return res;
+}
+
+/**
+ * The website reader's roles for role-restricted blocks, from the site's own sign-in (cookie or Auth0 bearer).
+ * Any failure reads as anonymous, as the CMS did.
+ */
+async function readerRoles(request: Request): Promise<string[]> {
+  try {
+    return readerRolesFor(await getSession(request, getAuth0Config(ambientEnv())));
+  } catch (err) {
+    console.warn("space public content: reader roles unavailable; reading as anonymous", err);
+    return [];
+  }
+}
+
 /** A query number, or the fallback when absent or not a number. */
 function num(raw: string | undefined, fallback: number): number {
   if (raw === undefined || raw === "") return fallback;
@@ -198,6 +224,7 @@ pub.get("/content/public/collections/:collection", async (c) => {
   const taxonomy = c.req.query("taxonomy");
   const term = c.req.query("term");
   const withContent = c.req.query("content") !== "false";
+  const roles = await readerRoles(c.req.raw);
   const where = publicWhere(sql, collection, taxonomy && term ? { taxonomy, term } : null);
 
   const [rows, count] = await Promise.all([
@@ -212,10 +239,13 @@ pub.get("/content/public/collections/:collection", async (c) => {
     rows.map((r) => String(r["id"])),
   );
   const entries = rows.map((r) =>
-    entryFromRow(r as Row, terms.get(String(r["id"])) ?? [], withContent),
+    entryFromRow(r as Row, terms.get(String(r["id"])) ?? [], withContent, roles),
   );
   const filled = await fillEntryMentions(sql, entries, locale);
-  return cached({ entries: filled, total: Number((count[0] as Row | undefined)?.["n"] ?? 0) });
+  return entriesResponse(
+    { entries: filled, total: Number((count[0] as Row | undefined)?.["n"] ?? 0) },
+    roles,
+  );
 });
 
 pub.get("/content/public/collections/:collection/:slug{.+}", async (c) => {
@@ -226,6 +256,7 @@ pub.get("/content/public/collections/:collection/:slug{.+}", async (c) => {
   const key = asMarkdown ? raw.slice(0, -3) : raw;
   const locale = c.req.query("locale") ?? "en";
 
+  const roles = await readerRoles(c.req.raw);
   const row = await loadPublicEntry(sql, collection, key);
   if (!row) {
     return asMarkdown
@@ -238,7 +269,7 @@ pub.get("/content/public/collections/:collection/:slug{.+}", async (c) => {
   const terms = await termsFor(sql, [String(row["id"])]);
   const [entry] = await fillEntryMentions(
     sql,
-    [entryFromRow(row, terms.get(String(row["id"])) ?? [])],
+    [entryFromRow(row, terms.get(String(row["id"])) ?? [], true, roles)],
     locale,
   );
   if (!entry) return json({ entry: null }, 404);
@@ -252,12 +283,12 @@ pub.get("/content/public/collections/:collection/:slug{.+}", async (c) => {
       {
         headers: {
           "Content-Type": "text/markdown; charset=utf-8",
-          "Cache-Control": "public, max-age=3600",
+          "Cache-Control": roles.length ? "private, no-store" : "public, max-age=3600",
         },
       },
     );
   }
-  return cached({ entry });
+  return entriesResponse({ entry }, roles);
 });
 
 /** Sidebar navigation from a collection's Public, published entries (default collection "doc"). */

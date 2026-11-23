@@ -78,11 +78,32 @@ export function cacheControl(seconds = 60): string {
   return `public, max-age=${seconds}, s-maxage=${seconds * 5}, stale-while-revalidate=86400`;
 }
 
+/**
+ * The roles a website reader's role-restricted blocks are checked against (owner, 2026-11-23: shown when signed in,
+ * as the CMS did). Anonymous: none. Signed in: the session's roles, or `member` when it has none.
+ */
+export function readerRolesFor(session: { roles?: unknown } | null): string[] {
+  if (!session) return [];
+  const roles = Array.isArray(session.roles)
+    ? session.roles.filter((r): r is string => typeof r === "string" && r !== "")
+    : [];
+  return roles.length ? roles : ["member"];
+}
+
+/**
+ * Cache-Control for a response: shared caching for anonymous readers; never stored by a shared cache when the
+ * response was filtered for a signed-in reader's roles.
+ */
+export function cacheControlFor(readerRoles: string[], seconds = 60): string {
+  return readerRoles.length ? "private, no-store" : cacheControl(seconds);
+}
+
 /** A row of the Public, published, undeleted pages (the public filter, as SQL in publicWhere) as a public entry. */
 export function entryFromRow(
   row: Row,
   terms: PublicTermRef[] = [],
   withContent = true,
+  readerRoles: string[] = [],
 ): PublicEntry {
   const content = (parseJson(row["content"]) ?? {}) as {
     blocks?: unknown;
@@ -90,7 +111,7 @@ export function entryFromRow(
   };
   const blocks =
     withContent && Array.isArray(content.blocks)
-      ? filterBlocks(content.blocks as ContentBlock[], [], "public")
+      ? filterBlocks(content.blocks as ContentBlock[], readerRoles, "public")
       : [];
   return {
     id: String(row["id"]),

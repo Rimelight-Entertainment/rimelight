@@ -5,6 +5,7 @@ import { describe, expect, it } from "vite-plus/test";
 import {
   bylineView,
   cacheControl,
+  cacheControlFor,
   collectionColor,
   entryFromRow,
   entryHref,
@@ -12,6 +13,7 @@ import {
   isoOrNull,
   mentionIds,
   parseJson,
+  readerRolesFor,
   resolveLabel,
   termView,
   type CollectionInfo,
@@ -299,5 +301,55 @@ describe("cacheControl", () => {
     expect(cacheControl(300)).toBe(
       "public, max-age=300, s-maxage=1500, stale-while-revalidate=86400",
     );
+  });
+});
+
+describe("role-restricted blocks for signed-in website readers (owner, 2026-11-23)", () => {
+  const blocks = [
+    { id: "a1111111-1111-4111-8111-111111111111", type: "ParagraphBlock", props: {} },
+    {
+      id: "b2222222-2222-4222-8222-222222222222",
+      type: "ParagraphBlock",
+      props: {},
+      allowedRoles: ["member"],
+    },
+    {
+      id: "c3333333-3333-4333-8333-333333333333",
+      type: "ParagraphBlock",
+      props: {},
+      allowedRoles: ["patron"],
+    },
+    {
+      id: "d4444444-4444-4444-8444-444444444444",
+      type: "ParagraphBlock",
+      props: {},
+      allowedRoles: ["member"],
+      visibility: "internal",
+    },
+  ];
+  const ids = (roles: string[]) =>
+    entryFromRow(row({ blocks, properties: {} }), [], true, roles).blocks.map((b) => b["id"]);
+
+  it("gives anonymous readers no roles, and signed-in readers theirs or member", () => {
+    expect(readerRolesFor(null)).toEqual([]);
+    expect(readerRolesFor({ roles: [] })).toEqual(["member"]);
+    expect(readerRolesFor({ roles: ["patron", 3, ""] })).toEqual(["patron"]);
+  });
+
+  it("shows a block to a reader with one of its roles, never an internal one", () => {
+    expect(ids([])).toEqual(["a1111111-1111-4111-8111-111111111111"]);
+    expect(ids(["member"])).toEqual([
+      "a1111111-1111-4111-8111-111111111111",
+      "b2222222-2222-4222-8222-222222222222",
+    ]);
+    expect(ids(["patron"])).toEqual([
+      "a1111111-1111-4111-8111-111111111111",
+      "c3333333-3333-4333-8333-333333333333",
+    ]);
+  });
+
+  it("keeps role-filtered responses out of shared caches", () => {
+    expect(cacheControlFor([])).toBe(cacheControl(60));
+    expect(cacheControlFor(["member"])).toBe("private, no-store");
   });
 });
