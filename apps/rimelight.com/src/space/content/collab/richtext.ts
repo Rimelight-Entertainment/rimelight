@@ -3,7 +3,7 @@
 // Positions: every index is read from `text.length`, never computed from string lengths, so the code does not
 // depend on whether Loro counts UTF-16 units or code points. // UNSURE: confirm `LoroText` index unit in loro-crdt 1.x.
 
-import type { LoroText } from "loro-crdt";
+import type { LoroText } from "#loro";
 import { normalizeNodes, textNode } from "./normalize";
 import { CANON_MARKS, EXPAND_AFTER_MARKS, ICON_CHAR } from "./values";
 

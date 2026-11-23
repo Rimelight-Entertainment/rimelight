@@ -3,8 +3,8 @@
 // Layout: root map `meta` (slug, type, template fields, `title:<locale>` and `description:<locale>` text, the
 // `properties` child map), and root tree `blocks` (fractional index, one node per block, node data in `node.data`).
 
-import { LoroDoc, LoroList, LoroMap, LoroText } from "loro-crdt";
-import type { LoroTreeNode } from "loro-crdt";
+import { LoroDoc, LoroList, LoroMap, LoroText } from "#loro";
+import type { LoroTreeNode } from "#loro";
 import { exportPlain, exportRich, importPlain, importRich } from "./richtext";
 import { textKind } from "./registry";
 import { isLocaleCode, isPlain, isRich, localizedMap } from "./values";

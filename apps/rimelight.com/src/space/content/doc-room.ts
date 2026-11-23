@@ -11,7 +11,7 @@
  * and /event. The frames on the socket are described in doc-room-logic.ts.
  */
 import { DurableObject } from "cloudflare:workers";
-import { LoroDoc, VersionVector } from "loro-crdt";
+import { LoroDoc, VersionVector } from "#loro";
 // UNSURE: the collab entry is written by another agent; the signatures are as the brief gave them.
 import {
   configure,
