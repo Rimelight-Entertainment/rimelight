@@ -45,6 +45,10 @@ export default defineConfig({
 
     security({
       domain: "rimelight.com",
+      // The Space app's web-only block embed (/embed/block) is served to the app while the site is in construction mode.
+      construction: {
+        whitelist: ["/embed/"],
+      },
       ratelimit: {
         rules: [
           {
@@ -65,7 +69,11 @@ export default defineConfig({
       },
     }),
 
-    i18n({ types: ".cloudflare/types/i18n.d.ts" }),
+    // /embed is outside the [locale] folder (the Space app's web-only block embed), so it is not redirected to a locale prefix.
+    i18n({
+      types: ".cloudflare/types/i18n.d.ts",
+      skipPaths: ["/api", "/_", "/.well-known", "/cdn-cgi", "/embed"],
+    }),
 
     ui({
       logos: {

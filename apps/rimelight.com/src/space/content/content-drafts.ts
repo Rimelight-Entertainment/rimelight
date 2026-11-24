@@ -8,16 +8,19 @@ import { Hono } from "hono";
 import { getSql } from "../../db/index.ts";
 import { caller, isResponse } from "../session.ts";
 import {
+  type AccessLevel,
   apiError,
   badRequest,
   forbidden,
   json,
   notFound,
   readBody,
+  type Row,
   type Sql,
 } from "../canvas-access.ts";
 import {
   canOpenDraft,
+  type ContentScope,
   type DraftRow,
   draftFacts,
   draftPageAccess,
@@ -29,6 +32,7 @@ import {
   uuidField,
 } from "./content-access.ts";
 import { docRoomStub } from "./content-live.ts";
+import { parseDraftListQuery, selectDrafts } from "./content-drafts-logic.ts";
 
 export type RoomStub = ReturnType<typeof docRoomStub>;
 
@@ -251,6 +255,97 @@ export async function publishDraft(
 }
 
 const drafts = new Hono();
+
+const iso = (v: unknown) => new Date(v as string | Date).toISOString();
+
+/**
+ * GET /v1/content/drafts?status=Open|InReview&role=mine|member|reviewer: the drafts on pages the caller may view,
+ * each once, with the roles it has for the caller. No status means both; no role means all three roles.
+ */
+drafts.get("/content/drafts", async (c) => {
+  const who = await caller(c);
+  if (isResponse(who)) return who;
+  const query = parseDraftListQuery(c.req.query("status"), c.req.query("role"));
+  if (!query.ok) return badRequest(query.message);
+  try {
+    const sql = getSql();
+    const rows =
+      await sql`SELECT d.id::text AS id, d.page_id::text AS page_id, d.author_id::text AS author_id,
+         d.status, d.version_id::text AS version_id, d.summary, d.updated_at,
+         p.slug, p.type, p.title, p.visibility, p.scope_kind, p.scope_id::text AS scope_id
+       FROM content_drafts d
+       JOIN pages p ON p.id = d.page_id
+       WHERE p.deleted_at IS NULL AND d.status IN ('Open', 'InReview')
+       ORDER BY d.updated_at DESC, d.id`;
+    const memberRows = await sql`SELECT m.draft_id::text AS draft_id, m.user_id::text AS user_id
+       FROM content_draft_members m
+       JOIN content_drafts d ON d.id = m.draft_id
+       WHERE d.status IN ('Open', 'InReview')
+       ORDER BY m.added_at, m.user_id`;
+    const members = new Map<string, string[]>();
+    for (const m of memberRows as Row[]) {
+      const list = members.get(m["draft_id"]) ?? [];
+      list.push(m["user_id"]);
+      members.set(m["draft_id"], list);
+    }
+
+    const candidates = (rows as Row[]).map((r) => ({
+      id: r["id"] as string,
+      pageId: r["page_id"] as string,
+      authorId: r["author_id"] as string,
+      status: r["status"] as string,
+      memberIds: members.get(r["id"]) ?? [],
+      versionId: (r["version_id"] as string | null) ?? null,
+      summary: (r["summary"] as string | null) ?? null,
+      updatedAt: iso(r["updated_at"]),
+      slug: r["slug"] as string,
+      type: r["type"] as string,
+      title: r["title"],
+      visibility: r["visibility"] as string,
+      scopeKind: r["scope_kind"] as ContentScope,
+      scopeId: (r["scope_id"] as string | null) ?? null,
+    }));
+
+    // Access is per scope: one check for each scope among the candidates.
+    const access = new Map<string, AccessLevel>();
+    for (const d of candidates) {
+      const key = `${d.scopeKind}:${d.scopeId ?? ""}`;
+      if (!access.has(key)) {
+        access.set(
+          key,
+          await pageAccess(sql, who.id, { scopeKind: d.scopeKind, scopeId: d.scopeId }),
+        );
+      }
+    }
+    const levelOf = (d: (typeof candidates)[number]) =>
+      access.get(`${d.scopeKind}:${d.scopeId ?? ""}`) ?? "none";
+
+    const selected = selectDrafts(candidates, who.id, query, levelOf);
+    return json({
+      drafts: selected.map(({ draft: d, roles }) => ({
+        id: d.id,
+        status: d.status,
+        roles,
+        page: {
+          id: d.pageId,
+          title: d.title,
+          slug: d.slug,
+          type: d.type,
+          scope: { kind: d.scopeKind, id: d.scopeId },
+          visibility: d.visibility,
+        },
+        authorId: d.authorId,
+        versionId: d.versionId,
+        summary: d.summary,
+        members: d.memberIds,
+        updatedAt: d.updatedAt,
+      })),
+    });
+  } catch (err) {
+    console.error("space GET /content/drafts failed", err);
+    return apiError(500, "server_error", "Something went wrong. Try again in a moment.");
+  }
+});
 
 /** POST /v1/content/pages/:id/drafts: the caller's open (or in review) draft on the page, created if there is none. */
 drafts.post("/content/pages/:id/drafts", async (c) => {

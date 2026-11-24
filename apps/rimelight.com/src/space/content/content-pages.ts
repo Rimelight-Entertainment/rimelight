@@ -6,7 +6,9 @@ import { Hono } from "hono";
 import { getSql } from "../../db/index.ts";
 import { caller, isResponse } from "../session.ts";
 import {
+  type AccessLevel,
   apiError,
+  atLeast,
   badRequest,
   forbidden,
   json,
@@ -26,6 +28,15 @@ import {
   type PageRow,
   type ContentBlock,
 } from "./content-access.ts";
+import { collectionListItem } from "./content-collections-logic.ts";
+import { collectionColor, resolveLabel } from "./content-public-logic.ts";
+import {
+  MENTION_SCAN_LIMIT,
+  mentionLimit,
+  mentionPattern,
+  normaliseMentionQuery,
+} from "./content-mentions-logic.ts";
+import { templateContent, templateIdField } from "./content-templates-logic.ts";
 
 const SCOPE_KINDS: ContentScope[] = ["Project", "Team", "Department", "Company"];
 const SLUG = /^[a-z0-9][a-z0-9-]{0,99}$/;
@@ -130,13 +141,32 @@ export async function createPageFromInput(
   const types = await sql`SELECT 1 FROM content_types WHERE slug = ${type}::text`;
   if (types.length === 0) return badRequest("There is no such content type.");
 
+  // An optional template: the page starts from its initialBlocks and defaultProperties, with fresh block ids.
+  const tid = templateIdField(body["templateId"]);
+  if (!tid.ok) return badRequest(tid.message);
+  let templateVersion = 1;
+  let content = { blocks: [] as unknown[], properties: {} as Record<string, unknown> };
+  if (tid.id !== null) {
+    const found = await sql`SELECT page_type, version, initial_blocks, default_properties
+       FROM page_templates WHERE id = ${tid.id}::text::uuid`;
+    const tpl = found[0] as Row | undefined;
+    if (!tpl) return badRequest("There is no such template.");
+    if (tpl["page_type"] !== type)
+      return badRequest("That template is for a different content type.");
+    templateVersion = Number(tpl["version"] ?? 1);
+    content = templateContent(
+      { initialBlocks: tpl["initial_blocks"], defaultProperties: tpl["default_properties"] },
+      () => crypto.randomUUID(),
+    ) as typeof content;
+  }
+
   const titleJson = JSON.stringify({ en: title });
-  const contentJson = JSON.stringify({ blocks: [], properties: {} });
+  const contentJson = JSON.stringify(content);
   try {
     const rows = await sql`INSERT INTO pages (slug, type, title, content, status, visibility,
-         scope_kind, scope_id)
+         scope_kind, scope_id, template_id, template_version)
        VALUES (${slug}::text, ${type}::text, ${titleJson}::jsonb, ${contentJson}::jsonb, 'draft', 'Internal',
-         ${scope.kind}::text, ${scope.id}::text::uuid)
+         ${scope.kind}::text, ${scope.id}::text::uuid, ${tid.id}::text::uuid, ${templateVersion}::int)
        RETURNING id::text AS id, slug, type, title, description, scope_kind, scope_id::text AS scope_id,
          visibility, status, published_version_id::text AS published_version_id, content, created_at, updated_at`;
     return pageSummary(pageFromRow(rows[0] as Row), access);
@@ -156,20 +186,68 @@ content.get("/content/collections", async (c) => {
   if (isResponse(who)) return who;
   try {
     const sql = getSql();
-    const rows = await sql`SELECT slug, name, description, icon, color, mode
+    const rows = await sql`SELECT slug, name, description, icon, color, mode, features, field_schema
        FROM content_types ORDER BY slug`;
+    return json({ collections: rows.map((r) => collectionListItem(r as Row)) });
+  } catch (err) {
+    console.error("space GET /content/collections failed", err);
+    return apiError(500, "server_error", "Something went wrong. Try again in a moment.");
+  }
+});
+
+/**
+ * GET /v1/content/mentions?q=&limit=: pages whose title (in any locale) or slug contains q, that the caller may view.
+ * limit is 1 to 25 (default 10). An empty q gives no results.
+ */
+content.get("/content/mentions", async (c) => {
+  const who = await caller(c);
+  if (isResponse(who)) return who;
+  try {
+    const sql = getSql();
+    const q = normaliseMentionQuery(c.req.query("q"));
+    const limit = mentionLimit(c.req.query("limit"));
+    if (q === "") return json({ results: [] });
+
+    const pattern = mentionPattern(q);
+    const rows = await sql`SELECT p.id::text AS id, p.slug, p.type, p.title, p.scope_kind,
+         p.scope_id::text AS scope_id, ct.color
+       FROM pages p
+       LEFT JOIN content_types ct ON ct.slug = p.type
+       WHERE p.deleted_at IS NULL
+         AND (p.slug ILIKE ${pattern}::text ESCAPE '\\'
+              OR EXISTS (SELECT 1 FROM jsonb_each_text(p.title) t
+                         WHERE t.value ILIKE ${pattern}::text ESCAPE '\\'))
+       ORDER BY p.updated_at DESC, p.id
+       LIMIT ${MENTION_SCAN_LIMIT}`;
+
+    // Access is per scope: one check for each scope among the candidates, in their order.
+    const access = new Map<string, AccessLevel>();
+    const viewable: Row[] = [];
+    for (const r of rows as Row[]) {
+      if (viewable.length >= limit) break;
+      const key = `${r["scope_kind"]}:${r["scope_id"] ?? ""}`;
+      if (!access.has(key)) {
+        access.set(
+          key,
+          await pageAccess(sql, who.id, {
+            scopeKind: r["scope_kind"] as ContentScope,
+            scopeId: (r["scope_id"] as string | null) ?? null,
+          }),
+        );
+      }
+      if (atLeast(access.get(key) as AccessLevel, "view")) viewable.push(r);
+    }
     return json({
-      collections: rows.map((r) => ({
+      results: viewable.map((r) => ({
+        entryId: r["id"],
+        collection: r["type"],
         slug: r["slug"],
-        name: r["name"],
-        description: r["description"] ?? null,
-        icon: r["icon"],
-        color: r["color"] ?? null,
-        mode: r["mode"],
+        title: resolveLabel(r["title"]),
+        color: collectionColor(r["type"] as string, (r["color"] as string | null) ?? null),
       })),
     });
   } catch (err) {
-    console.error("space GET /content/collections failed", err);
+    console.error("space GET /content/mentions failed", err);
     return apiError(500, "server_error", "Something went wrong. Try again in a moment.");
   }
 });

@@ -31,6 +31,10 @@ import contentComments from "./content/content-comments.ts";
 import contentLive from "./content/content-live.ts";
 import contentMcp from "./content/content-mcp.ts";
 import contentPublic from "./content/content-public.ts";
+import contentScope from "./content/content-scope.ts";
+import contentCollections from "./content/content-collections.ts";
+import contentTemplates from "./content/content-templates.ts";
+import contentMedia from "./content/content-media.ts";
 
 const space = new Hono();
 
@@ -57,6 +61,10 @@ space.route("/", contentComments);
 space.route("/", contentLive);
 space.route("/", contentMcp);
 space.route("/", contentPublic);
+space.route("/", contentScope);
+space.route("/", contentCollections);
+space.route("/", contentTemplates);
+space.route("/", contentMedia);
 
 /** SHA-256 of the token, the same bytes the Rust backend stores in `sessions.token_hash`. */
 async function hashToken(token: string): Promise<Uint8Array> {
