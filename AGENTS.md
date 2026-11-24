@@ -30,37 +30,49 @@ release. Add a tool name to select part of the graph. For example, run
 
 <!--VITE PLUS END-->
 
+---
+
+## Standard Documentation Architecture
+
+Before modifying this repository, consult our standardized core documents:
+
+- [**README.md**](file:///C:/Users/idant/WebstormProjects/rimelight/README.md): Simple overview of the monorepo with local development and build instructions.
+- [**PROJECT.md**](file:///C:/Users/idant/WebstormProjects/rimelight/PROJECT.md): Comprehensive description of the monorepo, packages catalog, game API specs, and deployment topology.
+- [**PLAN.md**](file:///C:/Users/idant/WebstormProjects/rimelight/PLAN.md): Live progress tracker, package maturity matrix, and active engineering backlog.
+
+---
+
 ## Git
 
-- Never commit, push, or create branches unless I explicitly ask. If I ask for a changeset, create only the .changeset file.
-- When I say merge to main, commit directly to or merge into main. Do not leave the work on a side branch.
+- Never commit, push, or create branches unless explicitly requested by the user. If asked for a changeset, create only the `.changeset` file.
+- When instructed to merge to main, commit directly to or merge into main. Do not leave the work on a side branch.
 
 ## Working Rules
 
-- Do exactly what was asked. If I ask for a proposal, review, or explanation, do NOT edit code until I approve.
+- Do exactly what was asked. If a proposal, review, or explanation is requested, do NOT edit code until approved.
 - Fix issues at the narrowest correct layer. Do not change shared theme/UI packages or package-wide config for a page-specific bug without asking.
 - Prefer config settings over new middleware, helpers, or adapters.
 
 ## Debugging
 
-- Verify before claiming a fix. Reproduce the issue, then confirm it is gone (server log, browser console, or test). Never say "fixed" on theory alone.
-- When a page is blank or broken, first diff it against a working sibling project (idantity.me is the reference) for routes, entry files, and config before forming theories.
-- Check for stale dist/ builds and Vite/worker caches early. Rebuild linked packages before testing UI changes.
-- Before blaming unrelated code for a regression (e.g. a hang), check whether my own recent changes caused it.
+- Verify before claiming a fix. Reproduce the issue, then confirm it is gone (server log, browser console, or test). Never declare "fixed" on theory alone.
+- When a page is blank or broken, first diff it against a working sibling project (`idantity.me` is the reference) for routes, entry files, and config before forming theories.
+- Check for stale `dist/` builds and Vite/worker caches early. Rebuild linked packages before testing UI changes.
+- Before blaming unrelated code for a regression (e.g. a hang), check whether your own recent changes caused it.
 
 ## Testing / Verification
 
-- Use the built-in t3-code preview tools (preview_navigate/evaluate/snapshot). Do not install Playwright.
+- Use the built-in t3-code preview tools (`preview_navigate`/`evaluate`/`snapshot`). Do not install Playwright.
 - Wait for data to load before reading the page, and re-install console hooks after reloads.
-- Don't start extra dev servers or browsers if one is already running. Ask me to verify visually when that's faster. Kill leftover dev/build processes when done.
+- Don't start extra dev servers or browsers if one is already running. Ask the user to verify visually when that is faster. Kill leftover dev/build processes when done.
 
 ## Packages > i18n
 
-- There are no runtime/dynamic translation keys. Unused keys reported by the CLI check are safe to delete, and t.raw keys count as used.
-- Run `vp check` and the full i18n test suite after any change to runtime.ts, shared.ts, plugin, lint.ts, or cli.ts.
+- There are no runtime/dynamic translation keys. Unused keys reported by the CLI check are safe to delete, and `t.raw` keys count as used.
+- Run `vp check` and the full i18n test suite after any change to `runtime.ts`, `shared.ts`, `plugin`, `lint.ts`, or `cli.ts`.
 - Measure bundle size before and after any i18n architecture change, with clean builds (delete output dirs first). Report the numbers before claiming an improvement.
 
 ## Environment
 
-- Shell is Git Bash on Windows. Use MSYS_NO_PATHCONV=1 for path args, and avoid Python one-liners for edits (use the Edit tool).
-- Production DB path is Neon via Cloudflare Hyperdrive (not neon-http). Explain driver tradeoffs plainly, without jargon.
+- Shell is Git Bash on Windows. Use `MSYS_NO_PATHCONV=1` for path arguments, and avoid Python one-liners for edits.
+- Production DB path is Neon via Cloudflare Hyperdrive (not `neon-http`). Explain driver tradeoffs plainly, without jargon.

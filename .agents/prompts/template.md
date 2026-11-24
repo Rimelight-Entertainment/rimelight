@@ -37,10 +37,6 @@
 
 - [ ]
 
-## Deliverables
-
--
-
-## Completion report
+## Report
 
 <!-- Summarize changes, validation results, and any follow-up work. -->

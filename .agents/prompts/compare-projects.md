@@ -37,3 +37,5 @@ This prompt is used to compare all projects within the active directory to ident
 5. **Public Assets & Meta Standards**:
    - Check standard public files (`favicon.ico`, `favicon.svg`, `apple-touch-icon.png`, `site.webmanifest`, `robots.txt`, `llms.txt`). 6.**Report Output**:
    - Produce a structured Markdown report categorizing findings by severity and component area.
+
+## Report

@@ -51,3 +51,5 @@ This prompt is used to bump the version of one or more Rimelight packages, publi
 9. Apply `Package version bump commit/push` to commit and optionally push the version bumps in this monorepo.
 10. For each updated project that passed its checks cleanly, apply `Updated project commits/pushes` to commit and optionally push its changed installation. Do not commit or push any project that failed its checks.
 11. Report back, listing: the packages published with their previous and new versions, the projects updated, the projects skipped or ignored, the git actions performed, and any errors encountered. Do not fix errors automatically.
+
+## Report

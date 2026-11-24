@@ -146,7 +146,7 @@ Audit a component file to ensure strict adherence to our design patterns and fun
 - Completion report in the structure below.
 - Ensure you follow current package standards, and not mocking of nuxt ui/vue patterns just because they are the reference.
 
-## Completion report
+## Report
 
 Report in this exact structure, omitting nothing:
 
