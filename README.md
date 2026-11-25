@@ -1,11 +1,6 @@
 # Rimelight Entertainment Monorepo
 
-> **Source for Rimelight Entertainment's web applications, headless game APIs, and shared packages.**  
-> Built with SolidJS 2.0, served serverless from Cloudflare Workers, and orchestrated via [Vite+](https://viteplus.dev/guide/) (`vp`).
-
----
-
-## 1. Monorepo Overview
+## Overview
 
 This repository houses all public web services, client documentation, design tokens, and game backend APIs for Rimelight Entertainment:
 
@@ -13,22 +8,7 @@ This repository houses all public web services, client documentation, design tok
 - **Core Packages:** Content delivery (`@rimelight/cms`), design tokens (`@rimelight/design`), internationalization (`@rimelight/i18n`), edge security (`@rimelight/security`), SEO metadata (`@rimelight/seo`), UI components (`@rimelight/ui`), and shared TypeScript configuration (`@rimelight/config`).
 - **Game Backend API:** Headless Auth0 ROPC authentication and title settings persistence for Unreal Engine 5 clients (including _Grand Tale_).
 
----
-
-## 2. Standard Documentation Suite
-
-Our monorepo adheres to the standardized 4-file documentation architecture:
-
-| Document                                                                       | Purpose                                                                                                                         |
-| ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------- |
-| [**README.md**](file:///C:/Users/idant/WebstormProjects/rimelight/README.md)   | Simple overview of the monorepo with local development and build instructions.                                                  |
-| [**PROJECT.md**](file:///C:/Users/idant/WebstormProjects/rimelight/PROJECT.md) | Comprehensive description: complete package catalog, application breakdown, game API specs, and deployment topology.            |
-| [**PLAN.md**](file:///C:/Users/idant/WebstormProjects/rimelight/PLAN.md)       | Progress tracker: live package maturity matrix, game API verification status, and active backlog.                               |
-| [**AGENTS.md**](file:///C:/Users/idant/WebstormProjects/rimelight/AGENTS.md)   | Specific agent instructions: Vite+ unified toolchain (`vp`), strict coding rules, debugging workflows, and testing constraints. |
-
----
-
-## 3. Getting Started
+## Local Development
 
 ### Prerequisites
 
@@ -95,8 +75,8 @@ rimelight/
 └── PLAN.md                      # Milestone progress tracker & active backlog
 ```
 
----
+## License
 
-## 6. License
+Proprietary. Copyright (c) 2026 Rimelight Entertainment. All rights reserved.
 
-MIT. Copyright (c) 2026 Rimelight Entertainment.
+See the `LICENSE.md` file for more details.
