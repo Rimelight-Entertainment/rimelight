@@ -2,25 +2,36 @@
 
 ## Overview
 
-This repository houses all public web services, client documentation, design tokens, and game backend APIs for Rimelight Entertainment:
+The repository for web packages and apps developed by Rimelight Entertainment.
 
-- **Web Apps:** `apps/rimelight.com` (company site, docs, store, franchise hub, and game API).
-- **Core Packages:** Content delivery (`@rimelight/cms`), design tokens (`@rimelight/design`), internationalization (`@rimelight/i18n`), edge security (`@rimelight/security`), SEO metadata (`@rimelight/seo`), UI components (`@rimelight/ui`), and shared TypeScript configuration (`@rimelight/config`).
-- **Game Backend API:** Headless Auth0 ROPC authentication and title settings persistence for Unreal Engine 5 clients (including _Grand Tale_).
+## Technology Stack
+
+- **Runtime:** `node.js`
+- **Toolchain:** `vite-plus`
+- **Package Manager:** `pnpm`
+-
 
 ## Local Development
 
 ### Prerequisites
 
-- **Node.js:** `26.13.1` (managed via `.node-version`)
-- **Package Manager:** `pnpm@12.16.1+` (defined in `packageManager`)
-- **Toolchain:** `vite-plus` (`vp`)
+### Initial Setup
 
-### Initial Installation
+1. **Clone the repository:**
 
-```sh
-pnpm install
-```
+   ```bash
+   git clone <repo-url> rimelight
+   cd rimelight
+   git pull
+   ```
+
+2. **Open in Rider or Visual Studio:**
+   Open `GrandTale.sln` or `GrandTale.uproject` directly in your IDE.
+
+3. Install Dependencies
+   ```sh
+   pnpm install
+   ```
 
 The repository `prepare` lifecycle hook runs `vp config` automatically to initialize the Vite+ toolchain and git commit hooks.
 
@@ -30,12 +41,12 @@ The repository `prepare` lifecycle hook runs `vp config` automatically to initia
 
 Run commands from the monorepo root:
 
-| Command        | Action                                                                 |
-| -------------- | ---------------------------------------------------------------------- |
-| `pnpm install` | Install all workspace dependencies across apps and packages            |
-| `pnpm build`   | Build every package and application with a build target                |
-| `pnpm test`    | Run Vitest test suites across all workspaces                           |
-| `pnpm check`   | Format, lint, and type check across the entire repo (`vp check --fix`) |
+| Command      | Action                                                                 |
+| ------------ | ---------------------------------------------------------------------- |
+| `vp install` | Install all workspace dependencies across apps and packages            |
+| `vpr build`  | Build every package and application with a build target                |
+| `vpr test`   | Run Vitest test suites across all workspaces                           |
+| `vpr check`  | Format, lint, and type check across the entire repo (`vp check --fix`) |
 
 ### Working on a Specific Application or Package
 
@@ -52,9 +63,7 @@ pnpm --filter @rimelight/ui test
 pnpm --filter @rimelight/design generate
 ```
 
----
-
-## 5. Repository Layout
+## 5. Repository Structure
 
 ```
 rimelight/
@@ -71,9 +80,13 @@ rimelight/
 ├── .github/workflows/           # CI pipelines (pkg.pr.new previews, tests, checks)
 ├── AGENTS.md                    # Specific AI agent rules & toolchain instructions
 ├── README.md                    # Project overview & quickstart (this file)
-├── PROJECT.md                   # Comprehensive project manual & technical specs
-└── PLAN.md                      # Milestone progress tracker & active backlog
+└── PROJECT.md                   # Comprehensive project manual & technical specs
 ```
+
+- **Web Apps:** `apps/rimelight.com` (company site, docs, store, franchise hub, and game API).
+- **Core Packages:** Content delivery (`@rimelight/cms`), design tokens (`@rimelight/design`), internationalization (`@rimelight/i18n`), edge security (`@rimelight/security`), SEO metadata (`@rimelight/seo`), UI components (`@rimelight/ui`), and shared TypeScript configuration (`@rimelight/config`).
+- **Game Backend API:** Headless Auth0 ROPC authentication and title settings persistence for Unreal Engine 5 clients (including _Grand Tale_).
+-
 
 ## License
 

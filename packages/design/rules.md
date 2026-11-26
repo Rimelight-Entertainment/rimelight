@@ -8,7 +8,7 @@ Draft. Read-only research. Each rule is one or two sentences with its source. Wh
 | ----- | ------------------------------------------------------------------------------------------------------------------------- |
 | [MH]  | `rimelight-media` `docs/HANDOFF.md`, read with `git show c1198b3:docs/HANDOFF.md` (line numbers from that file)           |
 | [MA]  | `C:\Users\idant\RustRoverProjects\rimelight-media\AGENTS.md` (release and build notes only; no UI rules)                  |
-| [SP]  | `C:\Users\idant\RustRoverProjects\rimelight-space\PLAN.md`                                                                |
+| [SP]  | `C:\Users\idant\RustRoverProjects\rimelight-space\PROJECT.md`                                                             |
 | [SA]  | `C:\Users\idant\RustRoverProjects\rimelight-space\PLAN-archive.md` (line numbers)                                         |
 | [SAG] | `C:\Users\idant\RustRoverProjects\rimelight-space\AGENTS.md`                                                              |
 | [SU]  | `C:\Users\idant\RustRoverProjects\rimelight-space\crates\rimelight_ui\README.md`                                          |
